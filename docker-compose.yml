@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  db:
+    build: ./db
+    image: kitchen2/db
+    ports:
+      - 15432:5432
+    healthcheck:
+      test: ["CMD", "su", "postgres", "-c", "echo 'select 1' | psql"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
