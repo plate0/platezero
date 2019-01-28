@@ -11,3 +11,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
+  frontend:
+    build: ./frontend
+    image: kitchen2/frontend
+    env_file: ./frontend/dev.env
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
