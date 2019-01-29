@@ -3,8 +3,8 @@
 Install it and run:
 
 ```bash
-yarn
-yarn dev
+$ yarn
+$ yarn dev
 ```
 
 ## The idea behind the example
