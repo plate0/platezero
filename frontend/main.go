@@ -10,11 +10,11 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.LoadHTMLGlob(filepath.Join(os.Getenv("TMPL_DIR"), "**", "*"))
+	router.LoadHTMLGlob(filepath.Join(os.Getenv("TMPL_DIR"), "*.tmpl"))
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"title": "Posts",
 		})
 	})
-	router.Run(":8080")
+	router.Run(":" + os.Getenv("PORT"))
 }
