@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     build: ./db
-    image: kitchen2/db
+    image: recipe/db
     ports:
       - 15432:5432
     healthcheck:
@@ -13,9 +13,9 @@ services:
       retries: 30
   frontend:
     build: ./frontend
-    image: kitchen2/frontend
-    env_file: ./frontend/dev.env
+    image: recipe/frontend
+    env_file: ./frontend/.env
     ports:
-      - 8080:8080
+      - 9100:9100
     depends_on:
       - db
