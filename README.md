@@ -1,6 +1,6 @@
 # Recipe manager
 
-* `/`: Marketing landing page. Highlight some users/recipes.
+* `/`: Shows Users/Recipes
 * `/login`: form to accept (email or username) and password
 * `/register`: register form, requires username, email, password
 * `/{username}`: Profile page, shows recipes of user. If your profile, button for adding new recipe
