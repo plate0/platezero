@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "nodemon",
+    "dev": "PORT=9100 nodemon",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production PORT=9100 node dist/index.js"
   },
@@ -8,6 +8,7 @@
     "@zeit/next-typescript": "1.1.1",
     "express": "4.16.4",
     "next": "7.0.2",
+    "next-routes": "^1.4.2",
     "react": "16.7.0",
     "react-dom": "16.7.0",
     "sequelize-typescript": "^0.6.7"
