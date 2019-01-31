@@ -3,11 +3,13 @@ import { Button, Col, Row } from 'reactstrap'
 import { Layout, Navbar } from '../components'
 import Head from 'next/head'
 import { User as UserModel } from '../models'
-import '../style/index.scss'
+import { RecipeCard } from '../components/RecipeCard'
 
 const user = {
   username: 'em'
 }
+
+const recipes = [{ name: 'Pizza', slug: 'pizza' }]
 
 interface UserProps {
   user: UserModel
@@ -32,7 +34,7 @@ export default class User extends React.Component<UserProps> {
   }
 
   public render() {
-    console.log('render', this.props)
+    const recis = recipes.map(r => <RecipeCard {...r} key={r.slug} />)
     return (
       <Layout>
         <Head>
@@ -42,6 +44,7 @@ export default class User extends React.Component<UserProps> {
           <Picture />
         </Row>
         <ProfileNav />
+        {recis}
       </Layout>
     )
   }
