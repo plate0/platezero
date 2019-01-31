@@ -1,19 +1,53 @@
 import {
-  Table,
   AllowNull,
-  Column,
-  DataType,
-  IsIn,
-  Default,
-  ForeignKey,
-  Model,
-  Unique,
-  PrimaryKey,
   AutoIncrement,
   BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  Default,
+  ForeignKey,
   HasMany,
-  BelongsToMany
+  Is,
+  IsEmail,
+  IsIn,
+  Model,
+  PrimaryKey,
+  Sequelize,
+  Table,
+  Unique
 } from 'sequelize-typescript'
+
+export const sequelize = new Sequelize({
+  database: process.env['DATABASE_NAME'],
+  dialect: 'postgres',
+  username: process.env['DATABASE_USER'],
+  password: process.env['DATABASE_PASSWORD']
+})
+
+sequelize.addModels([
+  Author,
+  CookbookAuthor,
+  CookbookRecipe,
+  Cookbook,
+  IngredientLine,
+  IngredientListLine,
+  IngredientList,
+  OvenPreheat,
+  ProcedureLine,
+  ProcedureListLine,
+  ProcedureList,
+  RecipeBranch,
+  RecipeCollaborator,
+  RecipeTitle,
+  RecipeVersionIngredientList,
+  RecipeVersionProcedureList,
+  RecipeVersion,
+  RecipeYield,
+  Recipe,
+  SousVidePreheat,
+  User
+])
 
 @Table({
   tableName: 'authors'
@@ -416,4 +450,104 @@ export class RecipeYield extends Model<RecipeYield> {
   @AutoIncrement
   @PrimaryKey
   public id: number
+
+  @Column
+  @AllowNull(false)
+  public text: string
+}
+
+@Table({
+  tableName: 'recipes'
+})
+export class Recipe extends Model<Recipe> {
+  @Column
+  @AutoIncrement
+  @PrimaryKey
+  public id: number
+
+  @Column
+  @AllowNull(false)
+  @ForeignKey(() => User)
+  public user_id: number
+
+  @Column
+  @AllowNull(false)
+  public slug: string
+
+  @Column public source_url: string
+
+  @Column
+  @ForeignKey(() => CookbookRecipe)
+  public souce_cookbook_recipe_id: number
+
+  @Column
+  @AllowNull(false)
+  public created_at: Date
+
+  @Column public updated_at: Date
+
+  @Column public deleted_at: Date
+
+  @BelongsTo(() => User)
+  public user: User
+
+  @BelongsTo(() => CookbookRecipe)
+  public cookbookRecipe: CookbookRecipe
+}
+
+@Table({
+  tableName: 'sous_vide_preheats'
+})
+export class SousVidePreheat extends Model<SousVidePreheat> {
+  @Column
+  @AutoIncrement
+  @PrimaryKey
+  public id: number
+
+  @Column
+  @AllowNull(false)
+  public temperature: number
+
+  @Column
+  @AllowNull(false)
+  @IsIn(['C', 'F'])
+  public unit: string
+}
+
+@Table({
+  tableName: 'users'
+})
+export class User extends Model<User> {
+  @Column
+  @AutoIncrement
+  @PrimaryKey
+  public id: number
+
+  @Column
+  @Unique
+  @AllowNull(false)
+  @Is('Username', value => {
+    if (!/[a-zA-Z0-9][a-zA-Z0-9_\-]{1,31}/.test(value)) {
+      throw new Error(`"${value}" is not a valid username.`)
+    }
+  })
+  public username: string
+
+  @Column
+  @Unique
+  @AllowNull(false)
+  @IsEmail
+  public email: string
+
+  @Column public password_hash: string
+
+  @Column public confirmed_at: Date
+
+  @Column public created_at: Date
+
+  @Column public updated_at: Date
+
+  @Column public deleted_at: Date
+
+  @Column public name: string
 }
