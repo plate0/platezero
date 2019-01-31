@@ -3,6 +3,7 @@ import {
   AutoIncrement,
   BelongsTo,
   Column,
+  HasMany,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -11,6 +12,7 @@ import {
 
 import { CookbookRecipe } from './cookbook_recipe'
 import { User } from './user'
+import { RecipeBranch } from './recipe_branch'
 
 @Table({
   tableName: 'recipes'
@@ -41,7 +43,7 @@ export class Recipe extends Model<Recipe> {
 
   @Column
   @ForeignKey(() => CookbookRecipe)
-  public souce_cookbook_recipe_id: number
+  public source_cookbook_recipe_id: number
 
   @AllowNull(false)
   @Column
@@ -56,4 +58,7 @@ export class Recipe extends Model<Recipe> {
 
   @BelongsTo(() => CookbookRecipe)
   public cookbookRecipe: CookbookRecipe
+
+  @HasMany(() => RecipeBranch)
+  public branches: RecipeBranch[]
 }

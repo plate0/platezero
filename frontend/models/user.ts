@@ -5,10 +5,13 @@ import {
   Is,
   IsEmail,
   Model,
+  HasMany,
   PrimaryKey,
   Table,
   Unique
 } from 'sequelize-typescript'
+
+import { Recipe } from './recipe'
 
 @Table({
   tableName: 'users'
@@ -48,4 +51,7 @@ export class User extends Model<User> {
   @Column public deleted_at: Date
 
   @Column public name: string
+
+  @HasMany(() => Recipe)
+  public recipes: Recipe[]
 }
