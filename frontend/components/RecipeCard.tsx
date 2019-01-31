@@ -1,7 +1,9 @@
 import React from 'react'
-import Link from 'next/link'
 import { Card, CardImg, CardBody, CardTitle } from 'reactstrap'
 import { Recipe } from '../models'
+const {
+  routes: { Link }
+} = require('../routes')
 
 export interface RecipeCardProps {
   name: string
@@ -11,7 +13,7 @@ export interface RecipeCardProps {
 }
 
 export const RecipeCard = (props: RecipeCardProps) => (
-  <Link href={`/${props.username}/recipe/${props.slug}`}>
+  <Link route={`/${props.username}/recipe/${props.slug}`}>
     <a>
       <Card>
         <CardImg
