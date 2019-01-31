@@ -9,7 +9,7 @@ import {
   ProfileNav
 } from '../components'
 import Head from 'next/head'
-//import { User as UserModel } from '../models'
+import { User as UserModel } from '../models/user'
 import { RecipeCard } from '../components/RecipeCard'
 
 const recipes = [
@@ -45,7 +45,7 @@ const recipes = [
 ]
 
 interface UserProps {
-  user: any
+  user: UserModel
 }
 
 const ListRecipes = props => (
@@ -59,13 +59,8 @@ const ListRecipes = props => (
 )
 
 export default class User extends React.Component<UserProps> {
-  static async getInitialProps({ req, query }) {
+  static async getInitialProps({ query }) {
     const username = query.username
-    if (req) {
-      //const models = require('../models')
-      //console.log('have req so we are on the server')
-      //const user = await models.User.findOne({ where: { username }})
-    }
     return { user: { username } }
   }
 
