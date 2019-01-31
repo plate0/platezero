@@ -1,3 +1,5 @@
 export * from './layout'
 export * from './Navbar'
 export * from './ProfilePicture'
+export * from './ProfileHeader'
+export * from './ProfileNav'

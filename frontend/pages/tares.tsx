@@ -1,11 +1,31 @@
 import React from 'react'
+import { Layout, ProfileHeader, ProfileNav } from '../components'
+import Head from 'next/head'
 
-export default class Tares extends React.Component {
+interface TaresProps {
+  user: any
+}
+
+const user = {
+  username: 'em',
+  avatar: 'https://github.com/ethanmick.png?size=128'
+}
+
+export default class Tares extends React.Component<TaresProps> {
   static async getInitialProps({ query }) {
-    return {}
+    return { user }
   }
 
   public render() {
-    return <div>user tares</div>
+    return (
+      <Layout>
+        <Head>
+          <title>{`${this.props.user.username} - Tares`}</title>
+        </Head>
+        <ProfileHeader {...user} />
+        <ProfileNav username={this.props.user.username} />
+        <div>Tares!!</div>
+      </Layout>
+    )
   }
 }

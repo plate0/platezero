@@ -1,7 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import { Button, Col, Row } from 'reactstrap'
-import { Layout, Navbar, ProfilePicture } from '../components'
+import {
+  Layout,
+  Navbar,
+  ProfilePicture,
+  ProfileHeader,
+  ProfileNav
+} from '../components'
 import Head from 'next/head'
 import { User as UserModel } from '../models'
 import { RecipeCard } from '../components/RecipeCard'
@@ -47,26 +53,6 @@ interface UserProps {
   user: UserModel
 }
 
-const ProfileHeader = (user: any) => (
-  <Row className="mt-3 d-flex justify-content-center">
-    <Col xs={{ size: 'auto' }} className="text-center">
-      <ProfilePicture size={128} img={user.avatar} />
-      <h3>{user.username}</h3>
-    </Col>
-  </Row>
-)
-
-const ProfileNav = (user: any) => (
-  <Row className="d-flex justify-content-around py-3 border-bottom">
-    <Col xs="2">
-      <Link href={`/${user.username}/recipes`}>
-        <a>Recipes</a>
-      </Link>
-    </Col>
-    <Col xs="2">Tares</Col>
-  </Row>
-)
-
 const ListRecipes = props => (
   <Row>
     {props.recipes.map(r => (
@@ -89,7 +75,7 @@ export default class User extends React.Component<UserProps> {
           <title>{this.props.user.username}</title>
         </Head>
         <ProfileHeader {...user} />
-        <ProfileNav {...user} />
+        <ProfileNav username={this.props.user.username} />
         <ListRecipes recipes={recipes} username={this.props.user.username} />
       </Layout>
     )
