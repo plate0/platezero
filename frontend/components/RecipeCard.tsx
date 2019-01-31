@@ -27,6 +27,14 @@ export const RecipeCard = (props: RecipeCardProps) => (
           <CardTitle className="m-0">
             <strong>{props.name}</strong>
           </CardTitle>
+          <style jsx>{`
+            strong {
+              color: black;
+            }
+            a:hover {
+              text-decoration: none;
+            }
+          `}</style>
         </CardBody>
       </Card>
     </a>
