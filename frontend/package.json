@@ -5,12 +5,15 @@
     "start": "cross-env NODE_ENV=production PORT=9100 node dist/index.js"
   },
   "dependencies": {
+    "@zeit/next-sass": "^1.0.1",
     "@zeit/next-typescript": "1.1.1",
     "express": "4.16.4",
     "next": "7.0.2",
     "next-routes": "^1.4.2",
+    "node-sass": "^4.11.0",
     "react": "16.7.0",
     "react-dom": "16.7.0",
+    "reactstrap": "^7.1.0",
     "sequelize-typescript": "^0.6.7"
   },
   "devDependencies": {
