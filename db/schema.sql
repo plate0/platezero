@@ -40,7 +40,7 @@ CREATE TABLE ingredient_list_lines (
 
 CREATE TABLE ingredient_lists (
     id SERIAL PRIMARY KEY,
-    name character varying,
+    name character varying
 );
 
 CREATE TABLE oven_preheats (
@@ -81,11 +81,6 @@ CREATE TABLE recipe_collaborators (
   UNIQUE (recipe_id, user_id)
 );
 
-CREATE TABLE recipe_titles (
-  id SERIAL PRIMARY KEY,
-  text character varying NOT NULL
-);
-
 CREATE TABLE recipe_version_ingredient_lists (
   recipe_version_id integer NOT NULL,
   ingredient_list_id integer NOT NULL,
@@ -106,7 +101,6 @@ CREATE TABLE recipe_versions (
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   user_id integer NOT NULL,
   parent_recipe_version_id integer,
-  recipe_title_id integer NOT NULL,
   recipe_yield_id integer,
   oven_preheat_id integer,
   sous_vide_preheat_id integer,
@@ -122,6 +116,8 @@ CREATE TABLE recipes (
   id SERIAL PRIMARY KEY,
   user_id integer NOT NULL,
   slug character varying NOT NULL,
+  title character varying NOT NULL,
+  image_url character varying,
   source_url character varying,
   source_cookbook_recipe_id integer,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
@@ -141,6 +137,7 @@ CREATE TABLE users (
   username character varying UNIQUE NOT NULL,
   email character varying UNIQUE NOT NULL,
   password_hash character varying,
+  avatar_url character varying,
   confirmed_at timestamp without time zone DEFAULT now(),
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
@@ -167,7 +164,6 @@ ALTER TABLE recipe_version_procedure_lists ADD FOREIGN KEY (procedure_list_id) R
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (parent_recipe_version_id) REFERENCES recipe_versions (id);
-ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_title_id) REFERENCES recipe_titles (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (oven_preheat_id) REFERENCES oven_preheats (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (sous_vide_preheat_id) REFERENCES sous_vide_preheats (id);

@@ -5,7 +5,7 @@ services:
     build: ./db
     image: recipe/db
     ports:
-      - 15432:5432
+      - 5432:5432
     healthcheck:
       test: ["CMD", "su", "postgres", "-c", "echo 'select 1' | psql"]
       interval: 5s

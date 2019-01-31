@@ -9,13 +9,8 @@ import {
   ProfileNav
 } from '../components'
 import Head from 'next/head'
-import { User as UserModel } from '../models'
+//import { User as UserModel } from '../models'
 import { RecipeCard } from '../components/RecipeCard'
-
-const user = {
-  username: 'em',
-  avatar: 'https://github.com/ethanmick.png?size=128'
-}
 
 const recipes = [
   {
@@ -50,7 +45,7 @@ const recipes = [
 ]
 
 interface UserProps {
-  user: UserModel
+  user: any
 }
 
 const ListRecipes = props => (
@@ -64,17 +59,24 @@ const ListRecipes = props => (
 )
 
 export default class User extends React.Component<UserProps> {
-  static async getInitialProps({ query }) {
-    return { user }
+  static async getInitialProps({ req, query }) {
+    const username = query.username
+    if (req) {
+      //const models = require('../models')
+      //console.log('have req so we are on the server')
+      //const user = await models.User.findOne({ where: { username }})
+    }
+    return { user: { username } }
   }
 
   public render() {
+    console.log(this.props)
     return (
       <Layout>
         <Head>
           <title>{this.props.user.username}</title>
         </Head>
-        <ProfileHeader {...user} />
+        <ProfileHeader {...this.props.user} />
         <ProfileNav username={this.props.user.username} />
         <ListRecipes recipes={recipes} username={this.props.user.username} />
       </Layout>
