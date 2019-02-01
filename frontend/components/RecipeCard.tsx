@@ -6,9 +6,9 @@ const {
 } = require('../routes')
 
 export interface RecipeCardProps {
-  name: string
+  title: string
   slug: string
-  image?: string
+  image_url?: string
   username: string
 }
 
@@ -19,13 +19,13 @@ export const RecipeCard = (props: RecipeCardProps) => (
         <CardImg
           top
           width="100%"
-          src={props.image}
+          src={props.image_url}
           alt="Card image cap"
           style={{ height: 180, objectFit: 'cover' }}
         />
         <CardBody className="p-3">
           <CardTitle className="m-0">
-            <strong>{props.name}</strong>
+            <strong>{props.title}</strong>
           </CardTitle>
           <style jsx>{`
             strong {

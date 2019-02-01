@@ -9,6 +9,7 @@
     "@zeit/next-sass": "1.0.1",
     "@zeit/next-typescript": "1.1.1",
     "express": "4.16.4",
+    "isomorphic-fetch": "^2.2.1",
     "next": "7.0.2",
     "next-routes": "1.4.2",
     "node-sass": "4.11.0",

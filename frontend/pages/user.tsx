@@ -10,42 +10,13 @@ import {
 } from '../components'
 import Head from 'next/head'
 import { User as UserModel } from '../models/user'
+import { Recipe as RecipeModel } from '../models/recipe'
 import { RecipeCard } from '../components/RecipeCard'
-
-const recipes = [
-  {
-    name: 'Pizza',
-    slug: 'pizza',
-    image: 'http://insidetailgating.com/wp-content/uploads/2015/05/pizza.jpg'
-  },
-  {
-    name: 'Pancakes',
-    slug: 'pancakes',
-    image:
-      'http://www.pamelasproducts.com/wp-content/uploads/2012/05/Pancakes.png'
-  },
-  {
-    name: 'Egg Salad',
-    slug: 'egg-salad',
-    image:
-      'https://www.afamilyfeast.com/wp-content/uploads/2013/03/egg_salad1.jpg'
-  },
-  {
-    name: 'Chicken Caesar Pasta',
-    slug: 'chicken-caesar-pasta',
-    image:
-      'https://spicysouthernkitchen.com/wp-content/uploads/caesar-pasta-salad-5.jpg'
-  },
-  {
-    name: 'Chicken Pesto Parmesan',
-    slug: 'chicken-pesto-parmesan',
-    image:
-      'https://www.melaniecooks.com/wp-content/uploads/2017/12/chicken_baked_pesto_recipe-773x1030.jpg'
-  }
-]
+import 'isomorphic-fetch'
 
 interface UserProps {
   user: UserModel
+  recipes: RecipeModel
 }
 
 const ListRecipes = props => (
@@ -60,12 +31,21 @@ const ListRecipes = props => (
 
 export default class User extends React.Component<UserProps> {
   static async getInitialProps({ query }) {
-    const username = query.username
-    return { user: { username } }
+    const { username } = query
+    const options = {
+      method: 'GET'
+    }
+    const host = 'http://localhost:9100/api'
+    const user = await fetch(`${host}/user/${username}`, options)
+    const recipes = await fetch(`${host}/user/${username}/recipes`, options)
+    return {
+      user: await user.json(),
+      recipes: await recipes.json()
+    }
   }
 
   public render() {
-    console.log(this.props)
+    console.log('props', this.props)
     return (
       <Layout>
         <Head>
@@ -73,7 +53,10 @@ export default class User extends React.Component<UserProps> {
         </Head>
         <ProfileHeader {...this.props.user} />
         <ProfileNav username={this.props.user.username} />
-        <ListRecipes recipes={recipes} username={this.props.user.username} />
+        <ListRecipes
+          recipes={this.props.recipes}
+          username={this.props.user.username}
+        />
       </Layout>
     )
   }
