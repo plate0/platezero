@@ -12,8 +12,10 @@ import {
 } from 'sequelize-typescript'
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
+import * as jwt from 'jsonwebtoken'
 
 import { Recipe } from './recipe'
+import { JWT_SECRET } from '../server/api'
 
 const SALT_ROUNDS = 12
 const SITE_BASE = 'http://localhost:9100'
@@ -88,11 +90,29 @@ export class User extends Model<User> {
     delete values.password_hash
     values.url = `${SITE_BASE}/api/users/${values.username}`
     values.html_url = `${SITE_BASE}/${values.username}`
+    values.recipes_url = `${SITE_BASE}/api/users/${values.username}/recipes`
+    values.recipes_html_url = `${SITE_BASE}/${values.username}/recipes`
     if (!values.avatar_url) {
       const emailHash = crypto.createHash('md5')
       emailHash.update(values.email.toLowerCase())
       values.avatar_url = `https://www.gravatar.com/avatar/${emailHash.digest('hex')}`
     }
     return values
+  }
+
+  public async generateToken(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      jwt.sign(
+        { userId: this.id, username: this.username },
+        JWT_SECRET,
+        { expiresIn: '24h' },
+        (err, token) => {
+          if (err) {
+            return reject(err)
+          }
+          return resolve(token)
+        }
+      )
+    })
   }
 }

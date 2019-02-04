@@ -55,9 +55,14 @@ r.get('/:username', async (req, res) => {
   console.log('HERE')
   const { username } = req.params
   try {
-    const user = await User.findOne({ where: { username } })
+    const user = await User.findOne({ where: { username }})
+    if (!user) {
+      res.status(404)
+      return res.json({ error: 'not found' })
+    }
     return res.json(user)
   } catch (error) {
+    res.status(500)
     return res.json({ error })
   }
 })
@@ -68,6 +73,7 @@ r.get('/:username/recipes', async (req, res) => {
     const user = await User.findOne({ where: { username }, include: [Recipe] })
     return res.json(user.recipes)
   } catch (error) {
+    res.status(500)
     return res.json({ error })
   }
 })
@@ -79,8 +85,13 @@ r.get('/:username/recipes/:slug', async (req, res) => {
       include: [User],
       where: { '$user.username$': username, slug }
     })
+    if (!recipe) {
+      res.status(404)
+      return res.json({ error: 'not found' })
+    }
     return res.json(recipe)
   } catch (error) {
+    res.status(500)
     return res.json({ error })
   }
 })

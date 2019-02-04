@@ -12,6 +12,7 @@
     "body-parser": "^1.18.3",
     "express": "4.16.4",
     "express-joi": "^0.3.1",
+    "express-jwt": "^5.3.1",
     "isomorphic-fetch": "^2.2.1",
     "next": "7.0.2",
     "next-routes": "1.4.2",
