@@ -139,11 +139,11 @@ CREATE TABLE users (
   email character varying UNIQUE NOT NULL,
   password_hash character varying,
   avatar_url character varying,
+  name character varying,
   confirmed_at timestamp without time zone DEFAULT now(),
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
-  deleted_at timestamp without time zone,
-  name character varying
+  deleted_at timestamp without time zone
 );
 
 -- foreign keys
