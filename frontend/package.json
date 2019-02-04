@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "PORT=9100 nodemon",
+    "dev": "API_URL=http://localhost:9100/api PORT=9100 nodemon",
     "build": "next build && tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production PORT=9100 node dist/index.js"
   },

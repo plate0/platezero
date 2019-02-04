@@ -12,7 +12,7 @@ import Head from 'next/head'
 import { User as UserModel } from '../models/user'
 import { Recipe as RecipeModel } from '../models/recipe'
 import { RecipeCard } from '../components/RecipeCard'
-import 'isomorphic-fetch'
+import { getUser } from '../common/http'
 
 interface UserProps {
   user: UserModel
@@ -32,20 +32,13 @@ const ListRecipes = props => (
 export default class User extends React.Component<UserProps> {
   static async getInitialProps({ query }) {
     const { username } = query
-    const options = {
-      method: 'GET'
-    }
-    const host = 'http://localhost:9100/api'
-    const user = await fetch(`${host}/users/${username}`, options)
-    const recipes = await fetch(`${host}/users/${username}/recipes`, options)
     return {
-      user: await user.json(),
-      recipes: await recipes.json()
+      user: await getUser(username),
+      recipes: []
     }
   }
 
   public render() {
-    console.log('props', this.props)
     return (
       <Layout>
         <Head>
