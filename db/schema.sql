@@ -27,6 +27,7 @@ CREATE TABLE ingredient_lines (
     name character varying NOT NULL,
     quantity_numerator integer,
     quantity_denominator integer,
+    unit character varying,
     preparation character varying,
     optional boolean NOT NULL DEFAULT false
 );
@@ -141,7 +142,7 @@ CREATE TABLE users (
   confirmed_at timestamp without time zone DEFAULT now(),
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
-  deleted_at timestamp without time zone DEFAULT now(),
+  deleted_at timestamp without time zone,
   name character varying
 );
 
