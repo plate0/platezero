@@ -36,8 +36,8 @@ export default class User extends React.Component<UserProps> {
       method: 'GET'
     }
     const host = 'http://localhost:9100/api'
-    const user = await fetch(`${host}/user/${username}`, options)
-    const recipes = await fetch(`${host}/user/${username}/recipes`, options)
+    const user = await fetch(`${host}/users/${username}`, options)
+    const recipes = await fetch(`${host}/users/${username}/recipes`, options)
     return {
       user: await user.json(),
       recipes: await recipes.json()

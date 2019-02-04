@@ -8,9 +8,20 @@ const r = express.Router()
 const Joi = expressJoi.Joi
 
 const newUserSchema = {
-  username: Joi.types.string().regex(/[a-zA-Z][a-zA-Z0-9\-_]+/).min(2).max(25).required(),
-  email: Joi.types.string().email().required(),
-  password: Joi.types.string().min(8).required()
+  username: Joi.types
+    .string()
+    .regex(/[a-zA-Z][a-zA-Z0-9\-_]+/)
+    .min(2)
+    .max(25)
+    .required(),
+  email: Joi.types
+    .string()
+    .email()
+    .required(),
+  password: Joi.types
+    .string()
+    .min(8)
+    .required()
 }
 
 r.get('/', async (_, res) => {
@@ -41,9 +52,10 @@ r.post('/', expressJoi.joiValidate(newUserSchema), async (req, res) => {
 })
 
 r.get('/:username', async (req, res) => {
+  console.log('HERE')
   const { username } = req.params
   try {
-    const user = await User.findOne({ where: { username }})
+    const user = await User.findOne({ where: { username } })
     return res.json(user)
   } catch (error) {
     return res.json({ error })
@@ -53,7 +65,7 @@ r.get('/:username', async (req, res) => {
 r.get('/:username/recipes', async (req, res) => {
   const { username } = req.params
   try {
-    const user = await User.findOne({ where: { username }, include: [ Recipe ]})
+    const user = await User.findOne({ where: { username }, include: [Recipe] })
     return res.json(user.recipes)
   } catch (error) {
     return res.json({ error })
@@ -63,7 +75,10 @@ r.get('/:username/recipes', async (req, res) => {
 r.get('/:username/recipes/:slug', async (req, res) => {
   const { username, slug } = req.params
   try {
-    const recipe = await Recipe.findOne({ include: [ User ], where: { '$user.username$': username, slug }})
+    const recipe = await Recipe.findOne({
+      include: [User],
+      where: { '$user.username$': username, slug }
+    })
     return res.json(recipe)
   } catch (error) {
     return res.json({ error })
