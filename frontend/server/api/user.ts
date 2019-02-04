@@ -1,11 +1,9 @@
 import * as express from 'express'
-import * as expressJoi from 'express-joi'
 import { Request } from 'express'
 
+import { validateNewRecipe } from '../validate'
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
-
-const Joi = expressJoi.Joi
 
 interface AuthenticatedRequest extends Request {
   user: any
@@ -22,11 +20,7 @@ r.get('/', async (req: AuthenticatedRequest, res) => {
   }
 })
 
-const newRecipeSchema = {
-  title: Joi.types.string().required()
-}
-
-r.post('/recipes', expressJoi.joiValidate(newRecipeSchema), async (req: AuthenticatedRequest, res) => {
+r.post('/recipes', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
   const recipe = Recipe.build(req.body)
   return res.json(recipe)
 })

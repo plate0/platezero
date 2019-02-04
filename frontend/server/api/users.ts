@@ -1,28 +1,10 @@
 import * as express from 'express'
-import * as expressJoi from 'express-joi'
 
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
+import { validateNewUser } from '../validate'
 
 const r = express.Router()
-const Joi = expressJoi.Joi
-
-const newUserSchema = {
-  username: Joi.types
-    .string()
-    .regex(/[a-zA-Z][a-zA-Z0-9\-_]+/)
-    .min(2)
-    .max(25)
-    .required(),
-  email: Joi.types
-    .string()
-    .email()
-    .required(),
-  password: Joi.types
-    .string()
-    .min(8)
-    .required()
-}
 
 r.get('/', async (_, res) => {
   try {
@@ -33,7 +15,7 @@ r.get('/', async (_, res) => {
   }
 })
 
-r.post('/', expressJoi.joiValidate(newUserSchema), async (req, res) => {
+r.post('/', validateNewUser, async (req, res) => {
   const { username, password, email } = req.body
   const u = User.build({ username, email })
   try {
