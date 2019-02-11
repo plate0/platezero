@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 import { Button, Col, Row } from 'reactstrap'
 import {
   Layout,
@@ -13,6 +12,9 @@ import { User as UserModel } from '../models/user'
 import { Recipe as RecipeModel } from '../models/recipe'
 import { RecipeCard } from '../components/RecipeCard'
 import { getUser } from '../common/http'
+const {
+  routes: { Link }
+} = require('../routes')
 
 interface UserProps {
   user: UserModel
@@ -46,6 +48,9 @@ export default class User extends React.Component<UserProps> {
         </Head>
         <ProfileHeader {...this.props.user} />
         <ProfileNav username={this.props.user.username} />
+        <Link route={`/${this.props.user.username}/recipe/new`}>
+          <Button>New Recipe</Button>
+        </Link>
         <ListRecipes
           recipes={this.props.recipes}
           username={this.props.user.username}

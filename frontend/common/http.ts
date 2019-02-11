@@ -13,6 +13,12 @@ const headers = {
 
 export const getUser = (username: string) => _fetch(`/users/${username}`)
 
+export const createRecipe = (r: any) =>
+  _fetch(`/user/recipe`, {
+    method: 'POST',
+    body: JSON.stringify(r)
+  })
+
 // const recipes = await fetch(`${host}/users/${username}/recipes`, options)
 
 const _fetch = async <T>(uri: string, opts?: RequestInfo = {}): Promise<T> => {

@@ -5,7 +5,7 @@ export const Navbar = () => (
   <RsNavbar expand="md" className="shadow-sm">
     <Container>
       <Link href="/">
-        <a className="navbar-brand">Alcoholic Fork</a>
+        <a className="navbar-brand">PlateZero</a>
       </Link>
     </Container>
   </RsNavbar>

@@ -13,14 +13,14 @@ const r = express.Router()
 
 r.get('/', async (req: AuthenticatedRequest, res) => {
   try {
-    const user = await User.findOne({ where: { username: req.user.username }})
+    const user = await User.findOne({ where: { username: req.user.username } })
     return res.json(user)
   } catch (error) {
     return res.status(500).json({ error })
   }
 })
 
-r.post('/recipes', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
+r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
   const recipe = Recipe.build(req.body)
   return res.json(recipe)
 })
