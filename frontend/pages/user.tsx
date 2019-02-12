@@ -8,6 +8,7 @@ import {
   ProfileNav
 } from '../components'
 import Head from 'next/head'
+import nextCookie from 'next-cookies'
 import { User as UserModel } from '../models/user'
 import { Recipe as RecipeModel } from '../models/recipe'
 import { RecipeCard } from '../components/RecipeCard'
@@ -32,10 +33,15 @@ const ListRecipes = props => (
 )
 
 export default class User extends React.Component<UserProps> {
-  static async getInitialProps({ query }) {
-    const { username } = query
+  static async getInitialProps(ctx) {
+    console.log('User Initial Props', nextCookie(ctx))
+    const { token } = nextCookie(ctx)
+    console.log('NEXT COOKIE', token)
+    const {
+      query: { username }
+    } = ctx
     return {
-      user: await getUser(username),
+      user: await getUser(username, { token }),
       recipes: []
     }
   }

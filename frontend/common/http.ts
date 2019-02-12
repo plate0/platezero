@@ -11,7 +11,33 @@ const headers = {
   'Content-Type': 'application/json'
 }
 
-export const getUser = (username: string) => _fetch(`/users/${username}`)
+const authHeaders = (token?: string) =>
+  token
+    ? {
+        Authorization: `Bearer ${token}`
+      }
+    : {}
+
+export interface PlateZeroRequestInfo extends RequestInfo {
+  token?: string
+}
+
+export const login = ({
+  username,
+  password
+}: {
+  username: string
+  password: string
+}) =>
+  _fetch('/login', {
+    method: 'POST',
+    body: JSON.stringify({ username, password })
+  })
+
+export const getUser = (username: string, opts?: PlateZeroRequestInfo) =>
+  _fetch(`/users/${username}`, {
+    headers: authHeaders(opts ? opts.token : '')
+  })
 
 export const createRecipe = (r: any) =>
   _fetch(`/user/recipe`, {
@@ -22,9 +48,13 @@ export const createRecipe = (r: any) =>
 // const recipes = await fetch(`${host}/users/${username}/recipes`, options)
 
 const _fetch = async <T>(uri: string, opts?: RequestInfo = {}): Promise<T> => {
+  console.log('FETCH TEST', opts)
   const options = {
     method: 'GET',
-    ...headers,
+    headers: {
+      ...headers,
+      ...(opts.headers || {})
+    },
     ...opts
   }
   const res = await fetch(`${API_URL}${uri}`, options)

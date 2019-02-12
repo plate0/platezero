@@ -14,23 +14,40 @@ const r = express.Router()
 r.use(bodyParser.json())
 
 // check each request for authentication, but don't deny requests without it
-r.use(jwtMiddleware({
-  secret: JWT_SECRET,
-  credentialsRequired: false
-}))
+r.use(
+  jwtMiddleware({
+    secret: JWT_SECRET,
+    credentialsRequired: false,
+    getToken: req => {
+      console.log('req headers', req.headers)
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'Bearer'
+      ) {
+        console.log('Auth headers:', req.headers.authorization)
+        return req.headers.authorization.split(' ')[1]
+      }
+      return null
+    }
+  })
+)
 
 r.use('/users', users)
 
 // the /user path represents the _currently authenticated_ user. this is where
 // things like changing passwords, creating recipes, etc happen. so in this
 // case, we kick them out if they're not logged in.
-r.use('/user', (req, res, next) => {
-  const { user } = req as any
-  if (!user) {
-    return res.status(401).json({ error: 'unauthorized' })
-  }
-  next()
-}, user)
+r.use(
+  '/user',
+  (req, res, next) => {
+    const { user } = req as any
+    if (!user) {
+      return res.status(401).json({ error: 'unauthorized' })
+    }
+    next()
+  },
+  user
+)
 
 // the index route. provide some useful URLs
 r.get('/', (_, res) => {
@@ -48,7 +65,7 @@ r.post('/login', async (req, res) => {
     return res.json({ error: 'bad request' })
   }
   try {
-    const user = await User.findOne({ where: { username }})
+    const user = await User.findOne({ where: { username } })
     if (!user) {
       res.status(401)
       return res.json({ error: 'unauthorized' })

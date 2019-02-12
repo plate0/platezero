@@ -9,12 +9,12 @@ import {
   Label
 } from 'reactstrap'
 import Router from 'next/router'
+import { authenticated, login } from '../common'
 
 interface LoginState {
   error: string
   password: string
   username: string
-  redirect: boolean
 }
 
 const ErrorMessage = ({ err }: { err: string }) => (
@@ -27,7 +27,6 @@ export default class Login extends React.Component<any, LoginState> {
     this.state = {
       error: '',
       password: '',
-      redirect: false,
       username: ''
     }
     this.login = this.login.bind(this)
@@ -39,11 +38,10 @@ export default class Login extends React.Component<any, LoginState> {
     event.preventDefault()
     const { username, password } = this.state
     try {
-      // const { user, session } = await login({ username, password })
-      // setItem('user', JSON.stringify(user))
-      // setItem('session', JSON.stringify(session))
-      this.setState({ redirect: true })
+      const { user, token } = await login({ username, password })
+      authenticated(user, token)
     } catch (err) {
+      console.log(err)
       this.setState({ error: 'Incorrect username or password' })
     }
   }
@@ -59,11 +57,9 @@ export default class Login extends React.Component<any, LoginState> {
   }
 
   public render() {
-    if (this.state.redirect) {
-      Router.push(`/${this.state.username}`)
-      return null
-    }
-    const error = this.state.error ? ErrorMessage(this.state.error) : undefined
+    const error = this.state.error ? (
+      <ErrorMessage err={this.state.error} />
+    ) : null
     return (
       <Container>
         <div className="row justify-content-center">
