@@ -55,7 +55,7 @@ export default class User extends React.Component<UserProps> {
         <ProfileHeader {...this.props.user} />
         <ProfileNav username={this.props.user.username} />
         <Link route={`/${this.props.user.username}/recipe/new`}>
-          <Button>New Recipe</Button>
+          <a className="btn btn-primary">New Recipe</a>
         </Link>
         <ListRecipes
           recipes={this.props.recipes}

@@ -39,23 +39,23 @@ export const getUser = (username: string, opts?: PlateZeroRequestInfo) =>
     headers: authHeaders(opts ? opts.token : '')
   })
 
-export const createRecipe = (r: any) =>
+export const createRecipe = (r: any, opts?: PlateZeroRequestInfo) =>
   _fetch(`/user/recipe`, {
+    body: JSON.stringify(r),
     method: 'POST',
-    body: JSON.stringify(r)
+    headers: authHeaders(opts ? opts.token : '')
   })
 
 // const recipes = await fetch(`${host}/users/${username}/recipes`, options)
 
 const _fetch = async <T>(uri: string, opts?: RequestInfo = {}): Promise<T> => {
-  console.log('FETCH TEST', opts)
   const options = {
-    method: 'GET',
+    method: opts.method || 'GET',
     headers: {
       ...headers,
       ...(opts.headers || {})
     },
-    ...opts
+    body: opts.body
   }
   const res = await fetch(`${API_URL}${uri}`, options)
   return (await res.json()) as T

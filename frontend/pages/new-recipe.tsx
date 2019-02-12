@@ -2,9 +2,25 @@ import React from 'react'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
 import { Layout, ProfileHeader } from '../components'
 import { getUser, createRecipe } from '../common/http'
+import nextCookie from 'next-cookies'
+import * as _ from 'lodash'
+
+const nullIfFalsey = (o: any): any => {
+  if (o === '') {
+    return undefined
+  } else if (o === 0) {
+    return null
+  } else if (_.isPlainObject(o)) {
+    return _.mapValues(o, nullIfFalsey)
+  } else if (_.isArray(o)) {
+    return _.map(o, nullIfFalsey)
+  }
+  return o
+}
 
 interface NewRecipeProps {
   user: UserModel
+  token: string
 }
 
 interface Ingredient {
@@ -76,17 +92,25 @@ export default class NewRecipe extends React.Component<
       ]
     }
   }
-  static async getInitialProps({ query }) {
-    const { username } = query
+  static async getInitialProps(ctx) {
+    const {
+      query: { username }
+    } = ctx
+    const { token } = nextCookie(ctx)
     return {
-      user: await getUser(username)
+      user: await getUser(username, { token }),
+      token
     }
   }
 
   public async create(event: React.FormEvent<EventTarget>) {
     console.log('create!', this.state)
+    console.log('token', this.props)
+    const { token } = this.props
     event.preventDefault()
-    const res = await createRecipe(this.state)
+    const recipe = nullIfFalsey({ ...this.state })
+    console.log('Recipeeeee', recipe)
+    const res = await createRecipe(recipe, { token })
     console.log('Created!', res)
   }
 

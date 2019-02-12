@@ -35,8 +35,6 @@ r.post('/', validateNewUser, async (req, res) => {
 
 r.get('/:username', async (req, res) => {
   const { username } = req.params
-  console.log('Get Username:', username)
-  console.log('Test opt auth', (req as any).user)
   try {
     const user = await User.findOne({ where: { username } })
     if (!user) {
