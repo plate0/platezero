@@ -21,9 +21,21 @@ export const validateNewRecipe = validator({
   source_url: Joi.string().uri(),
   yield: Joi.string(),
   oven_preheat_temperature: Joi.number().min(0),
-  oven_preheat_unit: Joi.any().valid('C', 'F'),
+  oven_preheat_unit: Joi.any()
+    .valid('C', 'F')
+    .when('oven_preheat_temperature', {
+      is: Joi.exist(),
+      then: Joi.required(),
+      otherwise: Joi.forbidden()
+    }),
   sous_vide_preheat_temperature: Joi.number().min(0),
-  sous_vide_preheat_unit: Joi.any().valid('C', 'F'),
+  sous_vide_preheat_unit: Joi.any()
+    .valid('C', 'F')
+    .when('sous_vide_preheat_temperature', {
+      is: Joi.exist(),
+      then: Joi.required(),
+      otherwise: Joi.forbidden()
+    }),
   ingredient_lists: Joi.array()
     .items({
       name: Joi.string(),
@@ -33,7 +45,7 @@ export const validateNewRecipe = validator({
           quantity_denominator: Joi.number(),
           name: Joi.string().required(),
           preparation: Joi.string(),
-          optional: Joi.boolean()
+          optional: Joi.boolean().required()
         })
         .required()
     })

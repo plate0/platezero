@@ -1,9 +1,4 @@
-import {
-  Column,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript'
+import { Column, ForeignKey, Model, Table } from 'sequelize-typescript'
 
 import { Author } from './author'
 import { Cookbook } from './cookbook'

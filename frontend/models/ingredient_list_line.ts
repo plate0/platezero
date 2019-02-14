@@ -6,8 +6,8 @@ import {
   Table
 } from 'sequelize-typescript'
 
-import { IngredientLine} from './ingredient_line'
-import { IngredientList} from './ingredient_list'
+import { IngredientLine } from './ingredient_line'
+import { IngredientList } from './ingredient_list'
 
 @Table({
   tableName: 'ingredient_list_lines'

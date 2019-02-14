@@ -7,7 +7,7 @@ import {
   Table
 } from 'sequelize-typescript'
 
-import { IngredientList} from './ingredient_list'
+import { IngredientList } from './ingredient_list'
 import { RecipeVersion } from './recipe_version'
 
 @Table({

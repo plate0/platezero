@@ -36,4 +36,3 @@ export class CookbookRecipe extends Model<CookbookRecipe> {
   @BelongsTo(() => Cookbook)
   public cookbook: Cookbook
 }
-

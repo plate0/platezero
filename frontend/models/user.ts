@@ -86,7 +86,7 @@ export class User extends Model<User> {
   }
 
   public toJSON(): object {
-    const values = Object.assign({}, this.get());
+    const values = Object.assign({}, this.get())
     delete values.password_hash
     values.url = `${SITE_BASE}/api/users/${values.username}`
     values.html_url = `${SITE_BASE}/${values.username}`
@@ -95,7 +95,9 @@ export class User extends Model<User> {
     if (!values.avatar_url) {
       const emailHash = crypto.createHash('md5')
       emailHash.update(values.email.toLowerCase())
-      values.avatar_url = `https://www.gravatar.com/avatar/${emailHash.digest('hex')}`
+      values.avatar_url = `https://www.gravatar.com/avatar/${emailHash.digest(
+        'hex'
+      )}`
     }
     return values
   }

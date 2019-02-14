@@ -2,6 +2,7 @@ import {
   AllowNull,
   BelongsTo,
   Column,
+  PrimaryKey,
   ForeignKey,
   Model,
   Table
@@ -15,11 +16,13 @@ import { Recipe } from './recipe'
 })
 export class RecipeBranch extends Model<RecipeBranch> {
   @AllowNull(false)
+  @PrimaryKey
   @Column
   @ForeignKey(() => Recipe)
   public recipe_id: number
 
   @AllowNull(false)
+  @PrimaryKey
   @Column
   public name: string
 
