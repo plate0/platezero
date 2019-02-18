@@ -18,6 +18,20 @@ const authHeaders = (token?: string) =>
       }
     : {}
 
+const handleError = async (res: Response): Promise<any> => {
+  if (res.status === 200) {
+    return res.json()
+  } else {
+    let error = 'Unexpected error from server'
+    try {
+      error = (await res.json()).error
+    } catch {
+      // Do Nothing
+    }
+    throw new Error(error)
+  }
+}
+
 export interface PlateZeroRequestInfo extends RequestInfo {
   token?: string
 }
@@ -57,6 +71,5 @@ const _fetch = async <T>(uri: string, opts?: RequestInfo = {}): Promise<T> => {
     },
     body: opts.body
   }
-  const res = await fetch(`${API_URL}${uri}`, options)
-  return (await res.json()) as T
+  return await fetch(`${API_URL}${uri}`, options).then(handleError)
 }

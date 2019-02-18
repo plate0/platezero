@@ -41,7 +41,6 @@ export default class Login extends React.Component<any, LoginState> {
       const { user, token } = await login({ username, password })
       authenticated(user, token)
     } catch (err) {
-      console.log(err)
       this.setState({ error: 'Incorrect username or password' })
     }
   }

@@ -34,12 +34,11 @@ const ListRecipes = props => (
 
 export default class User extends React.Component<UserProps> {
   static async getInitialProps(ctx) {
-    console.log('User Initial Props', nextCookie(ctx))
     const { token } = nextCookie(ctx)
-    console.log('NEXT COOKIE', token)
     const {
       query: { username }
     } = ctx
+    // TODO: Get Recipes
     return {
       user: await getUser(username, { token }),
       recipes: []
@@ -47,20 +46,20 @@ export default class User extends React.Component<UserProps> {
   }
 
   public render() {
+    const { user } = this.props
     return (
-      <Layout>
+      <Layout user={user}>
         <Head>
-          <title>{this.props.user.username}</title>
+          <title>
+            {user.username} ({user.name})
+          </title>
         </Head>
-        <ProfileHeader {...this.props.user} />
-        <ProfileNav username={this.props.user.username} />
-        <Link route={`/${this.props.user.username}/recipe/new`}>
+        <ProfileHeader {...user} />
+        <ProfileNav username={user.username} />
+        <Link route={`/${user.username}/recipe/new`}>
           <a className="btn btn-primary">New Recipe</a>
         </Link>
-        <ListRecipes
-          recipes={this.props.recipes}
-          username={this.props.user.username}
-        />
+        <ListRecipes recipes={this.props.recipes} username={user.username} />
       </Layout>
     )
   }
