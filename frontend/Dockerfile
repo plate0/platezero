@@ -19,6 +19,11 @@ COPY tsconfig.server.json .
 COPY tsconfig.json .
 COPY pages pages
 COPY server server
+COPY common common
+COPY components components
+COPY models models
+COPY static static
+COPY style style
 
 RUN yarn build
 
