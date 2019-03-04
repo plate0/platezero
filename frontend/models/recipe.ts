@@ -6,6 +6,7 @@ import {
   UpdatedAt,
   DeletedAt,
   Column,
+  DefaultScope,
   HasMany,
   ForeignKey,
   Model,
@@ -26,6 +27,9 @@ import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { ProcedureList, ProcedureListJSON } from './procedure_list'
 import { IngredientList, IngredientListJSON } from './ingredient_list'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
+import { getConfig } from '../server/config'
+
+const cfg = getConfig()
 
 interface RecipeJSON {
   title: string
@@ -48,6 +52,9 @@ const isUniqueSlugError = (e): boolean => {
   )
 }
 
+@DefaultScope({
+  include: [() => User]
+})
 @Table({
   tableName: 'recipes'
 })
@@ -230,5 +237,18 @@ export class Recipe extends Model<Recipe> {
       }
     }
     throw new Error('exhausted retry possibilities, contact support')
+  }
+
+  public toJSON(): object {
+    const values = Object.assign({}, this.get())
+    // TODO: this needs to get fixed -- when creating a recipe, we don't have
+    // the associated user populated
+    if (values.user) {
+      values.url = `${cfg.apiUrl}/users/${values.user.username}/recipes/${
+        values.slug
+      }`
+      values.html_url = `${cfg.siteUrl}/${values.user.username}/${values.slug}`
+    }
+    return values
   }
 }

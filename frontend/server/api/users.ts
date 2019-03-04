@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as _ from 'lodash'
 
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
@@ -63,7 +64,6 @@ r.get('/:username/recipes/:slug', async (req, res) => {
   const { username, slug } = req.params
   try {
     const recipe = await Recipe.findOne({
-      include: [User],
       where: { '$user.username$': username, slug }
     })
     if (!recipe) {
