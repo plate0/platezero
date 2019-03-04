@@ -1,27 +1,3 @@
-CREATE TABLE authors (
-    id SERIAL PRIMARY KEY,
-    name character varying NOT NULL
-);
-
-CREATE TABLE cookbook_authors (
-    author_id integer NOT NULL,
-    cookbook_id integer NOT NULL,
-    UNIQUE (author_id, cookbook_id)
-);
-
-CREATE TABLE cookbook_recipes (
-    id SERIAL PRIMARY KEY,
-    cookbook_id integer NOT NULL,
-    page character varying NOT NULL,
-    title character varying NOT NULL
-);
-
-CREATE TABLE cookbooks (
-    id SERIAL PRIMARY KEY,
-    title character varying NOT NULL,
-    isbn character varying NOT NULL UNIQUE
-);
-
 CREATE TABLE ingredient_lines (
     id SERIAL PRIMARY KEY,
     name character varying NOT NULL,
@@ -120,7 +96,6 @@ CREATE TABLE recipes (
   title character varying NOT NULL,
   image_url character varying,
   source_url character varying,
-  source_cookbook_recipe_id integer,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone,
@@ -147,9 +122,6 @@ CREATE TABLE users (
 );
 
 -- foreign keys
-ALTER TABLE cookbook_authors ADD FOREIGN KEY (author_id) REFERENCES authors (id);
-ALTER TABLE cookbook_authors ADD FOREIGN KEY (cookbook_id) REFERENCES cookbooks (id);
-ALTER TABLE cookbook_recipes ADD FOREIGN KEY (cookbook_id) REFERENCES cookbooks (id);
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_list_id) REFERENCES ingredient_lists (id);
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_line_id) REFERENCES ingredient_lines (id);
 ALTER TABLE procedure_list_lines ADD FOREIGN KEY (procedure_list_id) REFERENCES procedure_lists (id);
@@ -169,4 +141,3 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_
 ALTER TABLE recipe_versions ADD FOREIGN KEY (oven_preheat_id) REFERENCES oven_preheats (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (sous_vide_preheat_id) REFERENCES sous_vide_preheats (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE recipes ADD FOREIGN KEY (source_cookbook_recipe_id) REFERENCES cookbook_recipes (id);

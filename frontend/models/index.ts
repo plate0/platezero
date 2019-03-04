@@ -1,9 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
 
-import { Author } from './author'
-import { CookbookAuthor } from './cookbook_author'
-import { CookbookRecipe } from './cookbook_recipe'
-import { Cookbook } from './cookbook'
 import { IngredientLine } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 import { IngredientList } from './ingredient_list'
@@ -32,10 +28,6 @@ export const sequelize = new Sequelize({
 })
 
 sequelize.addModels([
-  Author,
-  CookbookAuthor,
-  CookbookRecipe,
-  Cookbook,
   IngredientLine,
   IngredientListLine,
   IngredientList,

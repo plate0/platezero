@@ -16,7 +16,6 @@ import {
 import slugify from 'slugify'
 import * as _ from 'lodash'
 
-import { CookbookRecipe } from './cookbook_recipe'
 import { User } from './user'
 import { RecipeBranch } from './recipe_branch'
 import { RecipeVersion } from './recipe_version'
@@ -82,10 +81,6 @@ export class Recipe extends Model<Recipe> {
 
   @Column public source_url: string
 
-  @Column
-  @ForeignKey(() => CookbookRecipe)
-  public source_cookbook_recipe_id: number
-
   @AllowNull(false)
   @Column
   @CreatedAt
@@ -101,9 +96,6 @@ export class Recipe extends Model<Recipe> {
 
   @BelongsTo(() => User)
   public user: User
-
-  @BelongsTo(() => CookbookRecipe)
-  public cookbookRecipe: CookbookRecipe
 
   @HasMany(() => RecipeBranch)
   public branches: RecipeBranch[]
