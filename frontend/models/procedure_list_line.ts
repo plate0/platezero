@@ -3,6 +3,7 @@ import {
   BelongsTo,
   Column,
   ForeignKey,
+  PrimaryKey,
   Model,
   Table
 } from 'sequelize-typescript'
@@ -15,11 +16,13 @@ import { ProcedureList } from './procedure_list'
 })
 export class ProcedureListLine extends Model<ProcedureListLine> {
   @AllowNull(false)
+  @PrimaryKey
   @Column
   @ForeignKey(() => ProcedureList)
   public procedure_list_id: number
 
   @AllowNull(false)
+  @PrimaryKey
   @Column
   @ForeignKey(() => ProcedureLine)
   public procedure_line_id: number

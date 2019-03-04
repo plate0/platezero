@@ -3,6 +3,7 @@ import {
   BelongsTo,
   Column,
   ForeignKey,
+  PrimaryKey,
   Model,
   Table
 } from 'sequelize-typescript'
@@ -17,11 +18,13 @@ export class RecipeVersionIngredientList extends Model<
   RecipeVersionIngredientList
 > {
   @AllowNull(false)
+  @PrimaryKey
   @Column
   @ForeignKey(() => RecipeVersion)
   public recipe_version_id: number
 
   @AllowNull(false)
+  @PrimaryKey
   @Column
   @ForeignKey(() => IngredientList)
   public ingredient_list_id: number

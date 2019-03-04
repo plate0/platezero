@@ -22,30 +22,10 @@ import { RecipeVersion } from './recipe_version'
 import { RecipeYield } from './recipe_yield'
 import { OvenPreheat } from './oven_preheat'
 import { SousVidePreheat } from './sous_vide_preheat'
-//import { RecipeVersionProcedureList } from '../../models/recipe_version_procedure_list'
-//import { ProcedureList } from '../../models/procedure_list'
-//import { ProcedureListLine } from '../../models/procedure_list_line'
-//import { IngredientList } from '../../models/ingredient_list'
-//import { IngredientListLine } from '../../models/ingredient_list_line'
-//import { RecipeVersionIngredientList } from '../../models/recipe_version_ingredient_list'
-
-interface IngredientJSON {
-  quantity_numerator?: number
-  quantity_denominator?: number
-  name: string
-  preparation?: string
-  optional: boolean
-}
-
-interface IngredientListJSON {
-  name?: string
-  ingredients: IngredientJSON[]
-}
-
-interface ProcedureListJSON {
-  name?: string
-  steps: string[]
-}
+import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
+import { ProcedureList, ProcedureListJSON } from './procedure_list'
+import { IngredientList, IngredientListJSON } from './ingredient_list'
+import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 
 interface RecipeJSON {
   title: string
@@ -126,7 +106,7 @@ export class Recipe extends Model<Recipe> {
     body: RecipeJSON,
     slug: string
   ): Promise<Recipe> {
-    return await Recipe.sequelize.transaction(async transaction => {
+    return Recipe.sequelize.transaction(async transaction => {
       const recipe = await Recipe.create(
         {
           title: body.title,
@@ -162,6 +142,20 @@ export class Recipe extends Model<Recipe> {
           )
         : undefined
 
+      const procedureLists = await Promise.all(
+        _.map(body.procedure_lists, pl =>
+          ProcedureList.createWithSteps(pl, {
+            transaction
+          })
+        )
+      )
+
+      const ingredientLists = await Promise.all(
+        _.map(body.ingredient_lists, il =>
+          IngredientList.createWithIngredients(il, { transaction })
+        )
+      )
+
       const recipeVersion = await RecipeVersion.create(
         {
           user_id,
@@ -176,6 +170,32 @@ export class Recipe extends Model<Recipe> {
           message: 'Initial version'
         },
         { transaction }
+      )
+
+      await Promise.all(
+        _.map(procedureLists, (pl, sort_key) =>
+          RecipeVersionProcedureList.create(
+            {
+              recipe_version_id: recipeVersion.id,
+              procedure_list_id: pl.id,
+              sort_key
+            },
+            { transaction }
+          )
+        )
+      )
+
+      await Promise.all(
+        _.map(ingredientLists, (il, sort_key) =>
+          RecipeVersionIngredientList.create(
+            {
+              recipe_version_id: recipeVersion.id,
+              ingredient_list_id: il.id,
+              sort_key
+            },
+            { transaction }
+          )
+        )
       )
 
       await RecipeBranch.create(
