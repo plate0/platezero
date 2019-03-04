@@ -19,12 +19,10 @@ r.use(
     secret: JWT_SECRET,
     credentialsRequired: false,
     getToken: req => {
-      console.log('req headers', req.headers)
       if (
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'Bearer'
       ) {
-        console.log('Auth headers:', req.headers.authorization)
         return req.headers.authorization.split(' ')[1]
       }
       return null
