@@ -20,12 +20,15 @@ import { RecipeYield } from './recipe_yield'
 import { Recipe } from './recipe'
 import { SousVidePreheat } from './sous_vide_preheat'
 import { User } from './user'
+import { getConfig } from '../server/config'
+
+const cfg = getConfig()
 
 export const sequelize = new Sequelize({
-  database: process.env['DATABASE_NAME'] || 'postgres',
+  database: cfg.dbName,
   dialect: 'postgres',
-  username: process.env['DATABASE_USER'] || 'postgres',
-  password: process.env['DATABASE_PASSWORD'] || undefined
+  username: cfg.dbUser,
+  password: cfg.dbPassword
 })
 
 sequelize.addModels([

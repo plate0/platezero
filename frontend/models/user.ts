@@ -15,10 +15,9 @@ import * as crypto from 'crypto'
 import * as jwt from 'jsonwebtoken'
 
 import { Recipe } from './recipe'
-import { JWT_SECRET } from '../server/api'
+import { getConfig } from '../server/config'
 
-const SALT_ROUNDS = 12
-const SITE_BASE = 'http://localhost:9100'
+const cfg = getConfig()
 
 @Table({
   tableName: 'users'
@@ -64,7 +63,7 @@ export class User extends Model<User> {
 
   public async setPassword(newPassword: string) {
     return new Promise((resolve, reject) => {
-      bcrypt.hash(newPassword, SALT_ROUNDS, (err, hash) => {
+      bcrypt.hash(newPassword, cfg.bcryptRounds, (err, hash) => {
         if (err) {
           return reject(err)
         }
@@ -88,10 +87,10 @@ export class User extends Model<User> {
   public toJSON(): object {
     const values = Object.assign({}, this.get())
     delete values.password_hash
-    values.url = `${SITE_BASE}/api/users/${values.username}`
-    values.html_url = `${SITE_BASE}/${values.username}`
-    values.recipes_url = `${SITE_BASE}/api/users/${values.username}/recipes`
-    values.recipes_html_url = `${SITE_BASE}/${values.username}/recipes`
+    values.url = `${cfg.apiUrl}/users/${values.username}`
+    values.html_url = `${cfg.siteUrl}/${values.username}`
+    values.recipes_url = `${cfg.apiUrl}/users/${values.username}/recipes`
+    values.recipes_html_url = `${cfg.siteUrl}/${values.username}/recipes`
     if (!values.avatar_url) {
       const emailHash = crypto.createHash('md5')
       emailHash.update(values.email.toLowerCase())
@@ -106,7 +105,7 @@ export class User extends Model<User> {
     return new Promise((resolve, reject) => {
       jwt.sign(
         { userId: this.id, username: this.username },
-        JWT_SECRET,
+        cfg.jwtSecret,
         { expiresIn: '24h' },
         (err, token) => {
           if (err) {

@@ -5,10 +5,11 @@ import * as favicon from 'serve-favicon'
 const { routes } = require('../routes')
 const { sequelize } = require('../models')
 import { api } from './api'
+import { getConfig } from './config'
 
-const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const cfg = getConfig()
+
+const app = next({ dev: cfg.dev })
 const handler = routes.getRequestHandler(app)
 
 app.prepare().then(() => {
@@ -21,9 +22,9 @@ app.prepare().then(() => {
   sequelize
     .authenticate()
     .then(() => {
-      server.listen(port, err => {
+      server.listen(cfg.port, err => {
         if (err) throw err
-        console.log(`> Ready on http://localhost:${port}`)
+        console.log(`> Ready on ${cfg.siteUrl}`)
       })
     })
     .catch(err => {

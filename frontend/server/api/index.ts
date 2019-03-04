@@ -5,9 +5,9 @@ import * as jwtMiddleware from 'express-jwt'
 import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
+import { getConfig } from '../config'
 
-export const JWT_SECRET = 'dev secret replace for prod or shit will be fucked'
-
+const cfg = getConfig()
 const r = express.Router()
 
 // parse JSON bodies
@@ -16,7 +16,7 @@ r.use(bodyParser.json())
 // check each request for authentication, but don't deny requests without it
 r.use(
   jwtMiddleware({
-    secret: JWT_SECRET,
+    secret: cfg.jwtSecret,
     credentialsRequired: false,
     getToken: req => {
       if (
@@ -50,8 +50,8 @@ r.use(
 // the index route. provide some useful URLs
 r.get('/', (_, res) => {
   return res.json({
-    users_url: '/users',
-    current_user_url: '/user'
+    users_url: `${cfg.apiUrl}/users`,
+    current_user_url: `${cfg.apiUrl}/user`
   })
 })
 
