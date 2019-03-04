@@ -14,7 +14,6 @@ services:
   frontend:
     build: ./frontend
     image: recipe/frontend
-    env_file: ./frontend/.env
     ports:
       - 9100:9100
     depends_on:
