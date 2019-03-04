@@ -1,5 +1,4 @@
 import * as express from 'express'
-import * as bodyParser from 'body-parser'
 import * as jwtMiddleware from 'express-jwt'
 
 import { users } from './users'
@@ -11,7 +10,7 @@ const cfg = getConfig()
 const r = express.Router()
 
 // parse JSON bodies
-r.use(bodyParser.json())
+r.use(express.json())
 
 // check each request for authentication, but don't deny requests without it
 r.use(
