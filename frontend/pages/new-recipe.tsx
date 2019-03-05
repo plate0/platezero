@@ -3,7 +3,7 @@ import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
 import { Layout } from '../components'
 import { getUser, createRecipe } from '../common/http'
 import { UserJSON, RecipeJSON } from '../models'
-
+import { AmountInput, NewRecipeTitle } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 
@@ -83,6 +83,11 @@ export default class NewRecipe extends React.Component<
     }
   }
 
+  public titleOnChange = (e: React.FormEvent<HTMLInputElement>) =>
+    this.setState({
+      title: e.currentTarget.value
+    })
+
   public async create(event: React.FormEvent<EventTarget>) {
     console.log('create!', this.state)
     console.log('token', this.props)
@@ -110,6 +115,7 @@ export default class NewRecipe extends React.Component<
       const ingredients = state.ingredient_lists[i].ingredients
       ingredients.push({
         name: '',
+        //        unit: '',
         quantity_numerator: 1,
         quantity_denominator: 1,
         preparation: '',
@@ -158,129 +164,109 @@ export default class NewRecipe extends React.Component<
     })
   }
 
+  public procedureListNameChange(i: number, val: string) {
+    this.setState(state => {
+      state.procedure_lists[i].name = val
+      return state
+    })
+  }
+
   public render() {
     return (
       <Layout user={this.props.user}>
         <Form onSubmit={this.create} className="mt-3">
-          <FormGroup>
-            <Label for="title">
-              <strong>Title</strong>
-            </Label>
-            <Input
-              type="text"
-              name="title"
-              id="title"
-              required
-              autoFocus={true}
-              tabIndex={1}
-              value={this.state.title}
-              onChange={e => this.setField('title', e.currentTarget.value)}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="image_url">
-              <strong>Image URL</strong>
-            </Label>
-            <Input
-              type="text"
-              name="image_url"
-              id="image_url"
-              tabIndex={2}
-              value={this.state.image_url}
-              onChange={e => this.setField('image_url', e.currentTarget.value)}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="source_url">
-              <strong>Recipe Source (Where did you find this?)</strong>
-            </Label>
-            <Input
-              type="text"
-              name="source_url"
-              id="source_url"
-              tabIndex={3}
-              value={this.state.source_url}
-              onChange={e => this.setField('source_url', e.currentTarget.value)}
-            />
-          </FormGroup>
-          <Row>
-            <Col xs="3">
-              <FormGroup>
-                <Label for="oven_preheat_temperature">
-                  <strong>Oven Preheat</strong>
-                </Label>
-                <Input
-                  type="number"
-                  name="oven_preheat_temperature"
-                  id="oven_preheat_temperature"
-                  tabIndex={4}
-                  value={this.state.oven_preheat_temperature}
-                  onChange={e =>
-                    this.setField(
-                      'oven_preheat_temperature',
-                      e.currentTarget.value
-                    )
-                  }
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-          <h2>Ingredient Lists</h2>
-          <Row>
-            {this.state.ingredient_lists.map((il, i) => (
-              <Col key={i} xs="12">
+          <NewRecipeTitle
+            value={this.state.title}
+            onChange={this.titleOnChange}
+          />
+          <h2>Ingredients</h2>
+          {this.state.ingredient_lists.map((il, i) => (
+            <Row key={i}>
+              <Col xs="1">
                 <FormGroup>
-                  <Label for={`procedure-${i}`}>
-                    <strong>Ingredient List Name</strong>
+                  <Label for="ingredientQuantity" className="m-0">
+                    <small>Amount</small>
+                  </Label>
+                  <AmountInput value={0} tabIndex={2 + i * 3} />
+                </FormGroup>
+              </Col>
+              <Col xs="2">
+                <FormGroup>
+                  <Label for="ingredientMeasurement" className="m-0">
+                    <small>Unit</small>
                   </Label>
                   <Input
                     type="text"
-                    name={`ingredient-list-${i}`}
-                    id={`ingredient-list-${i}`}
-                    value={this.state.ingredient_lists[i].name}
-                    onChange={e => {
-                      this.ingredientListNameChange(i, e.currentTarget.value)
-                    }}
+                    name="ingredientQuantity"
+                    id="ingredientQuantity"
+                    tabIndex={3 + i * 3}
                   />
                 </FormGroup>
-                <h4>ingredients</h4>
-                {il.ingredients.map((ingred, j) => (
-                  <Input
-                    key={j}
-                    type="text"
-                    value={ingred.name}
-                    onChange={e =>
-                      this.ingredientOnChange(i, j, e.currentTarget.value)
-                    }
-                  />
-                ))}
-                <Button type="button" onClick={() => this.addIngredient(i)}>
-                  Add Another Ingredient
-                </Button>
               </Col>
-            ))}
-          </Row>
-          <h2>Steps</h2>
+              <Col xs="2">
+                <FormGroup>
+                  <Label for="ingredientMeasurement" className="m-0">
+                    <small>Name</small>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="ingredientQuantity"
+                    id="ingredientQuantity"
+                    tabIndex={4 + i * 3}
+                  />
+                </FormGroup>
+              </Col>
+              <Col xs="6">
+                {il.ingredients.map((ingred, j) => (
+                  <FormGroup>
+                    <Label for="ingredient" className="m-0">
+                      <small>Preparation</small>
+                    </Label>
+                    <Input
+                      key={j}
+                      type="text"
+                      value={ingred.name}
+                      onChange={e =>
+                        this.ingredientOnChange(i, j, e.currentTarget.value)
+                      }
+                    />
+                  </FormGroup>
+                ))}
+              </Col>
+              <Col xs="r">
+                <FormGroup>
+                  <Label for="ingredientMeasurement" className="m-0">
+                    <small>Optional</small>
+                  </Label>
+                  <Input
+                    type="checkbox"
+                    name="ingredientQuantity"
+                    id="ingredientQuantity"
+                    tabIndex={4 + i * 3}
+                  />
+                </FormGroup>
+              </Col>
+            </Row>
+          ))}
+          <Button
+            type="button"
+            outline
+            color="secondary "
+            onClick={() => this.addIngredient(0)}
+          >
+            Add Another Ingredient
+          </Button>
+          <h2 className="my-3">Steps</h2>
           <Row>
             {this.state.procedure_lists.map((p, i) => (
-              <Col key={i} xs="12">
-                <FormGroup>
-                  <Label for={`procedure-${i}`}>
-                    <strong>Step Name</strong>
-                  </Label>
-                  <Input
-                    type="text"
-                    name={`procedure-${i}`}
-                    id={`procedure-${i}`}
-                    value={this.state.procedure_lists[i].name}
-                  />
-                </FormGroup>
+              <Col key={i} xs="12" className="mb-3">
                 {p.steps.map((_, j) => (
                   <Input
                     key={`pstep-${j}`}
                     type="textarea"
                     name="text"
                     id="exampleText"
+                    placeholder="Step by step instructions..."
                     value={this.state.procedure_lists[i].steps[j]}
                     onChange={e =>
                       this.stepOnChange(i, j, e.currentTarget.value)
@@ -290,11 +276,15 @@ export default class NewRecipe extends React.Component<
               </Col>
             ))}
           </Row>
-
-          <Button type="button" onClick={this.addProcedureStep}>
+          <Button
+            type="button"
+            outline
+            color="secondary"
+            onClick={this.addProcedureStep}
+          >
             Add Another Step
           </Button>
-          <Button type="submit" color="primary" className="btn-block">
+          <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!
           </Button>
         </Form>
