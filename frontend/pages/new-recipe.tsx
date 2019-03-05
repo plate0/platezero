@@ -88,6 +88,14 @@ export default class NewRecipe extends React.Component<
       title: e.currentTarget.value
     })
 
+  public ingredientOnChange = (i: number, field: string, val: any) => {
+    this.setState(state => {
+      const ingredient = state.ingredient_lists[0].ingredients[i]
+      ingredient[field] = val
+      return state
+    })
+  }
+
   public async create(event: React.FormEvent<EventTarget>) {
     console.log('create!', this.state)
     console.log('token', this.props)
@@ -139,14 +147,6 @@ export default class NewRecipe extends React.Component<
     }))
   }
 
-  public ingredientOnChange(list: number, ingredient: number, val: string) {
-    this.setState(state => {
-      const ingredients = state.ingredient_lists[list].ingredients[ingredient]
-      ingredients.name = val
-      return state
-    })
-  }
-
   public ingredientListNameChange(i: number, val: string) {
     console.log('name change', i, val)
     this.setState(state => {
@@ -175,16 +175,24 @@ export default class NewRecipe extends React.Component<
     return (
       <Layout user={this.props.user}>
         <Form onSubmit={this.create} className="mt-3">
-          <NewRecipeTitle
-            value={this.state.title}
-            onChange={this.titleOnChange}
-          />
-          <h2>Ingredients</h2>
-          {this.state.ingredient_lists.map((il, i) => (
-            <Row key={i}>
+          <Row>
+            <Col xs="12">
+              <NewRecipeTitle
+                value={this.state.title}
+                onChange={this.titleOnChange}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <h2>Ingredients</h2>
+            </Col>
+          </Row>
+          {this.state.ingredient_lists[0].ingredients.map((ingredient, i) => (
+            <Row>
               <Col xs="1">
                 <FormGroup>
-                  <Label for="ingredientQuantity" className="m-0">
+                  <Label for="amount" className="m-0">
                     <small>Amount</small>
                   </Label>
                   <AmountInput value={0} tabIndex={2 + i * 3} />
@@ -192,58 +200,52 @@ export default class NewRecipe extends React.Component<
               </Col>
               <Col xs="2">
                 <FormGroup>
-                  <Label for="ingredientMeasurement" className="m-0">
+                  <Label for="unit" className="m-0">
                     <small>Unit</small>
                   </Label>
                   <Input
                     type="text"
-                    name="ingredientQuantity"
-                    id="ingredientQuantity"
+                    name={`unit-${i}`}
+                    id={`unit-${i}`}
                     tabIndex={3 + i * 3}
+                    value={this.state.ingredient_lists[0].ingredients[i].unit}
+                    onChange={e =>
+                      this.ingredientOnChange(i, 'unit', e.currentTarget.value)
+                    }
                   />
                 </FormGroup>
               </Col>
               <Col xs="2">
                 <FormGroup>
-                  <Label for="ingredientMeasurement" className="m-0">
+                  <Label for="name" className="m-0">
                     <small>Name</small>
                   </Label>
                   <Input
                     type="text"
-                    name="ingredientQuantity"
-                    id="ingredientQuantity"
+                    name={`name-${i}`}
+                    id={`name-${i}`}
                     tabIndex={4 + i * 3}
+                    value={this.state.ingredient_lists[0].ingredients[i].name}
+                    onChange={e =>
+                      this.ingredientOnChange(i, 'name', e.currentTarget.value)
+                    }
                   />
                 </FormGroup>
               </Col>
               <Col xs="6">
-                {il.ingredients.map((ingred, j) => (
-                  <FormGroup>
-                    <Label for="ingredient" className="m-0">
-                      <small>Preparation</small>
-                    </Label>
-                    <Input
-                      key={j}
-                      type="text"
-                      value={ingred.name}
-                      onChange={e =>
-                        this.ingredientOnChange(i, j, e.currentTarget.value)
-                      }
-                    />
-                  </FormGroup>
-                ))}
-              </Col>
-              <Col xs="r">
                 <FormGroup>
-                  <Label for="ingredientMeasurement" className="m-0">
+                  <Label for="prep" className="m-0">
+                    <small>Preperation</small>
+                  </Label>
+                  <Input type="text" name="" id="" tabIndex={5 + i * 3} />
+                </FormGroup>
+              </Col>
+              <Col xs="1" className="d-flex align-items-center">
+                <FormGroup check>
+                  <Input type="checkbox" name={`optional-${i}`} />
+                  <Label for={`optional-${i}`} className="m-0" check>
                     <small>Optional</small>
                   </Label>
-                  <Input
-                    type="checkbox"
-                    name="ingredientQuantity"
-                    id="ingredientQuantity"
-                    tabIndex={4 + i * 3}
-                  />
                 </FormGroup>
               </Col>
             </Row>
