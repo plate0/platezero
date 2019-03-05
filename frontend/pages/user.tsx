@@ -19,7 +19,6 @@ const {
 
 interface UserProps {
   user: UserModel
-  recipes: RecipeModel
 }
 
 const ListRecipes = props => (
@@ -38,10 +37,8 @@ export default class User extends React.Component<UserProps> {
     const {
       query: { username }
     } = ctx
-    // TODO: Get Recipes
     return {
-      user: await getUser(username, { token }),
-      recipes: await getUserRecipes(username, { token })
+      user: await getUser(username, { token })
     }
   }
 
@@ -59,7 +56,7 @@ export default class User extends React.Component<UserProps> {
         <Link route={`/${user.username}/recipe/new`}>
           <a className="btn btn-primary">New Recipe</a>
         </Link>
-        <ListRecipes recipes={this.props.recipes} username={user.username} />
+        <ListRecipes recipes={user.recipes} username={user.username} />
       </Layout>
     )
   }

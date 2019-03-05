@@ -39,7 +39,7 @@ r.post('/', validateNewUser, async (req, res) => {
 r.get('/:username', async (req, res) => {
   const { username } = req.params
   try {
-    const user = await User.findOne({ where: { username } })
+    const user = await User.findOne({ where: { username }, include: [Recipe] })
     if (!user) {
       res.status(404)
       return res.json({ error: 'not found' })
@@ -74,11 +74,7 @@ r.get('/:username/recipes/:slug', async (req, res) => {
           include: [
             {
               model: RecipeVersion,
-              attributes: [
-                'id',
-                'created_at',
-                'message'
-              ]
+              attributes: ['id', 'created_at', 'message']
             }
           ]
         },
