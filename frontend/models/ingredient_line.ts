@@ -3,6 +3,7 @@ import {
   AutoIncrement,
   Column,
   Default,
+  IsIn,
   Model,
   PrimaryKey,
   Table
@@ -35,6 +36,26 @@ export class IngredientLine extends Model<IngredientLine> {
   @Column public quantity_denominator: number
 
   @Column public preparation: string
+
+  @IsIn([[
+    // mass
+    'g',
+    'mg',
+    'kg',
+
+    // weight
+    'lbs',
+
+    // volume
+    'c',
+    'tbsp',
+    'tsp',
+    'l',
+    'dl',
+    'ml'
+  ]])
+  @Column
+  public unit: string
 
   @AllowNull(false)
   @Default(false)
