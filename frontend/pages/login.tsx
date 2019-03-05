@@ -8,7 +8,6 @@ import {
   Input,
   Label
 } from 'reactstrap'
-import Router from 'next/router'
 import { authenticated, login } from '../common'
 
 interface LoginState {

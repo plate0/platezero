@@ -21,6 +21,15 @@ import { getConfig } from '../server/config'
 
 const cfg = getConfig()
 
+export interface UserJSON {
+  avatar_url: string
+  email: string
+  id: number
+  name: string
+  recipes?: Recipe[]
+  username: string
+}
+
 @Table({
   tableName: 'users'
 })
@@ -118,12 +127,16 @@ export class User extends Model<User> {
 
   public async checkPassword(candidate: string) {
     return new Promise((resolve, reject) => {
-      bcrypt.compare(candidate, this.getDataValue('password_hash'), (err, res) => {
-        if (err) {
-          return reject(err)
+      bcrypt.compare(
+        candidate,
+        this.getDataValue('password_hash'),
+        (err, res) => {
+          if (err) {
+            return reject(err)
+          }
+          return resolve(res)
         }
-        return resolve(res)
-      })
+      )
     })
   }
 

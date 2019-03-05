@@ -1,5 +1,6 @@
 import 'isomorphic-fetch'
 import getConfig from 'next/config'
+import { UserJSON } from '../models'
 const {
   publicRuntimeConfig: {
     api: { url: API_URL }
@@ -32,8 +33,13 @@ const handleError = async (res: Response): Promise<any> => {
   }
 }
 
-export interface PlateZeroRequestInfo extends RequestInfo {
+export interface PlateZeroRequestInfo extends RequestInit {
   token?: string
+}
+
+export interface LoginResponse {
+  user: UserJSON
+  token: string
 }
 
 export const login = ({
@@ -43,13 +49,13 @@ export const login = ({
   username: string
   password: string
 }) =>
-  _fetch('/login', {
+  _fetch<LoginResponse>('/login', {
     method: 'POST',
     body: JSON.stringify({ username, password })
   })
 
 export const getUser = (username: string, opts?: PlateZeroRequestInfo) =>
-  _fetch(`/users/${username}`, {
+  _fetch<UserJSON>(`/users/${username}`, {
     headers: authHeaders(opts ? opts.token : '')
   })
 
@@ -84,7 +90,7 @@ export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
     headers: authHeaders(opts ? opts.token : '')
   })
 
-const _fetch = async <T>(uri: string, opts?: RequestInfo = {}): Promise<T> => {
+const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
   const options = {
     method: opts.method || 'GET',
     headers: {

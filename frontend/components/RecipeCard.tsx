@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card, CardImg, CardBody, CardTitle } from 'reactstrap'
-import { Recipe } from '../models'
 const {
   routes: { Link }
 } = require('../routes')

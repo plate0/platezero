@@ -1,24 +1,17 @@
 import React from 'react'
-import { Button, Col, Row } from 'reactstrap'
-import {
-  Layout,
-  Navbar,
-  ProfilePicture,
-  ProfileHeader,
-  ProfileNav
-} from '../components'
+import { Col, Row } from 'reactstrap'
+import { Layout, ProfileHeader, ProfileNav } from '../components'
 import Head from 'next/head'
 import nextCookie from 'next-cookies'
-import { User as UserModel } from '../models/user'
-import { Recipe as RecipeModel } from '../models/recipe'
+import { UserJSON } from '../models/user'
 import { RecipeCard } from '../components/RecipeCard'
-import { getUser, getUserRecipes } from '../common/http'
+import { getUser } from '../common/http'
 const {
   routes: { Link }
 } = require('../routes')
 
 interface UserProps {
-  user: UserModel
+  user: UserJSON
 }
 
 const ListRecipes = props => (

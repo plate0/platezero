@@ -12,7 +12,7 @@ const user = {
 }
 
 export default class Tares extends React.Component<TaresProps> {
-  static async getInitialProps({ query }) {
+  static async getInitialProps() {
     return { user }
   }
 
@@ -22,7 +22,7 @@ export default class Tares extends React.Component<TaresProps> {
         <Head>
           <title>{`${this.props.user.username} - Tares`}</title>
         </Head>
-        <ProfileHeader {...user} />
+        <ProfileHeader {...this.props.user} />
         <ProfileNav username={this.props.user.username} />
         <div>Tares!!</div>
       </Layout>

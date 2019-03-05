@@ -7,13 +7,12 @@ import {
   Table
 } from 'sequelize-typescript'
 import * as _ from 'lodash'
-
-import { IngredientLine } from './ingredient_line'
+import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 
 export interface IngredientListJSON {
   name?: string
-  ingredients: IngredientLine[]
+  ingredients: IngredientLineJSON[]
 }
 
 @Table({

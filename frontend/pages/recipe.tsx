@@ -32,7 +32,11 @@ export default class Recipe extends React.Component<RecipeProps> {
         <Row>
           {recipe.branches.map(b => (
             <Col key={b.recipeVersion.id}>
-              <Link route={`/${owner.username}/${recipe.slug}/versions/${b.recipeVersion.id}`}>
+              <Link
+                route={`/${owner.username}/${recipe.slug}/versions/${
+                  b.recipeVersion.id
+                }`}
+              >
                 <a>{b.name}</a>
               </Link>
             </Col>

@@ -8,6 +8,15 @@ import {
   Table
 } from 'sequelize-typescript'
 
+export interface IngredientLineJSON {
+  id?: number
+  name: string
+  quantity_numerator: number
+  quantity_denominator: number
+  preparation: string
+  optional: boolean
+}
+
 @Table({
   tableName: 'ingredient_lines'
 })

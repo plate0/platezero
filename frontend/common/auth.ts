@@ -1,8 +1,8 @@
 import Router from 'next/router'
 import cookie from 'js-cookie'
-import { User } from '../models/user'
+import { UserJSON } from '../models/user'
 
-export const authenticated = async (user: User, token: string) => {
+export const authenticated = async (user: UserJSON, token: string) => {
   cookie.set('token', token, { expires: 1 })
   Router.push(`/${user.username}`)
 }

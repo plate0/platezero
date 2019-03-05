@@ -1,10 +1,17 @@
 import React from 'react'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
-import { Layout, ProfileHeader } from '../components'
+import { Layout } from '../components'
 import { getUser, createRecipe } from '../common/http'
-import { RecipeJSON, IngredientListJSON, ProcedureListJSON } from '../models'
+import { UserJSON, RecipeJSON } from '../models'
+
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
+
+type SimpleProperty =
+  | 'title'
+  | 'image_url'
+  | 'source_url'
+  | 'oven_preheat_temperature'
 
 const nullIfFalsey = (o: any): any => {
   if (o === '') {
@@ -20,7 +27,7 @@ const nullIfFalsey = (o: any): any => {
 }
 
 interface NewRecipeProps {
-  user: UserModel
+  user: UserJSON
   token: string
 }
 
@@ -39,10 +46,10 @@ export default class NewRecipe extends React.Component<
       image_url: '',
       source_url: '',
       yield: '',
-      oven_preheat_temperature: '',
-      oven_preheat_unit: '',
+      oven_preheat_temperature: 0,
+      oven_preheat_unit: 'F',
       sous_vide_preheat_temperature: 0,
-      sous_vide_preheat_unit: '',
+      sous_vide_preheat_unit: 'F',
       ingredient_lists: [
         {
           name: '',
@@ -92,20 +99,21 @@ export default class NewRecipe extends React.Component<
     }
   }
 
-  public setField = (field: string, val: string) => {
-    this.setState({
-      [field]: val
-    })
-  }
+  public setField = (field: SimpleProperty, val: string) =>
+    this.setState(state => ({
+      ...state,
+      ...{ [field]: val }
+    }))
 
   public addIngredient = (i: number) => {
     this.setState(state => {
       const ingredients = state.ingredient_lists[i].ingredients
       ingredients.push({
         name: '',
-        quantity_numerator: '',
-        quantity_denominator: '',
-        preparation: ''
+        quantity_numerator: 1,
+        quantity_denominator: 1,
+        preparation: '',
+        optional: false
       })
       state.ingredient_lists[i].ingredients = ingredients
       return state
@@ -246,7 +254,7 @@ export default class NewRecipe extends React.Component<
                     }
                   />
                 ))}
-                <Button type="button" onClick={e => this.addIngredient(i)}>
+                <Button type="button" onClick={() => this.addIngredient(i)}>
                   Add Another Ingredient
                 </Button>
               </Col>
@@ -265,10 +273,9 @@ export default class NewRecipe extends React.Component<
                     name={`procedure-${i}`}
                     id={`procedure-${i}`}
                     value={this.state.procedure_lists[i].name}
-                    onChange={e => this.setField('', e.currentTarget.value)}
                   />
                 </FormGroup>
-                {p.steps.map((pstep, j) => (
+                {p.steps.map((_, j) => (
                   <Input
                     key={`pstep-${j}`}
                     type="textarea"
