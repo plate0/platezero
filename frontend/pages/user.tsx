@@ -12,7 +12,7 @@ import nextCookie from 'next-cookies'
 import { User as UserModel } from '../models/user'
 import { Recipe as RecipeModel } from '../models/recipe'
 import { RecipeCard } from '../components/RecipeCard'
-import { getUser } from '../common/http'
+import { getUser, getUserRecipes } from '../common/http'
 const {
   routes: { Link }
 } = require('../routes')
@@ -41,7 +41,7 @@ export default class User extends React.Component<UserProps> {
     // TODO: Get Recipes
     return {
       user: await getUser(username, { token }),
-      recipes: []
+      recipes: await getUserRecipes(username, { token })
     }
   }
 

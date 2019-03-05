@@ -62,24 +62,28 @@ export default class NewRecipe extends React.Component<
   constructor(props: NewRecipeProps) {
     super(props)
     this.create = this.create.bind(this)
+    this.ingredientOnChange = this.ingredientOnChange.bind(this)
+    this.ingredientListNameChange = this.ingredientListNameChange.bind(this)
+    this.stepOnChange = this.stepOnChange.bind(this)
     this.state = {
       title: '',
       image_url: '',
       source_url: '',
       yield: '',
       oven_preheat_temperature: '',
-      oven_preheat_unit: 'F',
+      oven_preheat_unit: '',
       sous_vide_preheat_temperature: 0,
-      sous_vide_preheat_unit: 'F',
+      sous_vide_preheat_unit: '',
       ingredient_lists: [
         {
           name: '',
           ingredients: [
             {
-              quantity_numerator: 0,
-              quantity_denominator: 0,
+              quantity_numerator: 1,
+              quantity_denominator: 1,
               name: '',
-              preparation: ''
+              preparation: '',
+              optional: false
             }
           ]
         }
@@ -109,9 +113,14 @@ export default class NewRecipe extends React.Component<
     const { token } = this.props
     event.preventDefault()
     const recipe = nullIfFalsey({ ...this.state })
+    delete recipe.sous_vide_preheat_temperature
     console.log('Recipeeeee', recipe)
-    const res = await createRecipe(recipe, { token })
-    console.log('Created!', res)
+    try {
+      const res = await createRecipe(recipe, { token })
+      console.log('Created!', res)
+    } catch (err) {
+      console.log('ERROR CRREATIN RECIPE', err)
+    }
   }
 
   public setField = (field: string, val: string) => {
@@ -147,9 +156,34 @@ export default class NewRecipe extends React.Component<
     }))
   }
 
+  public ingredientOnChange(list: number, ingredient: number, val: string) {
+    this.setState(state => {
+      const ingredients = state.ingredient_lists[list].ingredients[ingredient]
+      ingredients.name = val
+      return state
+    })
+  }
+
+  public ingredientListNameChange(i: number, val: string) {
+    console.log('name change', i, val)
+    this.setState(state => {
+      console.log('state', i, state)
+      const list = state.ingredient_lists[i]
+      list.name = val
+      return state
+    })
+  }
+
+  public stepOnChange(listIndex: number, stepIndex: number, val: string) {
+    this.setState(state => {
+      state.procedure_lists[listIndex].steps[stepIndex] = val
+      return state
+    })
+  }
+
   public render() {
     return (
-      <Layout>
+      <Layout user={this.props.user}>
         <ProfileHeader {...this.props.user} />
         <Form onSubmit={this.create}>
           <FormGroup>
@@ -228,7 +262,9 @@ export default class NewRecipe extends React.Component<
                     name={`ingredient-list-${i}`}
                     id={`ingredient-list-${i}`}
                     value={this.state.ingredient_lists[i].name}
-                    onChange={e => this.setField('', e.currentTarget.value)}
+                    onChange={e => {
+                      this.ingredientListNameChange(i, e.currentTarget.value)
+                    }}
                   />
                 </FormGroup>
                 <h4>ingredients</h4>
@@ -237,7 +273,9 @@ export default class NewRecipe extends React.Component<
                     key={j}
                     type="text"
                     value={ingred.name}
-                    onChange={e => this.setField('', e.currentTarget.value)}
+                    onChange={e =>
+                      this.ingredientOnChange(i, j, e.currentTarget.value)
+                    }
                   />
                 ))}
                 <Button type="button" onClick={e => this.addIngredient(i)}>
@@ -268,6 +306,10 @@ export default class NewRecipe extends React.Component<
                     type="textarea"
                     name="text"
                     id="exampleText"
+                    value={this.state.procedure_lists[i].steps[j]}
+                    onChange={e =>
+                      this.stepOnChange(i, j, e.currentTarget.value)
+                    }
                   />
                 ))}
               </Col>

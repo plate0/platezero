@@ -39,7 +39,7 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
   public render() {
     const { user } = this.props
     const right = user ? (
-      <Link route={`/${user.username}`} className="d-flex align-items-center">
+      <Link route={`/${user.username}`}>
         <a className="d-flex align-items-center nav-link rounded p-1">
           <span className="mr-2">{user.name}</span>
           <ProfilePicture img={user.avatar_url} size={30} />
