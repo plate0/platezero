@@ -105,7 +105,7 @@ export class Recipe extends Model<Recipe> {
     body: RecipeJSON,
     slug: string
   ): Promise<Recipe> {
-    return Recipe.sequelize.transaction(async transaction => {
+    const recipe = await Recipe.sequelize.transaction(async transaction => {
       const recipe = await Recipe.create(
         {
           title: body.title,
@@ -208,6 +208,7 @@ export class Recipe extends Model<Recipe> {
 
       return recipe
     })
+    return recipe.reload()
   }
 
   public static async createNewRecipe(
@@ -233,14 +234,10 @@ export class Recipe extends Model<Recipe> {
 
   public toJSON(): object {
     const values = Object.assign({}, this.get())
-    // TODO: this needs to get fixed -- when creating a recipe, we don't have
-    // the associated user populated
-    if (values.owner) {
-      values.url = `${cfg.apiUrl}/users/${values.owner.username}/recipes/${
-        values.slug
-      }`
-      values.html_url = `${cfg.siteUrl}/${values.owner.username}/${values.slug}`
-    }
+    values.url = `${cfg.apiUrl}/users/${values.owner.username}/recipes/${
+      values.slug
+    }`
+    values.html_url = `${cfg.siteUrl}/${values.owner.username}/${values.slug}`
     return values
   }
 }
