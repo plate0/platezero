@@ -153,8 +153,7 @@ export default class NewRecipe extends React.Component<
   public render() {
     return (
       <Layout user={this.props.user}>
-        <ProfileHeader {...this.props.user} />
-        <Form onSubmit={this.create}>
+        <Form onSubmit={this.create} className="mt-3">
           <FormGroup>
             <Label for="title">
               <strong>Title</strong>
