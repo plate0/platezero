@@ -95,7 +95,7 @@ export class Recipe extends Model<Recipe> {
   public deleted_at: Date
 
   @BelongsTo(() => User)
-  public user: User
+  public owner: User
 
   @HasMany(() => RecipeBranch)
   public branches: RecipeBranch[]
@@ -235,11 +235,11 @@ export class Recipe extends Model<Recipe> {
     const values = Object.assign({}, this.get())
     // TODO: this needs to get fixed -- when creating a recipe, we don't have
     // the associated user populated
-    if (values.user) {
-      values.url = `${cfg.apiUrl}/users/${values.user.username}/recipes/${
+    if (values.owner) {
+      values.url = `${cfg.apiUrl}/users/${values.owner.username}/recipes/${
         values.slug
       }`
-      values.html_url = `${cfg.siteUrl}/${values.user.username}/${values.slug}`
+      values.html_url = `${cfg.siteUrl}/${values.owner.username}/${values.slug}`
     }
     return values
   }
