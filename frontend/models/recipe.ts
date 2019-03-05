@@ -31,7 +31,7 @@ import { getConfig } from '../server/config'
 
 const cfg = getConfig()
 
-interface RecipeJSON {
+export interface RecipeJSON {
   title: string
   image_url?: string
   source_url?: string

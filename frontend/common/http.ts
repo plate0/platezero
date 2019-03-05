@@ -58,9 +58,9 @@ export const getUserRecipes = (username: string, opts?: PlateZeroRequestInfo) =>
     headers: authHeaders(opts ? opts.token : '')
   })
 
-export const createRecipe = (r: any, opts?: PlateZeroRequestInfo) =>
+export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
   _fetch(`/user/recipe`, {
-    body: JSON.stringify(r),
+    body: JSON.stringify(recipe),
     method: 'POST',
     headers: authHeaders(opts ? opts.token : '')
   })

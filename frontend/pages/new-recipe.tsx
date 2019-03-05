@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
 import { Layout, ProfileHeader } from '../components'
 import { getUser, createRecipe } from '../common/http'
+import { RecipeJSON, IngredientListJSON, ProcedureListJSON } from '../models'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 
@@ -23,41 +24,9 @@ interface NewRecipeProps {
   token: string
 }
 
-interface Ingredient {
-  quantity_numerator?: number
-  quantity_denominator?: number
-  name: string
-  preparation: string
-  optional: boolean
-}
-
-interface IngredientList {
-  name: string
-  ingredients: Ingredient[]
-}
-
-interface Procedure {
-  name: string
-  step: string[]
-}
-
-// Maps to req.body
-interface NewRecipeState {
-  title: string
-  image_url: string
-  source_url: string
-  yield: string
-  oven_preheat_temperature: string | number
-  oven_preheat_unit: string
-  sous_vide_preheat_temperature: number
-  sous_vide_preheat_unit: string
-  ingredient_lists: IngredientList[]
-  procedure_lists: Procedure[]
-}
-
 export default class NewRecipe extends React.Component<
   NewRecipeProps,
-  NewRecipeState
+  RecipeJSON
 > {
   constructor(props: NewRecipeProps) {
     super(props)

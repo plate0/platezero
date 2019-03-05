@@ -45,3 +45,20 @@ sequelize.addModels([
   SousVidePreheat,
   User
 ])
+
+export * from './ingredient_line'
+export * from './ingredient_list_line'
+export * from './ingredient_list'
+export * from './oven_preheat'
+export * from './procedure_line'
+export * from './procedure_list_line'
+export * from './procedure_list'
+export * from './recipe_branch'
+export * from './recipe_collaborator'
+export * from './recipe_version_ingredient_list'
+export * from './recipe_version_procedure_list'
+export * from './recipe_version'
+export * from './recipe_yield'
+export * from './recipe'
+export * from './sous_vide_preheat'
+export * from './user'
