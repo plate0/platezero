@@ -6,6 +6,10 @@ import { User } from '../../../../models/user'
 import { Recipe } from '../../../../models/recipe'
 import { RecipeVersion } from '../../../../models/recipe_version'
 import { RecipeBranch } from '../../../../models/recipe_branch'
+import { RecipeYield } from '../../../../models/recipe_yield'
+import { ProcedureList } from '../../../../models/procedure_list'
+import { ProcedureLine } from '../../../../models/procedure_line'
+import { Preheat } from '../../../../models/preheat'
 
 const r = express.Router()
 
@@ -33,7 +37,37 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
   try {
     const recipeVersion = await RecipeVersion.findOne({
       where: { id, recipe_id: req.recipe.id },
-      include: [Recipe, User]
+      attributes: ['created_at', 'message'],
+      order: [
+        RecipeVersion.sequelize.literal(
+          '"procedureLists.RecipeVersionProcedureList.sort_key" ASC'
+        ),
+        RecipeVersion.sequelize.literal(
+          '"procedureLists.lines.ProcedureListLine.sort_key" ASC'
+        )
+      ],
+      include: [
+        { model: Recipe },
+        { model: User },
+        { model: RecipeYield, attributes: ['text'] },
+        {
+          model: Preheat,
+          attributes: ['name', 'temperature', 'unit'],
+          through: { attributes: [] }
+        },
+        {
+          model: ProcedureList,
+          attributes: ['name'],
+          through: { attributes: [] },
+          include: [
+            {
+              model: ProcedureLine,
+              attributes: ['text'],
+              through: { attributes: [] }
+            }
+          ]
+        }
+      ]
     })
     if (!recipeVersion) {
       res.status(404)
