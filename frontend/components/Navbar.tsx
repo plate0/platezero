@@ -38,12 +38,22 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
 
   public render() {
     const { user } = this.props
-    console.log(user)
     const right = user ? (
-      <div className="d-flex align-items-center">
-        <span>{user.name}</span>
-        <ProfilePicture img={user.avatar_url} size={30} />
-      </div>
+      <Link route={`/${user.username}`} className="d-flex align-items-center">
+        <a className="d-flex align-items-center nav-link rounded p-1">
+          <span className="mr-2">{user.name}</span>
+          <ProfilePicture img={user.avatar_url} size={30} />
+          <style jsx>{`
+            a {
+              color: white !important;
+              letter-spacing: 0.01rem;
+            }
+            a:hover {
+              background-color: rgba(0, 0, 0, 0.1);
+            }
+          `}</style>
+        </a>
+      </Link>
     ) : (
       <Link route="/register">
         <Button outline color="primary">
@@ -52,7 +62,7 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
       </Link>
     )
     return (
-      <RsNavbar expand="md" className="shadow-sm navbar-light">
+      <RsNavbar expand="md" color="primary" dark={true} className="shadow-sm">
         <Container>
           <Link route="/">
             <a className="navbar-brand">PlateZero</a>
@@ -63,6 +73,11 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
               {right}
             </Nav>
           </Collapse>
+          <style jsx>{`
+            a {
+              letter-spacing: 0.01rem;
+            }
+          `}</style>
         </Container>
       </RsNavbar>
     )
