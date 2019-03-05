@@ -21,8 +21,8 @@ import { User } from './user'
 import { RecipeBranch } from './recipe_branch'
 import { RecipeVersion } from './recipe_version'
 import { RecipeYield } from './recipe_yield'
-import { OvenPreheat } from './oven_preheat'
-import { SousVidePreheat } from './sous_vide_preheat'
+import { Preheat } from './preheat'
+import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { ProcedureList, ProcedureListJSON } from './procedure_list'
 import { IngredientList, IngredientListJSON } from './ingredient_list'
@@ -36,10 +36,7 @@ export interface RecipeJSON {
   image_url?: string
   source_url?: string
   yield?: string
-  oven_preheat_temperature?: number
-  oven_preheat_unit?: 'C' | 'F'
-  sous_vide_preheat_temperature?: number
-  sous_vide_preheat_unit?: 'C' | 'F'
+  preheats: Preheat[]
   ingredient_lists: IngredientListJSON[]
   procedure_lists: ProcedureListJSON[]
 }
@@ -132,26 +129,6 @@ export class Recipe extends Model<Recipe> {
         ? await RecipeYield.create({ text: body.yield })
         : undefined
 
-      const ovenPreheat = body.oven_preheat_unit
-        ? await OvenPreheat.create(
-            {
-              temperature: body.oven_preheat_temperature,
-              unit: body.oven_preheat_unit
-            },
-            { transaction }
-          )
-        : undefined
-
-      const sousVidePreheat = body.sous_vide_preheat_unit
-        ? await SousVidePreheat.create(
-            {
-              temperature: body.sous_vide_preheat_temperature,
-              unit: body.sous_vide_preheat_unit
-            },
-            { transaction }
-          )
-        : undefined
-
       const procedureLists = await Promise.all(
         _.map(body.procedure_lists, pl =>
           ProcedureList.createWithSteps(pl, {
@@ -171,15 +148,30 @@ export class Recipe extends Model<Recipe> {
           user_id,
           recipe_id: recipe.id,
           recipe_yield_id: recipeYield ? recipeYield.id : undefined,
-          oven_preheat_id: ovenPreheat ? ovenPreheat.id : undefined,
-          sous_vide_preheat_id: sousVidePreheat
-            ? sousVidePreheat.id
-            : undefined,
+          //oven_preheat_id: ovenPreheat ? ovenPreheat.id : undefined,
+          //sous_vide_preheat_id: sousVidePreheat
+          //  ? sousVidePreheat.id
+          //  : undefined,
           ingredientLists: [],
           procedureLists: [],
           message: 'Initial version'
         },
         { transaction }
+      )
+
+      const preheats = await Promise.all(
+        _.map(body.preheats, preheat =>
+          Preheat.create(preheat, { transaction })
+        )
+      )
+
+      await Promise.all(
+        _.map(preheats, preheat =>
+          RecipeVersionPreheat.create(
+            { recipe_version_id: recipeVersion.id, preheat_id: preheat.id },
+            { transaction }
+          )
+        )
       )
 
       await Promise.all(

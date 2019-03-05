@@ -2,6 +2,7 @@ import {
   AutoIncrement,
   Column,
   HasMany,
+  BelongsToMany,
   Model,
   PrimaryKey,
   ICreateOptions,
@@ -29,7 +30,10 @@ export class ProcedureList extends Model<ProcedureList> {
   @Column public name: string
 
   @HasMany(() => ProcedureListLine)
-  public lines: ProcedureListLine[]
+  public listLines: ProcedureListLine[]
+
+  @BelongsToMany(() => ProcedureLine, () => ProcedureListLine)
+  public lines: ProcedureLine[]
 
   public static async createWithSteps(
     pl: ProcedureListJSON,

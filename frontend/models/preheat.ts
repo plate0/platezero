@@ -9,13 +9,17 @@ import {
 } from 'sequelize-typescript'
 
 @Table({
-  tableName: 'oven_preheats'
+  tableName: 'preheats'
 })
-export class OvenPreheat extends Model<OvenPreheat> {
+export class Preheat extends Model<Preheat> {
   @AutoIncrement
   @PrimaryKey
   @Column
   public id: number
+
+  @AllowNull(false)
+  @Column
+  public name: string
 
   @AllowNull(false)
   @Column

@@ -2,9 +2,9 @@ import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
+  BelongsToMany,
   Default,
   Column,
-  HasMany,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -12,13 +12,15 @@ import {
 } from 'sequelize-typescript'
 import { fn } from 'sequelize'
 
-import { OvenPreheat } from './oven_preheat'
+import { Preheat } from './preheat'
 import { RecipeYield } from './recipe_yield'
 import { Recipe } from './recipe'
-import { SousVidePreheat } from './sous_vide_preheat'
+import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { User } from './user'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
+import { ProcedureList } from './procedure_list'
+import { IngredientList } from './ingredient_list'
 
 @Table({
   tableName: 'recipe_versions'
@@ -52,14 +54,6 @@ export class RecipeVersion extends Model<RecipeVersion> {
   @ForeignKey(() => RecipeYield)
   public recipe_yield_id: number
 
-  @Column
-  @ForeignKey(() => OvenPreheat)
-  public oven_preheat_id: number
-
-  @Column
-  @ForeignKey(() => SousVidePreheat)
-  public sous_vide_preheat_id: number
-
   @AllowNull(false)
   @Column
   public message: string
@@ -76,15 +70,12 @@ export class RecipeVersion extends Model<RecipeVersion> {
   @BelongsTo(() => RecipeYield)
   public recipeYield: RecipeYield
 
-  @BelongsTo(() => OvenPreheat)
-  public ovenPreheat: OvenPreheat
+  @BelongsToMany(() => ProcedureList, () => RecipeVersionProcedureList)
+  public procedureLists: ProcedureList[]
 
-  @BelongsTo(() => SousVidePreheat)
-  public sousVidePreheat: SousVidePreheat
+  @BelongsToMany(() => IngredientList, () => RecipeVersionIngredientList)
+  public ingredientLists: IngredientList[]
 
-  @HasMany(() => RecipeVersionIngredientList)
-  public ingredientLists: RecipeVersionIngredientList[]
-
-  @HasMany(() => RecipeVersionProcedureList)
-  public procedureLists: RecipeVersionProcedureList[]
+  @BelongsToMany(() => Preheat, () => RecipeVersionPreheat)
+  public preheats: Preheat[]
 }
