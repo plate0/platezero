@@ -2,6 +2,7 @@ import {
   AllowNull,
   AutoIncrement,
   Column,
+  DataType,
   Is,
   IsEmail,
   Model,
@@ -13,6 +14,7 @@ import {
 import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
 import * as jwt from 'jsonwebtoken'
+import * as _ from 'lodash'
 
 import { Recipe } from './recipe'
 import { getConfig } from '../server/config'
@@ -44,9 +46,30 @@ export class User extends Model<User> {
   @Column
   public email: string
 
-  @Column public password_hash: string
+  @Column
+  public set password_hash(value: string) {
+    this.setDataValue('password_hash', value)
+  }
 
-  @Column public avatar_url: string
+  public get password_hash() {
+    return undefined
+  }
+
+  @Column
+  public get avatar_url(): string {
+    const dv = this.getDataValue('avatar_url')
+    if (!dv) {
+      const emailHash = crypto.createHash('md5')
+      emailHash.update(this.email.toLowerCase())
+      const hex = emailHash.digest('hex')
+      return `https://www.gravatar.com/avatar/${hex}`
+    }
+    return dv
+  }
+
+  public set avatar_url(value: string) {
+    this.setDataValue('avatar_url', value)
+  }
 
   @Column public confirmed_at: Date
 
@@ -60,6 +83,26 @@ export class User extends Model<User> {
 
   @HasMany(() => Recipe)
   public recipes: Recipe[]
+
+  @Column(DataType.VIRTUAL)
+  public get url(): string {
+    return `${cfg.apiUrl}/users/${this.username}`
+  }
+
+  @Column(DataType.VIRTUAL)
+  public get html_url(): string {
+    return `${cfg.siteUrl}/${this.username}`
+  }
+
+  @Column(DataType.VIRTUAL)
+  public get recipes_url(): string {
+    return `${cfg.apiUrl}/users/${this.username}/recipes`
+  }
+
+  @Column(DataType.VIRTUAL)
+  public get recipes_html_url(): string {
+    return `${cfg.siteUrl}/${this.username}/recipes`
+  }
 
   public async setPassword(newPassword: string) {
     return new Promise((resolve, reject) => {
@@ -75,30 +118,13 @@ export class User extends Model<User> {
 
   public async checkPassword(candidate: string) {
     return new Promise((resolve, reject) => {
-      bcrypt.compare(candidate, this.password_hash, (err, res) => {
+      bcrypt.compare(candidate, this.getDataValue('password_hash'), (err, res) => {
         if (err) {
           return reject(err)
         }
         return resolve(res)
       })
     })
-  }
-
-  public toJSON(): object {
-    const values = Object.assign({}, this.get())
-    delete values.password_hash
-    values.url = `${cfg.apiUrl}/users/${values.username}`
-    values.html_url = `${cfg.siteUrl}/${values.username}`
-    values.recipes_url = `${cfg.apiUrl}/users/${values.username}/recipes`
-    values.recipes_html_url = `${cfg.siteUrl}/${values.username}/recipes`
-    if (!values.avatar_url) {
-      const emailHash = crypto.createHash('md5')
-      emailHash.update(values.email.toLowerCase())
-      values.avatar_url = `https://www.gravatar.com/avatar/${emailHash.digest(
-        'hex'
-      )}`
-    }
-    return values
   }
 
   public async generateToken(): Promise<string> {

@@ -68,7 +68,7 @@ export class RecipeVersion extends Model<RecipeVersion> {
   public recipe: Recipe
 
   @BelongsTo(() => User)
-  public user: User
+  public author: User
 
   @BelongsTo(() => RecipeVersion)
   public parentRecipeVersion: RecipeVersion
