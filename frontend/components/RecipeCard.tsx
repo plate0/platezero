@@ -13,7 +13,7 @@ export interface RecipeCardProps {
 }
 
 export const RecipeCard = (props: RecipeCardProps) => (
-  <Link route={`/${props.username}/recipe/${props.slug}`}>
+  <Link route={`/${props.username}/${props.slug}`}>
     <a>
       <Card>
         <CardImg

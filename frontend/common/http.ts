@@ -58,14 +58,31 @@ export const getUserRecipes = (username: string, opts?: PlateZeroRequestInfo) =>
     headers: authHeaders(opts ? opts.token : '')
   })
 
+export const getRecipe = (
+  username: string,
+  slug: string,
+  opts?: PlateZeroRequestInfo
+) =>
+  _fetch(`/users/${username}/recipes/${slug}`, {
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
+export const getRecipeVersion = (
+  username: string,
+  slug: string,
+  versionId: number,
+  opts?: PlateZeroRequestInfo
+) =>
+  _fetch(`/users/${username}/recipes/${slug}/versions/${versionId}`, {
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
 export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
   _fetch(`/user/recipe`, {
     body: JSON.stringify(recipe),
     method: 'POST',
     headers: authHeaders(opts ? opts.token : '')
   })
-
-// const recipes = await fetch(`${host}/users/${username}/recipes`, options)
 
 const _fetch = async <T>(uri: string, opts?: RequestInfo = {}): Promise<T> => {
   const options = {
