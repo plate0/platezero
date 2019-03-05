@@ -10,6 +10,8 @@ import { RecipeYield } from '../../../../models/recipe_yield'
 import { ProcedureList } from '../../../../models/procedure_list'
 import { ProcedureLine } from '../../../../models/procedure_line'
 import { Preheat } from '../../../../models/preheat'
+import { IngredientList } from '../../../../models/ingredient_list'
+import { IngredientLine } from '../../../../models/ingredient_line'
 
 const r = express.Router()
 
@@ -34,17 +36,17 @@ r.get('/', async (req: RecipeRequest, res) => {
 
 r.get('/versions/:id', async (req: RecipeRequest, res) => {
   const id = parseInt(req.params.id, 10)
+  const l = RecipeVersion.sequelize.literal
   try {
     const recipeVersion = await RecipeVersion.findOne({
       where: { id, recipe_id: req.recipe.id },
       attributes: ['created_at', 'message'],
       order: [
-        RecipeVersion.sequelize.literal(
-          '"procedureLists.RecipeVersionProcedureList.sort_key" ASC'
-        ),
-        RecipeVersion.sequelize.literal(
-          '"procedureLists.lines.ProcedureListLine.sort_key" ASC'
-        )
+        l('"ingredientLists.RecipeVersionIngredientList.sort_key" ASC'),
+        l('"ingredientLists.lines.IngredientListLine.sort_key" ASC'),
+
+        l('"procedureLists.RecipeVersionProcedureList.sort_key" ASC'),
+        l('"procedureLists.lines.ProcedureListLine.sort_key" ASC')
       ],
       include: [
         { model: Recipe },
@@ -63,6 +65,25 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
             {
               model: ProcedureLine,
               attributes: ['text'],
+              through: { attributes: [] }
+            }
+          ]
+        },
+        {
+          model: IngredientList,
+          attributes: ['name'],
+          through: { attributes: [] },
+          include: [
+            {
+              model: IngredientLine,
+              attributes: [
+                'name',
+                'quantity_numerator',
+                'quantity_denominator',
+                'preparation',
+                'unit',
+                'optional'
+              ],
               through: { attributes: [] }
             }
           ]

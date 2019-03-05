@@ -3,6 +3,7 @@ import {
   Column,
   Model,
   PrimaryKey,
+  BelongsToMany,
   ICreateOptions,
   Table
 } from 'sequelize-typescript'
@@ -25,6 +26,9 @@ export class IngredientList extends Model<IngredientList> {
   public id: number
 
   @Column public name: string
+
+  @BelongsToMany(() => IngredientLine, () => IngredientListLine)
+  public lines: IngredientLine[]
 
   public static async createWithIngredients(
     il: IngredientListJSON,
