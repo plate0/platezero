@@ -20,7 +20,10 @@ export default class MyDocument extends Document {
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
           />
           <link rel="icon" type="image/png" href="/favicon.ico" />
-          <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+          <link
+            href="https://fonts.googleapis.com/css?family=Lato:300,400,700"
+            rel="stylesheet"
+          />
         </Head>
         <body className="custom_class">
           <Main />
