@@ -3,6 +3,7 @@ import * as _ from 'lodash'
 
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
+import { RecipeBranch } from '../../models/recipe_branch'
 import { validateNewUser } from '../validate'
 
 const r = express.Router()
@@ -64,7 +65,8 @@ r.get('/:username/recipes/:slug', async (req, res) => {
   const { username, slug } = req.params
   try {
     const recipe = await Recipe.findOne({
-      where: { '$user.username$': username, slug }
+      where: { slug },
+      include: [{ model: RecipeBranch }, { model: User, where: { username } }]
     })
     if (!recipe) {
       res.status(404)

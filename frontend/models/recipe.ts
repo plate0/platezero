@@ -5,6 +5,7 @@ import {
   CreatedAt,
   UpdatedAt,
   DeletedAt,
+  DataType,
   Column,
   DefaultScope,
   HasMany,
@@ -52,7 +53,7 @@ const isUniqueSlugError = (e): boolean => {
 }
 
 @DefaultScope({
-  include: [() => User]
+  include: [{ model: () => User }]
 })
 @Table({
   tableName: 'recipes'
@@ -99,6 +100,16 @@ export class Recipe extends Model<Recipe> {
 
   @HasMany(() => RecipeBranch)
   public branches: RecipeBranch[]
+
+  @Column(DataType.VIRTUAL)
+  public get url(): string {
+    return `${cfg.apiUrl}/users/${this.owner.username}/recipes/${this.slug}`
+  }
+
+  @Column(DataType.VIRTUAL)
+  public get html_url(): string {
+    return `${cfg.siteUrl}/${this.owner.username}/${this.slug}`
+  }
 
   private static async createWithSlug(
     user_id: number,
@@ -230,14 +241,5 @@ export class Recipe extends Model<Recipe> {
       }
     }
     throw new Error('exhausted retry possibilities, contact support')
-  }
-
-  public toJSON(): object {
-    const values = Object.assign({}, this.get())
-    values.url = `${cfg.apiUrl}/users/${values.owner.username}/recipes/${
-      values.slug
-    }`
-    values.html_url = `${cfg.siteUrl}/${values.owner.username}/${values.slug}`
-    return values
   }
 }
