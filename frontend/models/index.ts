@@ -24,7 +24,8 @@ export const sequelize = new Sequelize({
   database: cfg.dbName,
   dialect: 'postgres',
   username: cfg.dbUser,
-  password: cfg.dbPassword
+  password: cfg.dbPassword,
+  host: cfg.dbHost
 })
 
 sequelize.addModels([

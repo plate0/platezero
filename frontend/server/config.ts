@@ -20,6 +20,7 @@ export const getConfig = (): Config => {
     dev: process.env.NODE_ENV !== 'production',
     dbName: process.env.DATABASE_NAME || 'postgres',
     dbUser: process.env.DATABASE_USER || 'postgres',
-    dbPassword: process.env.DATABASE_PASSWORD || undefined
+    dbPassword: process.env.DATABASE_PASSWORD || undefined,
+    dbHost: process.env.DATABASE_HOST
   }
 }
