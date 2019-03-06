@@ -30,7 +30,9 @@ export const RecipeNav = (props: RecipeNavProps) => {
   return (
     <div className="my-3">
       <h1>
-        <Link route={`/${owner.username}/recipes`}>{owner.username}</Link>
+        <Link route={`/${owner.username}/recipes`}>
+          <a>{owner.username}</a>
+        </Link>
         <span className="text-secondary"> / </span>
         <a>{recipe.title}</a>
       </h1>
