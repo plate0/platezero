@@ -65,7 +65,9 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
       <RsNavbar expand="md" color="primary" dark={true} className="shadow-sm">
         <Container>
           <Link route="/">
-            <a className="navbar-brand">PlateZero</a>
+            <a className="navbar-brand">
+              <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
+            </a>
           </Link>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
