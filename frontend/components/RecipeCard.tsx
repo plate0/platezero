@@ -15,13 +15,15 @@ export const RecipeCard = (props: RecipeCardProps) => (
   <Link route={`/${props.username}/${props.slug}`}>
     <a>
       <Card>
-        <CardImg
-          top
-          width="100%"
-          src={props.image_url}
-          alt="Card image cap"
-          style={{ height: 180, objectFit: 'cover' }}
-        />
+        {props.image_url && (
+          <CardImg
+            top
+            width="100%"
+            src={props.image_url}
+            alt="Card image cap"
+            style={{ height: 180, objectFit: 'cover' }}
+          />
+        )}
         <CardBody className="p-3">
           <CardTitle className="m-0">
             <strong>{props.title}</strong>

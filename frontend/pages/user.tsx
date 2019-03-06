@@ -1,14 +1,11 @@
 import React from 'react'
 import { Col, Row } from 'reactstrap'
-import { Layout, ProfileHeader, ProfileNav, IfLoggedIn } from '../components'
+import { Layout, ProfileHeader, ProfileNav } from '../components'
 import Head from 'next/head'
 import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
 import { RecipeCard } from '../components/RecipeCard'
 import { getUser } from '../common/http'
-const {
-  routes: { Link }
-} = require('../routes')
 
 interface UserProps {
   user: UserJSON
@@ -44,11 +41,6 @@ export default class User extends React.Component<UserProps> {
         </Head>
         <ProfileHeader {...user} />
         <ProfileNav username={user.username} />
-        <IfLoggedIn username={user.username}>
-          <Link route={`/${user.username}/recipe/new`}>
-            <a className="btn btn-primary">New Recipe</a>
-          </Link>
-        </IfLoggedIn>
         <ListRecipes recipes={user.recipes} username={user.username} />
       </Layout>
     )
