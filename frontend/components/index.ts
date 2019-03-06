@@ -1,5 +1,6 @@
 export * from './Amount'
 export * from './AmountInput'
+export * from './IfLoggedIn'
 export * from './Navbar'
 export * from './NewRecipe'
 export * from './ProfileHeader'

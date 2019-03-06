@@ -1,6 +1,6 @@
 import React from 'react'
 import { Col, Row } from 'reactstrap'
-import { Layout, ProfileHeader, ProfileNav } from '../components'
+import { Layout, ProfileHeader, ProfileNav, IfLoggedIn } from '../components'
 import Head from 'next/head'
 import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
@@ -26,10 +26,8 @@ const ListRecipes = props => (
 
 export default class User extends React.Component<UserProps> {
   static async getInitialProps(ctx) {
+    const { username } = ctx.query
     const { token } = nextCookie(ctx)
-    const {
-      query: { username }
-    } = ctx
     return {
       user: await getUser(username, { token })
     }
@@ -38,7 +36,7 @@ export default class User extends React.Component<UserProps> {
   public render() {
     const { user } = this.props
     return (
-      <Layout user={user}>
+      <Layout>
         <Head>
           <title>
             {user.username} ({user.name})
@@ -46,9 +44,11 @@ export default class User extends React.Component<UserProps> {
         </Head>
         <ProfileHeader {...user} />
         <ProfileNav username={user.username} />
-        <Link route={`/${user.username}/recipe/new`}>
-          <a className="btn btn-primary">New Recipe</a>
-        </Link>
+        <IfLoggedIn username={user.username}>
+          <Link route={`/${user.username}/recipe/new`}>
+            <a className="btn btn-primary">New Recipe</a>
+          </Link>
+        </IfLoggedIn>
         <ListRecipes recipes={user.recipes} username={user.username} />
       </Layout>
     )

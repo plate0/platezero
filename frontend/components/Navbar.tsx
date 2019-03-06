@@ -9,19 +9,20 @@ import {
 } from 'reactstrap'
 import { ProfilePicture } from './ProfilePicture'
 import { User } from '../models/user'
+import { PlateZeroContext } from '../pages/_app'
 const {
   routes: { Link }
 } = require('../routes')
 
-export interface NavbarProps {
-  user?: User
-}
+export interface NavbarProps {}
 
 export interface NavbarState {
   isOpen: boolean
 }
 
 export class Navbar extends React.Component<NavbarProps, NavbarState> {
+  public static contextType = PlateZeroContext
+
   constructor(props: NavbarProps) {
     super(props)
     this.state = {
@@ -37,30 +38,7 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
   }
 
   public render() {
-    const { user } = this.props
-    const right = user ? (
-      <Link route={`/${user.username}`}>
-        <a className="d-flex align-items-center nav-link rounded p-1">
-          <span className="mr-2">{user.name}</span>
-          <ProfilePicture img={user.avatar_url} size={30} />
-          <style jsx>{`
-            a {
-              color: white !important;
-              letter-spacing: 0.01rem;
-            }
-            a:hover {
-              background-color: rgba(0, 0, 0, 0.1);
-            }
-          `}</style>
-        </a>
-      </Link>
-    ) : (
-      <Link route="/register">
-        <Button outline color="primary">
-          Sign Up
-        </Button>
-      </Link>
-    )
+    const { user } = this.context
     return (
       <RsNavbar expand="md" color="primary" dark={true} className="shadow-sm">
         <Container>
@@ -72,7 +50,7 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              {right}
+              {user ? <UserNav user={user} /> : <AnonNav />}
             </Nav>
           </Collapse>
           <style jsx>{`
@@ -85,3 +63,36 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
     )
   }
 }
+
+const UserNav = (props: { user: User }) => (
+  <Link route={`/${props.user.username}`}>
+    <a className="d-flex align-items-center nav-link rounded p-1">
+      <span className="mr-2">{props.user.name}</span>
+      <ProfilePicture img={props.user.avatar_url} size={30} />
+      <style jsx>{`
+        a {
+          color: white !important;
+          letter-spacing: 0.01rem;
+        }
+        a:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+      `}</style>
+    </a>
+  </Link>
+)
+
+const AnonNav = () => (
+  <div>
+    <Link route="/register">
+      <Button color="link" className="text-light">
+        Sign Up
+      </Button>
+    </Link>
+    <Link route="/login">
+      <Button color="link" className="text-light">
+        Log In
+      </Button>
+    </Link>
+  </div>
+)

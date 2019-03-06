@@ -54,6 +54,16 @@ export const login = ({
     body: JSON.stringify({ username, password })
   })
 
+export const getCurrentUser = (opts?: PlateZeroRequestInfo) =>
+  _fetch<UserJSON>(`/user`, {
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
+export const getUsers = (opts?: PlateZeroRequestInfo) =>
+  _fetch<UserJSON[]>(`/users`, {
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
 export const getUser = (username: string, opts?: PlateZeroRequestInfo) =>
   _fetch<UserJSON>(`/users/${username}`, {
     headers: authHeaders(opts ? opts.token : '')

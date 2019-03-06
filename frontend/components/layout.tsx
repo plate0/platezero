@@ -3,7 +3,7 @@ import { Navbar } from './Navbar'
 
 export const Layout = props => (
   <div>
-    <Navbar user={props.user} />
+    <Navbar />
     <Container>{props.children}</Container>
   </div>
 )
