@@ -28,7 +28,9 @@ r.get('/', async (req: AuthenticatedRequest, res) => {
 
 r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
   try {
-    return res.json(await Recipe.createNewRecipe(req.user.userId, req.body))
+    return res
+      .status(201)
+      .json(await Recipe.createNewRecipe(req.user.userId, req.body))
   } catch (error) {
     console.error(error)
     return res.status(500).json({ error })
