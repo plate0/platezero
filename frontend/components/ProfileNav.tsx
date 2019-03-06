@@ -18,7 +18,7 @@ export const ProfileNav = (props: ProfileNavProps) => (
     </Col>
     <IfLoggedIn username={props.username}>
       <Col xs="2">
-        <Link route={`/${props.username}/recipe/new`}>
+        <Link route="/recipes/new">
           <a className="btn btn-primary">New Recipe</a>
         </Link>
       </Col>

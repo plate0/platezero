@@ -3,8 +3,8 @@ import Router from 'next/router'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
 import Select from 'react-select'
 import { Layout } from '../components'
-import { getUser, createRecipe } from '../common/http'
-import { UserJSON, RecipeJSON } from '../models'
+import { createRecipe } from '../common/http'
+import { RecipeJSON } from '../models'
 import { AmountInput, NewRecipeTitle } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
@@ -42,7 +42,6 @@ const Units = [
 ]
 
 interface NewRecipeProps {
-  user: UserJSON
   token: string
 }
 
@@ -86,14 +85,8 @@ export default class NewRecipe extends React.Component<
     }
   }
   static async getInitialProps(ctx) {
-    const {
-      query: { username }
-    } = ctx
     const { token } = nextCookie(ctx)
-    return {
-      user: await getUser(username, { token }),
-      token
-    }
+    return { token }
   }
 
   public titleOnChange = (e: React.FormEvent<HTMLInputElement>) =>
@@ -187,7 +180,7 @@ export default class NewRecipe extends React.Component<
 
   public render() {
     return (
-      <Layout user={this.props.user}>
+      <Layout>
         <Form onSubmit={this.create} className="mt-3">
           <Row>
             <Col xs="12">
@@ -203,7 +196,7 @@ export default class NewRecipe extends React.Component<
             </Col>
           </Row>
           {this.state.ingredient_lists[0].ingredients.map((ingredient, i) => (
-            <Row>
+            <Row key={i}>
               <Col xs="1">
                 <FormGroup>
                   <Label for="amount" className="m-0">
