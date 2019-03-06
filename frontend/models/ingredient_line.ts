@@ -16,6 +16,7 @@ export interface IngredientLineJSON {
   quantity_denominator: number
   preparation: string
   optional: boolean
+  unit: string
 }
 
 @Table({
@@ -37,23 +38,25 @@ export class IngredientLine extends Model<IngredientLine> {
 
   @Column public preparation: string
 
-  @IsIn([[
-    // mass
-    'g',
-    'mg',
-    'kg',
+  @IsIn([
+    [
+      // mass
+      'g',
+      'mg',
+      'kg',
 
-    // weight
-    'lbs',
+      // weight
+      'lbs',
 
-    // volume
-    'c',
-    'tbsp',
-    'tsp',
-    'l',
-    'dl',
-    'ml'
-  ]])
+      // volume
+      'c',
+      'tbsp',
+      'tsp',
+      'l',
+      'dl',
+      'ml'
+    ]
+  ])
   @Column
   public unit: string
 

@@ -22,8 +22,12 @@ export const validateNewRecipe = validator({
   yield: Joi.string(),
   preheats: Joi.array().items({
     name: Joi.string().required(),
-    temperature: Joi.number().min(0).required(),
-    unit: Joi.string().valid('C', 'F').required()
+    temperature: Joi.number()
+      .min(0)
+      .required(),
+    unit: Joi.string()
+      .valid('C', 'F')
+      .required()
   }),
   ingredient_lists: Joi.array()
     .items({
@@ -33,6 +37,7 @@ export const validateNewRecipe = validator({
           quantity_numerator: Joi.number(),
           quantity_denominator: Joi.number(),
           name: Joi.string().required(),
+          unit: Joi.string(),
           preparation: Joi.string(),
           optional: Joi.boolean().required()
         })

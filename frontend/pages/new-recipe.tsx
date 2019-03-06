@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
+import Select from 'react-select'
 import { Layout } from '../components'
 import { getUser, createRecipe } from '../common/http'
 import { UserJSON, RecipeJSON } from '../models'
@@ -26,6 +27,19 @@ const nullIfFalsey = (o: any): any => {
   return o
 }
 
+const Units = [
+  { label: 'gram', value: 'g' },
+  { label: 'milligram', value: 'mg' },
+  { label: 'kilogram', value: 'kg' },
+  { label: 'pound', value: 'lbs' },
+  { label: 'cup', value: 'c' },
+  { label: 'tablespoon', value: 'tbsp' },
+  { label: 'teaspoon', value: 'tsp' },
+  { label: 'liter', value: 'l' },
+  { label: 'milliliter', value: 'ml' },
+  { label: 'deciliter', value: 'dl' }
+]
+
 interface NewRecipeProps {
   user: UserJSON
   token: string
@@ -46,10 +60,7 @@ export default class NewRecipe extends React.Component<
       image_url: '',
       source_url: '',
       yield: '',
-      oven_preheat_temperature: 0,
-      oven_preheat_unit: 'F',
-      sous_vide_preheat_temperature: 0,
-      sous_vide_preheat_unit: 'F',
+      preheats: [],
       ingredient_lists: [
         {
           name: '',
@@ -59,7 +70,8 @@ export default class NewRecipe extends React.Component<
               quantity_denominator: 1,
               name: '',
               preparation: '',
-              optional: false
+              optional: false,
+              unit: ''
             }
           ]
         }
@@ -123,7 +135,7 @@ export default class NewRecipe extends React.Component<
       const ingredients = state.ingredient_lists[i].ingredients
       ingredients.push({
         name: '',
-        //        unit: '',
+        unit: '',
         quantity_numerator: 1,
         quantity_denominator: 1,
         preparation: '',
@@ -203,15 +215,31 @@ export default class NewRecipe extends React.Component<
                   <Label for="unit" className="m-0">
                     <small>Unit</small>
                   </Label>
-                  <Input
-                    type="text"
+                  <Select
+                    tabIndex={`${3 + i * 3}`}
                     name={`unit-${i}`}
                     id={`unit-${i}`}
-                    tabIndex={3 + i * 3}
-                    value={this.state.ingredient_lists[0].ingredients[i].unit}
-                    onChange={e =>
-                      this.ingredientOnChange(i, 'unit', e.currentTarget.value)
-                    }
+                    options={Units}
+                    value={_.find(Units, {
+                      value: ingredient.unit
+                    })}
+                    onChange={(e: any) => {
+                      console.log('SELECT ON CHANE', e)
+                      this.ingredientOnChange(i, 'unit', e.value)
+                    }}
+                    styles={{
+                      control: (base, state) => ({
+                        ...base,
+                        color: '#495057',
+                        borderColor: state.isFocused ? '#7adaef' : '#ced4da',
+                        boxShadow: state.isFocused
+                          ? '0 0 0 0.2rem rgba(25, 175, 208, 0.25)'
+                          : 'none',
+                        '&:hover': {
+                          borderColor: state.isFocused ? '#7adaef' : '#ced4da'
+                        }
+                      })
+                    }}
                   />
                 </FormGroup>
               </Col>
