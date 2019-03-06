@@ -3,8 +3,8 @@ import Head from 'next/head'
 import { Row, Col } from 'reactstrap'
 import { Layout, RecipeNav, Timestamp, Amount } from '../components'
 import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
+import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientList as IngredientListModel } from '../models/ingredient_list'
-import { IngredientListLine as IngredientListLineModel } from '../models/ingredient_list_line'
 import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
 import { getRecipeVersion } from '../common/http'
 const {
@@ -34,12 +34,11 @@ const ProcedureList = (props: ProcedureListProps) => {
 }
 
 interface IngredientListLineProps {
-  line: IngredientListLineModel
+  line: IngredientLineJSON
 }
 
 const IngredientListLine = (props: IngredientListLineProps) => {
   const l = props.line
-  const amt = l.quantity_denom
   return (
     <div>
       <Amount
