@@ -8,6 +8,7 @@ interface Config {
   dbName: string
   dbUser: string
   dbPassword: string
+  dbHost: string
 }
 
 export const getConfig = (): Config => {
