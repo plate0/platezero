@@ -7,8 +7,7 @@ import {
   Container,
   Navbar as RsNavbar
 } from 'reactstrap'
-import { ProfilePicture } from './ProfilePicture'
-import { User } from '../models/user'
+import { UserCard } from './UserCard'
 import { PlateZeroContext } from '../pages/_app'
 const {
   routes: { Link }
@@ -50,7 +49,7 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              {user ? <UserNav user={user} /> : <AnonNav />}
+              {user ? <UserCard user={user} compact={true} /> : <AnonNav />}
             </Nav>
           </Collapse>
           <style jsx>{`
@@ -63,24 +62,6 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
     )
   }
 }
-
-const UserNav = (props: { user: User }) => (
-  <Link route={`/${props.user.username}`}>
-    <a className="d-flex align-items-center nav-link rounded p-1">
-      <span className="mr-2">{props.user.name}</span>
-      <ProfilePicture img={props.user.avatar_url} size={30} />
-      <style jsx>{`
-        a {
-          color: white !important;
-          letter-spacing: 0.01rem;
-        }
-        a:hover {
-          background-color: rgba(0, 0, 0, 0.1);
-        }
-      `}</style>
-    </a>
-  </Link>
-)
 
 const AnonNav = () => (
   <div>

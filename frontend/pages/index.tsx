@@ -1,15 +1,9 @@
 import React, { Component } from 'react'
-import {
-  Jumbotron,
-  Button,
-  Card,
-  CardBody,
-  CardColumns
-} from 'reactstrap'
+import { Jumbotron, Button, Card, CardBody, CardColumns } from 'reactstrap'
 import Head from 'next/head'
 import * as _ from 'lodash'
 import '../style/index.scss'
-import { Layout, ProfilePicture } from '../components'
+import { Layout, UserCard } from '../components'
 import { getUsers } from '../common/http'
 import { UserJSON } from '../models/user'
 const {
@@ -27,7 +21,9 @@ export default class Index extends Component<{ users: UserJSON[] }> {
     return (
       <Layout>
         <Head>
-          <title>PlateZero - Adapt, remix, and iterate on your favorite meals</title>
+          <title>
+            PlateZero - Adapt, remix, and iterate on your favorite meals
+          </title>
         </Head>
         <Jumbotron className="my-5">
           <h1 className="display-4">Welcome to PlateZero!</h1>
@@ -44,35 +40,14 @@ export default class Index extends Component<{ users: UserJSON[] }> {
         </Jumbotron>
         <CardColumns>
           {_.shuffle(this.props.users).map(user => (
-            <UserCard key={user.id} user={user} />
+            <Card key={user.id}>
+              <CardBody>
+                <UserCard user={user} />
+              </CardBody>
+            </Card>
           ))}
         </CardColumns>
       </Layout>
     )
   }
-}
-
-const UserCard = (props: { user: UserJSON }) => {
-  const route = `/${props.user.username}`
-  return (
-    <Card>
-      <CardBody>
-        <Link route={route}>
-          <a className="d-block">
-            <div className="d-flex align-items-center">
-              <div className="mr-3">
-                <ProfilePicture img={props.user.avatar_url} size={50} />
-              </div>
-              <div>
-                {props.user.name ? props.user.name : props.user.username}
-                {props.user.name && (
-                  <div className="text-muted">@{props.user.username}</div>
-                )}
-              </div>
-            </div>
-          </a>
-        </Link>
-      </CardBody>
-    </Card>
-  )
 }

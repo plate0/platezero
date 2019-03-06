@@ -1,15 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
 import { Row, Col } from 'reactstrap'
-import { Layout, RecipeNav, Timestamp, Amount } from '../components'
+import { Layout, RecipeNav, Timestamp, Amount, UserCard } from '../components'
 import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientList as IngredientListModel } from '../models/ingredient_list'
 import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
 import { getRecipeVersion } from '../common/http'
-const {
-  routes: { Link }
-} = require('../routes')
 
 interface ProcedureListProps {
   procedureList: ProcedureListModel
@@ -101,16 +98,15 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
           <title>{v.recipe.title}</title>
         </Head>
         <RecipeNav recipe={v.recipe} selectedRecipeVersion={v.id} />
-        <Row>
-          <Col>
-            <pre className="bg-light p-1">{v.message}</pre>
+        <Row className="align-items-center my-3">
+          <Col xs="auto" className="py-1">
+            <UserCard user={v.author} />
+            <div className="text-muted">
+              <Timestamp t={v.created_at} />
+            </div>
           </Col>
-          <Col xs="auto text-muted">
-            by{' '}
-            <Link route={`/${v.author.username}`}>
-              <a>{v.author.username}</a>
-            </Link>{' '}
-            <Timestamp t={v.created_at} />
+          <Col className="align-self-stretch">
+            <pre className="bg-light p-1 h-100">{v.message}</pre>
           </Col>
         </Row>
         <Row>
