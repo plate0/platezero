@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 import getConfig from 'next/config'
-import { UserJSON } from '../models'
+import { UserJSON, RecipeJSON } from '../models'
 const {
   publicRuntimeConfig: {
     api: { url: API_URL }
@@ -84,7 +84,7 @@ export const getRecipeVersion = (
   })
 
 export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
-  _fetch(`/user/recipe`, {
+  _fetch<RecipeJSON>(`/user/recipe`, {
     body: JSON.stringify(recipe),
     method: 'POST',
     headers: authHeaders(opts ? opts.token : '')

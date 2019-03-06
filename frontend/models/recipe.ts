@@ -35,6 +35,7 @@ export interface RecipeJSON {
   title: string
   image_url?: string
   source_url?: string
+  html_url?: string
   yield?: string
   preheats: Preheat[]
   ingredient_lists: IngredientListJSON[]

@@ -1,4 +1,5 @@
 import React from 'react'
+import Router from 'next/router'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
 import Select from 'react-select'
 import { Layout } from '../components'
@@ -119,6 +120,7 @@ export default class NewRecipe extends React.Component<
     try {
       const res = await createRecipe(recipe, { token })
       console.log('Created!', res)
+      Router.push(res.html_url)
     } catch (err) {
       console.log('ERROR CRREATIN RECIPE', err)
     }
