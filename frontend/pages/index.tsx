@@ -6,6 +6,7 @@ import {
   CardBody,
   CardColumns
 } from 'reactstrap'
+import Head from 'next/head'
 import * as _ from 'lodash'
 import '../style/index.scss'
 import { Layout, ProfilePicture } from '../components'
@@ -25,6 +26,9 @@ export default class Index extends Component<{ users: UserJSON[] }> {
   public render() {
     return (
       <Layout>
+        <Head>
+          <title>PlateZero - Adapt, remix, and iterate on your favorite meals</title>
+        </Head>
         <Jumbotron className="my-5">
           <h1 className="display-4">Welcome to PlateZero!</h1>
           <p className="lead">
