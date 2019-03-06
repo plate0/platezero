@@ -40,7 +40,7 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
   try {
     const recipeVersion = await RecipeVersion.findOne({
       where: { id, recipe_id: req.recipe.id },
-      attributes: ['created_at', 'message'],
+      attributes: ['id', 'created_at', 'message'],
       order: [
         l('"ingredientLists.RecipeVersionIngredientList.sort_key" ASC'),
         l('"ingredientLists.lines.IngredientListLine.sort_key" ASC'),
@@ -49,7 +49,12 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
         l('"procedureLists.lines.ProcedureListLine.sort_key" ASC')
       ],
       include: [
-        { model: Recipe },
+        {
+          model: Recipe,
+          include: [
+            { model: RecipeBranch, attributes: ['name', 'recipe_version_id'] }
+          ]
+        },
         { model: User },
         { model: RecipeYield, attributes: ['text'] },
         {
