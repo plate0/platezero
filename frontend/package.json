@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "SITE_URL=http://localhost:9100 API_URL=http://localhost:9100/api JWT_SECRET=test_jwt_secret BCRYPT_ROUNDS=12 PORT=9100 nodemon",
-    "build": "next build && tsc --project tsconfig.server.json",
+    "build": "next build && tsc --project tsconfig.server.json && cp -R static dist",
     "prestart": "npm run build",
     "start": "PORT=8081 node dist/server/index.js"
   },
