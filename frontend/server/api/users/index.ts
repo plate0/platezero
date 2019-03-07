@@ -9,7 +9,7 @@ const r = express.Router()
 
 r.get('/', async (_, res) => {
   try {
-    const users = await User.findAll()
+    const users = await User.findAll({ order: [['id', 'DESC']] })
     return res.json(users)
   } catch (error) {
     return res.json({ error })
@@ -34,20 +34,24 @@ r.post('/', validateNewUser, async (req, res) => {
   return res.json(u)
 })
 
-r.use('/:username', async (req, res, next) => {
-  const { username } = req.params
-  try {
-    const user = await User.findOne({ where: { username } })
-    if (!user) {
-      res.status(404)
-      return res.json({ error: 'not found' })
+r.use(
+  '/:username',
+  async (req, res, next) => {
+    const { username } = req.params
+    try {
+      const user = await User.findOne({ where: { username } })
+      if (!user) {
+        res.status(404)
+        return res.json({ error: 'not found' })
+      }
+      ;(req as UserRequest).user = user
+      next()
+    } catch (error) {
+      res.status(500)
+      return res.json({ error })
     }
-    (req as UserRequest).user = user
-    next()
-  } catch (error) {
-    res.status(500)
-    return res.json({ error })
-  }
-}, user)
+  },
+  user
+)
 
 export const users = r

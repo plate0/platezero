@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Jumbotron, Button, Card, CardBody, CardColumns } from 'reactstrap'
 import Head from 'next/head'
-import * as _ from 'lodash'
+import { shuffle } from 'lodash'
 import '../style/index.scss'
 import { Layout, UserCard } from '../components'
 import { getUsers } from '../common/http'
@@ -13,7 +13,7 @@ const {
 export default class Index extends Component<{ users: UserJSON[] }> {
   public static async getInitialProps() {
     return {
-      users: await getUsers()
+      users: shuffle(await getUsers())
     }
   }
 
@@ -39,7 +39,7 @@ export default class Index extends Component<{ users: UserJSON[] }> {
           </Link>
         </Jumbotron>
         <CardColumns>
-          {_.shuffle(this.props.users).map(user => (
+          {this.props.users.map(user => (
             <Card key={user.id}>
               <CardBody>
                 <UserCard user={user} />
