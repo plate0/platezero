@@ -9,6 +9,8 @@ import { getConfig } from './config'
 
 const cfg = getConfig()
 
+console.log('App Started with config', cfg)
+
 const app = next({ dev: cfg.dev })
 const handler = routes.getRequestHandler(app)
 
