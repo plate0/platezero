@@ -18,7 +18,7 @@ export const getConfig = (): Config => {
     bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS, 10),
     jwtSecret: process.env.JWT_SECRET,
     port: parseInt(process.env.PORT, 10),
-    dev: process.env.NODE_ENV !== 'production',
+    dev: process.env.NODE_ENV !== 'prod',
     dbName: process.env.DATABASE_NAME || 'postgres',
     dbUser: process.env.DATABASE_USER || 'postgres',
     dbPassword: process.env.DATABASE_PASSWORD || undefined,
