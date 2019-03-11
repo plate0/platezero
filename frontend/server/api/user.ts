@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 import { validateNewRecipe } from '../validate'
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
+import { internalServerError } from '../errors'
 
 interface UserDetail {
   userId: number
@@ -21,8 +22,8 @@ r.get('/', async (req: AuthenticatedRequest, res) => {
   try {
     const user = await User.findOne({ where: { username: req.user.username } })
     return res.json(user)
-  } catch (error) {
-    return res.status(500).json({ error })
+  } catch (err) {
+    return internalServerError(res, err)
   }
 })
 
@@ -31,9 +32,8 @@ r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
     return res
       .status(201)
       .json(await Recipe.createNewRecipe(req.user.userId, req.body))
-  } catch (error) {
-    console.error(error)
-    return res.status(500).json({ error })
+  } catch (err) {
+    return internalServerError(res, err)
   }
 })
 

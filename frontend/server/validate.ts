@@ -1,5 +1,6 @@
 import * as Joi from 'joi'
 import { Request, Response } from 'express'
+import * as _ from 'lodash'
 
 const validator = schema => {
   return (req: Request, res: Response, next) => {
@@ -9,7 +10,9 @@ const validator = schema => {
       allowUnknown: false
     })
     if (result.error) {
-      return res.status(400).json({ error: result.error.details })
+      return res
+        .status(400)
+        .json({ errors: _.map(result.error.details, 'message') })
     }
     next()
   }
@@ -61,7 +64,7 @@ export const validateNewUser = validator({
     .max(25)
     .required(),
   email: Joi.string()
-    .email()
+    .email({ minDomainAtoms: 2 })
     .required(),
   password: Joi.string()
     .min(8)
