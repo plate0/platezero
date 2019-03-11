@@ -17,7 +17,8 @@ CREATE TABLE ingredient_list_lines (
 
 CREATE TABLE ingredient_lists (
     id SERIAL PRIMARY KEY,
-    name character varying
+    name character varying,
+    image_url character varying
 );
 
 CREATE TABLE preheats (
@@ -29,7 +30,9 @@ CREATE TABLE preheats (
 
 CREATE TABLE procedure_lines (
     id SERIAL PRIMARY KEY,
-    text text NOT NULL
+    image_url character varying,
+    text text NOT NULL,
+    title character varying
 );
 
 CREATE TABLE procedure_list_lines (
@@ -59,6 +62,11 @@ CREATE TABLE recipe_collaborators (
   UNIQUE (recipe_id, user_id)
 );
 
+CREATE TABLE recipe_durations (
+  id SERIAL PRIMARY KEY,
+  duration_seconds integer NOT NULL
+);
+
 CREATE TABLE recipe_version_ingredient_lists (
   recipe_version_id integer NOT NULL,
   ingredient_list_id integer NOT NULL,
@@ -86,6 +94,7 @@ CREATE TABLE recipe_versions (
   user_id integer NOT NULL,
   parent_recipe_version_id integer,
   recipe_yield_id integer,
+  recipe_duration_id integer,
   message text NOT NULL
 );
 
@@ -99,6 +108,8 @@ CREATE TABLE recipes (
   user_id integer NOT NULL,
   slug character varying NOT NULL,
   title character varying NOT NULL,
+  subtitle character varying,
+  description character varying,
   image_url character varying,
   source_url character varying,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
@@ -139,4 +150,5 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (parent_recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
+ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_duration_id) REFERENCES recipe_durations (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);

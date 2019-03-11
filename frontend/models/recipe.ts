@@ -21,6 +21,7 @@ import { User } from './user'
 import { RecipeBranch } from './recipe_branch'
 import { RecipeVersion } from './recipe_version'
 import { RecipeYield } from './recipe_yield'
+import { RecipeDuration } from './recipe_duration'
 import { Preheat } from './preheat'
 import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
@@ -33,12 +34,13 @@ const cfg = getConfig()
 
 export interface RecipeJSON {
   title: string
-  // subtitle?: string
-  // description?: string
+  subtitle?: string
+  description?: string
   image_url?: string
   source_url?: string
   html_url?: string
   yield?: string
+  duration?: number
   preheats: Preheat[]
   ingredient_lists: IngredientListJSON[]
   procedure_lists: ProcedureListJSON[]
@@ -76,6 +78,12 @@ export class Recipe extends Model<Recipe> {
   @AllowNull(false)
   @Column
   public title: string
+
+  @Column
+  public subtitle: string
+
+  @Column
+  public description: string
 
   @Column
   public image_url: string
@@ -120,6 +128,8 @@ export class Recipe extends Model<Recipe> {
       const recipe = await Recipe.create(
         {
           title: body.title,
+          subtitle: body.subtitle,
+          description: body.description,
           slug,
           image_url: body.image_url,
           source_url: body.source_url,
@@ -127,6 +137,10 @@ export class Recipe extends Model<Recipe> {
         },
         { transaction }
       )
+
+      const recipeDuration = body.duration
+        ? await RecipeDuration.create({ duration_seconds: body.duration })
+        : undefined
 
       const recipeYield = body.yield
         ? await RecipeYield.create({ text: body.yield })
@@ -151,10 +165,7 @@ export class Recipe extends Model<Recipe> {
           user_id,
           recipe_id: recipe.id,
           recipe_yield_id: recipeYield ? recipeYield.id : undefined,
-          //oven_preheat_id: ovenPreheat ? ovenPreheat.id : undefined,
-          //sous_vide_preheat_id: sousVidePreheat
-          //  ? sousVidePreheat.id
-          //  : undefined,
+          recipe_duration_id: recipeDuration ? recipeDuration.id : undefined,
           ingredientLists: [],
           procedureLists: [],
           message: 'Initial version'
