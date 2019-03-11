@@ -4,11 +4,13 @@ import { PlateZeroContext } from '../pages/_app'
 
 interface IfLoggedInProps {
   username?: string
-  else?: React.Element
+  else?: any
 }
 
 export class IfLoggedIn extends React.Component<IfLoggedInProps> {
   public static contextType = PlateZeroContext
+  private guarded: any
+  private default: any
 
   constructor(props: IfLoggedInProps) {
     super(props)

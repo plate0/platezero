@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize-typescript'
-
 import { IngredientLine } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 import { IngredientList } from './ingredient_list'
@@ -9,6 +8,7 @@ import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureList } from './procedure_list'
 import { RecipeBranch } from './recipe_branch'
 import { RecipeCollaborator } from './recipe_collaborator'
+import { RecipeDuration } from './recipe_duration'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { RecipeVersion } from './recipe_version'
@@ -38,6 +38,7 @@ sequelize.addModels([
   ProcedureList,
   RecipeBranch,
   RecipeCollaborator,
+  RecipeDuration,
   RecipeVersionIngredientList,
   RecipeVersionProcedureList,
   RecipeVersion,
@@ -56,6 +57,7 @@ export * from './procedure_list_line'
 export * from './procedure_list'
 export * from './recipe_branch'
 export * from './recipe_collaborator'
+export * from './recipe_duration'
 export * from './recipe_version_ingredient_list'
 export * from './recipe_version_procedure_list'
 export * from './recipe_version'
