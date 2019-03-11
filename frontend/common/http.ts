@@ -1,4 +1,5 @@
 import 'isomorphic-fetch'
+import fetch, { Response, RequestInit } from 'node-fetch'
 import getConfig from 'next/config'
 import { UserJSON, RecipeJSON } from '../models'
 import { get } from 'lodash'

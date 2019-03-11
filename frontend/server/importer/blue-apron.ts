@@ -1,10 +1,11 @@
 import { Importer } from './importer'
-import { toNumber } from 'lodash'
+import * as moment from 'moment'
 import {
   RecipeJSON,
   Preheat,
   IngredientListJSON,
-  ProcedureListJSON
+  ProcedureListJSON,
+  ProcedureLineJSON
 } from '../../models'
 import * as cheerio from 'cheerio'
 import { fraction, unitfy } from '../../common'
@@ -13,10 +14,24 @@ export class BlueApronImporter extends Importer {
   private $: any
   private url: string
 
+  constructor(url: string) {
+    super()
+    this.url = url
+  }
+
   // @Override
   public async recipe(): Promise<RecipeJSON> {
     return {
-      title: await this.getTitle()
+      title: await this.getTitle(),
+      subtitle: await this.getSubtitle(),
+      description: await this.getDescription(),
+      image_url: await this.getImageUrl(),
+      source_url: await this.getSourceUrl(),
+      yield: await this.getYield(),
+      duration: await this.getDuration(),
+      preheats: await this.getPreheats(),
+      ingredient_lists: await this.getIngredientLists(),
+      procedure_lists: await this.getProcedureLists()
     }
   }
 
@@ -38,13 +53,32 @@ export class BlueApronImporter extends Importer {
       .trim()
   }
 
+  public async getDescription() {
+    const { $ } = this
+    return $('[itemprop="description"]')
+      .text()
+      .trim()
+  }
+
+  public async getImageUrl() {
+    const { $ } = this
+    return $('.ba-hero-image img').prop('src')
+  }
+
   public async getSourceUrl() {
     return this.url
   }
 
   public async getYield() {
     const { $ } = this
-    return toNumber($('[itemprop="recipeYield"]').text())
+    return $('[itemprop="recipeYield"]').text()
+  }
+
+  public async getDuration(): Promise<number> {
+    const { $ } = this
+    return moment
+      .duration($('[itemprop="totalTime"]').attr('content'))
+      .asSeconds()
   }
 
   public async getPreheats(): Promise<Preheat[]> {
@@ -72,7 +106,7 @@ export class BlueApronImporter extends Importer {
     return [
       {
         name: 'Ingredients',
-        // image
+        image_url: $('.section-recipe.recipe-ingredients img').attr('src'),
         ingredients: $('.section-recipe.recipe-ingredients ul li')
           .map(function() {
             const amount = $(this)
@@ -107,9 +141,9 @@ export class BlueApronImporter extends Importer {
       {
         name: 'Instructions',
         steps: $('.section-recipe.recipe-instructions .step.row .col-md-6')
-          .map(function() {
+          .map(function(): ProcedureLineJSON {
             return {
-              image: $(this)
+              image_url: $(this)
                 .find('img')
                 .first()
                 .prop('src'),

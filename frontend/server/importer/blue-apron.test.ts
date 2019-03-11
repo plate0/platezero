@@ -14,7 +14,7 @@ describe('Blue Apron import recipe', () => {
   let importer: BlueApronImporter
 
   beforeEach(() => {
-    importer = new BlueApronImporter()
+    importer = new BlueApronImporter('')
     importer.setup(readFileSync(recipe, { encoding: 'utf8' }))
   })
 
@@ -30,7 +30,7 @@ describe('Blue Apron import recipe', () => {
 
   test('get yield', async () => {
     const yld = await importer.getYield()
-    expect(yld).toEqual(2)
+    expect(yld).toEqual('2')
   })
 
   test('get preheats', async () => {

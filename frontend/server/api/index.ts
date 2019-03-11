@@ -1,6 +1,5 @@
 import * as express from 'express'
 import * as jwtMiddleware from 'express-jwt'
-
 import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
