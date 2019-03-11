@@ -32,7 +32,6 @@ CREATE TABLE procedure_lines (
     id SERIAL PRIMARY KEY,
     image_url character varying,
     text text NOT NULL,
-    time integer,
     title character varying
 );
 
@@ -45,7 +44,8 @@ CREATE TABLE procedure_list_lines (
 
 CREATE TABLE procedure_lists (
   id SERIAL PRIMARY KEY,
-  name character varying
+  name character varying,
+  time integer
 );
 
 CREATE TABLE recipe_branches (
