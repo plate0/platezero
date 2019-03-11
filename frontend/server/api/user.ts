@@ -1,7 +1,7 @@
 import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
-
+import { importers } from './importer'
 import { validateNewRecipe } from '../validate'
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
@@ -11,7 +11,7 @@ interface UserDetail {
   username: string
 }
 
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user: UserDetail
 }
 
@@ -36,5 +36,7 @@ r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
     return res.status(500).json({ error })
   }
 })
+
+r.use('/import', importers)
 
 export const user = r

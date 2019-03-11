@@ -1,12 +1,24 @@
 import { Importer } from './importer'
 import { toNumber } from 'lodash'
-import { Preheat, IngredientListJSON, ProcedureListJSON } from '../../models'
+import {
+  RecipeJSON,
+  Preheat,
+  IngredientListJSON,
+  ProcedureListJSON
+} from '../../models'
 import * as cheerio from 'cheerio'
 import { fraction, unitfy } from '../../common'
 
 export class BlueApronImporter extends Importer {
   private $: any
   private url: string
+
+  // @Override
+  public async recipe(): Promise<RecipeJSON> {
+    return {
+      title: await this.getTitle()
+    }
+  }
 
   public async setup(raw: any) {
     this.$ = cheerio.load(raw)
