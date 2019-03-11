@@ -17,7 +17,8 @@ CREATE TABLE ingredient_list_lines (
 
 CREATE TABLE ingredient_lists (
     id SERIAL PRIMARY KEY,
-    name character varying
+    name character varying,
+    image_url character varying
 );
 
 CREATE TABLE preheats (
@@ -29,7 +30,10 @@ CREATE TABLE preheats (
 
 CREATE TABLE procedure_lines (
     id SERIAL PRIMARY KEY,
-    text text NOT NULL
+    image_url character varying,
+    text text NOT NULL,
+    time integer,
+    title character varying
 );
 
 CREATE TABLE procedure_list_lines (
@@ -99,6 +103,8 @@ CREATE TABLE recipes (
   user_id integer NOT NULL,
   slug character varying NOT NULL,
   title character varying NOT NULL,
+  subtitle character varying,
+  description character varying,
   image_url character varying,
   source_url character varying,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
