@@ -33,6 +33,8 @@ const cfg = getConfig()
 
 export interface RecipeJSON {
   title: string
+  subtitle?: string
+  description?: string
   image_url?: string
   source_url?: string
   html_url?: string
@@ -74,6 +76,12 @@ export class Recipe extends Model<Recipe> {
   @AllowNull(false)
   @Column
   public title: string
+
+  @Column
+  public subtitle: string
+
+  @Column
+  public description: string
 
   @Column
   public image_url: string
@@ -118,6 +126,8 @@ export class Recipe extends Model<Recipe> {
       const recipe = await Recipe.create(
         {
           title: body.title,
+          subtitle: body.subtitle,
+          description: body.description,
           slug,
           image_url: body.image_url,
           source_url: body.source_url,

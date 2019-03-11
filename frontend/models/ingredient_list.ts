@@ -12,8 +12,9 @@ import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 
 export interface IngredientListJSON {
-  name?: string
   ingredients: IngredientLineJSON[]
+  image_url?: string
+  name?: string
 }
 
 @Table({
@@ -27,6 +28,8 @@ export class IngredientList extends Model<IngredientList> {
 
   @Column public name: string
 
+  @Column public image_url: string
+
   @BelongsToMany(() => IngredientLine, () => IngredientListLine)
   public lines: IngredientLine[]
 
@@ -35,7 +38,7 @@ export class IngredientList extends Model<IngredientList> {
     options?: ICreateOptions
   ): Promise<IngredientList> {
     const ingredientList = await IngredientList.create(
-      { name: il.name },
+      { name: il.name, image_url: il.image_url },
       options
     )
     const ingredientLines = await Promise.all(

@@ -17,6 +17,8 @@ const validator = schema => {
 
 export const validateNewRecipe = validator({
   title: Joi.string().required(),
+  subtitle: Joi.string(),
+  description: Joi.string(),
   image_url: Joi.string().uri(),
   source_url: Joi.string().uri(),
   yield: Joi.string(),
@@ -32,6 +34,7 @@ export const validateNewRecipe = validator({
   ingredient_lists: Joi.array()
     .items({
       name: Joi.string(),
+      image_url: Joi.string(),
       ingredients: Joi.array()
         .items({
           quantity_numerator: Joi.number(),
@@ -47,9 +50,14 @@ export const validateNewRecipe = validator({
   procedure_lists: Joi.array()
     .items({
       name: Joi.string(),
+      time: Joi.number(),
       steps: Joi.array()
         .required()
-        .items(Joi.string().required())
+        .items({
+          text: Joi.string().required(),
+          image_url: Joi.string(),
+          title: Joi.string()
+        })
     })
     .required()
 })
