@@ -44,8 +44,7 @@ CREATE TABLE procedure_list_lines (
 
 CREATE TABLE procedure_lists (
   id SERIAL PRIMARY KEY,
-  name character varying,
-  time integer
+  name character varying
 );
 
 CREATE TABLE recipe_branches (
@@ -61,6 +60,11 @@ CREATE TABLE recipe_collaborators (
   user_id integer NOT NULL,
   accepted boolean NOT NULL DEFAULT false,
   UNIQUE (recipe_id, user_id)
+);
+
+CREATE TABLE recipe_durations (
+  id SERIAL PRIMARY KEY,
+  duration_seconds integer NOT NULL
 );
 
 CREATE TABLE recipe_version_ingredient_lists (
@@ -90,6 +94,7 @@ CREATE TABLE recipe_versions (
   user_id integer NOT NULL,
   parent_recipe_version_id integer,
   recipe_yield_id integer,
+  recipe_duration_id integer,
   message text NOT NULL
 );
 
@@ -145,4 +150,5 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (parent_recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
+ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_duration_id) REFERENCES recipe_durations (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
