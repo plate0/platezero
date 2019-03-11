@@ -16,7 +16,6 @@ import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
 export interface ProcedureListJSON {
   name?: string
   steps: ProcedureLineJSON[]
-  time?: number
 }
 
 @Table({
@@ -30,8 +29,6 @@ export class ProcedureList extends Model<ProcedureList> {
 
   @Column public name: string
 
-  @Column public time: number
-
   @HasMany(() => ProcedureListLine)
   public listLines: ProcedureListLine[]
 
@@ -42,10 +39,7 @@ export class ProcedureList extends Model<ProcedureList> {
     pl: ProcedureListJSON,
     options?: ICreateOptions
   ): Promise<ProcedureList> {
-    const procedureList = await ProcedureList.create(
-      { name: pl.name, time: pl.time },
-      options
-    )
+    const procedureList = await ProcedureList.create({ name: pl.name }, options)
     const lines = await Promise.all(
       _.map(pl.steps, ({ text, image_url, title }) =>
         ProcedureLine.create({ text, image_url, title }, options)
