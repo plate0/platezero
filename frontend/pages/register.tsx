@@ -60,11 +60,10 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
     this.setState({ working: true })
     const { username, password, email } = this.state
     try {
-      const u = await createUser({ username, password, email })
+      await createUser({ username, password, email })
       const { user, token } = await login({ username, password })
       authenticated(user, token)
     } catch (e) {
-      console.log('caught', e)
       this.setState({ errors: _.get(e, 'messages', []) })
     }
     this.setState({ working: false })

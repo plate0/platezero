@@ -53,10 +53,11 @@ export interface PlateZeroRequestInfo extends RequestInit {
   token?: string
 }
 
-export const createUser = (
-  body: { username: string; password: string; email: string },
-  opts?: PlateZeroRequestInfo
-): Promise<UserJSON> =>
+export const createUser = (body: {
+  username: string
+  password: string
+  email: string
+}): Promise<UserJSON> =>
   _fetch<UserJSON>(`/users`, {
     method: 'POST',
     body: JSON.stringify(body),
