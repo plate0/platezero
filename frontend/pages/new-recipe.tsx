@@ -59,6 +59,7 @@ export default class NewRecipe extends React.Component<
       title: '',
       // subtitle
       // description
+      // duration
       image_url: '',
       source_url: '',
       yield: '',
@@ -82,7 +83,6 @@ export default class NewRecipe extends React.Component<
       procedure_lists: [
         {
           name: '',
-          // time
           steps: [
             {
               text: ''

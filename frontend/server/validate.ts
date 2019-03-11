@@ -22,6 +22,7 @@ export const validateNewRecipe = validator({
   image_url: Joi.string().uri(),
   source_url: Joi.string().uri(),
   yield: Joi.string(),
+  duration: Joi.number(),
   preheats: Joi.array().items({
     name: Joi.string().required(),
     temperature: Joi.number()
@@ -50,7 +51,6 @@ export const validateNewRecipe = validator({
   procedure_lists: Joi.array()
     .items({
       name: Joi.string(),
-      time: Joi.number(),
       steps: Joi.array()
         .required()
         .items({
