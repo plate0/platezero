@@ -57,6 +57,9 @@ export default class NewRecipe extends React.Component<
     this.stepOnChange = this.stepOnChange.bind(this)
     this.state = {
       title: '',
+      // subtitle
+      // description
+      // duration
       image_url: '',
       source_url: '',
       yield: '',
@@ -64,6 +67,7 @@ export default class NewRecipe extends React.Component<
       ingredient_lists: [
         {
           name: '',
+          // image_url
           ingredients: [
             {
               quantity_numerator: 1,
@@ -79,7 +83,13 @@ export default class NewRecipe extends React.Component<
       procedure_lists: [
         {
           name: '',
-          steps: ['']
+          steps: [
+            {
+              text: ''
+              // image_url
+              // title
+            }
+          ]
         }
       ]
     }
@@ -148,7 +158,7 @@ export default class NewRecipe extends React.Component<
         ...state.procedure_lists,
         {
           name: '',
-          steps: ['']
+          steps: [{ text: '' }]
         }
       ]
     }))
@@ -166,7 +176,7 @@ export default class NewRecipe extends React.Component<
 
   public stepOnChange(listIndex: number, stepIndex: number, val: string) {
     this.setState(state => {
-      state.procedure_lists[listIndex].steps[stepIndex] = val
+      state.procedure_lists[listIndex].steps[stepIndex].text = val
       return state
     })
   }
@@ -292,7 +302,7 @@ export default class NewRecipe extends React.Component<
                     name="text"
                     id="exampleText"
                     placeholder="Step by step instructions..."
-                    value={this.state.procedure_lists[i].steps[j]}
+                    value={this.state.procedure_lists[i].steps[j].text}
                     onChange={e =>
                       this.stepOnChange(i, j, e.currentTarget.value)
                     }
