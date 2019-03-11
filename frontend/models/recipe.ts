@@ -33,6 +33,8 @@ const cfg = getConfig()
 
 export interface RecipeJSON {
   title: string
+  // subtitle?: string
+  // description?: string
   image_url?: string
   source_url?: string
   html_url?: string

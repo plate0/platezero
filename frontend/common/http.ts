@@ -1,11 +1,8 @@
 import 'isomorphic-fetch'
 import getConfig from 'next/config'
 import { UserJSON, RecipeJSON } from '../models'
-const {
-  publicRuntimeConfig: {
-    api: { url: API_URL }
-  }
-} = getConfig()
+import { get } from 'lodash'
+const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
 const headers = {
   Accept: 'application/json',
