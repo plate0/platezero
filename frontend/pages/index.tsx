@@ -22,20 +22,18 @@ export default class Index extends Component<{ users: UserJSON[] }> {
       <Layout>
         <Head>
           <title>
-            PlateZero - Adapt, remix, and iterate on your favorite meals
+            PlateZero - Save, organize, and iterate on your favorite meals
           </title>
         </Head>
         <Jumbotron className="my-5">
           <h1 className="display-4">Welcome to PlateZero!</h1>
+          <p className="lead">The best way to own the food you cook.</p>
           <p className="lead">
-            The best way to make the food you cook your own.
-          </p>
-          <p className="lead">
-            Other sites show you recipes made by others. PlateZero gives you the
-            tools to adapt, remix, and iterate over your favorite meals.
+            Other sites show you recipes developed by others. PlateZero gives
+            you the tools to save, organize, and remix your favorite meals.
           </p>
           <Link route="/register">
-            <Button color="primary">Get started for free</Button>
+            <Button color="primary">Get started</Button>
           </Link>
         </Jumbotron>
         <CardColumns>
