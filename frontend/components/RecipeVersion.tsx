@@ -14,12 +14,10 @@ const ProcedureList = (props: ProcedureListProps) => {
   const pl = props.procedureList
   return (
     <div className="mb-3">
-      {pl.name ? (
+      {pl.name && (
         <div>
           <strong>{pl.name}</strong>
         </div>
-      ) : (
-        undefined
       )}
       {pl.lines.map((l, key) => (
         <p key={key}>{l.text}</p>
@@ -41,11 +39,9 @@ const IngredientListLine = (props: IngredientListLineProps) => {
         denominator={l.quantity_denominator}
       />{' '}
       {l.unit} {l.name}
-      {l.preparation ? ', ' + l.preparation : undefined}
-      {l.optional ? (
+      {l.preparation && ', ' + l.preparation}
+      {l.optional && (
         <span className="badge badge-secondary ml-1">Optional</span>
-      ) : (
-        undefined
       )}
     </div>
   )
@@ -56,12 +52,10 @@ interface IngredientListProps {
 }
 
 const IngredientList = (props: IngredientListProps) => {
-  const title = props.ingredientList.name ? (
+  const title = props.ingredientList.name && (
     <div>
       <strong>{props.ingredientList.name}</strong>
     </div>
-  ) : (
-    undefined
   )
   return (
     <div className="mb-3">
