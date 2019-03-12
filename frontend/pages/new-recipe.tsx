@@ -268,7 +268,7 @@ export default class NewRecipe extends React.Component<
               <Col xs="6">
                 <FormGroup>
                   <Label for="prep" className="m-0">
-                    <small>Preperation</small>
+                    <small>Preparation</small>
                   </Label>
                   <Input type="text" name="" id="" tabIndex={5 + i * 3} />
                 </FormGroup>
