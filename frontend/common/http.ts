@@ -98,6 +98,13 @@ export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
     headers: authHeaders(opts ? opts.token : '')
   })
 
+export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
+  _fetch<RecipeJSON>(`/user/import/url`, {
+    body: JSON.stringify({ url }),
+    method: 'POST',
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
 const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
   const options = {
     method: opts.method || 'GET',
