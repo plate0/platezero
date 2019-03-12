@@ -1,5 +1,7 @@
 import React from 'react'
 import * as _ from 'lodash'
+import ReactMarkdown from 'react-markdown'
+import { Card, CardHeader, CardBody } from 'reactstrap'
 import {
   Layout,
   RecipeNav,
@@ -38,6 +40,27 @@ export default class Recipe extends React.Component<RecipeProps> {
           <title>{recipe.title}</title>
         </Head>
         <RecipeNav recipe={recipe} />
+        {recipe.description && (
+          <Card className="mb-3">
+            <CardHeader>
+              <strong>About {recipe.title}</strong>
+            </CardHeader>
+            <CardBody>
+              <ReactMarkdown
+                source={recipe.description}
+                disallowedTypes={[
+                  'link',
+                  'image',
+                  'linkReference',
+                  'imageReference',
+                  'html',
+                  'virtualHtml',
+                  'parsedHtml'
+                ]}
+              />
+            </CardBody>
+          </Card>
+        )}
         {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
       </Layout>
     )
