@@ -8,11 +8,9 @@ import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientList as IngredientListModel } from '../models/ingredient_list'
 import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
 
-interface RecipeVersionHeaderProps {
+export const RecipeVersionHeader = (props: {
   recipeVersion: RecipeVersionModel
-}
-
-export const RecipeVersionHeader = (props: RecipeVersionHeaderProps) => {
+}) => {
   const v = props.recipeVersion
   return (
     <Row className="align-items-center my-3">
