@@ -4,15 +4,24 @@ import * as _ from 'lodash'
 import { User } from '../../../models/user'
 import { validateNewUser } from '../../validate'
 import { user, UserRequest } from './user'
+import { internalServerError, badRequest, notFound } from '../../errors'
 
 const r = express.Router()
+
+const isUniqueUsernameError = (err: any) =>
+  'unique violation' === _.get(err, 'errors[0].type', '') &&
+  'username' === _.get(err, 'errors[0].path', '')
+
+const isUniqueEmailError = (err: any) =>
+  'unique violation' === _.get(err, 'errors[0].type', '') &&
+  'email' === _.get(err, 'errors[0].path', '')
 
 r.get('/', async (_, res) => {
   try {
     const users = await User.findAll({ order: [['id', 'DESC']] })
     return res.json(users)
   } catch (error) {
-    return res.json({ error })
+    return internalServerError(res, error)
   }
 })
 
@@ -22,16 +31,23 @@ r.post('/', validateNewUser, async (req, res) => {
   try {
     await u.setPassword(password)
   } catch (e) {
-    res.status(500)
-    return res.json({ error: 'internal server error' })
+    return internalServerError(res, e)
   }
   try {
     await u.save()
   } catch (e) {
-    res.status(400)
-    return res.json({ error: 'bad request' })
+    if (isUniqueUsernameError(e)) {
+      return badRequest(res, 'that username is not available')
+    }
+    if (isUniqueEmailError(e)) {
+      return badRequest(
+        res,
+        'that email address has already been registered, try resetting your password'
+      )
+    }
+    return internalServerError(res, e)
   }
-  return res.json(u)
+  return res.status(201).json(u)
 })
 
 r.use(
@@ -41,14 +57,12 @@ r.use(
     try {
       const user = await User.findOne({ where: { username } })
       if (!user) {
-        res.status(404)
-        return res.json({ error: 'not found' })
+        return notFound(res)
       }
       ;(req as UserRequest).user = user
       next()
     } catch (error) {
-      res.status(500)
-      return res.json({ error })
+      return internalServerError(res, error)
     }
   },
   user

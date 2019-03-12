@@ -12,6 +12,7 @@ import { ProcedureLine } from '../../../../models/procedure_line'
 import { Preheat } from '../../../../models/preheat'
 import { IngredientList } from '../../../../models/ingredient_list'
 import { IngredientLine } from '../../../../models/ingredient_line'
+import { notFound, internalServerError } from '../../../errors'
 
 const r = express.Router()
 
@@ -96,13 +97,11 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
       ]
     })
     if (!recipeVersion) {
-      res.status(404)
-      return res.json({ error: 'not found' })
+      return notFound(res)
     }
     return res.json(recipeVersion)
   } catch (error) {
-    res.status(500)
-    return res.json({ error })
+    return internalServerError(res, error)
   }
 })
 
