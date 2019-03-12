@@ -6,11 +6,7 @@ import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientList as IngredientListModel } from '../models/ingredient_list'
 import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
 
-interface ProcedureListProps {
-  procedureList: ProcedureListModel
-}
-
-const ProcedureList = (props: ProcedureListProps) => {
+const ProcedureList = (props: { procedureList: ProcedureListModel }) => {
   const pl = props.procedureList
   return (
     <div className="mb-3">
@@ -26,11 +22,7 @@ const ProcedureList = (props: ProcedureListProps) => {
   )
 }
 
-interface IngredientListLineProps {
-  line: IngredientLineJSON
-}
-
-const IngredientListLine = (props: IngredientListLineProps) => {
+const IngredientListLine = (props: { line: IngredientLineJSON }) => {
   const l = props.line
   return (
     <div>
@@ -47,11 +39,7 @@ const IngredientListLine = (props: IngredientListLineProps) => {
   )
 }
 
-interface IngredientListProps {
-  ingredientList: IngredientListModel
-}
-
-const IngredientList = (props: IngredientListProps) => {
+const IngredientList = (props: { ingredientList: IngredientListModel }) => {
   const title = props.ingredientList.name && (
     <div>
       <strong>{props.ingredientList.name}</strong>
@@ -67,11 +55,7 @@ const IngredientList = (props: IngredientListProps) => {
   )
 }
 
-interface RecipeVersionProps {
-  recipeVersion: RecipeVersionModel
-}
-
-export const RecipeVersion = (props: RecipeVersionProps) => {
+export const RecipeVersion = (props: { recipeVersion: RecipeVersionModel }) => {
   const v = props.recipeVersion
   return (
     <Row>
