@@ -24,7 +24,10 @@ const ProcedureList = (props: ProcedureListProps) => {
         undefined
       )}
       {pl.lines.map((l, key) => (
-        <p key={key}>{l.text}</p>
+        <div key={key}>
+          <img src={l.image_url} />
+          <p>{l.text}</p>
+        </div>
       ))}
     </div>
   )
@@ -68,6 +71,7 @@ const IngredientList = (props: IngredientListProps) => {
   return (
     <div className="mb-3">
       {title}
+      <img src={props.ingredientList.image_url} />
       {props.ingredientList.lines.map((line, key) => (
         <IngredientListLine key={key} line={line} />
       ))}
@@ -98,6 +102,11 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
           <title>{v.recipe.title}</title>
         </Head>
         <RecipeNav recipe={v.recipe} selectedRecipeVersion={v.id} />
+        <div>{v.recipe.subtitle}</div>
+        <div>{v.recipe.description}</div>
+        <div>{v.recipeDuration.duration_seconds}</div>
+        <div>{v.recipeYield.text}</div>
+        <img src={v.recipe.image_url} />
         <Row className="align-items-center my-3">
           <Col xs="auto" className="py-1">
             <UserCard user={v.author} />
@@ -109,6 +118,7 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
             <pre className="bg-light p-1 h-100">{v.message}</pre>
           </Col>
         </Row>
+        <Row>{v.recipe.source_url}</Row>
         <Row>
           <Col xs={12} lg={4}>
             <h5>Ingredients</h5>
