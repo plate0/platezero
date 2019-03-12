@@ -7,6 +7,6 @@ const DynamicComponentWithNoSSR = dynamic(() => import('./_import-recipe'), {
 
 export default () => (
   <div>
-    <DynamicComponentWithNoSSR />
+    <DynamicComponentWithNoSSR token={''} />
   </div>
 )

@@ -3,6 +3,7 @@ import * as express from 'express'
 import * as Importers from '../importer'
 import { AuthenticatedRequest } from './user'
 import { Recipe } from '../../models/recipe'
+import { internalServerError } from '../errors'
 
 const r = express.Router()
 
@@ -22,8 +23,8 @@ r.post('/url', async (req: AuthenticatedRequest, res) => {
     return res
       .status(201)
       .json(await Recipe.createNewRecipe(req.user.userId, recipe))
-  } catch (error) {
-    return res.status(500).json({ error })
+  } catch (err) {
+    return internalServerError(res, err)
   }
 })
 

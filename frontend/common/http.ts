@@ -131,15 +131,3 @@ export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
     method: 'POST',
     headers: authHeaders(opts ? opts.token : '')
   })
-
-const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
-  const options = {
-    method: opts.method || 'GET',
-    headers: {
-      ...headers,
-      ...(opts.headers || {})
-    },
-    body: opts.body
-  }
-  return await fetch(`${API_URL}${uri}`, options).then(handleError)
-}

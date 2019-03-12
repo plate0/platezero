@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo } from 'react'
+import nextCookie from 'next-cookies'
 import {
   Row,
+  Alert,
   Col,
   Spinner,
   ListGroup,
@@ -16,7 +18,11 @@ import { Layout } from '../components'
 import { PlateZeroContext } from '../pages/_app'
 import { useDropzone } from 'react-dropzone'
 import * as parse from 'url-parse'
-import { importUrl } from '../common'
+import { importUrl, PlateZeroApiError } from '../common'
+import { RecipeJSON } from '../models'
+const {
+  routes: { Link }
+} = require('../routes')
 
 const baseStyle = {
   width: '100%',
@@ -88,13 +94,39 @@ const ImportsStatus = ({ urls }: { urls: UrlImport[] }) => {
               <Col xs="11">
                 <h4 className="m-0">{parse(u.url).hostname}</h4>
                 <small className="text-muted">{u.url}</small>
+                {u.errors ? (
+                  <Alert color="danger">{u.errors.join(' ')}</Alert>
+                ) : (
+                  undefined
+                )}
               </Col>
-              <Col
-                xs="1"
-                className="align-items-center justify-content-center d-flex"
-              >
-                <Spinner color="info" />
-              </Col>
+              {!u.done ? (
+                <Col
+                  xs="1"
+                  className="align-items-center justify-content-center d-flex"
+                >
+                  <Spinner color="info" />
+                </Col>
+              ) : (
+                undefined
+              )}
+              {u.success ? (
+                <Col
+                  xs="1"
+                  className="align-items-center justify-content-center d-flex"
+                >
+                  <i className="far fa-check fa-2x text-success" />
+                </Col>
+              ) : (
+                undefined
+              )}
+              {u.recipe ? (
+                <Link route={u.recipe.html_url}>
+                  <a className="btn btn-success">View</a>
+                </Link>
+              ) : (
+                undefined
+              )}
             </Row>
           </ListGroupItem>
         ))}
@@ -105,31 +137,46 @@ const ImportsStatus = ({ urls }: { urls: UrlImport[] }) => {
 
 interface UrlImport {
   url: string
+  done?: boolean
   success?: boolean
-  htmlUrl?: string
-  error?: string
+  recipe?: RecipeJSON
+  errors?: string[]
 }
 
 interface ImportRecipeState {
+  token: string
   url: string
   urls: UrlImport[]
 }
 
+interface ImportRecipeProps {
+  token: string
+}
+
 export default class ImportRecipe extends React.Component<
-  any,
+  ImportRecipeProps,
   ImportRecipeState
 > {
   public static contextType = PlateZeroContext
 
-  constructor(props: any) {
+  constructor(props: ImportRecipeProps) {
     super(props)
     this.onDrop = this.onDrop.bind(this)
     this.onUrlChange = this.onUrlChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
+    const { token } = nextCookie({})
     this.state = {
       url: '',
-      urls: []
+      urls: [],
+      token
     }
+  }
+
+  // not working client side
+  static async getInitialProps() {
+    const { token } = nextCookie({})
+    console.log('INITIAL PROPS', token)
+    return { token }
   }
 
   public onDrop(files: any) {
@@ -145,20 +192,35 @@ export default class ImportRecipe extends React.Component<
 
   public async onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const { url } = this.state
-    const imprt: UrlImport = { url }
+    const { token, url, urls } = this.state
+    const i = urls.length
     this.setState(s => ({
-      urls: [...s.urls, imprt],
+      urls: [...s.urls, { url }],
       url: ''
     }))
     try {
-      const res = await importUrl(url)
-      imprt.success = true
-      imprt.htmlUrl = res.html_url
+      const res = await importUrl(url, { token })
+      this.setState(s => {
+        const imprt = s.urls[i]
+        imprt.success = true
+        imprt.done = true
+        imprt.recipe = res
+        return s
+      })
     } catch (err) {
-      console.log('err', err)
-      imprt.success = false
-      imprt.error = err.message
+      let messages = []
+      if (err instanceof PlateZeroApiError) {
+        messages = err.messages
+      } else {
+        messages = [err.message]
+      }
+      this.setState(s => {
+        const imprt = s.urls[i]
+        imprt.success = false
+        imprt.done = true
+        imprt.errors = messages
+        return s
+      })
     }
   }
 

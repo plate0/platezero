@@ -56,7 +56,7 @@ describe('Blue Apron import recipe', () => {
       {
         name: 'Jasmine Rice',
         quantity_numerator: 1,
-        quantity_denominator: 10,
+        quantity_denominator: 2,
         preparation: undefined,
         optional: false,
         unit: 'c'
@@ -127,7 +127,7 @@ describe('Blue Apron import recipe', () => {
     expect(procedures[0].name).toEqual('Instructions')
     expect(procedures[0].steps).toHaveLength(5)
     expect(procedures[0].steps[0]).toEqual({
-      image:
+      image_url:
         'https://media.blueapron.com/recipes/21409/recipe_steps/32374/1548270543-426-0028-6520/Jasmine_2P_Stockpot-Medium_Fluff_WEB_high_feature.jpg',
       title: 'Cook the rice:',
       text:
