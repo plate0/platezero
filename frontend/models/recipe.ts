@@ -44,6 +44,7 @@ export interface RecipeJSON {
   preheats: Preheat[]
   ingredient_lists: IngredientListJSON[]
   procedure_lists: ProcedureListJSON[]
+  branches?: { name: string; recipe_version_id: number }[]
 }
 
 const isUniqueSlugError = (e): boolean => {

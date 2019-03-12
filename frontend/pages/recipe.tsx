@@ -8,10 +8,8 @@ import {
   RecipeVersion as RecipeVersionView
 } from '../components'
 import Head from 'next/head'
-import {
-  Recipe as RecipeModel,
-  RecipeVersion as RecipeVersionModel
-} from '../models/recipe'
+import { Recipe as RecipeModel } from '../models/recipe'
+import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
 import { getRecipe, getRecipeVersion } from '../common/http'
 
 interface RecipeProps {
@@ -54,8 +52,7 @@ export default class Recipe extends React.Component<RecipeProps> {
                   'linkReference',
                   'imageReference',
                   'html',
-                  'virtualHtml',
-                  'parsedHtml'
+                  'virtualHtml'
                 ]}
               />
             </CardBody>

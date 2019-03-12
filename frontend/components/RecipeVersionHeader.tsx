@@ -1,12 +1,8 @@
 import React from 'react'
 import { Row, Col } from 'reactstrap'
 import { Timestamp } from './Timestamp'
-import { Amount } from './Amount'
 import { UserCard } from './UserCard'
 import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
-import { IngredientLineJSON } from '../models/ingredient_line'
-import { IngredientList as IngredientListModel } from '../models/ingredient_list'
-import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
 
 export const RecipeVersionHeader = (props: {
   recipeVersion: RecipeVersionModel

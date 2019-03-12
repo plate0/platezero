@@ -105,8 +105,8 @@ export const getRecipe = (
   username: string,
   slug: string,
   opts?: PlateZeroRequestInfo
-) =>
-  _fetch(`/users/${username}/recipes/${slug}`, {
+): Promise<RecipeJSON> =>
+  _fetch<RecipeJSON>(`/users/${username}/recipes/${slug}`, {
     headers: authHeaders(opts ? opts.token : '')
   })
 
