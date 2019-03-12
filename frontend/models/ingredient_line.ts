@@ -47,7 +47,7 @@ export class IngredientLine extends Model<IngredientLine> {
       'oz',
 
       // weight
-      'lbs',
+      'lb',
 
       // volume
       'c',

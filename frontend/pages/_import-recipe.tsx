@@ -15,7 +15,6 @@ import {
 } from 'reactstrap'
 import Head from 'next/head'
 import { Layout } from '../components'
-import { PlateZeroContext } from '../pages/_app'
 import { useDropzone } from 'react-dropzone'
 import * as parse from 'url-parse'
 import { importUrl, PlateZeroApiError } from '../common'
@@ -155,8 +154,6 @@ export default class ImportRecipe extends React.Component<
   ImportRecipeProps,
   ImportRecipeState
 > {
-  public static contextType = PlateZeroContext
-
   constructor(props: ImportRecipeProps) {
     super(props)
     this.onDrop = this.onDrop.bind(this)

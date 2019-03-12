@@ -3,13 +3,26 @@ export type Unit =
   | 'mg'
   | 'kg'
   | 'oz'
-  | 'lbs'
+  | 'lb'
   | 'c'
   | 'tbsp'
   | 'tsp'
   | 'l'
   | 'dl'
   | 'ml'
+
+export const Units = [
+  { label: 'gram', value: 'g' },
+  { label: 'milligram', value: 'mg' },
+  { label: 'kilogram', value: 'kg' },
+  { label: 'pound', value: 'lb' },
+  { label: 'cup', value: 'c' },
+  { label: 'tablespoon', value: 'tbsp' },
+  { label: 'teaspoon', value: 'tsp' },
+  { label: 'liter', value: 'l' },
+  { label: 'milliliter', value: 'ml' },
+  { label: 'deciliter', value: 'dl' }
+]
 
 export const unitfy = (s?: string): Unit | undefined => {
   if (!s) {
@@ -21,7 +34,7 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'g':
     case 'mg':
     case 'kg':
-    case 'lbs':
+    case 'lb':
     case 'c':
     case 'tbsp':
     case 'tsp':
@@ -29,8 +42,8 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'dl':
     case 'ml':
       return unit
-    case 'lb':
-      return 'lbs'
+    case 'lbs':
+      return 'lb'
     case 'tbsps':
       return 'tbsp'
     case 'tsps':
