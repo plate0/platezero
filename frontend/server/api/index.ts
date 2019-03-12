@@ -4,6 +4,12 @@ import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
 import { getConfig } from '../config'
+import {
+  unauthorized,
+  invalidAuthentication,
+  internalServerError,
+  badRequest
+} from '../errors'
 
 const cfg = getConfig()
 const r = express.Router()
@@ -38,7 +44,7 @@ r.use(
   (req, res, next) => {
     const { user } = req as any
     if (!user) {
-      return res.status(401).json({ error: 'unauthorized' })
+      return unauthorized(res)
     }
     next()
   },
@@ -57,29 +63,25 @@ r.get('/', (_, res) => {
 r.post('/login', async (req, res) => {
   const { username, password } = req.body
   if (!username || !password) {
-    res.status(400)
-    return res.json({ error: 'bad request' })
+    return badRequest(res, 'username and password are required')
   }
   try {
     const user = await User.findOne({ where: { username } })
     if (!user) {
-      res.status(401)
-      return res.json({ error: 'unauthorized' })
+      return invalidAuthentication(res)
     }
     // it's trivial to discover whether a user exists by visiting /:username,
     // so we're not concerned with timing attacks that leak user existence.
     const validPassword = await user.checkPassword(password)
     if (!validPassword) {
-      res.status(401)
-      return res.json({ error: 'unauthorized' })
+      return invalidAuthentication(res)
     }
     return res.json({
       user,
       token: await user.generateToken()
     })
-  } catch (error) {
-    res.status(500)
-    return res.json({ error })
+  } catch (err) {
+    return internalServerError(res, err)
   }
 })
 

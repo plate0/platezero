@@ -1,6 +1,7 @@
 import 'isomorphic-fetch'
 import fetch, { Response, RequestInit } from 'node-fetch'
 import getConfig from 'next/config'
+import * as _ from 'lodash'
 import { UserJSON, RecipeJSON } from '../models'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
@@ -17,23 +18,49 @@ const authHeaders = (token?: string) =>
       }
     : {}
 
+const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
+  const options = {
+    method: opts.method || 'GET',
+    headers: {
+      ...headers,
+      ...(opts.headers || {})
+    },
+    body: opts.body
+  }
+  return await fetch(`${API_URL}${uri}`, options).then(handleError)
+}
+
 const handleError = async (res: Response): Promise<any> => {
-  if (res.status === 200) {
+  if (res.status >= 200 && res.status < 400) {
     return res.json()
-  } else {
-    let error = 'Unexpected error from server'
-    try {
-      error = (await res.json()).error
-    } catch {
-      // Do Nothing
-    }
-    throw new Error(error)
+  }
+  const messages = (await res.json()).errors
+  throw new PlateZeroApiError(messages)
+}
+
+export class PlateZeroApiError extends Error {
+  public messages: string[] = []
+
+  constructor(messages: string[]) {
+    super('API error')
+    this.messages = messages
   }
 }
 
 export interface PlateZeroRequestInfo extends RequestInit {
   token?: string
 }
+
+export const createUser = (body: {
+  username: string
+  password: string
+  email: string
+}): Promise<UserJSON> =>
+  _fetch<UserJSON>(`/users`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers
+  })
 
 export interface LoginResponse {
   user: UserJSON
