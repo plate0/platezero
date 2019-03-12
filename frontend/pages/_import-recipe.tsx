@@ -50,7 +50,6 @@ const acceptStyle = {
 
 const Dropzone = ({ onDrop }: any) => {
   const cb = useCallback(files => {
-    console.log('files', files)
     onDrop(files)
   }, [])
   const {
@@ -83,7 +82,6 @@ const ImportsStatus = ({ urls }: { urls: UrlImport[] }) => {
   if (!urls || urls.length === 0) {
     return null
   }
-  console.log(urls)
   return (
     <div>
       <h3 className="my-3">Import Status</h3>
@@ -175,7 +173,6 @@ export default class ImportRecipe extends React.Component<
   // not working client side
   static async getInitialProps() {
     const { token } = nextCookie({})
-    console.log('INITIAL PROPS', token)
     return { token }
   }
 

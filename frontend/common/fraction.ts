@@ -1,12 +1,12 @@
 import Fraction from 'fraction.js'
 
-const _mapping = {
+const fractionMapping = {
   '½': '1/2',
   '⅓': '1/3',
   '⅔': '2/3',
   '¼': '1/4',
   '¾': '3/4',
-  '⅖': '2/3',
+  '⅖': '2/5',
   '⅗': '3/5',
   '⅘': '4/5',
   '⅙': '1/6',
@@ -21,6 +21,6 @@ const _mapping = {
 }
 
 export const fraction = (s: string): Fraction => {
-  s = s.replace(/[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒]/gm, m => ` ${_mapping[m]}`).trim()
+  s = s.replace(/[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒]/gm, m => ` ${fractionMapping[m]}`).trim()
   return new Fraction(s)
 }
