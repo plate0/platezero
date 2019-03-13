@@ -1,19 +1,16 @@
 import React from 'react'
 import Router from 'next/router'
-import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
-import Select from 'react-select'
+import Head from 'next/head'
+import { Button, Col, Form, Input, Row } from 'reactstrap'
 import { Layout } from '../components'
-import { createRecipe, Units } from '../common'
-import { RecipeJSON } from '../models'
-import { AmountInput, FractionAmount, NewRecipeTitle } from '../components'
+import { createRecipe } from '../common'
+import { RecipeJSON, IngredientListJSON, ProcedureListJSON } from '../models'
+import {
+  NewRecipeTitle,
+  NewIngredientList
+} from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
-
-type SimpleProperty =
-  | 'title'
-  | 'image_url'
-  | 'source_url'
-  | 'oven_preheat_temperature'
 
 const nullIfFalsey = (o: any): any => {
   if (o === '') {
@@ -28,22 +25,27 @@ const nullIfFalsey = (o: any): any => {
   return o
 }
 
-interface NewRecipeProps {
+interface Props {
   token: string
 }
 
-export default class NewRecipe extends React.Component<
-  NewRecipeProps,
-  RecipeJSON
-> {
-  constructor(props: NewRecipeProps) {
+interface State extends RecipeJSON {
+  errors: string[]
+  ingredientList: IngredientListJSON
+  procedureList: ProcedureListJSON
+}
+
+export default class NewRecipe extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props)
     this.create = this.create.bind(this)
-    this.ingredientOnChange = this.ingredientOnChange.bind(this)
-    this.ingredientListNameChange = this.ingredientListNameChange.bind(this)
     this.stepOnChange = this.stepOnChange.bind(this)
-    this.amountOnChange = this.amountOnChange.bind(this)
     this.state = {
+      errors: [],
+      ingredientList: null,
+      procedureList: null,
+
+      ingredient_lists: [],
       title: '',
       // subtitle
       // description
@@ -52,22 +54,6 @@ export default class NewRecipe extends React.Component<
       source_url: '',
       yield: '',
       preheats: [],
-      ingredient_lists: [
-        {
-          name: '',
-          // image_url
-          ingredients: [
-            {
-              quantity_numerator: undefined,
-              quantity_denominator: undefined,
-              name: '',
-              preparation: '',
-              optional: false,
-              unit: ''
-            }
-          ]
-        }
-      ],
       procedure_lists: [
         {
           name: '',
@@ -92,23 +78,6 @@ export default class NewRecipe extends React.Component<
       title: e.currentTarget.value
     })
 
-  public ingredientOnChange = (i: number, field: string, val: any) => {
-    this.setState(state => {
-      const ingredient = state.ingredient_lists[0].ingredients[i]
-      ingredient[field] = val
-      return state
-    })
-  }
-
-  public amountOnChange = (i: number, val: FractionAmount) => {
-    this.setState(state => {
-      const ingredient = state.ingredient_lists[0].ingredients[i]
-      ingredient.quantity_numerator = val.n
-      ingredient.quantity_denominator = val.d
-      return state
-    })
-  }
-
   public async create(event: React.FormEvent<EventTarget>) {
     console.log('create!', this.state)
     console.log('token', this.props)
@@ -126,28 +95,6 @@ export default class NewRecipe extends React.Component<
     }
   }
 
-  public setField = (field: SimpleProperty, val: string) =>
-    this.setState(state => ({
-      ...state,
-      ...{ [field]: val }
-    }))
-
-  public addIngredient = (i: number) => {
-    this.setState(state => {
-      const ingredients = state.ingredient_lists[i].ingredients
-      ingredients.push({
-        name: '',
-        unit: '',
-        quantity_numerator: undefined,
-        quantity_denominator: undefined,
-        preparation: '',
-        optional: false
-      })
-      state.ingredient_lists[i].ingredients = ingredients
-      return state
-    })
-  }
-
   public addProcedureStep = () => {
     console.log('add procedure step')
     this.setState(state => ({
@@ -159,16 +106,6 @@ export default class NewRecipe extends React.Component<
         }
       ]
     }))
-  }
-
-  public ingredientListNameChange(i: number, val: string) {
-    console.log('name change', i, val)
-    this.setState(state => {
-      console.log('state', i, state)
-      const list = state.ingredient_lists[i]
-      list.name = val
-      return state
-    })
   }
 
   public stepOnChange(listIndex: number, stepIndex: number, val: string) {
@@ -188,6 +125,9 @@ export default class NewRecipe extends React.Component<
   public render() {
     return (
       <Layout>
+        <Head>
+          <title>Create New Recipe on PlateZero</title>
+        </Head>
         <Form onSubmit={this.create} className="mt-3">
           <Row>
             <Col xs="12">
@@ -202,113 +142,9 @@ export default class NewRecipe extends React.Component<
               <h2>Ingredients</h2>
             </Col>
           </Row>
-          <Row>
-            <Col xs="2">
-              <small>Amount</small>
-            </Col>
-            <Col xs="2">
-              <small>Unit</small>
-            </Col>
-            <Col xs="4">
-              <small>Ingredient</small>
-            </Col>
-            <Col xs="3">
-              <small>Preparation</small>
-            </Col>
-            <Col xs="1" />
-          </Row>
-          {this.state.ingredient_lists[0].ingredients.map((ingredient, i) => (
-            <Row key={i}>
-              <Col xs="2">
-                <FormGroup>
-                  <AmountInput
-                    amount={{
-                      n: ingredient.quantity_numerator,
-                      d: ingredient.quantity_denominator
-                    }}
-                    tabIndex={2 + i * 3}
-                    onChange={(e: FractionAmount) => this.amountOnChange(i, e)}
-                  />
-                </FormGroup>
-              </Col>
-              <Col xs="2">
-                <FormGroup>
-                  <Select
-                    tabIndex={`${3 + i * 3}`}
-                    name={`unit-${i}`}
-                    id={`unit-${i}`}
-                    options={Units}
-                    value={_.find(Units, {
-                      value: ingredient.unit
-                    })}
-                    onChange={(e: any) => {
-                      console.log('SELECT ON CHANE', e)
-                      this.ingredientOnChange(i, 'unit', e.value)
-                    }}
-                    styles={{
-                      control: (base, state) => ({
-                        ...base,
-                        color: '#495057',
-                        borderColor: state.isFocused ? '#7adaef' : '#ced4da',
-                        boxShadow: state.isFocused
-                          ? '0 0 0 0.2rem rgba(25, 175, 208, 0.25)'
-                          : 'none',
-                        '&:hover': {
-                          borderColor: state.isFocused ? '#7adaef' : '#ced4da'
-                        }
-                      })
-                    }}
-                  />
-                </FormGroup>
-              </Col>
-              <Col xs="4">
-                <FormGroup>
-                  <Input
-                    type="text"
-                    placeholder="onion, head of lettuce, ground black pepper…"
-                    name={`name-${i}`}
-                    id={`name-${i}`}
-                    tabIndex={4 + i * 3}
-                    value={this.state.ingredient_lists[0].ingredients[i].name}
-                    onChange={e =>
-                      this.ingredientOnChange(i, 'name', e.currentTarget.value)
-                    }
-                  />
-                </FormGroup>
-              </Col>
-              <Col xs="3">
-                <FormGroup>
-                  <Input
-                    type="text"
-                    name=""
-                    id=""
-                    tabIndex={5 + i * 3}
-                    placeholder="finely diced, cleaned, peeled…"
-                  />
-                </FormGroup>
-              </Col>
-              <Col xs="1" className="d-flex align-items-center">
-                <FormGroup check className="mb-3">
-                  <Input
-                    type="checkbox"
-                    name={`optional-${i}`}
-                    id={`optional-${i}`}
-                  />
-                  <Label for={`optional-${i}`} className="m-0" check>
-                    <small>Optional</small>
-                  </Label>
-                </FormGroup>
-              </Col>
-            </Row>
-          ))}
-          <Button
-            type="button"
-            outline
-            color="secondary "
-            onClick={() => this.addIngredient(0)}
-          >
-            Add Another Ingredient
-          </Button>
+          <NewIngredientList
+            onChange={ingredientList => this.setState({ ingredientList })}
+          />
           <h2 className="my-3">Steps</h2>
           <Row>
             {this.state.procedure_lists.map((p, i) => (
@@ -341,6 +177,7 @@ export default class NewRecipe extends React.Component<
             Create New Recipe!
           </Button>
         </Form>
+        <pre>{JSON.stringify(this.state.procedureList, null, 2)}</pre>
       </Layout>
     )
   }
