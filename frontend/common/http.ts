@@ -28,6 +28,7 @@ const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
     },
     body: opts.body
   }
+  console.log('Options', options)
   return await fetch(`${API_URL}${uri}`, options).then(handleError)
 }
 
