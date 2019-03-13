@@ -1,12 +1,10 @@
 import 'isomorphic-fetch'
+import fetch, { Response, RequestInit } from 'node-fetch'
 import getConfig from 'next/config'
 import * as _ from 'lodash'
 import { UserJSON, RecipeJSON } from '../models'
-const {
-  publicRuntimeConfig: {
-    api: { url: API_URL }
-  }
-} = getConfig()
+import { get } from 'lodash'
+const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
 const headers = {
   Accept: 'application/json',
@@ -105,8 +103,8 @@ export const getRecipe = (
   username: string,
   slug: string,
   opts?: PlateZeroRequestInfo
-) =>
-  _fetch(`/users/${username}/recipes/${slug}`, {
+): Promise<RecipeJSON> =>
+  _fetch<RecipeJSON>(`/users/${username}/recipes/${slug}`, {
     headers: authHeaders(opts ? opts.token : '')
   })
 
@@ -123,6 +121,13 @@ export const getRecipeVersion = (
 export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
   _fetch<RecipeJSON>(`/user/recipe`, {
     body: JSON.stringify(recipe),
+    method: 'POST',
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
+export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
+  _fetch<RecipeJSON>(`/user/import/url`, {
+    body: JSON.stringify({ url }),
     method: 'POST',
     headers: authHeaders(opts ? opts.token : '')
   })
