@@ -52,7 +52,6 @@ export class NewIngredientList extends React.Component<Props, State> {
   }
 
   public replaceIngredient(idx: number, ingredient: IngredientLineJSON): void {
-    console.log('got a new ingredient', ingredient)
     this.setState(state => {
       const ingredients = [...state.ingredients]
       ingredients[idx] = ingredient

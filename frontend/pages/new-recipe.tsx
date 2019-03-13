@@ -1,13 +1,14 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
-import { Button, Col, Form, Input, Row } from 'reactstrap'
-import { Layout } from '../components'
-import { createRecipe } from '../common'
+import { Alert, Button, Col, Form, Row } from 'reactstrap'
+import { createRecipe, PlateZeroApiError } from '../common'
 import { RecipeJSON, IngredientListJSON, ProcedureListJSON } from '../models'
 import {
+  Layout,
   NewRecipeTitle,
-  NewIngredientList
+  NewIngredientList,
+  ProcedureList
 } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
@@ -39,13 +40,14 @@ export default class NewRecipe extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.create = this.create.bind(this)
-    this.stepOnChange = this.stepOnChange.bind(this)
+    this.getRecipe = this.getRecipe.bind(this)
     this.state = {
       errors: [],
-      ingredientList: null,
-      procedureList: null,
+      ingredientList: undefined,
+      procedureList: undefined,
 
       ingredient_lists: [],
+      procedure_lists: [],
       title: '',
       // subtitle
       // description
@@ -53,19 +55,7 @@ export default class NewRecipe extends React.Component<Props, State> {
       image_url: '',
       source_url: '',
       yield: '',
-      preheats: [],
-      procedure_lists: [
-        {
-          name: '',
-          steps: [
-            {
-              text: ''
-              // image_url
-              // title
-            }
-          ]
-        }
-      ]
+      preheats: []
     }
   }
   static async getInitialProps(ctx) {
@@ -78,48 +68,33 @@ export default class NewRecipe extends React.Component<Props, State> {
       title: e.currentTarget.value
     })
 
+  public getRecipe(): RecipeJSON {
+    return {
+      title: this.state.title,
+      preheats: [],
+      ingredient_lists: this.state.ingredientList
+        ? [this.state.ingredientList]
+        : [],
+      procedure_lists: this.state.procedureList
+        ? [this.state.procedureList]
+        : []
+    }
+  }
+
   public async create(event: React.FormEvent<EventTarget>) {
-    console.log('create!', this.state)
-    console.log('token', this.props)
-    const { token } = this.props
     event.preventDefault()
-    const recipe = nullIfFalsey({ ...this.state })
-    delete recipe.sous_vide_preheat_temperature
-    console.log('Recipeeeee', recipe)
+    this.setState({ errors: [] })
+    const { token } = this.props
+    const recipe = this.getRecipe()
     try {
       const res = await createRecipe(recipe, { token })
       console.log('Created!', res)
       Router.push(res.html_url)
     } catch (err) {
-      console.log('ERROR CRREATIN RECIPE', err)
+      if (err instanceof PlateZeroApiError) {
+        this.setState({ errors: err.messages })
+      }
     }
-  }
-
-  public addProcedureStep = () => {
-    console.log('add procedure step')
-    this.setState(state => ({
-      procedure_lists: [
-        ...state.procedure_lists,
-        {
-          name: '',
-          steps: [{ text: '' }]
-        }
-      ]
-    }))
-  }
-
-  public stepOnChange(listIndex: number, stepIndex: number, val: string) {
-    this.setState(state => {
-      state.procedure_lists[listIndex].steps[stepIndex].text = val
-      return state
-    })
-  }
-
-  public procedureListNameChange(i: number, val: string) {
-    this.setState(state => {
-      state.procedure_lists[i].name = val
-      return state
-    })
   }
 
   public render() {
@@ -129,6 +104,11 @@ export default class NewRecipe extends React.Component<Props, State> {
           <title>Create New Recipe on PlateZero</title>
         </Head>
         <Form onSubmit={this.create} className="mt-3">
+          {this.state.errors.map((err, key) => (
+            <Alert key={key} color="danger">
+              {err}
+            </Alert>
+          ))}
           <Row>
             <Col xs="12">
               <NewRecipeTitle
@@ -146,38 +126,13 @@ export default class NewRecipe extends React.Component<Props, State> {
             onChange={ingredientList => this.setState({ ingredientList })}
           />
           <h2 className="my-3">Steps</h2>
-          <Row>
-            {this.state.procedure_lists.map((p, i) => (
-              <Col key={i} xs="12" className="mb-3">
-                {p.steps.map((_, j) => (
-                  <Input
-                    key={`pstep-${j}`}
-                    type="textarea"
-                    name="text"
-                    id="exampleText"
-                    placeholder="Step by step instructions..."
-                    value={this.state.procedure_lists[i].steps[j].text}
-                    onChange={e =>
-                      this.stepOnChange(i, j, e.currentTarget.value)
-                    }
-                  />
-                ))}
-              </Col>
-            ))}
-          </Row>
-          <Button
-            type="button"
-            outline
-            color="secondary"
-            onClick={this.addProcedureStep}
-          >
-            Add Another Step
-          </Button>
+          <ProcedureList
+            onChange={procedureList => this.setState({ procedureList })}
+          />
           <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!
           </Button>
         </Form>
-        <pre>{JSON.stringify(this.state.procedureList, null, 2)}</pre>
       </Layout>
     )
   }
