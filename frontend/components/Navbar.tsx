@@ -42,7 +42,7 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
       <RsNavbar expand="md" color="primary" dark={true} className="shadow-sm">
         <Container>
           <Link route="/">
-            <a className="navbar-brand">
+            <a className="navbar-brand py-0">
               <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
             </a>
           </Link>
