@@ -84,12 +84,13 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
 }
 
 const ProcedureList = ({ list }: { list: ProcedureListModel }) => {
-  const name = list.name || 'Instructions'
   return (
     <div className="mb-3">
-      <div>
-        <strong>{name}</strong>
-      </div>
+      {list.name && (
+        <div>
+          <strong>{list.name}</strong>
+        </div>
+      )}
       <Row>
         {list.lines.map((l, key) => (
           <Col xs="6" key={key}>
@@ -120,11 +121,6 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
 }
 
 const IngredientList = ({ list }: { list: IngredientListModel }) => {
-  const title = (
-    <div>
-      <strong>{list.name || 'Ingredients'}</strong>
-    </div>
-  )
   const image = list.image_url && (
     <Col xs="8">
       <img className="w-100" src={list.image_url} />
@@ -134,7 +130,11 @@ const IngredientList = ({ list }: { list: IngredientListModel }) => {
     <Row className="mb-3">
       {image}
       <Col xs={image ? '4' : '12'}>
-        {title}
+        {list.name && (
+          <div>
+            <strong>{list.name}</strong>
+          </div>
+        )}
         {list.lines.map((line, key) => (
           <IngredientListLine key={key} line={line} />
         ))}
@@ -165,7 +165,7 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionModel }) => {
         ))}
       </Col>
       <Col xs={12}>
-        <h5>Procedure</h5>
+        <h5>Instructions</h5>
         {v.procedureLists.map((pl, key) => (
           <ProcedureList key={key} list={pl} />
         ))}
