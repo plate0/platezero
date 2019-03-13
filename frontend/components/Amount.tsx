@@ -1,4 +1,5 @@
 import React from 'react'
+import Fraction from 'fraction.js'
 import * as _ from 'lodash'
 
 interface AmountProps {
@@ -7,17 +8,11 @@ interface AmountProps {
 }
 
 export const Amount = (props: AmountProps) => {
-  const n = props.numerator
-  const d = props.denominator
-  if (_.isNil(n) || _.isNil(d)) {
+  try {
+    const text = new Fraction(props.numerator, props.denominator).toFraction(true)
+    console.log(text)
+    return <span>{text}</span>
+  } catch {
     return <span />
   }
-  if (d === 1) {
-    return <span>{n}</span>
-  }
-  return (
-    <span>
-      {n}/{d}
-    </span>
-  )
 }
