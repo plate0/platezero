@@ -3,7 +3,7 @@ import Router from 'next/router'
 import { Button, Col, Form, FormGroup, Input, Label, Row } from 'reactstrap'
 import Select from 'react-select'
 import { Layout } from '../components'
-import { createRecipe } from '../common/http'
+import { createRecipe, Units } from '../common'
 import { RecipeJSON } from '../models'
 import { AmountInput, NewRecipeTitle } from '../components'
 import nextCookie from 'next-cookies'
@@ -27,19 +27,6 @@ const nullIfFalsey = (o: any): any => {
   }
   return o
 }
-
-const Units = [
-  { label: 'gram', value: 'g' },
-  { label: 'milligram', value: 'mg' },
-  { label: 'kilogram', value: 'kg' },
-  { label: 'pound', value: 'lbs' },
-  { label: 'cup', value: 'c' },
-  { label: 'tablespoon', value: 'tbsp' },
-  { label: 'teaspoon', value: 'tsp' },
-  { label: 'liter', value: 'l' },
-  { label: 'milliliter', value: 'ml' },
-  { label: 'deciliter', value: 'dl' }
-]
 
 interface NewRecipeProps {
   token: string

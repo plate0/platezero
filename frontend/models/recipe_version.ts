@@ -14,6 +14,7 @@ import { fn } from 'sequelize'
 
 import { Preheat } from './preheat'
 import { RecipeYield } from './recipe_yield'
+import { RecipeDuration } from './recipe_duration'
 import { Recipe } from './recipe'
 import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { User } from './user'
@@ -54,6 +55,10 @@ export class RecipeVersion extends Model<RecipeVersion> {
   @ForeignKey(() => RecipeYield)
   public recipe_yield_id: number
 
+  @Column
+  @ForeignKey(() => RecipeDuration)
+  public recipe_duration_id: number
+
   @AllowNull(false)
   @Column
   public message: string
@@ -69,6 +74,9 @@ export class RecipeVersion extends Model<RecipeVersion> {
 
   @BelongsTo(() => RecipeYield)
   public recipeYield: RecipeYield
+
+  @BelongsTo(() => RecipeDuration)
+  public recipeDuration: RecipeDuration
 
   @BelongsToMany(() => ProcedureList, () => RecipeVersionProcedureList)
   public procedureLists: ProcedureList[]

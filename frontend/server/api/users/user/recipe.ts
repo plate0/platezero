@@ -2,6 +2,7 @@ import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
 
+import { RecipeDuration } from '../../../../models'
 import { User } from '../../../../models/user'
 import { Recipe } from '../../../../models/recipe'
 import { RecipeVersion } from '../../../../models/recipe_version'
@@ -58,6 +59,7 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
         },
         { model: User },
         { model: RecipeYield, attributes: ['text'] },
+        { model: RecipeDuration, attributes: ['duration_seconds'] },
         {
           model: Preheat,
           attributes: ['name', 'temperature', 'unit'],
@@ -70,14 +72,14 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
           include: [
             {
               model: ProcedureLine,
-              attributes: ['text'],
+              attributes: ['text', 'title', 'image_url'],
               through: { attributes: [] }
             }
           ]
         },
         {
           model: IngredientList,
-          attributes: ['name'],
+          attributes: ['name', 'image_url'],
           through: { attributes: [] },
           include: [
             {
