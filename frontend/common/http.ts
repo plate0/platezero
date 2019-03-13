@@ -7,7 +7,6 @@ const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
 const headers = {
   Accept: 'application/json',
-  'Accept-Encoding': 'gzip',
   'Content-Type': 'application/json'
 }
 
