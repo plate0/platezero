@@ -9,20 +9,16 @@ import {
 } from 'reactstrap'
 import { UserCard } from './UserCard'
 import { PlateZeroContext } from '../pages/_app'
-const {
-  routes: { Link }
-} = require('../routes')
-
-export interface NavbarProps {}
+import { Link } from '../routes'
 
 export interface NavbarState {
   isOpen: boolean
 }
 
-export class Navbar extends React.Component<NavbarProps, NavbarState> {
+export class Navbar extends React.Component<any, NavbarState> {
   public static contextType = PlateZeroContext
 
-  constructor(props: NavbarProps) {
+  constructor(props: any) {
     super(props)
     this.state = {
       isOpen: false
@@ -52,11 +48,6 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
               {user ? <UserCard user={user} compact={true} /> : <AnonNav />}
             </Nav>
           </Collapse>
-          <style jsx>{`
-            a {
-              letter-spacing: 0.01rem;
-            }
-          `}</style>
         </Container>
       </RsNavbar>
     )

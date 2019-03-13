@@ -19,9 +19,7 @@ import { useDropzone } from 'react-dropzone'
 import * as parse from 'url-parse'
 import { importUrl, PlateZeroApiError } from '../common'
 import { RecipeJSON } from '../models'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 const baseStyle = {
   width: '100%',

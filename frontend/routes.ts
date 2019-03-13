@@ -9,3 +9,7 @@ export const routes: any = nextroutes()
   .add('import-recipe', '/recipes/import')
   .add('recipe', '/:username/:slug')
   .add('recipe-version', '/:username/:slug/versions/:versionId')
+
+// Easy Access, usage:
+// import { Link } from '../routes'
+export const Link = routes.Link

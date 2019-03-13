@@ -1,9 +1,7 @@
 import React from 'react'
 import { Row, Col } from 'reactstrap'
 import { IfLoggedIn } from './IfLoggedIn'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 export interface ProfileNavProps {
   username: string

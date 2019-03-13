@@ -6,9 +6,7 @@ import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
 import { RecipeCard } from '../components/RecipeCard'
 import { getUser } from '../common/http'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 interface UserProps {
   user: UserJSON

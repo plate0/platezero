@@ -1,9 +1,7 @@
 import React from 'react'
 import { Recipe as RecipeModel } from '../models/recipe'
 import { UserCard } from '../components'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 interface BranchProps {
   name: string

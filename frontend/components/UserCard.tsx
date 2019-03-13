@@ -1,9 +1,7 @@
 import React from 'react'
 import { UserJSON } from '../models/user'
 import { ProfilePicture } from './ProfilePicture'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 export const UserCard = (props: { user: UserJSON; compact?: boolean }) => {
   const route = `/${props.user.username}`

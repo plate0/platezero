@@ -1,8 +1,6 @@
 import React from 'react'
 import { Card, CardImg, CardBody, CardTitle } from 'reactstrap'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 export interface RecipeCardProps {
   title: string
