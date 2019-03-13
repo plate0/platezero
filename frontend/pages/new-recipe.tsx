@@ -5,7 +5,7 @@ import Select from 'react-select'
 import { Layout } from '../components'
 import { createRecipe, Units } from '../common'
 import { RecipeJSON } from '../models'
-import { AmountInput, NewRecipeTitle } from '../components'
+import { AmountInput, FractionAmount, NewRecipeTitle } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 
@@ -42,6 +42,7 @@ export default class NewRecipe extends React.Component<
     this.ingredientOnChange = this.ingredientOnChange.bind(this)
     this.ingredientListNameChange = this.ingredientListNameChange.bind(this)
     this.stepOnChange = this.stepOnChange.bind(this)
+    this.amountOnChange = this.amountOnChange.bind(this)
     this.state = {
       title: '',
       // subtitle
@@ -57,8 +58,8 @@ export default class NewRecipe extends React.Component<
           // image_url
           ingredients: [
             {
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               name: '',
               preparation: '',
               optional: false,
@@ -99,6 +100,15 @@ export default class NewRecipe extends React.Component<
     })
   }
 
+  public amountOnChange = (i: number, val: FractionAmount) => {
+    this.setState(state => {
+      const ingredient = state.ingredient_lists[0].ingredients[i]
+      ingredient.quantity_numerator = val.n
+      ingredient.quantity_denominator = val.d
+      return state
+    })
+  }
+
   public async create(event: React.FormEvent<EventTarget>) {
     console.log('create!', this.state)
     console.log('token', this.props)
@@ -128,8 +138,8 @@ export default class NewRecipe extends React.Component<
       ingredients.push({
         name: '',
         unit: '',
-        quantity_numerator: 1,
-        quantity_denominator: 1,
+        quantity_numerator: undefined,
+        quantity_denominator: undefined,
         preparation: '',
         optional: false
       })
@@ -192,21 +202,37 @@ export default class NewRecipe extends React.Component<
               <h2>Ingredients</h2>
             </Col>
           </Row>
+          <Row>
+            <Col xs="2">
+              <small>Amount</small>
+            </Col>
+            <Col xs="2">
+              <small>Unit</small>
+            </Col>
+            <Col xs="4">
+              <small>Ingredient</small>
+            </Col>
+            <Col xs="3">
+              <small>Preparation</small>
+            </Col>
+            <Col xs="1" />
+          </Row>
           {this.state.ingredient_lists[0].ingredients.map((ingredient, i) => (
             <Row key={i}>
-              <Col xs="1">
+              <Col xs="2">
                 <FormGroup>
-                  <Label for="amount" className="m-0">
-                    <small>Amount</small>
-                  </Label>
-                  <AmountInput value={0} tabIndex={2 + i * 3} />
+                  <AmountInput
+                    amount={{
+                      n: ingredient.quantity_numerator,
+                      d: ingredient.quantity_denominator
+                    }}
+                    tabIndex={2 + i * 3}
+                    onChange={(e: FractionAmount) => this.amountOnChange(i, e)}
+                  />
                 </FormGroup>
               </Col>
               <Col xs="2">
                 <FormGroup>
-                  <Label for="unit" className="m-0">
-                    <small>Unit</small>
-                  </Label>
                   <Select
                     tabIndex={`${3 + i * 3}`}
                     name={`unit-${i}`}
@@ -235,13 +261,11 @@ export default class NewRecipe extends React.Component<
                   />
                 </FormGroup>
               </Col>
-              <Col xs="2">
+              <Col xs="4">
                 <FormGroup>
-                  <Label for="name" className="m-0">
-                    <small>Name</small>
-                  </Label>
                   <Input
                     type="text"
+                    placeholder="onion, head of lettuce, ground black pepper…"
                     name={`name-${i}`}
                     id={`name-${i}`}
                     tabIndex={4 + i * 3}
@@ -252,17 +276,24 @@ export default class NewRecipe extends React.Component<
                   />
                 </FormGroup>
               </Col>
-              <Col xs="6">
+              <Col xs="3">
                 <FormGroup>
-                  <Label for="prep" className="m-0">
-                    <small>Preparation</small>
-                  </Label>
-                  <Input type="text" name="" id="" tabIndex={5 + i * 3} />
+                  <Input
+                    type="text"
+                    name=""
+                    id=""
+                    tabIndex={5 + i * 3}
+                    placeholder="finely diced, cleaned, peeled…"
+                  />
                 </FormGroup>
               </Col>
               <Col xs="1" className="d-flex align-items-center">
-                <FormGroup check>
-                  <Input type="checkbox" name={`optional-${i}`} />
+                <FormGroup check className="mb-3">
+                  <Input
+                    type="checkbox"
+                    name={`optional-${i}`}
+                    id={`optional-${i}`}
+                  />
                   <Label for={`optional-${i}`} className="m-0" check>
                     <small>Optional</small>
                   </Label>

@@ -1,42 +1,47 @@
 import React from 'react'
 import Fraction from 'fraction.js'
 import { Input } from 'reactstrap'
+import * as _ from 'lodash'
 
-const DECIMAL = /(\d*)\.(\d*)/gm
-const FRACTION = /(\d*)\/(\d*)/gm
+export interface FractionAmount {
+  n: number | undefined
+  d: number | undefined
+}
 
-export interface AmountInputState {
-  value: number
-  text: string
+const parse = (s: string): FractionAmount | undefined => {
+  try {
+    const f = new Fraction(s)
+    const { n, d } = f
+    return { n, d }
+  } catch {
+    return { n: undefined, d: undefined }
+  }
+}
+
+const isValid = (f: FractionAmount): boolean =>
+  !_.isNil(f) && !_.isNil(f.n) && !_.isNil(f.d)
+
+const fractionToString = (amt: FractionAmount): string => {
+  if (!isValid(amt)) {
+    return ''
+  }
+  try {
+    return new Fraction(amt).toFraction()
+  } catch {
+    return ''
+  }
 }
 
 interface AmountInputProps {
-  value: number
+  amount: FractionAmount
+  onChange?: (amount: FractionAmount) => void
   tabIndex?: number
 }
 
-const fractionToDecimal = (fraction: string): number => {
-  const [num, denom] = fraction.split(/\//)
-  return parseFloat(num) / parseFloat(denom)
-}
-
-const parse = (s: string): number => {
-  if (s.match(DECIMAL)) {
-    return parseFloat(s)
-  }
-  if (s.match(FRACTION)) {
-    console.log('Fraction!')
-    const split = s.split(/\s+/g)
-    if (split.length == 1) {
-      return fractionToDecimal(s)
-    } else if (split.length == 2) {
-      const fraction = fractionToDecimal(split[1])
-      return parseInt(split[0], 10) + fraction
-    } else {
-      return 0
-    }
-  }
-  return parseInt(s)
+interface AmountInputState {
+  text: string
+  fraction: FractionAmount
+  valid: boolean
 }
 
 export class AmountInput extends React.Component<
@@ -45,24 +50,22 @@ export class AmountInput extends React.Component<
 > {
   constructor(props: AmountInputProps) {
     super(props)
+    this.onChange = this.onChange.bind(this)
     this.state = {
-      text: '',
-      value: 0
+      fraction: this.props.amount,
+      text: fractionToString(this.props.amount),
+      valid: isValid(this.props.amount)
     }
   }
 
   public onChange = (e: React.FormEvent<HTMLInputElement>) => {
-    console.log(
-      'Amount State',
-      this.state.value,
-      parse(e.currentTarget.value),
-      new Fraction(parse(e.currentTarget.value))
-    )
-    this.setState({
-      text: e.currentTarget.value,
-      value: parse(e.currentTarget.value)
-    })
-    // emit.
+    const text = e.currentTarget.value
+    const fraction = parse(text)
+    const valid = isValid(fraction)
+    this.setState({ text, fraction, valid })
+    if (this.props.onChange) {
+      this.props.onChange(fraction)
+    }
   }
 
   public render() {
@@ -70,15 +73,11 @@ export class AmountInput extends React.Component<
       <Input
         type="text"
         name="ingredientAmount"
-        id="ingredientAmount"
         tabIndex={this.props.tabIndex}
         value={this.state.text}
         onChange={this.onChange}
-        invalid={isNaN(this.state.value)}
-        style={{
-          paddingRight: 12,
-          backgroundImage: 'none'
-        }}
+        valid={this.state.valid}
+        placeholder="2/3…"
       />
     )
   }
