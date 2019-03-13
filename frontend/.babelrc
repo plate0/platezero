@@ -6,11 +6,12 @@
         "@zeit/next-typescript/babel"
       ],
       "plugins": [
+        "dynamic-import-node",
         [
           "@babel/plugin-proposal-decorators",
           {
             "legacy": true
-          }
+          },
         ]
       ]
     },
@@ -20,6 +21,7 @@
         "@zeit/next-typescript/babel"
       ],
       "plugins": [
+        "dynamic-import-node",
         [
           "@babel/plugin-proposal-decorators",
           {
@@ -41,6 +43,7 @@
         "@zeit/next-typescript/babel"
       ],
       "plugins": [
+        "dynamic-import-node",
         [
           "@babel/plugin-proposal-decorators",
           {
