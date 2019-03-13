@@ -9,6 +9,7 @@
   "dependencies": {
     "@babel/plugin-proposal-decorators": "7.3.0",
     "@types/express": "4.16.1",
+    "@types/isomorphic-fetch": "^0.0.35",
     "@types/jest": "24.0.11",
     "@types/js-cookie": "2.2.1",
     "@types/next": "8.0.1",
@@ -52,6 +53,6 @@
     "ts-node": "8.0.2",
     "turndown": "5.0.3",
     "typescript": "3.3.3333",
-    "url-parse": "1.4.4"
+    "url-parse": "^1.4.4"
   }
 }
