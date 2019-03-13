@@ -11,6 +11,7 @@ import Head from 'next/head'
 import { Recipe as RecipeModel } from '../models/recipe'
 import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
 import { getRecipe, getRecipeVersion } from '../common/http'
+import { Link } from '../routes'
 
 interface RecipeProps {
   recipe: RecipeModel
@@ -38,6 +39,7 @@ export default class Recipe extends React.Component<RecipeProps> {
           <title>{recipe.title}</title>
         </Head>
         <RecipeNav recipe={recipe} />
+        {recipeVersion && <RecipeEditButton recipe={recipe} branch="master" />}
         {recipe.description && (
           <Card className="mb-3">
             <CardHeader>
@@ -63,3 +65,17 @@ export default class Recipe extends React.Component<RecipeProps> {
     )
   }
 }
+
+interface RecipeEditButtonProps {
+  recipe: RecipeModel
+  branch: string
+}
+const RecipeEditButton = (props: RecipeEditButtonProps) => (
+  <Link
+    route={`/${props.recipe.owner.username}/${props.recipe.slug}/branches/${
+      props.branch
+    }/edit`}
+  >
+    <a className="btn btn-secondary">Edit</a>
+  </Link>
+)

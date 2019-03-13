@@ -11,18 +11,18 @@ interface Props {
 
 interface State {
   name?: string
-  steps: ProcedureLineJSON[]
+  lines: ProcedureLineJSON[]
 }
 
 export class ProcedureList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.notifyChange = this.notifyChange.bind(this)
-    this.replaceStep = this.replaceStep.bind(this)
+    this.replaceLine = this.replaceLine.bind(this)
     this.state = props.procedureList
       ? props.procedureList
       : {
-          steps: [{ text: '' }]
+          lines: [{ text: '' }]
         }
   }
 
@@ -32,11 +32,11 @@ export class ProcedureList extends React.Component<Props, State> {
     }
   }
 
-  public replaceStep(idx: number, text: string): void {
+  public replaceLine(idx: number, text: string): void {
     this.setState(
       state => ({
-        steps: _.map(state.steps, (step, i) =>
-          Object.assign(step, i === idx ? { text } : undefined)
+        lines: _.map(state.lines, (line, i) =>
+          Object.assign(line, i === idx ? { text } : undefined)
         )
       }),
       this.notifyChange
@@ -46,7 +46,7 @@ export class ProcedureList extends React.Component<Props, State> {
   public render() {
     return (
       <div>
-        {this.state.steps.map((s, key) => (
+        {_.map(this.state.lines, (s, key) => (
           <Row key={key}>
             <Col className="mb-3">
               <Input
@@ -54,7 +54,7 @@ export class ProcedureList extends React.Component<Props, State> {
                 type="textarea"
                 placeholder="Step by step instructions..."
                 value={s.text}
-                onChange={e => this.replaceStep(key, e.target.value)}
+                onChange={e => this.replaceLine(key, e.target.value)}
               />
             </Col>
           </Row>
@@ -65,7 +65,7 @@ export class ProcedureList extends React.Component<Props, State> {
           color="secondary"
           onClick={_ =>
             this.setState(
-              state => ({ steps: [...state.steps, { text: '' }] }),
+              state => ({ lines: [...state.lines, { text: '' }] }),
               this.notifyChange
             )
           }

@@ -3,12 +3,13 @@ import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
 
-import { Layout, RecipeNav } from '../components'
-import { getRecipeVersion } from '../common/http'
+import { Layout, RecipeNav, ProcedureList } from '../components'
+import { getRecipe, getRecipeVersion } from '../common/http'
 import { RecipeVersion as RecipeVersionModel } from '../models'
 
 interface EditRecipeProps {
   token: string
+  branch: string
   recipeVersion: RecipeVersionModel
 }
 
@@ -20,12 +21,19 @@ export default class EditRecipe extends React.Component<EditRecipeProps> {
   static async getInitialProps(ctx) {
     const { query } = ctx
     const { token } = nextCookie(ctx)
+    const branch = query.branch
+    const recipe = await getRecipe(query.username, query.slug, { token })
+    const recipeVersionId = _.get(
+      _.head(_.filter(recipe.branches, { name: branch })),
+      'recipe_version_id'
+    )
     return {
       token,
+      branch,
       recipeVersion: await getRecipeVersion(
         query.username,
         query.slug,
-        parseInt(query.versionId, 10)
+        recipeVersionId
       )
     }
   }
@@ -35,16 +43,19 @@ export default class EditRecipe extends React.Component<EditRecipeProps> {
     return (
       <Layout>
         <Head>
-          <title>Edit {v.recipe.title} on PlateZero</title>
+          <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
         <RecipeNav recipe={v.recipe} />
-        <pre>
-          {JSON.stringify(
-            _.omit(v, ['recipe', 'author', 'id', 'created_at', 'message']),
-            null,
-            2
-          )}
-        </pre>
+        <h1>Ingredients</h1>
+        <h1>Instructions</h1>
+        <pre>{JSON.stringify(v.procedureLists)}</pre>
+        {v.procedureLists.map((pl, key) => (
+          <ProcedureList
+            procedureList={pl}
+            key={key}
+            onChange={e => console.log('new procedure list', e)}
+          />
+        ))}
       </Layout>
     )
   }

@@ -142,7 +142,7 @@ export class BlueApronImporter implements Importer {
     return [
       {
         name: 'Instructions',
-        steps: $('.section-recipe.recipe-instructions .step.row .col-md-6')
+        lines: $('.section-recipe.recipe-instructions .step.row .col-md-6')
           .map(function(): ProcedureLineJSON {
             return {
               image_url: $(this)
