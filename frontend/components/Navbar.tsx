@@ -1,13 +1,12 @@
 import React from 'react'
 import {
-  Button,
   Collapse,
   NavbarToggler,
   Nav,
   Container,
   Navbar as RsNavbar
 } from 'reactstrap'
-import { UserCard } from './UserCard'
+import { UserJSON } from '../models'
 import { PlateZeroContext } from '../pages/_app'
 import { ProfilePicture } from './ProfilePicture'
 import { Link } from '../routes'
