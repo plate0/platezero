@@ -1,34 +1,110 @@
 import React from 'react'
+import * as moment from 'moment'
 import Head from 'next/head'
+import { get } from 'lodash'
 import { Row, Col } from 'reactstrap'
-import { Layout, RecipeNav, Timestamp, Amount, UserCard } from '../components'
+import { Layout, RecipeNav, Amount } from '../components'
 import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientList as IngredientListModel } from '../models/ingredient_list'
 import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
 import { getRecipeVersion } from '../common/http'
+import * as ReactMarkdown from 'react-markdown'
 
-interface ProcedureListProps {
-  procedureList: ProcedureListModel
+interface RecipeHeaderProps {
+  title: string
+  subtitle?: string
+  description?: string
+  duration?: number | string
+  yield?: string
+  imageUrl?: string
+  source?: string
 }
 
-const ProcedureList = (props: ProcedureListProps) => {
-  const pl = props.procedureList
+const RecipeHeader = (props: RecipeHeaderProps) => {
+  const source = props.source && (
+    <Col xs="auto">
+      <a target="_blank" href={props.source}>
+        <i className="fal fa-external-link" />
+      </a>
+    </Col>
+  )
+  const subtitle = props.subtitle && (
+    <h2 className="mb-3 text-muted">{props.subtitle}</h2>
+  )
+  const details = (props.duration || props.yield) && (
+    <Row className="border-top border-bottom align-items-center">
+      {props.duration && (
+        <Col xs="6" className="my-2 text-center">
+          <i className="fal fa-clock fa-2x" />
+          <div className="text-uppercase">Time</div>
+          <div>
+            {moment.duration(props.duration, 'seconds').asMinutes()} min
+          </div>
+        </Col>
+      )}
+      {props.yield && (
+        <Col xs="6" className="my-2 text-center">
+          <i className="fal fa-utensils fa-2x" />
+          <div className="text-uppercase">Servings</div>
+          <div>{props.yield}</div>
+        </Col>
+      )}
+    </Row>
+  )
+  const description = props.description && (
+    <p className="my-2">{props.description}</p>
+  )
+  return (
+    <Row>
+      <Col xs="6">
+        <Row className="align-items-center justify-content-between">
+          <Col xs="auto">
+            <h1 className="mb-1">{props.title}</h1>
+          </Col>
+          {source}
+        </Row>
+        {subtitle}
+        {details}
+        {description}
+      </Col>
+      <Col xs="6">
+        <img src={props.imageUrl} className="w-100" />
+      </Col>
+      <style jsx>
+        {`
+          h1 {
+            font-size: 30px;
+          }
+          h2 {
+            font-size: 16px;
+          }
+        `}
+      </style>
+    </Row>
+  )
+}
+
+interface ProcedureListProps {
+  list: ProcedureListModel
+}
+
+const ProcedureList = ({ list }: ProcedureListProps) => {
+  const name = list.name || 'Instructions'
   return (
     <div className="mb-3">
-      {pl.name ? (
-        <div>
-          <strong>{pl.name}</strong>
-        </div>
-      ) : (
-        undefined
-      )}
-      {pl.lines.map((l, key) => (
-        <div key={key}>
-          <img src={l.image_url} />
-          <p>{l.text}</p>
-        </div>
-      ))}
+      <div>
+        <strong>{name}</strong>
+      </div>
+      <Row>
+        {list.lines.map((l, key) => (
+          <Col xs="6" key={key}>
+            {l.image_url && <img className="w-100" src={l.image_url} />}
+            {l.title && <h3 className="border-bottom">{l.title}</h3>}
+            <ReactMarkdown source={l.text} />
+          </Col>
+        ))}
+      </Row>
     </div>
   )
 }
@@ -57,25 +133,30 @@ const IngredientListLine = (props: IngredientListLineProps) => {
 }
 
 interface IngredientListProps {
-  ingredientList: IngredientListModel
+  list: IngredientListModel
 }
 
-const IngredientList = (props: IngredientListProps) => {
-  const title = props.ingredientList.name ? (
+const IngredientList = ({ list }: IngredientListProps) => {
+  const title = (
     <div>
-      <strong>{props.ingredientList.name}</strong>
+      <strong>{list.name || 'Ingredients'}</strong>
     </div>
-  ) : (
-    undefined
+  )
+  const image = list.image_url && (
+    <Col xs="8">
+      <img className="w-100" src={list.image_url} />
+    </Col>
   )
   return (
-    <div className="mb-3">
-      {title}
-      <img src={props.ingredientList.image_url} />
-      {props.ingredientList.lines.map((line, key) => (
-        <IngredientListLine key={key} line={line} />
-      ))}
-    </div>
+    <Row className="mb-3">
+      {image}
+      <Col xs={image ? '4' : '12'}>
+        {title}
+        {list.lines.map((line, key) => (
+          <IngredientListLine key={key} line={line} />
+        ))}
+      </Col>
+    </Row>
   )
 }
 
@@ -102,34 +183,27 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
           <title>{v.recipe.title}</title>
         </Head>
         <RecipeNav recipe={v.recipe} selectedRecipeVersion={v.id} />
-        <div>{v.recipe.subtitle}</div>
-        <div>{v.recipe.description}</div>
-        <div>{v.recipeDuration.duration_seconds}</div>
-        <div>{v.recipeYield.text}</div>
-        <img src={v.recipe.image_url} />
-        <Row className="align-items-center my-3">
-          <Col xs="auto" className="py-1">
-            <UserCard user={v.author} />
-            <div className="text-muted">
-              <Timestamp t={v.created_at} />
-            </div>
-          </Col>
-          <Col className="align-self-stretch">
-            <pre className="bg-light p-1 h-100">{v.message}</pre>
-          </Col>
-        </Row>
-        <Row>{v.recipe.source_url}</Row>
+        <RecipeHeader
+          title={v.recipe.title}
+          subtitle={get(v.recipe, 'subtitle')}
+          description={get(v.recipe, 'description')}
+          duration={get(v.recipeDuration, 'duration_seconds')}
+          yield={get(v.recipeYield, 'text')}
+          imageUrl={get(v.recipe, 'image_url')}
+          source={get(v.recipe, 'source_url')}
+        />
         <Row>
-          <Col xs={12} lg={4}>
-            <h5>Ingredients</h5>
+          <Col xs="12">
             {v.ingredientLists.map((il, key) => (
-              <IngredientList key={key} ingredientList={il} />
+              <IngredientList key={key} list={il} />
             ))}
           </Col>
-          <Col xs={12} lg={8}>
-            <h5>Procedure</h5>
+        </Row>
+        <div className="w-100" style={{ pageBreakBefore: 'always' }} />
+        <Row>
+          <Col xs="12">
             {v.procedureLists.map((pl, key) => (
-              <ProcedureList key={key} procedureList={pl} />
+              <ProcedureList key={key} list={pl} />
             ))}
           </Col>
         </Row>

@@ -8,14 +8,15 @@ import {
   ProcedureLineJSON
 } from '../../models'
 import * as cheerio from 'cheerio'
+import * as TurndownService from 'turndown'
 import { fraction, unitfy } from '../../common'
 
-export class BlueApronImporter extends Importer {
+export class BlueApronImporter implements Importer {
   private $: any
   private url: string
+  private turndown = new TurndownService()
 
   constructor(url: string) {
-    super()
     this.url = url
   }
 
@@ -136,7 +137,7 @@ export class BlueApronImporter extends Importer {
   }
 
   public async getProcedureLists(): Promise<ProcedureListJSON[]> {
-    const { $ } = this
+    const { $, turndown } = this
     return [
       {
         name: 'Instructions',
@@ -152,10 +153,13 @@ export class BlueApronImporter extends Importer {
                 .first()
                 .text()
                 .trim(),
-              text: $(this)
-                .find('.step-txt')
-                .first()
-                .text()
+              text: turndown
+                .turndown(
+                  $(this)
+                    .find('.step-txt')
+                    .first()
+                    .html()
+                )
                 .trim()
             }
           })
