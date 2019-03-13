@@ -131,7 +131,7 @@ describe('Blue Apron import recipe', () => {
         'https://media.blueapron.com/recipes/21409/recipe_steps/32374/1548270543-426-0028-6520/Jasmine_2P_Stockpot-Medium_Fluff_WEB_high_feature.jpg',
       title: 'Cook the rice:',
       text:
-        'In a medium pot, combine the rice, a pinch of salt, and 1 cup of water. Heat to boiling on high. Once boiling, reduce the heat to low. Cover and cook, without stirring, 12 to 14 minutes, or until the water has been absorbed and the rice is tender. Turn off the heat and fluff with a fork. Cover to keep warm.'
+        'In a medium pot, combine the **rice**,** a pinch of salt**, and **1 cup of water**. Heat to boiling on high. Once boiling, reduce the heat to low. Cover and cook, without stirring, 12 to 14 minutes, or until the water has been absorbed and the rice is tender. Turn off the heat and fluff with a fork. Cover to keep warm.'
     })
   })
 })
