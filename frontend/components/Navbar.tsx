@@ -9,9 +9,36 @@ import {
 } from 'reactstrap'
 import { UserCard } from './UserCard'
 import { PlateZeroContext } from '../pages/_app'
+import { ProfilePicture } from './ProfilePicture'
 import { Link } from '../routes'
 
-export interface NavbarState {
+const UserCardNav = ({ user }: { user: UserJSON }) => (
+  <Link route={`/${user.username}`}>
+    <a className="d-block p-1 rounded">
+      <div className="d-flex align-items-center">
+        <div className="text-white">
+          {user.name ? user.name : user.username}
+        </div>
+        <div className="ml-2">
+          <ProfilePicture img={user.avatar_url} size={30} />
+        </div>
+      </div>
+      <style jsx>
+        {`
+          a:hover {
+            text-decoration: none;
+            background-color: rgba(255, 255, 255, 0.2);
+          }
+          div {
+            letter-spacing: 0.01rem;
+          }
+        `}
+      </style>
+    </a>
+  </Link>
+)
+
+interface NavbarState {
   isOpen: boolean
 }
 
@@ -45,7 +72,7 @@ export class Navbar extends React.Component<any, NavbarState> {
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              {user ? <UserCard user={user} compact={true} /> : <AnonNav />}
+              {user ? <UserCardNav user={user} /> : <AnonNav />}
             </Nav>
           </Collapse>
         </Container>
@@ -57,14 +84,14 @@ export class Navbar extends React.Component<any, NavbarState> {
 const AnonNav = () => (
   <div>
     <Link route="/register">
-      <Button color="link" className="text-light">
+      <a role="button" className="btn btn-link text-light">
         Sign Up
-      </Button>
+      </a>
     </Link>
     <Link route="/login">
-      <Button color="link" className="text-light">
+      <a role="button" className="btn btn-link text-light">
         Log In
-      </Button>
+      </a>
     </Link>
   </div>
 )

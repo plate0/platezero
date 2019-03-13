@@ -9,6 +9,8 @@ import {
   Label
 } from 'reactstrap'
 import { authenticated, login } from '../common'
+import { Layout } from '../components'
+import Head from 'next/head'
 
 interface LoginState {
   error: string
@@ -59,57 +61,62 @@ export default class Login extends React.Component<any, LoginState> {
       <ErrorMessage err={this.state.error} />
     ) : null
     return (
-      <Container>
-        <div className="row justify-content-center">
-          <div className="mt-3 col-12 col-md-8 col-lg-4">
-            <div className="text-center">
-              <h3 className="py-3">Sign in to PlateZero</h3>
-            </div>
-            {error}
-            <div className="border rounded p-3">
-              <Form onSubmit={this.login}>
-                <FormGroup>
-                  <Label for="username">
-                    <strong>Username</strong>
-                  </Label>
-                  <Input
-                    type="text"
-                    name="username"
-                    id="username"
-                    required
-                    autoFocus={true}
-                    tabIndex={1}
-                    value={this.state.username}
-                    onChange={this.usernameChange}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label for="password">
-                    <strong>Password</strong>
-                  </Label>
-                  <Input
-                    type="password"
-                    name="password"
-                    id="password"
-                    required
-                    tabIndex={2}
-                    value={this.state.password}
-                    onChange={this.passwordChange}
-                  />
-                </FormGroup>
-                <Button
-                  type="submit"
-                  color="primary"
-                  className="btn-block"
-                  disabled={!this.state.username || !this.state.password}
-                >
-                  Sign In
-                </Button>
-              </Form>
+      <Layout>
+        <Head>
+          <title>Log in to PlateZero</title>
+        </Head>
+        <Container>
+          <div className="row justify-content-center">
+            <div className="mt-3 col-12 col-md-8 col-lg-4">
+              <div className="text-center">
+                <h3 className="py-3">Log in to PlateZero</h3>
+              </div>
+              {error}
+              <div className="border rounded p-3">
+                <Form onSubmit={this.login}>
+                  <FormGroup>
+                    <Label for="username">
+                      <strong>Username</strong>
+                    </Label>
+                    <Input
+                      type="text"
+                      name="username"
+                      id="username"
+                      required
+                      autoFocus={true}
+                      tabIndex={1}
+                      value={this.state.username}
+                      onChange={this.usernameChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="password">
+                      <strong>Password</strong>
+                    </Label>
+                    <Input
+                      type="password"
+                      name="password"
+                      id="password"
+                      required
+                      tabIndex={2}
+                      value={this.state.password}
+                      onChange={this.passwordChange}
+                    />
+                  </FormGroup>
+                  <Button
+                    type="submit"
+                    color="primary"
+                    className="btn-block"
+                    disabled={!this.state.username || !this.state.password}
+                  >
+                    Sign In
+                  </Button>
+                </Form>
+              </div>
             </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </Layout>
     )
   }
 }
