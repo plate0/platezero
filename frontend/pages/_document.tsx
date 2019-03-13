@@ -24,6 +24,12 @@ export default class MyDocument extends Document {
             href="https://fonts.googleapis.com/css?family=Lato:300,400,700"
             rel="stylesheet"
           />
+          <link
+            rel="stylesheet"
+            href="https://pro.fontawesome.com/releases/v5.7.2/css/all.css"
+            integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev"
+            crossOrigin="anonymous"
+          />
         </Head>
         <body className="custom_class">
           <Main />

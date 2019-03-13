@@ -1,9 +1,7 @@
 import React from 'react'
 import { Row, Col } from 'reactstrap'
 import { IfLoggedIn } from './IfLoggedIn'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 export interface ProfileNavProps {
   username: string
@@ -17,10 +15,19 @@ export const ProfileNav = (props: ProfileNavProps) => (
       </Link>
     </Col>
     <IfLoggedIn username={props.username}>
-      <Col xs="2">
-        <Link route="/recipes/new">
-          <a className="btn btn-primary">New Recipe</a>
-        </Link>
+      <Col xs="4">
+        <Row>
+          <Col xs="6">
+            <Link route="/recipes/new">
+              <a className="btn btn-primary">New Recipe</a>
+            </Link>
+          </Col>
+          <Col xs="6">
+            <Link route="/recipes/import">
+              <a className="btn btn-primary">Import Recipes</a>
+            </Link>
+          </Col>
+        </Row>
       </Col>
     </IfLoggedIn>
   </Row>

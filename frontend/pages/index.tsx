@@ -6,9 +6,7 @@ import '../style/index.scss'
 import { Layout, UserCard } from '../components'
 import { getUsers } from '../common/http'
 import { UserJSON } from '../models/user'
-const {
-  routes: { Link }
-} = require('../routes')
+import { Link } from '../routes'
 
 export default class Index extends Component<{ users: UserJSON[] }> {
   public static async getInitialProps() {
