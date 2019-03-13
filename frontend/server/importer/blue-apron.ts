@@ -8,8 +8,8 @@ import {
   ProcedureLineJSON
 } from '../../models'
 import * as cheerio from 'cheerio'
-import TurndownService from 'turndown'
 import { fraction, unitfy } from '../../common'
+const TurndownService = require('turndown')
 
 export class BlueApronImporter implements Importer {
   private $: any

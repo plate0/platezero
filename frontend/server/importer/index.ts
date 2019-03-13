@@ -10,6 +10,7 @@ export const url = (u: string) => {
   try {
     return new _importers[parsed.hostname](u)
   } catch (err) {
+    console.log(err)
     throw new Error(`unsupported site: '${parsed.hostname}'`)
   }
 }
