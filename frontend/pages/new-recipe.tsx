@@ -13,25 +13,13 @@ import {
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 
-const nullIfFalsey = (o: any): any => {
-  if (o === '') {
-    return undefined
-  } else if (o === 0) {
-    return null
-  } else if (_.isPlainObject(o)) {
-    return _.mapValues(o, nullIfFalsey)
-  } else if (_.isArray(o)) {
-    return _.map(o, nullIfFalsey)
-  }
-  return o
-}
-
 interface Props {
   token: string
 }
 
-interface State extends RecipeJSON {
+interface State {
   errors: string[]
+  title: string
   ingredientList: IngredientListJSON
   procedureList: ProcedureListJSON
 }
@@ -43,19 +31,9 @@ export default class NewRecipe extends React.Component<Props, State> {
     this.getRecipe = this.getRecipe.bind(this)
     this.state = {
       errors: [],
-      ingredientList: undefined,
-      procedureList: undefined,
-
-      ingredient_lists: [],
-      procedure_lists: [],
       title: '',
-      // subtitle
-      // description
-      // duration
-      image_url: '',
-      source_url: '',
-      yield: '',
-      preheats: []
+      ingredientList: undefined,
+      procedureList: undefined
     }
   }
   static async getInitialProps(ctx) {
