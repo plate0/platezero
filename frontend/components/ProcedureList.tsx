@@ -2,15 +2,16 @@ import React from 'react'
 import { Button, Col, Input, Row } from 'reactstrap'
 import * as _ from 'lodash'
 
-import { ProcedureListJSON } from '../models'
+import { ProcedureListJSON, ProcedureLineJSON } from '../models'
 
 interface Props {
+  procedureList?: ProcedureListJSON
   onChange?: (procedureList: ProcedureListJSON) => void
 }
 
 interface State {
-  name: string
-  steps: string[]
+  name?: string
+  steps: ProcedureLineJSON[]
 }
 
 export class ProcedureList extends React.Component<Props, State> {
@@ -18,25 +19,25 @@ export class ProcedureList extends React.Component<Props, State> {
     super(props)
     this.notifyChange = this.notifyChange.bind(this)
     this.replaceStep = this.replaceStep.bind(this)
-    this.state = {
-      name: '',
-      steps: ['']
-    }
+    this.state = props.procedureList
+      ? props.procedureList
+      : {
+          steps: [{ text: '' }]
+        }
   }
 
   public notifyChange() {
     if (this.props.onChange) {
-      this.props.onChange({
-        name: this.state.name,
-        steps: _.map(this.state.steps, text => ({ text }))
-      })
+      this.props.onChange(this.state)
     }
   }
 
-  public replaceStep(idx: number, newText: string): void {
+  public replaceStep(idx: number, text: string): void {
     this.setState(
       state => ({
-        steps: _.map(state.steps, (text, i) => (i === idx ? newText : text))
+        steps: _.map(state.steps, (step, i) =>
+          Object.assign(step, i === idx ? { text } : undefined)
+        )
       }),
       this.notifyChange
     )
@@ -52,7 +53,7 @@ export class ProcedureList extends React.Component<Props, State> {
                 key={key}
                 type="textarea"
                 placeholder="Step by step instructions..."
-                value={s}
+                value={s.text}
                 onChange={e => this.replaceStep(key, e.target.value)}
               />
             </Col>
@@ -64,7 +65,7 @@ export class ProcedureList extends React.Component<Props, State> {
           color="secondary"
           onClick={_ =>
             this.setState(
-              state => ({ steps: [...state.steps, ''] }),
+              state => ({ steps: [...state.steps, { text: '' }] }),
               this.notifyChange
             )
           }
