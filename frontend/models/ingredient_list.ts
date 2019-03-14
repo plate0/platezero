@@ -12,7 +12,7 @@ import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 
 export interface IngredientListJSON {
-  ingredients: IngredientLineJSON[]
+  lines: IngredientLineJSON[]
   image_url?: string
   name?: string
 }
@@ -20,7 +20,8 @@ export interface IngredientListJSON {
 @Table({
   tableName: 'ingredient_lists'
 })
-export class IngredientList extends Model<IngredientList> {
+export class IngredientList extends Model<IngredientList>
+  implements IngredientListJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
@@ -42,9 +43,7 @@ export class IngredientList extends Model<IngredientList> {
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.ingredients, ingredient =>
-        IngredientLine.create(ingredient, options)
-      )
+      _.map(il.lines, ingredient => IngredientLine.create(ingredient, options))
     )
     await Promise.all(
       _.map(ingredientLines, (line, sort_key) =>

@@ -8,8 +8,16 @@ import {
   Table
 } from 'sequelize-typescript'
 
-import { RecipeVersion } from './recipe_version'
-import { Recipe } from './recipe'
+import { RecipeVersion, RecipeVersionJSON } from './recipe_version'
+import { Recipe, RecipeJSON } from './recipe'
+
+export interface RecipeBranchJSON {
+  recipe_id: number
+  name: string
+  recipe_version_id: number
+  recipe: RecipeJSON
+  recipeVersion: RecipeVersionJSON
+}
 
 @Table({
   tableName: 'recipe_branches'

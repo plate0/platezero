@@ -12,7 +12,7 @@ interface Props {
 
 interface State {
   name: string
-  ingredients: IngredientLineJSON[]
+  lines: IngredientLineJSON[]
 }
 
 const newIngredient = () => ({
@@ -32,7 +32,7 @@ export class NewIngredientList extends React.Component<Props, State> {
     this.replaceIngredient = this.replaceIngredient.bind(this)
     this.state = {
       name: '',
-      ingredients: [newIngredient()]
+      lines: [newIngredient()]
     }
   }
 
@@ -45,17 +45,17 @@ export class NewIngredientList extends React.Component<Props, State> {
   public addIngredient() {
     this.setState(
       state => ({
-        ingredients: [...state.ingredients, newIngredient()]
+        lines: [...state.lines, newIngredient()]
       }),
       this.notifyChange
     )
   }
 
-  public replaceIngredient(idx: number, ingredient: IngredientLineJSON): void {
+  public replaceIngredient(idx: number, line: IngredientLineJSON): void {
     this.setState(state => {
-      const ingredients = [...state.ingredients]
-      ingredients[idx] = ingredient
-      return { ingredients }
+      const lines = [...state.lines]
+      lines[idx] = line
+      return { lines }
     }, this.notifyChange)
   }
 
@@ -77,7 +77,7 @@ export class NewIngredientList extends React.Component<Props, State> {
           </Col>
           <Col xs="1" />
         </Row>
-        {this.state.ingredients.map((ingredient, key) => (
+        {this.state.lines.map((ingredient, key) => (
           <IngredientLine
             key={key}
             ingredient={ingredient}

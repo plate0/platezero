@@ -17,7 +17,8 @@ export interface ProcedureLineJSON {
 @Table({
   tableName: 'procedure_lines'
 })
-export class ProcedureLine extends Model<ProcedureLine> {
+export class ProcedureLine extends Model<ProcedureLine>
+  implements ProcedureLineJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

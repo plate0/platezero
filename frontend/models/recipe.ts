@@ -17,8 +17,8 @@ import {
 import slugify from 'slugify'
 import * as _ from 'lodash'
 
-import { User } from './user'
-import { RecipeBranch } from './recipe_branch'
+import { User, UserJSON } from './user'
+import { RecipeBranch, RecipeBranchJSON } from './recipe_branch'
 import { RecipeVersion } from './recipe_version'
 import { RecipeYield } from './recipe_yield'
 import { RecipeDuration } from './recipe_duration'
@@ -41,10 +41,11 @@ export interface RecipeJSON {
   html_url?: string
   yield?: string
   duration?: number
-  preheats: Preheat[]
-  ingredient_lists: IngredientListJSON[]
-  procedure_lists: ProcedureListJSON[]
-  branches?: { name: string; recipe_version_id: number }[]
+  preheats?: Preheat[]
+  ingredient_lists?: IngredientListJSON[]
+  procedure_lists?: ProcedureListJSON[]
+  branches?: RecipeBranchJSON[]
+  owner?: UserJSON
 }
 
 const isUniqueSlugError = (e): boolean => {
@@ -61,7 +62,7 @@ const isUniqueSlugError = (e): boolean => {
 @Table({
   tableName: 'recipes'
 })
-export class Recipe extends Model<Recipe> {
+export class Recipe extends Model<Recipe> implements RecipeJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
