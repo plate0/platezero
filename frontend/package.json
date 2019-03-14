@@ -55,5 +55,10 @@
     "turndown": "5.0.3",
     "typescript": "3.3.3333",
     "url-parse": "^1.4.4"
+  },
+  "devDependencies": {
+    "jest-diff": "^24.5.0",
+    "jest-matcher-utils": "^24.5.0",
+    "pretty-format": "^24.5.0"
   }
 }

@@ -6,6 +6,7 @@ import * as rfc6902 from 'rfc6902'
 import { IngredientLine } from './IngredientLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientListJSON } from '../models/ingredient_list'
+import { createIngredientListPatch } from '../common/diff'
 
 interface Props {
   onChange?: (ingredientList: IngredientListJSON, patch?: rfc6902.Patch) => void
@@ -29,13 +30,10 @@ const newIngredient = (): IngredientLineJSON => ({
   unit: ''
 })
 
-const defaultState: State = {
-  list: {
-    name: '',
-    lines: [newIngredient()]
-  },
-  patch: []
-}
+const newIngredientList = (): IngredientListJSON => ({
+  name: '',
+  lines: [newIngredient()]
+})
 
 export class IngredientList extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -44,7 +42,10 @@ export class IngredientList extends React.Component<Props, State> {
     this.notifyChange = this.notifyChange.bind(this)
     this.replaceLine = this.replaceLine.bind(this)
     this.removeLine = this.removeLine.bind(this)
-    this.state = Object.assign({}, defaultState, { list: props.ingredientList })
+    this.state = {
+      patch: [],
+      list: props.ingredientList || newIngredientList()
+    }
   }
 
   public notifyChange() {
@@ -140,75 +141,3 @@ export class IngredientList extends React.Component<Props, State> {
     )
   }
 }
-
-/**
- * Create a RFC6902 JSON patch for an edited ingredient list
- *
- * The patch generator that ships with the `rfc6902` package will try to make
- * diffs that only affect a very small part of the overall JSON document, and
- * by doing so, actually generates much larger and less-useful diffs than we
- * can trivially create ourselves.
- *
- * For example, if we remove an ingredient and add a new one, the default diff
- * algorithm will output a series of "replace" operations where the old
- * ingredient's name, quantity, etc, are all replaced with the new ingredient's
- * values. In fact, the equivalent but more meaningful representation for
- * PlateZero is to simply represent this as a "remove" operation followed by an
- * "add" operation with the value being the entire IngredientLine.
- *
- * We really only care about three things: (1) adding a new ingredient, (2)
- * removing an existing ingredient, and (3) editing an existing ingredient.
- */
-const createIngredientListPatch = (
-  orig: IngredientListJSON,
-  curr: IngredientListJSON
-): rfc6902.Patch => {
-  const patch = []
-
-  // Check for changes in the original lines
-  _.each(orig.lines, (origLine, origIdx) => {
-    const currLine = _.find(curr.lines, { id: origLine.id })
-
-    // Check whether the original line has been removed
-    if (!currLine) {
-      patch.push({ op: 'remove', path: `/lines/${origIdx}` })
-      return
-    }
-
-    // Check whether the original line has been changed
-    if (!isSameIngredient(origLine, currLine)) {
-      patch.push({
-        op: 'replace',
-        path: `/lines/${origIdx}`,
-        value: _.omit(currLine, 'id')
-      })
-    }
-  })
-
-  // Check the current lines to see if any are newly added
-  _.each(curr.lines, currLine => {
-    if (currLine.id <= 0) {
-      patch.push({ op: 'add', path: '/lines/-', value: _.omit(currLine, 'id') })
-    }
-  })
-  return patch
-}
-
-const ingredientLineProps = [
-  'name',
-  'optional',
-  'preparation',
-  'quantity_numerator',
-  'quantity_denominator',
-  'unit'
-]
-
-const isSameIngredient = (
-  a: IngredientLineJSON,
-  b: IngredientLineJSON
-): boolean =>
-  _.reduce(
-    ingredientLineProps,
-    (result, prop) => result && a[prop] === b[prop],
-    true
-  )
