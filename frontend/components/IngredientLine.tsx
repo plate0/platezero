@@ -86,7 +86,7 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
             <Input
               type="text"
               placeholder="onion, head of lettuce, ground black pepper…"
-              value={this.state.name}
+              value={this.state.name || ''}
               onChange={e =>
                 this.setState(
                   { name: e.currentTarget.value },
@@ -101,7 +101,7 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
             <Input
               type="text"
               placeholder="finely diced, cleaned, peeled…"
-              value={this.state.preparation}
+              value={this.state.preparation || ''}
               onChange={e =>
                 this.setState(
                   { preparation: e.currentTarget.value },

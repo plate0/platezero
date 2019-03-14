@@ -109,7 +109,7 @@ export class BlueApronImporter implements Importer {
       {
         name: 'Ingredients',
         image_url: $('.section-recipe.recipe-ingredients img').attr('src'),
-        ingredients: $('.section-recipe.recipe-ingredients ul li')
+        lines: $('.section-recipe.recipe-ingredients ul li')
           .map(function() {
             const amount = $(this)
               .find('span')

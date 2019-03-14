@@ -44,7 +44,7 @@ describe('Blue Apron import recipe', () => {
   test('get ingredient lists', async () => {
     const list = await importer.getIngredientLists()
     expect(list).toHaveLength(1)
-    expect(list[0].ingredients).toEqual([
+    expect(list[0].lines).toEqual([
       {
         name: 'Boneless, Skinless Chicken Breasts',
         quantity_numerator: 2,

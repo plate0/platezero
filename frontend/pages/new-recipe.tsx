@@ -7,7 +7,7 @@ import { RecipeJSON, IngredientListJSON, ProcedureListJSON } from '../models'
 import {
   Layout,
   NewRecipeTitle,
-  NewIngredientList,
+  IngredientList,
   ProcedureList
 } from '../components'
 import nextCookie from 'next-cookies'
@@ -100,7 +100,8 @@ export default class NewRecipe extends React.Component<Props, State> {
               <h2>Ingredients</h2>
             </Col>
           </Row>
-          <NewIngredientList
+          <IngredientList
+            ingredientList={this.state.ingredientList}
             onChange={ingredientList => this.setState({ ingredientList })}
           />
           <h2 className="my-3">Steps</h2>

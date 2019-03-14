@@ -8,11 +8,12 @@ import { IngredientListJSON } from '../models/ingredient_list'
 
 interface Props {
   onChange?: (ingredientList: IngredientListJSON) => void
+  ingredientList?: IngredientListJSON
 }
 
 interface State {
-  name: string
-  ingredients: IngredientLineJSON[]
+  name?: string
+  lines: IngredientLineJSON[]
 }
 
 const newIngredient = () => ({
@@ -24,16 +25,18 @@ const newIngredient = () => ({
   unit: ''
 })
 
-export class NewIngredientList extends React.Component<Props, State> {
+export class IngredientList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.addIngredient = this.addIngredient.bind(this)
     this.notifyChange = this.notifyChange.bind(this)
-    this.replaceIngredient = this.replaceIngredient.bind(this)
-    this.state = {
-      name: '',
-      ingredients: [newIngredient()]
-    }
+    this.replaceLine = this.replaceLine.bind(this)
+    this.state = props.ingredientList
+      ? props.ingredientList
+      : {
+          name: '',
+          lines: [newIngredient()]
+        }
   }
 
   public notifyChange() {
@@ -45,17 +48,17 @@ export class NewIngredientList extends React.Component<Props, State> {
   public addIngredient() {
     this.setState(
       state => ({
-        ingredients: [...state.ingredients, newIngredient()]
+        lines: [...state.lines, newIngredient()]
       }),
       this.notifyChange
     )
   }
 
-  public replaceIngredient(idx: number, ingredient: IngredientLineJSON): void {
+  public replaceLine(idx: number, ingredient: IngredientLineJSON): void {
     this.setState(state => {
-      const ingredients = [...state.ingredients]
-      ingredients[idx] = ingredient
-      return { ingredients }
+      const lines = [...state.lines]
+      lines[idx] = ingredient
+      return { ...state, lines }
     }, this.notifyChange)
   }
 
@@ -77,13 +80,11 @@ export class NewIngredientList extends React.Component<Props, State> {
           </Col>
           <Col xs="1" />
         </Row>
-        {this.state.ingredients.map((ingredient, key) => (
+        {this.state.lines.map((ingredient, key) => (
           <IngredientLine
             key={key}
             ingredient={ingredient}
-            onChange={newIngredient =>
-              this.replaceIngredient(key, newIngredient)
-            }
+            onChange={newIngredient => this.replaceLine(key, newIngredient)}
           />
         ))}
         <Button

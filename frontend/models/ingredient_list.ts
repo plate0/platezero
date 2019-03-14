@@ -12,7 +12,7 @@ import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 
 export interface IngredientListJSON {
-  ingredients: IngredientLineJSON[]
+  lines: IngredientLineJSON[]
   image_url?: string
   name?: string
 }
@@ -42,7 +42,7 @@ export class IngredientList extends Model<IngredientList> {
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.ingredients, ingredient =>
+      _.map(il.lines, ingredient =>
         IngredientLine.create(ingredient, options)
       )
     )
