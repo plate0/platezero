@@ -70,7 +70,12 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
   }
 
   public signUpEnabled(): boolean {
-    return Boolean(this.state.username.length && this.state.email.length && this.state.password.length && !this.state.working)
+    return Boolean(
+      this.state.username.length &&
+        this.state.email.length &&
+        this.state.password.length &&
+        !this.state.working
+    )
   }
 
   public render() {
@@ -132,7 +137,11 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
                 </a>
               </FormText>
             </FormGroup>
-            <Button color="primary" block={true} disabled={!this.signUpEnabled()}>
+            <Button
+              color="primary"
+              block={true}
+              disabled={!this.signUpEnabled()}
+            >
               Sign Up for PlateZero
             </Button>
           </Form>

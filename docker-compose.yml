@@ -11,10 +11,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-  frontend:
-    build: ./frontend
-    image: recipe/frontend
-    ports:
-      - 9100:9100
-    depends_on:
-      - db
