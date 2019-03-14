@@ -46,6 +46,7 @@
     "react-select": "2.4.1",
     "reactstrap": "7.1.0",
     "reflect-metadata": "0.1.13",
+    "rfc6902": "3.0.1",
     "sequelize": "4.43.0",
     "sequelize-typescript": "0.6.7",
     "serve-favicon": "2.5.0",

@@ -51,7 +51,7 @@ export default class EditRecipe extends React.Component<EditRecipeProps> {
           <IngredientList
             key={key}
             ingredientList={il}
-            onChange={e => console.log('new ingredient list', e)}
+            onChange={ingredientList => this.setState({ ingredientList })}
           />
         ))}
         <h1>Instructions</h1>
@@ -59,7 +59,7 @@ export default class EditRecipe extends React.Component<EditRecipeProps> {
           <ProcedureList
             procedureList={pl}
             key={key}
-            onChange={e => console.log('new procedure list', e)}
+            onChange={procedureList => this.setState({ procedureList })}
           />
         ))}
       </Layout>

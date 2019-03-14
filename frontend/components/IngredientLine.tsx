@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, FormGroup, Input, Label, Row } from 'reactstrap'
+import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap'
 import Select from 'react-select'
 import * as _ from 'lodash'
 
@@ -9,6 +9,7 @@ import { IngredientLineJSON } from '../models/ingredient_line'
 
 interface Props {
   onChange?: (ingredient: IngredientLineJSON) => void
+  onRemove?: () => void
   ingredient: IngredientLineJSON
 }
 
@@ -46,6 +47,15 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
   public render() {
     return (
       <Row>
+        <Col xs="auto" className="d-flex align-items-center pr-0">
+          <Button
+            color="link"
+            className="text-secondary"
+            onClick={_ => this.props.onRemove && this.props.onRemove()}
+          >
+            <i className="fal fa-times pb-3" />
+          </Button>
+        </Col>
         <Col xs="2">
           <FormGroup>
             <AmountInput
@@ -81,7 +91,7 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
             />
           </FormGroup>
         </Col>
-        <Col xs="4">
+        <Col>
           <FormGroup>
             <Input
               type="text"

@@ -84,14 +84,6 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
           include: [
             {
               model: IngredientLine,
-              attributes: [
-                'name',
-                'quantity_numerator',
-                'quantity_denominator',
-                'preparation',
-                'unit',
-                'optional'
-              ],
               through: { attributes: [] }
             }
           ]

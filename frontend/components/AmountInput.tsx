@@ -26,7 +26,7 @@ const fractionToString = (amt: FractionAmount): string => {
     return ''
   }
   try {
-    return new Fraction(amt).toFraction()
+    return new Fraction(amt).toFraction(true)
   } catch {
     return ''
   }
