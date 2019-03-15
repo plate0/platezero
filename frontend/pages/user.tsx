@@ -32,12 +32,12 @@ const Recipes = ({ recipes, user }: RecipesProps) => {
   return (
     <section>
       <Row className="align-items-center border-bottom">
-        <Col xs="11">
+        <Col xs="10">
           <IfLoggedIn username={user.username} else={not}>
             {me}
           </IfLoggedIn>
         </Col>
-        <Col xs="1" className="text-center">
+        <Col xs="2" className="text-center">
           <Link to={`/${user.username}/recipes`}>
             <a>See All</a>
           </Link>
