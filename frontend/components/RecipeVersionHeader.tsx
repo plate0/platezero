@@ -2,10 +2,10 @@ import React from 'react'
 import { Row, Col } from 'reactstrap'
 import { Timestamp } from './Timestamp'
 import { UserCard } from './UserCard'
-import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
+import { RecipeVersionJSON } from '../models/recipe_version'
 
 export const RecipeVersionHeader = (props: {
-  recipeVersion: RecipeVersionModel
+  recipeVersion: RecipeVersionJSON
 }) => {
   const v = props.recipeVersion
   return (

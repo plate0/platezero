@@ -38,6 +38,7 @@ export interface RecipeJSON {
   description?: string
   image_url?: string
   source_url?: string
+  slug?: string
   html_url?: string
   owner: UserJSON
   branches: RecipeBranchJSON[]
