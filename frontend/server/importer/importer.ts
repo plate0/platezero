@@ -1,5 +1,5 @@
-import { RecipeJSON } from '../../models'
+import { PostRecipe } from '../../common/request-models'
 
 export interface Importer {
-  recipe(): Promise<RecipeJSON>
+  recipe(): Promise<PostRecipe>
 }

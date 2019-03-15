@@ -1,5 +1,5 @@
 import React from 'react'
-import { Recipe as RecipeModel } from '../models/recipe'
+import { RecipeJSON } from '../models/recipe'
 import { UserCard } from '../components'
 import { Link } from '../routes'
 
@@ -19,7 +19,7 @@ const Branch = (props: BranchProps) => {
 }
 
 interface RecipeNavProps {
-  recipe: RecipeModel
+  recipe: RecipeJSON
   selectedRecipeVersion?: number
 }
 

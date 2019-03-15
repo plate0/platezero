@@ -16,7 +16,7 @@ import * as crypto from 'crypto'
 import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 
-import { Recipe } from './recipe'
+import { Recipe, RecipeJSON } from './recipe'
 import { getConfig } from '../server/config'
 
 const cfg = getConfig()
@@ -26,14 +26,14 @@ export interface UserJSON {
   email: string
   id: number
   name: string
-  recipes?: Recipe[]
+  recipes?: RecipeJSON[]
   username: string
 }
 
 @Table({
   tableName: 'users'
 })
-export class User extends Model<User> {
+export class User extends Model<User> implements UserJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

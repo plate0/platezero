@@ -8,10 +8,17 @@ import {
   Table
 } from 'sequelize-typescript'
 
+export interface PreheatJSON {
+  id?: number
+  name: string
+  temperature: number
+  unit: string
+}
+
 @Table({
   tableName: 'preheats'
 })
-export class Preheat extends Model<Preheat> {
+export class Preheat extends Model<Preheat> implements PreheatJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

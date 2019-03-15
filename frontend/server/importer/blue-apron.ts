@@ -1,13 +1,13 @@
 import { Importer } from './importer'
 import * as moment from 'moment'
 import {
-  RecipeJSON,
   Preheat,
   IngredientListJSON,
   ProcedureListJSON,
   ProcedureLineJSON
 } from '../../models'
 import * as cheerio from 'cheerio'
+import { PostRecipe } from '../../common/request-models'
 import { fraction } from '../../common/fraction'
 import { unitfy } from '../../common/unit'
 const TurndownService = require('turndown')
@@ -22,7 +22,7 @@ export class BlueApronImporter implements Importer {
   }
 
   // @Override
-  public async recipe(): Promise<RecipeJSON> {
+  public async recipe(): Promise<PostRecipe> {
     return {
       title: await this.getTitle(),
       subtitle: await this.getSubtitle(),
@@ -109,7 +109,7 @@ export class BlueApronImporter implements Importer {
       {
         name: 'Ingredients',
         image_url: $('.section-recipe.recipe-ingredients img').attr('src'),
-        ingredients: $('.section-recipe.recipe-ingredients ul li')
+        lines: $('.section-recipe.recipe-ingredients ul li')
           .map(function() {
             const amount = $(this)
               .find('span')
@@ -142,7 +142,7 @@ export class BlueApronImporter implements Importer {
     return [
       {
         name: 'Instructions',
-        steps: $('.section-recipe.recipe-instructions .step.row .col-md-6')
+        lines: $('.section-recipe.recipe-instructions .step.row .col-md-6')
           .map(function(): ProcedureLineJSON {
             return {
               image_url: $(this)

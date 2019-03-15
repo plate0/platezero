@@ -44,7 +44,7 @@ describe('Blue Apron import recipe', () => {
   test('get ingredient lists', async () => {
     const list = await importer.getIngredientLists()
     expect(list).toHaveLength(1)
-    expect(list[0].ingredients).toEqual([
+    expect(list[0].lines).toEqual([
       {
         name: 'Boneless, Skinless Chicken Breasts',
         quantity_numerator: 2,
@@ -125,8 +125,8 @@ describe('Blue Apron import recipe', () => {
     const procedures = await importer.getProcedureLists()
     expect(procedures).toHaveLength(1)
     expect(procedures[0].name).toEqual('Instructions')
-    expect(procedures[0].steps).toHaveLength(5)
-    expect(procedures[0].steps[0]).toEqual({
+    expect(procedures[0].lines).toHaveLength(5)
+    expect(procedures[0].lines[0]).toEqual({
       image_url:
         'https://media.blueapron.com/recipes/21409/recipe_steps/32374/1548270543-426-0028-6520/Jasmine_2P_Stockpot-Medium_Fluff_WEB_high_feature.jpg',
       title: 'Cook the rice:',
