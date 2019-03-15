@@ -22,7 +22,8 @@ export interface RecipeBranchJSON {
 @Table({
   tableName: 'recipe_branches'
 })
-export class RecipeBranch extends Model<RecipeBranch> {
+export class RecipeBranch extends Model<RecipeBranch>
+  implements RecipeBranchJSON {
   @AllowNull(false)
   @PrimaryKey
   @Column
