@@ -40,6 +40,8 @@ export class IngredientLine extends Model<IngredientLine> {
 
   @IsIn([
     [
+      // omitted
+      '',
       // mass
       'g',
       'mg',

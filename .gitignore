@@ -1,1 +1,7 @@
 venv
+.project
+.settings
+package.json
+tsconfig.json
+mode_modules
+yarn.lock

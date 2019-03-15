@@ -37,18 +37,19 @@ export const validateNewRecipe = validator({
   }),
   ingredient_lists: Joi.array()
     .items({
-      name: Joi.string(),
+      name: Joi.string().allow(''),
       image_url: Joi.string(),
       ingredients: Joi.array()
         .items({
           quantity_numerator: Joi.number(),
           quantity_denominator: Joi.number(),
           name: Joi.string().required(),
-          unit: Joi.string(),
-          preparation: Joi.string(),
+          unit: Joi.string().allow(''),
+          preparation: Joi.string().allow(''),
           optional: Joi.boolean().required()
         })
         .required()
+        .min(1)
     })
     .required(),
   procedure_lists: Joi.array()
