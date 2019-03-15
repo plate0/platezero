@@ -1,16 +1,14 @@
 import React from 'react'
 import { Col, Row } from 'reactstrap'
-import { Layout, ProfileHeader, ProfileNav, IfLoggedIn } from '../components'
+import { Layout, ProfileHeader, IfLoggedIn } from '../components'
 import Head from 'next/head'
 import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
+import { RecipeJSON } from '../models/recipe'
 import { RecipeCard } from '../components/RecipeCard'
 import { getUser } from '../common/http'
 import { Link } from '../routes'
-
-interface UserProps {
-  user: UserJSON
-}
+import { getName } from '../common/model-helpers'
 
 const RecipeListBlankslate = (props: { username: string }) => (
   <div className="bg-light text-secondary text-center rounded p-5 mt-3">
@@ -23,20 +21,52 @@ const RecipeListBlankslate = (props: { username: string }) => (
   </div>
 )
 
-const ListRecipes = props => (
-  <Row>
-    {!props.recipes.length && (
-      <Col>
-        <RecipeListBlankslate {...props} />
-      </Col>
-    )}
-    {props.recipes.map(r => (
-      <Col xs="12" md="4" xl="3" key={r.slug} className="mt-3">
-        <RecipeCard {...r} username={props.username} />
-      </Col>
-    ))}
-  </Row>
-)
+interface RecipesProps {
+  user: UserJSON
+  recipes: RecipeJSON[]
+}
+
+const Recipes = ({ recipes, user }: RecipesProps) => {
+  const me = <h2 className="m-0">Your Recipes</h2>
+  const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
+  return (
+    <section>
+      <Row className="align-items-center border-bottom">
+        <Col xs="11">
+          <IfLoggedIn username={user.username} else={not}>
+            {me}
+          </IfLoggedIn>
+        </Col>
+        <Col xs="1" className="text-center">
+          <Link to={`/${user.username}/recipes`}>
+            <a>See All</a>
+          </Link>
+        </Col>
+      </Row>
+      <Row>
+        {!recipes.length && (
+          <Col>
+            <RecipeListBlankslate username={user.username} />
+          </Col>
+        )}
+        {recipes.map(r => (
+          <Col xs="12" md="4" xl="3" key={r.slug} className="mt-3">
+            <RecipeCard
+              title={r.title}
+              slug={r.slug!}
+              image_url={r.image_url}
+              username={user.username}
+            />
+          </Col>
+        ))}
+      </Row>
+    </section>
+  )
+}
+
+interface UserProps {
+  user: UserJSON
+}
 
 export default class User extends React.Component<UserProps> {
   static async getInitialProps(ctx) {
@@ -57,8 +87,7 @@ export default class User extends React.Component<UserProps> {
           </title>
         </Head>
         <ProfileHeader user={user} />
-        <ProfileNav username={user.username} />
-        <ListRecipes recipes={user.recipes} username={user.username} />
+        <Recipes recipes={user.recipes} user={user} />
       </Layout>
     )
   }
