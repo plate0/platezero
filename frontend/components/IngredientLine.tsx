@@ -13,19 +13,36 @@ interface Props {
   ingredient: IngredientLineJSON
 }
 
-export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
+interface State {
+  ingredient: IngredientLineJSON
+  removed: boolean
+}
+
+export class IngredientLine extends React.Component<Props, State> {
   constructor(props) {
     super(props)
     this.onAmountChange = this.onAmountChange.bind(this)
     this.onUnitChange = this.onUnitChange.bind(this)
     this.notifyChange = this.notifyChange.bind(this)
-    this.state = this.props.ingredient
+    this.remove = this.remove.bind(this)
+    this.state = {
+      ingredient: this.props.ingredient,
+      removed: false
+    }
   }
 
   public notifyChange(): void {
-    if (this.props.onChange) {
+    if (_.isFunction(this.props.onChange)) {
       this.props.onChange(this.state)
     }
+  }
+
+  public remove(): void {
+    this.setState({ removed: true }, () => {
+      if (_.isFunction(this.props.onRemove)) {
+        this.props.onRemove()
+      }
+    })
   }
 
   public onAmountChange(amount: FractionAmount): void {
@@ -45,14 +62,11 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
   }
 
   public render() {
+    const ing = this.state.ingredient
     return (
-      <Row>
+      <Row className={this.state.removed ? 'text-muted' : ''}>
         <Col xs="auto" className="d-flex align-items-center pr-0">
-          <Button
-            color="link"
-            className="text-secondary"
-            onClick={_ => this.props.onRemove && this.props.onRemove()}
-          >
+          <Button color="link" className="text-secondary" onClick={this.remove}>
             <i className="fal fa-times pb-3" />
           </Button>
         </Col>
@@ -60,8 +74,8 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
           <FormGroup>
             <AmountInput
               amount={{
-                n: this.state.quantity_numerator,
-                d: this.state.quantity_denominator
+                n: ing.quantity_numerator,
+                d: ing.quantity_denominator
               }}
               onChange={this.onAmountChange}
             />
@@ -72,7 +86,7 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
             <Select
               options={Units}
               value={_.find(Units, {
-                value: this.state.unit
+                value: ing.unit
               })}
               onChange={(e: any) => this.onUnitChange(e.value)}
               styles={{
@@ -96,7 +110,8 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
             <Input
               type="text"
               placeholder="onion, head of lettuce, ground black pepper…"
-              value={this.state.name || ''}
+              value={ing.name || ''}
+              disabled={this.state.removed}
               onChange={e =>
                 this.setState(
                   { name: e.currentTarget.value },
@@ -111,7 +126,8 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
             <Input
               type="text"
               placeholder="finely diced, cleaned, peeled…"
-              value={this.state.preparation || ''}
+              value={ing.preparation || ''}
+              disabled={this.state.removed}
               onChange={e =>
                 this.setState(
                   { preparation: e.currentTarget.value },
@@ -125,7 +141,8 @@ export class IngredientLine extends React.Component<Props, IngredientLineJSON> {
           <FormGroup check className="mb-3">
             <Input
               type="checkbox"
-              defaultChecked={this.state.optional}
+              defaultChecked={ing.optional}
+              disabled={this.state.removed}
               onChange={e =>
                 this.setState(
                   { optional: e.currentTarget.checked },

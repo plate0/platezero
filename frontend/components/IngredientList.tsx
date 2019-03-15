@@ -25,13 +25,23 @@ const newIngredientList = (): IngredientListJSON => ({
   lines: [newIngredient()]
 })
 
+interface UIIngredientLine extends IngredientLineJSON {
+  changed: boolean
+  removed: boolean
+  added: boolean
+
+  // if changed === true, store a copy of the original values so they can be
+  // reverted if desired
+  original?: IngredientLineJSON
+}
+
 interface Props {
   onChange?: (ingredientList: IngredientListJSON, patch?: rfc6902.Patch) => void
   ingredientList?: IngredientListJSON
 }
 
 interface State {
-  list: IngredientListJSON
+  lines: UIIngredientLine[]
   patch: IngredientListPatch
 }
 
@@ -44,14 +54,15 @@ export class IngredientList extends React.Component<Props, State> {
     this.removeLine = this.removeLine.bind(this)
     const list = props.ingredientList || newIngredientList()
     const patch = new IngredientListPatch(list)
-    this.state = { list, patch }
+    this.state = { name: list.name, lines: list.lines, patch }
   }
 
   public notifyChange() {
     if (this.props.onChange) {
       const patch = this.state.patch.getPatch()
       console.log('patch', patch)
-      this.props.onChange(this.state.list, patch)
+      const { name, lines } = this.state
+      this.props.onChange({ name, lines }, patch)
     }
   }
 
@@ -59,13 +70,7 @@ export class IngredientList extends React.Component<Props, State> {
     const line = newIngredient()
     this.state.patch.addIngredient(line)
     this.setState(
-      state => ({
-        ...state,
-        list: {
-          ...state.list,
-          lines: [...state.list.lines, line]
-        }
-      }),
+      state => ({ ...state, lines: [...state.lines, line] }),
       this.notifyChange
     )
   }
@@ -75,12 +80,9 @@ export class IngredientList extends React.Component<Props, State> {
     this.setState(
       state => ({
         ...state,
-        list: {
-          ...state.list,
-          lines: _.map(state.list.lines, line =>
-            line.id === ingredient.id ? ingredient : line
-          )
-        }
+        lines: _.map(state.lines, line =>
+          line.id === ingredient.id ? ingredient : line
+        )
       }),
       this.notifyChange
     )
@@ -91,10 +93,9 @@ export class IngredientList extends React.Component<Props, State> {
     this.setState(
       state => ({
         ...state,
-        list: {
-          ...state.list,
-          lines: _.filter(state.list.lines, ingredient => ingredient.id !== id)
-        }
+        lines: _.map(state.lines, ingredient =>
+          ingredient.id !== id ? ingredient : { ...ingredient, removed: true }
+        )
       }),
       this.notifyChange
     )
@@ -126,7 +127,7 @@ export class IngredientList extends React.Component<Props, State> {
           </Col>
           <Col xs="1" />
         </Row>
-        {this.state.list.lines.map(ingredient => (
+        {this.state.lines.map(ingredient => (
           <IngredientLine
             key={ingredient.id}
             ingredient={ingredient}
