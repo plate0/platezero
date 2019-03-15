@@ -7,10 +7,16 @@ import {
   Table
 } from 'sequelize-typescript'
 
+export interface RecipeDurationJSON {
+  id?: number
+  duration_seconds: number
+}
+
 @Table({
   tableName: 'recipe_durations'
 })
-export class RecipeDuration extends Model<RecipeDuration> {
+export class RecipeDuration extends Model<RecipeDuration>
+  implements RecipeDurationJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

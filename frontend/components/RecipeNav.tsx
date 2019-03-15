@@ -1,10 +1,10 @@
 import React from 'react'
-import { Recipe as RecipeModel } from '../models/recipe'
+import { RecipeJSON } from '../models/recipe'
 import { UserCard } from '../components'
 import { Link } from '../routes'
 
 interface RecipeNavProps {
-  recipe: RecipeModel
+  recipe: RecipeJSON
 }
 
 export const RecipeNav = (props: RecipeNavProps) => {

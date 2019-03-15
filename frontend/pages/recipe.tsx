@@ -8,14 +8,14 @@ import {
   RecipeVersion as RecipeVersionView
 } from '../components'
 import Head from 'next/head'
-import { Recipe as RecipeModel } from '../models/recipe'
-import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
+import { RecipeJSON } from '../models/recipe'
+import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipe, getRecipeVersion } from '../common/http'
 import { Link } from '../routes'
 
 interface RecipeProps {
-  recipe: RecipeModel
-  recipeVersion?: RecipeVersionModel
+  recipe: RecipeJSON
+  recipeVersion?: RecipeVersionJSON
 }
 
 export default class Recipe extends React.Component<RecipeProps> {
@@ -67,7 +67,7 @@ export default class Recipe extends React.Component<RecipeProps> {
 }
 
 interface RecipeEditButtonProps {
-  recipe: RecipeModel
+  recipe: RecipeJSON
   branch: string
 }
 const RecipeEditButton = (props: RecipeEditButtonProps) => (

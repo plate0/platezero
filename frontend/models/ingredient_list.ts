@@ -1,8 +1,8 @@
 import {
-  AutoIncrement,
-  Column,
   Model,
+  AutoIncrement,
   PrimaryKey,
+  Column,
   BelongsToMany,
   ICreateOptions,
   Table
@@ -20,7 +20,8 @@ export interface IngredientListJSON {
 @Table({
   tableName: 'ingredient_lists'
 })
-export class IngredientList extends Model<IngredientList> {
+export class IngredientList extends Model<IngredientList>
+  implements IngredientListJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
@@ -42,9 +43,7 @@ export class IngredientList extends Model<IngredientList> {
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.lines, ingredient =>
-        IngredientLine.create(ingredient, options)
-      )
+      _.map(il.lines, ingredient => IngredientLine.create(ingredient, options))
     )
     await Promise.all(
       _.map(ingredientLines, (line, sort_key) =>

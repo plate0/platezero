@@ -21,7 +21,8 @@ export interface ProcedureListJSON {
 @Table({
   tableName: 'procedure_lists'
 })
-export class ProcedureList extends Model<ProcedureList> {
+export class ProcedureList extends Model<ProcedureList>
+  implements ProcedureListJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

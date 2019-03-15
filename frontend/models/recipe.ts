@@ -16,17 +16,17 @@ import {
 } from 'sequelize-typescript'
 import slugify from 'slugify'
 import * as _ from 'lodash'
-
-import { User } from './user'
-import { RecipeBranch } from './recipe_branch'
+import { PostRecipe } from '../common/request-models'
+import { User, UserJSON } from './user'
+import { RecipeBranch, RecipeBranchJSON } from './recipe_branch'
 import { RecipeVersion } from './recipe_version'
 import { RecipeYield } from './recipe_yield'
 import { RecipeDuration } from './recipe_duration'
 import { Preheat } from './preheat'
 import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
-import { ProcedureList, ProcedureListJSON } from './procedure_list'
-import { IngredientList, IngredientListJSON } from './ingredient_list'
+import { ProcedureList } from './procedure_list'
+import { IngredientList } from './ingredient_list'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { getConfig } from '../server/config'
 
@@ -38,13 +38,10 @@ export interface RecipeJSON {
   description?: string
   image_url?: string
   source_url?: string
+  slug?: string
   html_url?: string
-  yield?: string
-  duration?: number
-  preheats: Preheat[]
-  ingredient_lists: IngredientListJSON[]
-  procedure_lists: ProcedureListJSON[]
-  branches?: { name: string; recipe_version_id: number }[]
+  owner: UserJSON
+  branches: RecipeBranchJSON[]
 }
 
 const isUniqueSlugError = (e): boolean => {
@@ -61,7 +58,7 @@ const isUniqueSlugError = (e): boolean => {
 @Table({
   tableName: 'recipes'
 })
-export class Recipe extends Model<Recipe> {
+export class Recipe extends Model<Recipe> implements RecipeJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
@@ -122,7 +119,7 @@ export class Recipe extends Model<Recipe> {
 
   private static async createWithSlug(
     user_id: number,
-    body: RecipeJSON,
+    body: PostRecipe,
     slug: string
   ): Promise<Recipe> {
     const recipe = await Recipe.sequelize.transaction(async transaction => {
@@ -231,7 +228,7 @@ export class Recipe extends Model<Recipe> {
 
   public static async createNewRecipe(
     user_id: number,
-    body: RecipeJSON
+    body: PostRecipe
   ): Promise<Recipe> {
     const sluggd = slugify(body.title, { lower: true })
     // place an upper bound on retries to prevent DoS

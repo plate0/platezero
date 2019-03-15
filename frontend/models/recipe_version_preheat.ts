@@ -9,10 +9,16 @@ import {
 import { RecipeVersion } from './recipe_version'
 import { Preheat } from './preheat'
 
+export interface RecipeVersionPreheatJSON {
+  recipe_version_id: number
+  preheat_id: number
+}
+
 @Table({
   tableName: 'recipe_version_preheats'
 })
-export class RecipeVersionPreheat extends Model<RecipeVersionPreheat> {
+export class RecipeVersionPreheat extends Model<RecipeVersionPreheat>
+  implements RecipeVersionPreheatJSON {
   @PrimaryKey
   @ForeignKey(() => RecipeVersion)
   @Column

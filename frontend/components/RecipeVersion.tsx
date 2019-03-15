@@ -3,10 +3,10 @@ import * as moment from 'moment'
 import * as ReactMarkdown from 'react-markdown'
 import { Row, Col } from 'reactstrap'
 import { Amount } from './Amount'
-import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
+import { RecipeVersionJSON } from '../models/recipe_version'
 import { IngredientLineJSON } from '../models/ingredient_line'
-import { IngredientList as IngredientListModel } from '../models/ingredient_list'
-import { ProcedureList as ProcedureListModel } from '../models/procedure_list'
+import { IngredientListJSON } from '../models/ingredient_list'
+import { ProcedureListJSON } from '../models/procedure_list'
 import { get } from 'lodash'
 
 interface RecipeHeaderProps {
@@ -83,7 +83,7 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
   )
 }
 
-const ProcedureList = ({ list }: { list: ProcedureListModel }) => {
+const ProcedureList = ({ list }: { list: ProcedureListJSON }) => {
   return (
     <div className="mb-3">
       {list.name && (
@@ -120,7 +120,7 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   )
 }
 
-const IngredientList = ({ list }: { list: IngredientListModel }) => {
+const IngredientList = ({ list }: { list: IngredientListJSON }) => {
   const image = list.image_url && (
     <Col xs="8">
       <img className="w-100" src={list.image_url} />
@@ -143,7 +143,7 @@ const IngredientList = ({ list }: { list: IngredientListModel }) => {
   )
 }
 
-export const RecipeVersion = (props: { recipeVersion: RecipeVersionModel }) => {
+export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
   const v = props.recipeVersion
   return (
     <Row>

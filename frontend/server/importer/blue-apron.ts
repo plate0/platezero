@@ -1,13 +1,13 @@
 import { Importer } from './importer'
 import * as moment from 'moment'
 import {
-  RecipeJSON,
   Preheat,
   IngredientListJSON,
   ProcedureListJSON,
   ProcedureLineJSON
 } from '../../models'
 import * as cheerio from 'cheerio'
+import { PostRecipe } from '../../common/request-models'
 import { fraction } from '../../common/fraction'
 import { unitfy } from '../../common/unit'
 const TurndownService = require('turndown')
@@ -22,7 +22,7 @@ export class BlueApronImporter implements Importer {
   }
 
   // @Override
-  public async recipe(): Promise<RecipeJSON> {
+  public async recipe(): Promise<PostRecipe> {
     return {
       title: await this.getTitle(),
       subtitle: await this.getSubtitle(),

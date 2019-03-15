@@ -23,10 +23,30 @@ import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { ProcedureList } from './procedure_list'
 import { IngredientList } from './ingredient_list'
 
+export interface RecipeVersionJSON {
+  id?: number
+  recipe_id?: number
+  created_at?: Date | string
+  user_id: number
+  parent_recipe_version_id: number
+  recipe_yield_id: number
+  recipe_duration_id: number
+  message: string
+  recipe: Recipe
+  author: User
+  parentRecipeVersion: RecipeVersion
+  recipeYield: RecipeYield
+  recipeDuration: RecipeDuration
+  procedureLists: ProcedureList[]
+  ingredientLists: IngredientList[]
+  preheats: Preheat[]
+}
+
 @Table({
   tableName: 'recipe_versions'
 })
-export class RecipeVersion extends Model<RecipeVersion> {
+export class RecipeVersion extends Model<RecipeVersion>
+  implements RecipeVersionJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

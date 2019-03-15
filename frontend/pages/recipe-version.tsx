@@ -6,11 +6,11 @@ import {
   RecipeVersion as RecipeVersionView,
   RecipeVersionHeader
 } from '../components'
-import { RecipeVersion as RecipeVersionModel } from '../models/recipe_version'
+import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipeVersion } from '../common/http'
 
 interface RecipeVersionProps {
-  recipeVersion: RecipeVersionModel
+  recipeVersion: RecipeVersionJSON
 }
 
 export default class RecipeVersion extends React.Component<RecipeVersionProps> {

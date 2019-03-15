@@ -46,7 +46,7 @@ export class ProcedureList extends React.Component<Props, State> {
   public render() {
     return (
       <div>
-        {_.map(this.state.lines, (s, key) => (
+        {this.state.lines.map((s, key) => (
           <Row key={key}>
             <Col className="mb-3">
               <Input

@@ -10,13 +10,23 @@ import {
   Table
 } from 'sequelize-typescript'
 
-import { Recipe } from './recipe'
-import { User } from './user'
+import { Recipe, RecipeJSON } from './recipe'
+import { User, UserJSON } from './user'
+
+export interface RecipeCollaboratorJSON {
+  id?: number
+  recipe_id: number
+  user_id: number
+  accepted: boolean
+  recipe: RecipeJSON
+  user: UserJSON
+}
 
 @Table({
   tableName: 'recipe_collaborators'
 })
-export class RecipeCollaborator extends Model<RecipeCollaborator> {
+export class RecipeCollaborator extends Model<RecipeCollaborator>
+  implements RecipeCollaboratorJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

@@ -3,7 +3,8 @@ import Router from 'next/router'
 import Head from 'next/head'
 import { Alert, Button, Col, Form, Row } from 'reactstrap'
 import { createRecipe, PlateZeroApiError } from '../common'
-import { RecipeJSON, IngredientListJSON, ProcedureListJSON } from '../models'
+import { IngredientListJSON, ProcedureListJSON } from '../models'
+import { PostRecipe } from '../common/request-models'
 import {
   Layout,
   NewRecipeTitle,
@@ -46,7 +47,7 @@ export default class NewRecipe extends React.Component<Props, State> {
       title: e.currentTarget.value
     })
 
-  public getRecipe(): RecipeJSON {
+  public getRecipe(): PostRecipe {
     return {
       title: this.state.title,
       preheats: [],
