@@ -21,66 +21,63 @@ import { IngredientLineJSON, IngredientListJSON } from '../../models'
  * We really only care about three things: (1) adding a new ingredient, (2)
  * removing an existing ingredient, and (3) editing an existing ingredient.
  */
-export const createIngredientListPatch = (
-  orig: IngredientListJSON,
-  curr: IngredientListJSON
-): rfc6902.Patch => {
-  const patch = []
-  const origLines = _.filter(_.get(orig, 'lines', []), line => line.id > 0)
-  const currLines = _.get(curr, 'lines', [])
+export class IngredientListPatch {
+  private patch: rfc6902.Patch = []
+  private currentModel: IngredientListJSON
 
-  let offset = 0
+  constructor(original: IngredientListJSON) {
+    this.currentModel = _.cloneDeep(original)
+  }
 
-  // Check for changes in the original lines
-  _.each(origLines, (origLine, origIdx) => {
-    const currLine = _.find(currLines, { id: origLine.id })
-
-    // Check whether the original line has been removed
-    if (!currLine) {
-      patch.push({ op: 'remove', path: `/lines/${origIdx + offset}` })
-      offset -= 1
-      return
+  public removeIngredient(id: number): void {
+    const idx = _.findIndex(this.currentModel.lines, { id })
+    if (idx < 0) {
+      throw new Error(`ingredient ${id} was not found in list`)
     }
+    this.patch.push({ op: 'remove', path: `/lines/${idx}` })
+    this.currentModel.lines = _.reject(this.currentModel.lines, { id })
+  }
 
-    // Check whether the original line has been changed
-    if (!isSameIngredient(origLine, currLine)) {
-      patch.push({
-        op: 'replace',
-        path: `/lines/${origIdx + offset}`,
-        value: currLine
-      })
-    }
-  })
+  public addIngredient(value: IngredientLineJSON): void {
+    this.patch.push({ op: 'add', path: '/lines/-', value })
+    this.currentModel.lines = [...this.currentModel.lines, value]
+  }
 
-  // Check the current lines to see if any are newly added
-  _.each(currLines, (currLine, currIdx) => {
-    if (currLine.id <= 0) {
-      patch.push({
-        op: 'add',
-        path: `/lines/${currIdx + offset}`,
-        value: currLine
-      })
-      offset += 1
+  public replaceIngredient(id: number, value: IngredientLineJSON): void {
+    const idx = _.findIndex(this.currentModel.lines, { id })
+    if (idx < 0) {
+      throw new Error(`ingredient ${id} was not found in list`)
     }
-  })
-  return patch
+    this.patch.push({ op: 'replace', path: `/lines/${idx}`, value })
+    this.currentModel.lines[idx] = value
+  }
+
+  public getPatch(): rfc6902.Patch {
+    return optimize([...this.patch])
+  }
 }
 
-const ingredientLineProps = [
-  'name',
-  'optional',
-  'preparation',
-  'quantity_numerator',
-  'quantity_denominator',
-  'unit'
-]
+/**
+ * Given an RFC6902 patch, optimize it into fewer operations if possible
+ *
+ * Right now, the only optimization that is implemented is condensing repeated
+ * "replace" operations for the same path to only include the final one.
+ */
+const optimize = (patch: rfc6902.Patch): rfc6902.Patch => {
+  const optimized = []
+  for (let i = 0; i < patch.length; i++) {
+    const p0 = patch[i]
+    const p1 = patch[i + 1]
+    if (operationOverwrites(p0, p1)) {
+      continue
+    }
+    optimized.push(p0)
+  }
+  return optimized
+}
 
-const isSameIngredient = (
-  a: IngredientLineJSON,
-  b: IngredientLineJSON
+const operationOverwrites = (
+  p0: rfc6902.Operation,
+  p1: rfc6902.Operation
 ): boolean =>
-  _.reduce(
-    ingredientLineProps,
-    (result, prop) => result && _.get(a, prop) === _.get(b, prop),
-    true
-  )
+  p1 && p0.op === 'replace' && p1.op === 'replace' && p0.path === p1.path

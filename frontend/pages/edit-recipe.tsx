@@ -2,23 +2,31 @@ import React from 'react'
 import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
+import rfc6902 from 'rfc6902'
 
 import { Layout, RecipeNav, ProcedureList, IngredientList } from '../components'
 import { getRecipe, getRecipeVersion } from '../common/http'
 import { RecipeVersion as RecipeVersionModel } from '../models'
 
-interface EditRecipeProps {
+interface Props {
   token: string
   branch: string
   recipeVersion: RecipeVersionModel
 }
 
-export default class EditRecipe extends React.Component<EditRecipeProps> {
-  constructor(props: EditRecipeProps) {
+interface State {
+  ingredientListPatch: rfc6902.Patch
+}
+
+export default class EditRecipe extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props)
+    this.state = {
+      ingredientListPatch: []
+    }
   }
 
-  static async getInitialProps(ctx) {
+  static async getInitialProps(ctx): Promise<Props> {
     const { query } = ctx
     const { token } = nextCookie(ctx)
     const branch = query.branch
@@ -51,7 +59,7 @@ export default class EditRecipe extends React.Component<EditRecipeProps> {
           <IngredientList
             key={key}
             ingredientList={il}
-            onChange={ingredientList => this.setState({ ingredientList })}
+            onChange={(_, ingredientListPatch) => this.setState({ ingredientListPatch })}
           />
         ))}
         <h1>Instructions</h1>
@@ -59,7 +67,6 @@ export default class EditRecipe extends React.Component<EditRecipeProps> {
           <ProcedureList
             procedureList={pl}
             key={key}
-            onChange={procedureList => this.setState({ procedureList })}
           />
         ))}
       </Layout>

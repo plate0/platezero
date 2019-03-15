@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 
-import { createIngredientListPatch } from './ingredientList'
+import { IngredientListPatch } from './ingredientList'
 import '../../test/matchers'
 import { IngredientLineJSON } from '../../models'
 
@@ -31,29 +31,35 @@ const list = (lines: IngredientLineJSON[]) => ({ lines })
 describe('ingredient list patch', () => {
   test('add an item', () => {
     const [a, b] = [list([]), list([beets])]
-    expect(createIngredientListPatch(a, b)).toBePatchFor(a, b)
+    const p = new IngredientListPatch(a)
+    p.addIngredient(beets)
+    expect(p.getPatch()).toBePatchFor(a, b)
   })
 
   test('remove an item', () => {
     const [a, b] = [list([onions]), list([])]
-    expect(createIngredientListPatch(a, b)).toBePatchFor(a, b)
+    const p = new IngredientListPatch(a)
+    p.removeIngredient(onions.id)
+    expect(p.getPatch()).toBePatchFor(a, b)
   })
 
   test('remove middle item', () => {
     const [a, b] = [list([onions, carrots, celery]), list([onions, celery])]
-    expect(createIngredientListPatch(a, b)).toBePatchFor(a, b)
+    const p = new IngredientListPatch(a)
+    p.removeIngredient(carrots.id)
+    expect(p.getPatch()).toBePatchFor(a, b)
   })
 
-  test('add middle item', () => {
-    const [a, b] = [list([onions, carrots]), list([onions, beets, celery])]
-    expect(createIngredientListPatch(a, b)).toBePatchFor(a, b)
-  })
-
-  test('replace middle item', () => {
+  test('remove then add', () => {
     const [a, b] = [
       list([onions, carrots, celery]),
-      list([onions, beets, celery])
+      list([{ ...celery, name: 'turnip' }, beets])
     ]
-    expect(createIngredientListPatch(a, b)).toBePatchFor(a, b)
+    const p = new IngredientListPatch(a)
+    p.removeIngredient(carrots.id)
+    p.removeIngredient(onions.id)
+    p.addIngredient(beets)
+    p.replaceIngredient(celery.id, { ...celery, name: 'turnip' })
+    expect(p.getPatch()).toBePatchFor(a, b)
   })
 })
