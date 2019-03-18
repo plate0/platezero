@@ -9,9 +9,10 @@ import { IfLoggedIn } from './IfLoggedIn'
 export interface RecipesProps {
   user: UserJSON
   recipes: RecipeJSON[]
+  seeAll?: boolean
 }
 
-export const RecipeList = ({ recipes, user }: RecipesProps) => {
+export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
   const me = <h2 className="m-0">Your Recipes</h2>
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
   return (
@@ -22,11 +23,13 @@ export const RecipeList = ({ recipes, user }: RecipesProps) => {
             {me}
           </IfLoggedIn>
         </Col>
-        <Col xs="2" className="text-right">
-          <Link to={`/${user.username}/recipes`}>
-            <a>See All</a>
-          </Link>
-        </Col>
+        {seeAll && (
+          <Col xs="2" className="text-right">
+            <Link to={`/${user.username}/recipes`}>
+              <a>See All</a>
+            </Link>
+          </Col>
+        )}
       </Row>
       <Row>
         {!recipes.length && (
