@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Jumbotron, Button, Card, CardBody, CardColumns } from 'reactstrap'
 import Head from 'next/head'
-import { shuffle } from 'lodash'
 import '../style/index.scss'
 import { Layout, UserCard } from '../components'
 import { getUsers } from '../common/http'
@@ -11,7 +10,7 @@ import { Link } from '../routes'
 export default class Index extends Component<{ users: UserJSON[] }> {
   public static async getInitialProps() {
     return {
-      users: shuffle(await getUsers())
+      users: await getUsers()
     }
   }
 
