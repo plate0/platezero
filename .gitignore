@@ -5,3 +5,4 @@ package.json
 tsconfig.json
 mode_modules
 yarn.lock
+node_modules/

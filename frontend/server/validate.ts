@@ -49,7 +49,7 @@ export const validateNewRecipe = validator({
           optional: Joi.boolean().required()
         })
         .required()
-        .min(1)
+        // .min(1)
     })
     .required(),
   procedure_lists: Joi.array()
