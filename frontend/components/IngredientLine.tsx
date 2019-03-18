@@ -33,7 +33,7 @@ export class IngredientLine extends React.Component<Props, State> {
 
   public notifyChange(): void {
     if (_.isFunction(this.props.onChange)) {
-      this.props.onChange(this.state)
+      this.props.onChange(this.state.ingredient)
     }
   }
 
@@ -47,16 +47,25 @@ export class IngredientLine extends React.Component<Props, State> {
 
   public onAmountChange(amount: FractionAmount): void {
     this.setState(
-      { quantity_numerator: amount.n, quantity_denominator: amount.d },
+      state => ({
+        ingredient: {
+          ...state.ingredient,
+          quantity_numerator: amount.n,
+          quantity_denominator: amount.d
+        }
+      }),
       this.notifyChange
     )
   }
 
   public onUnitChange(unit: string): void {
     this.setState(
-      {
-        unit
-      },
+      state => ({
+        ingredient: {
+          ...state.ingredient,
+          unit
+        }
+      }),
       this.notifyChange
     )
   }
@@ -112,12 +121,15 @@ export class IngredientLine extends React.Component<Props, State> {
               placeholder="onion, head of lettuce, ground black pepper…"
               value={ing.name || ''}
               disabled={this.state.removed}
-              onChange={e =>
+              onChange={e => {
+                const name = e.currentTarget.value
                 this.setState(
-                  { name: e.currentTarget.value },
+                  state => ({
+                    ingredient: { ...state.ingredient, name }
+                  }),
                   this.notifyChange
                 )
-              }
+              }}
             />
           </FormGroup>
         </Col>
@@ -128,12 +140,15 @@ export class IngredientLine extends React.Component<Props, State> {
               placeholder="finely diced, cleaned, peeled…"
               value={ing.preparation || ''}
               disabled={this.state.removed}
-              onChange={e =>
+              onChange={e => {
+                const preparation = e.currentTarget.value
                 this.setState(
-                  { preparation: e.currentTarget.value },
+                  state => ({
+                    ingredient: { ...state.ingredient, preparation }
+                  }),
                   this.notifyChange
                 )
-              }
+              }}
             />
           </FormGroup>
         </Col>
@@ -143,12 +158,15 @@ export class IngredientLine extends React.Component<Props, State> {
               type="checkbox"
               defaultChecked={ing.optional}
               disabled={this.state.removed}
-              onChange={e =>
+              onChange={e => {
+                const optional = e.currentTarget.checked
                 this.setState(
-                  { optional: e.currentTarget.checked },
+                  state => ({
+                    ingredient: { ...state.ingredient, optional }
+                  }),
                   this.notifyChange
                 )
-              }
+              }}
             />
             <Label className="m-0" check>
               <small>Optional</small>

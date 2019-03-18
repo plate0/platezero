@@ -10,21 +10,6 @@ import { IngredientListPatch } from '../common/diff'
 
 let nextIngredientLineId = 0
 
-const newIngredient = (): IngredientLineJSON => ({
-  id: nextIngredientLineId--,
-  quantity_numerator: undefined,
-  quantity_denominator: undefined,
-  name: '',
-  preparation: '',
-  optional: false,
-  unit: ''
-})
-
-const newIngredientList = (): IngredientListJSON => ({
-  name: '',
-  lines: [newIngredient()]
-})
-
 interface UIIngredientLine extends IngredientLineJSON {
   changed: boolean
   removed: boolean
@@ -35,12 +20,31 @@ interface UIIngredientLine extends IngredientLineJSON {
   original?: IngredientLineJSON
 }
 
+const newIngredient = (): UIIngredientLine => ({
+  id: nextIngredientLineId--,
+  quantity_numerator: undefined,
+  quantity_denominator: undefined,
+  name: '',
+  preparation: '',
+  optional: false,
+  unit: '',
+  changed: false,
+  removed: false,
+  added: true
+})
+
+const newIngredientList = (): IngredientListJSON => ({
+  name: '',
+  lines: []
+})
+
 interface Props {
   onChange?: (ingredientList: IngredientListJSON, patch?: rfc6902.Patch) => void
   ingredientList?: IngredientListJSON
 }
 
 interface State {
+  name: string
   lines: UIIngredientLine[]
   patch: IngredientListPatch
 }
@@ -53,12 +57,18 @@ export class IngredientList extends React.Component<Props, State> {
     this.replaceLine = this.replaceLine.bind(this)
     this.removeLine = this.removeLine.bind(this)
     const list = props.ingredientList || newIngredientList()
+    const lines = _.map(list.lines, line => ({
+      ...line,
+      added: false,
+      changed: false,
+      removed: false
+    }))
     const patch = new IngredientListPatch(list)
-    this.state = { name: list.name, lines: list.lines, patch }
+    this.state = { name: list.name, lines, patch }
   }
 
   public notifyChange() {
-    if (this.props.onChange) {
+    if (_.isFunction(this.props.onChange)) {
       const patch = this.state.patch.getPatch()
       console.log('patch', patch)
       const { name, lines } = this.state
@@ -76,12 +86,16 @@ export class IngredientList extends React.Component<Props, State> {
   }
 
   public replaceLine(ingredient: IngredientLineJSON): void {
-    this.state.patch.replaceIngredient(ingredient.id, ingredient)
+    console.log('replacing', JSON.stringify(this.state.lines), JSON.stringify(ingredient))
+    const old = _.find(this.state.lines, { id: ingredient.id })
+    const newIngredient = old.added
+      ? { ...ingredient, added: true, changed: false, removed: false }
+      : { ...ingredient, added: false, changed: true, removed: false }
     this.setState(
       state => ({
         ...state,
         lines: _.map(state.lines, line =>
-          line.id === ingredient.id ? ingredient : line
+          line.id === ingredient.id ? newIngredient : line
         )
       }),
       this.notifyChange
@@ -93,8 +107,8 @@ export class IngredientList extends React.Component<Props, State> {
     this.setState(
       state => ({
         ...state,
-        lines: _.map(state.lines, ingredient =>
-          ingredient.id !== id ? ingredient : { ...ingredient, removed: true }
+        lines: _.map(state.lines, line =>
+          line.id === id ? { ...line, removed: true } : line
         )
       }),
       this.notifyChange
