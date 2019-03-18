@@ -19,6 +19,25 @@ interface RecipeHeaderProps {
   source?: string
 }
 
+const StepNumber = ({ i }: { i: number }) => (
+  <span
+    style={{
+      backgroundColor: '#18afcf',
+      color: '#ffffff',
+      fontWeight: 500,
+      fontSize: '16px',
+      lineHeight: '12px',
+      padding: '7px 9px',
+      borderRadius: '30px',
+      float: 'left',
+      marginTop: '4px',
+      marginRight: '5px'
+    }}
+  >
+    {i}
+  </span>
+)
+
 const RecipeHeader = (props: RecipeHeaderProps) => {
   const source = props.source && (
     <Col xs="auto">
@@ -28,7 +47,9 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
     </Col>
   )
   const subtitle = props.subtitle && (
-    <h2 className="mb-3 text-muted">{props.subtitle}</h2>
+    <h2 style={{ fontSize: 16 }} className="mb-3 text-muted">
+      {props.subtitle}
+    </h2>
   )
   const details = (props.duration || props.yield) && (
     <Row className="border-top border-bottom align-items-center">
@@ -55,18 +76,26 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
   )
   return (
     <Row>
-      <Col xs="6">
+      <Col
+        xs={{ order: 2, size: 12 }}
+        md={{ order: 1, size: 6 }}
+        className="py-2"
+      >
         <Row className="align-items-center justify-content-between">
-          <Col xs="11">
+          <Col xs="12">
             <h1 className="mb-1">{props.title}</h1>
+            {subtitle}
           </Col>
           {source}
         </Row>
-        {subtitle}
         {details}
         {description}
       </Col>
-      <Col xs="6">
+      <Col
+        xs={{ order: 1, size: 12 }}
+        md={{ order: 2, size: 6 }}
+        className="px-0 px-md-3"
+      >
         <img src={props.imageUrl} className="w-100" />
       </Col>
       <style jsx>
@@ -74,27 +103,42 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
           h1 {
             font-size: 30px;
           }
-          h2 {
-            font-size: 16px;
-          }
         `}
       </style>
     </Row>
   )
 }
 
-const ProcedureList = ({ list }: { list: ProcedureListJSON }) => {
-  const name = list.name || 'Instructions'
+const ProcedureList = ({
+  list,
+  showName
+}: {
+  list: ProcedureListJSON
+  showName?: boolean
+}) => {
+  const name = (
+    <div>
+      <strong>{list.name || 'Instructions'}</strong>
+    </div>
+  )
   return (
     <div className="mb-3">
-      <div>
-        <strong>{name}</strong>
-      </div>
+      {showName && name}
       <Row>
         {list.lines.map((l, key) => (
-          <Col xs="6" key={key}>
+          <Col xs="12" md="6" key={key}>
             {l.image_url && <img className="w-100" src={l.image_url} />}
-            {l.title && <h3 className="border-bottom">{l.title}</h3>}
+            {l.title && (
+              <div>
+                <StepNumber i={key} />
+                <h3
+                  style={{ fontSize: 16 }}
+                  className="border-bottom font-weight-bold py-2"
+                >
+                  {l.title}
+                </h3>
+              </div>
+            )}
             <ReactMarkdown source={l.text} />
           </Col>
         ))}
@@ -105,39 +149,50 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => {
 
 const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   return (
-    <div>
-      <Amount
-        numerator={line.quantity_numerator}
-        denominator={line.quantity_denominator}
-      />{' '}
-      {line.unit} {line.name}
+    <li style={{ fontSize: 16, lineHeight: '38px' }} className="d-flex">
+      <span className="text-muted text-right mr-2" style={{ width: '80px' }}>
+        <Amount
+          numerator={line.quantity_numerator}
+          denominator={line.quantity_denominator}
+        />{' '}
+        {line.unit}
+      </span>
+      <strong>{line.name}</strong>
       {line.preparation && ', ' + line.preparation}
       {line.optional && (
         <span className="badge badge-secondary ml-1">Optional</span>
       )}
-    </div>
+    </li>
   )
 }
 
-const IngredientList = ({ list }: { list: IngredientListJSON }) => {
-  const title = (
+const IngredientList = ({
+  list,
+  showTitle
+}: {
+  list: IngredientListJSON
+  showTitle?: boolean
+}) => {
+  const title = showTitle && (
     <div>
       <strong>{list.name || 'Ingredients'}</strong>
     </div>
   )
   const image = list.image_url && (
-    <Col xs="8">
+    <Col xs="12" md="8">
       <img className="w-100" src={list.image_url} />
     </Col>
   )
   return (
     <Row className="mb-3">
       {image}
-      <Col xs={image ? '4' : '12'}>
+      <Col xs="12" md={image ? '4' : '12'}>
         {title}
-        {list.lines.map((line, key) => (
-          <IngredientListLine key={key} line={line} />
-        ))}
+        <ul className="list-unstyled">
+          {list.lines.map((line, key) => (
+            <IngredientListLine key={key} line={line} />
+          ))}
+        </ul>
       </Col>
     </Row>
   )
@@ -158,16 +213,24 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
           source={get(v.recipe, 'source_url')}
         />
       </Col>
-      <Col xs={12}>
-        <h5>Ingredients</h5>
+      <Col xs={12} className="mt-5">
+        <h2>Ingredients</h2>
         {v.ingredientLists.map((il, key) => (
-          <IngredientList key={key} list={il} />
+          <IngredientList
+            key={key}
+            list={il}
+            showTitle={v.ingredientLists.length > 1}
+          />
         ))}
       </Col>
-      <Col xs={12}>
-        <h5>Procedure</h5>
+      <Col xs={12} className="mt-5">
+        <h2>Instructions</h2>
         {v.procedureLists.map((pl, key) => (
-          <ProcedureList key={key} list={pl} />
+          <ProcedureList
+            key={key}
+            list={pl}
+            showName={v.procedureLists.length > 1}
+          />
         ))}
       </Col>
     </Row>
