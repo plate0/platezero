@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Col, Row } from 'reactstrap'
 import { UserJSON, RecipeJSON } from '../models'
 import { RecipeCard } from './RecipeCard'
 import { Link } from '../routes'
 import { getName } from '../common/model-helpers'
 import { IfLoggedIn } from './IfLoggedIn'
+import { UserContext } from '../context/UserContext'
 
 export interface RecipesProps {
   user: UserJSON
@@ -15,10 +16,11 @@ export interface RecipesProps {
 export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
   const me = <h2 className="m-0">Your Recipes</h2>
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
+  const loggedInUser = useContext(UserContext)
   return (
     <section>
       <Row className="align-items-center border-bottom pb-1">
-        <Col xs={8 + (seeAll ? 0 : 1)}>
+        <Col xs={8 + (loggedInUser ? 0 : 3) + (seeAll ? 0 : 1)}>
           <IfLoggedIn username={user.username} else={not}>
             {me}
           </IfLoggedIn>
