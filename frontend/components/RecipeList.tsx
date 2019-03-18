@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Row } from 'reactstrap'
+import { Button, Col, Row } from 'reactstrap'
 import { UserJSON, RecipeJSON } from '../models'
 import { RecipeCard } from './RecipeCard'
 import { Link } from '../routes'
@@ -17,14 +17,28 @@ export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
   return (
     <section>
-      <Row className="align-items-center border-bottom">
-        <Col xs="10">
+      <Row className="align-items-center border-bottom pb-1">
+        <Col xs="8">
           <IfLoggedIn username={user.username} else={not}>
             {me}
           </IfLoggedIn>
         </Col>
+        <IfLoggedIn username={user.username}>
+          <Col xs="3" className="d-flex justify-content-around">
+            <Link route="new-recipe">
+              <a role="button" className="btn btn-primary">
+                Add Recipe
+              </a>
+            </Link>
+            <Link route="import-recipe">
+              <a role="button" className="btn btn-primary">
+                Import Recipe
+              </a>
+            </Link>
+          </Col>
+        </IfLoggedIn>
         {seeAll && (
-          <Col xs="2" className="text-right">
+          <Col xs="1" className="text-right">
             <Link to={`/${user.username}/recipes`}>
               <a>See All</a>
             </Link>
