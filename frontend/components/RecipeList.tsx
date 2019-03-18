@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Col, Row } from 'reactstrap'
+import { Col, Row } from 'reactstrap'
 import { UserJSON, RecipeJSON } from '../models'
 import { RecipeCard } from './RecipeCard'
 import { Link } from '../routes'
