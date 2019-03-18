@@ -18,7 +18,7 @@ export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
   return (
     <section>
       <Row className="align-items-center border-bottom pb-1">
-        <Col xs="8">
+        <Col xs={8 + (seeAll ? 0 : 1)}>
           <IfLoggedIn username={user.username} else={not}>
             {me}
           </IfLoggedIn>
