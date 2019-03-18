@@ -7,10 +7,15 @@ import {
   Table
 } from 'sequelize-typescript'
 
+export interface RecipeYieldJSON {
+  id?: number
+  text: string
+}
+
 @Table({
   tableName: 'recipe_yields'
 })
-export class RecipeYield extends Model<RecipeYield> {
+export class RecipeYield extends Model<RecipeYield> implements RecipeYieldJSON {
   @AutoIncrement
   @PrimaryKey
   @Column

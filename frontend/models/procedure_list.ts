@@ -15,13 +15,14 @@ import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
 
 export interface ProcedureListJSON {
   name?: string
-  steps: ProcedureLineJSON[]
+  lines: ProcedureLineJSON[]
 }
 
 @Table({
   tableName: 'procedure_lists'
 })
-export class ProcedureList extends Model<ProcedureList> {
+export class ProcedureList extends Model<ProcedureList>
+  implements ProcedureListJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
@@ -41,7 +42,7 @@ export class ProcedureList extends Model<ProcedureList> {
   ): Promise<ProcedureList> {
     const procedureList = await ProcedureList.create({ name: pl.name }, options)
     const lines = await Promise.all(
-      _.map(pl.steps, ({ text, image_url, title }) =>
+      _.map(pl.lines, ({ text, image_url, title }) =>
         ProcedureLine.create({ text, image_url, title }, options)
       )
     )

@@ -22,7 +22,8 @@ export interface IngredientLineJSON {
 @Table({
   tableName: 'ingredient_lines'
 })
-export class IngredientLine extends Model<IngredientLine> {
+export class IngredientLine extends Model<IngredientLine>
+  implements IngredientLineJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
