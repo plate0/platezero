@@ -1,6 +1,7 @@
 export * from './Amount'
 export * from './AmountInput'
 export * from './IfLoggedIn'
+export * from './Meta'
 export * from './Navbar'
 export * from './NewIngredientList'
 export * from './NewRecipe'
