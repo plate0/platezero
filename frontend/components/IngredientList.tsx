@@ -70,9 +70,8 @@ export class IngredientList extends React.Component<Props, State> {
   public notifyChange() {
     if (_.isFunction(this.props.onChange)) {
       const patch = this.state.patch.getPatch()
-      console.log('patch', patch)
       const { name, lines } = this.state
-      this.props.onChange({ name, lines }, patch)
+      this.props.onChange({ name: name === '' ? null : name, lines }, patch)
     }
   }
 
@@ -86,7 +85,6 @@ export class IngredientList extends React.Component<Props, State> {
   }
 
   public replaceLine(ingredient: IngredientLineJSON): void {
-    console.log('replacing', JSON.stringify(this.state.lines), JSON.stringify(ingredient))
     const old = _.find(this.state.lines, { id: ingredient.id })
     const newIngredient = old.added
       ? { ...ingredient, added: true, changed: false, removed: false }
@@ -102,14 +100,16 @@ export class IngredientList extends React.Component<Props, State> {
     )
   }
 
-  public removeLine(id: number): void {
-    this.state.patch.removeIngredient(id)
+  public removeLine(line: UIIngredientLine): void {
+    this.state.patch.removeIngredient(line.id)
     this.setState(
       state => ({
         ...state,
-        lines: _.map(state.lines, line =>
-          line.id === id ? { ...line, removed: true } : line
-        )
+        lines: line.added
+          ? _.reject(state.lines, { id: line.id })
+          : _.map(state.lines, l =>
+              l.id === line.id ? { ...line, removed: true } : l
+            )
       }),
       this.notifyChange
     )
@@ -146,7 +146,7 @@ export class IngredientList extends React.Component<Props, State> {
             key={ingredient.id}
             ingredient={ingredient}
             onChange={newIngredient => this.replaceLine(newIngredient)}
-            onRemove={() => this.removeLine(ingredient.id)}
+            onRemove={() => this.removeLine(ingredient)}
           />
         ))}
         <Button outline color="secondary" onClick={this.addIngredient}>
