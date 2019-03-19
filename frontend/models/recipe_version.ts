@@ -122,7 +122,7 @@ export class RecipeVersion extends Model<RecipeVersion>
       where: { id },
       include: [
         { model: IngredientList, include: [{ model: IngredientLine }] },
-        { model: ProcedureList, include: [{ model: ProcedureLine }]},
+        { model: ProcedureList, include: [{ model: ProcedureLine }] },
         { model: Preheat }
       ],
       transaction
@@ -151,12 +151,21 @@ export class RecipeVersion extends Model<RecipeVersion>
       )
     )
     await Promise.all(
-      _.map(prev.ingredientLists, (il, sort_key) =>
-        RecipeVersionIngredientList.create(
-          { recipe_version_id: v.id, ingredient_list_id: il.id, sort_key },
+      _.map(prev.ingredientLists, async (il, sort_key) => {
+        const changedIngredientList = _.find(patch.changedIngredientLists, {
+          ingredientListId: il.id
+        })
+        const ingredient_list_id = changedIngredientList
+          ? (await IngredientList.createFromPatch(
+              changedIngredientList,
+              transaction
+            )).id
+          : il.id
+        return RecipeVersionIngredientList.create(
+          { recipe_version_id: v.id, ingredient_list_id, sort_key },
           { transaction }
         )
-      )
+      })
     )
     await Promise.all(
       _.map(prev.preheats, preheat =>

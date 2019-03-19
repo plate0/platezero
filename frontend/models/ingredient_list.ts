@@ -10,6 +10,7 @@ import {
 import * as _ from 'lodash'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
+import { IngredientListPatch } from '../common/request-models'
 
 export interface IngredientListJSON {
   id?: number
@@ -59,5 +60,70 @@ export class IngredientList extends Model<IngredientList>
       )
     )
     return ingredientList
+  }
+
+  public static async createFromPatch(
+    patch: IngredientListPatch,
+    transaction?: any
+  ): Promise<IngredientList> {
+    const id = patch.ingredientListId
+    const prev = await IngredientList.findOne({
+      where: { id },
+      include: [{ model: IngredientLine }],
+      transaction
+    })
+    const list = await IngredientList.create(
+      { name: prev.name, image_url: prev.image_url },
+      { transaction }
+    )
+    await Promise.all(
+      _.map(prev.lines, async (line, sort_key) => {
+        const removed = !_.isUndefined(
+          _.find(patch.removedIngredientIds, id => id === line.id)
+        )
+        if (removed) {
+          return Promise.resolve()
+        }
+        const changed = _.find(patch.changedIngredients, { id: line.id })
+        if (!changed) {
+          return IngredientListLine.create(
+            {
+              ingredient_list_id: list.id,
+              ingredient_line_id: line.id,
+              sort_key
+            },
+            { transaction }
+          )
+        }
+        console.log('will add changed ingredient', changed)
+        const newLine = await IngredientLine.create(_.omit(changed, ['id']), {
+          transaction
+        })
+        return IngredientListLine.create(
+          {
+            ingredient_list_id: list.id,
+            ingredient_line_id: newLine.id,
+            sort_key
+          },
+          { transaction }
+        )
+      })
+    )
+    await Promise.all(
+      _.map(patch.addedIngredients, async (line, sort_key) => {
+        const newLine = await IngredientLine.create(_.omit(line, ['id']), {
+          transaction
+        })
+        return IngredientListLine.create(
+          {
+            ingredient_list_id: list.id,
+            ingredient_line_id: newLine.id,
+            sort_key: prev.lines.length + sort_key
+          },
+          { transaction }
+        )
+      })
+    )
+    return list
   }
 }
