@@ -30,6 +30,7 @@ const duration = ($: any) => {
   // parse format: 1 hour
   const dur = $('.recipe-about li:nth-child(3) .info')
     .text()
+    .replace(/about/i, '')
     .trim()
   // This parses the number part quite well, actually
   const num = parseInt(dur)
