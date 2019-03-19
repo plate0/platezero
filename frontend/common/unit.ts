@@ -42,10 +42,16 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'dl':
     case 'ml':
       return unit
+    case 'pound':
+    case 'pounds':
     case 'lbs':
       return 'lb'
+    case 'tablespoon':
+    case 'tablespoons':
     case 'tbsps':
       return 'tbsp'
+    case 'teaspoon':
+    case 'teaspoons':
     case 'tsps':
       return 'tsp'
     case 'cup':
