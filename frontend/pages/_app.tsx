@@ -2,23 +2,15 @@ import React from 'react'
 import nextCookie from 'next-cookies'
 import App, { Container } from 'next/app'
 import '../style/index.scss'
-import { getCurrentUser } from '../common/http'
 import { UserJSON } from '../models/user'
-
-interface PlateZeroContextProviderProps {
-  user?: UserJSON
-}
-
-export const PlateZeroContext = React.createContext<
-  PlateZeroContextProviderProps
->({
-  user: undefined
-})
+import { UserContext } from '../context/UserContext'
+import { getCurrentUser } from '../common/http'
 
 const currentUser = async (token: string): Promise<UserJSON | undefined> => {
   try {
     return await getCurrentUser({ token })
   } catch (e) {
+    console.error(e)
     return undefined
   }
 }
@@ -29,7 +21,7 @@ interface MyAppProps {
 }
 
 interface MyAppState {
-  pzContext: PlateZeroContextProviderProps
+  user: UserJSON | undefined
 }
 
 export default class MyApp extends App<MyAppProps, MyAppState> {
@@ -47,21 +39,18 @@ export default class MyApp extends App<MyAppProps, MyAppState> {
   constructor(props) {
     super(props)
     this.state = {
-      pzContext: {
-        user: this.props.user
-      }
+      user: this.props.user
     }
   }
 
   render() {
     const { Component, pageProps } = this.props
-    const ctx = this.state.pzContext
     return (
-      <PlateZeroContext.Provider value={ctx}>
+      <UserContext.Provider value={this.state.user}>
         <Container>
           <Component {...pageProps} />
         </Container>
-      </PlateZeroContext.Provider>
+      </UserContext.Provider>
     )
   }
 }

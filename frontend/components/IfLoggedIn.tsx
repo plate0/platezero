@@ -1,37 +1,22 @@
-import React from 'react'
+import { useContext } from 'react'
 import { get } from 'lodash'
-import { PlateZeroContext } from '../pages/_app'
+import { UserContext } from '../context/UserContext'
 
-interface IfLoggedInProps {
+interface Props {
   username?: string
   else?: any
+  children: any
 }
 
-export class IfLoggedIn extends React.Component<IfLoggedInProps> {
-  public static contextType = PlateZeroContext
-  private guarded: any
-  private default: any
+export const IfLoggedIn = (props: Props) => {
+  const user = useContext(UserContext)
+  const guarded = props.children
+  const fallback = props.else || null
 
-  constructor(props: IfLoggedInProps) {
-    super(props)
-    this.guarded = this.props.children
-    this.default = this.props.else || null
+  // if a username is provided and matches the currently logged in user
+  if (props.username) {
+    return get(user, 'username') === props.username ? guarded : fallback
   }
 
-  public render() {
-    // if a username is provided and matches the currently logged in user
-    if (this.props.username) {
-      return get(this.context, 'user.username') === this.props.username
-        ? this.guarded
-        : this.default
-    }
-
-    // if a user is logged in
-    if (this.context.user) {
-      return this.guarded
-    }
-
-    // by default, render nothing
-    return this.default
-  }
+  return user ? guarded : fallback
 }
