@@ -205,7 +205,7 @@ export class IngredientList extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div>
+      <>
         <Row>
           <Col xs="auto" className="pr-0">
             <button
@@ -241,10 +241,10 @@ export class IngredientList extends React.Component<Props, State> {
             onRestore={() => this.restoreLine(ingredient)}
           />
         ))}
-        <Button outline color="secondary" onClick={this.addIngredient}>
-          Add Another Ingredient
+        <Button color="secondary" size="sm" onClick={this.addIngredient}>
+          <i className="fa fa-plus" /> Add Ingredient
         </Button>
-      </div>
+      </>
     )
   }
 }

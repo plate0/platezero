@@ -84,12 +84,10 @@ export default class EditRecipe extends React.Component<Props, State> {
   public async save() {
     this.setState({ errors: [] })
     const patch = this.getPatch()
-    console.log('patching', patch)
     try {
       const slug = this.props.recipeVersion.recipe.slug
       const { branch, token } = this.props
-      const newVersion = await patchBranch(slug, branch, patch, { token })
-      console.log('applied, new version', newVersion)
+      await patchBranch(slug, branch, patch, { token })
       Router.push(`/${this.props.recipeVersion.recipe.owner.username}/${slug}`)
     } catch (e) {
       if (e instanceof PlateZeroApiError) {
@@ -113,15 +111,32 @@ export default class EditRecipe extends React.Component<Props, State> {
             {err}
           </Alert>
         ))}
-        <h4>Ingredients</h4>
+        <Row className="mb-3">
+          <Col>
+            <h4>Ingredients</h4>
+          </Col>
+          <Col xs="auto">
+            <Button
+              color="secondary"
+              size="sm"
+              onClick={() => console.log('add ingredient list')}
+            >
+              <i className="fa fa-plus" /> Add Section
+            </Button>
+          </Col>
+        </Row>
         {v.ingredientLists.map(il => (
-          <IngredientList
-            key={il.id}
-            ingredientList={il}
-            onChange={(_, patch) =>
-              this.setState({ ingredientListPatches: { [il.id]: patch } })
-            }
-          />
+          <Card key={il.id}>
+            <CardBody>
+              <IngredientList
+                key={il.id}
+                ingredientList={il}
+                onChange={(_, patch) =>
+                  this.setState({ ingredientListPatches: { [il.id]: patch } })
+                }
+              />
+            </CardBody>
+          </Card>
         ))}
         <h4 className="mt-3">Instructions</h4>
         {v.procedureLists.map((pl, key) => (
