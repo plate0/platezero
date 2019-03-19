@@ -1,5 +1,4 @@
 export * from './Amount'
-export * from './AmountInput'
 export * from './IfLoggedIn'
 export * from './IngredientList'
 export * from './Navbar'

@@ -1,12 +1,57 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import Fraction from 'fraction.js'
 import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap'
 import Select from 'react-select'
 import * as _ from 'lodash'
 
 import { Units } from '../common'
-import { FractionAmount, AmountInput } from './AmountInput'
 import { Amount } from './Amount'
 import { IngredientLineJSON } from '../models/ingredient_line'
+import { usePrevious } from '../hooks/usePrevious'
+
+function ingredientAmountString(line: IngredientLineJSON): string {
+  if (_.isNil(line.quantity_numerator) || _.isNil(line.quantity_denominator)) {
+    return ''
+  }
+  try {
+    return new Fraction(
+      line.quantity_numerator,
+      line.quantity_denominator
+    ).toFraction(true)
+  } catch {
+    return ''
+  }
+}
+
+function isAmountValid(f: FractionAmount): boolean {
+  return !_.isNil(f) && !_.isNil(f.n) && !_.isNil(f.d)
+}
+
+interface FractionAmount {
+  n: number | undefined
+  d: number | undefined
+}
+
+function parseFraction(s: string): FractionAmount | undefined {
+  try {
+    const f = new Fraction(s)
+    const { n, d } = f
+    return { n, d }
+  } catch {
+    return { n: undefined, d: undefined }
+  }
+}
+
+function fractionMatchesIngredient(
+  frac: FractionAmount,
+  ing: IngredientLineJSON
+): boolean {
+  const [n, d] = [ing.quantity_numerator, ing.quantity_denominator]
+  return (
+    ((_.isNil(frac.n) && _.isNil(n)) || frac.n === n) &&
+    ((_.isNil(frac.d) && _.isNil(d)) || frac.d === d)
+  )
+}
 
 interface Props {
   ingredient: IngredientLineJSON
@@ -43,26 +88,39 @@ export function IngredientLine(props: Props) {
     onChange({ ...props.ingredient, optional })
   }
 
-  const amount = _.isNil(props.ingredient.quantity_numerator) ? undefined : {
-    n: props.ingredient.quantity_numerator,
-    d: props.ingredient.quantity_denominator
-  }
-  const setAmount = (amt: FractionAmount) => {
-    console.log('setAmount', amt)
-    if (_.isNil(amt)) {
+  const [amount, setAmount] = useState(ingredientAmountString(props.ingredient))
+  const [frac, setFrac] = useState(parseFraction(amount))
+  const prevFrac = usePrevious(frac)
+
+  useEffect(() => {
+    setFrac(parseFraction(amount))
+  }, [amount])
+
+  useEffect(() => {
+    if (_.isUndefined(prevFrac)) {
+      // skip the initial fraction assignment
+      return
+    }
+    if (fractionMatchesIngredient(frac, props.ingredient)) {
+      return
+    }
+    if (prevFrac.n !== frac.n || prevFrac.d !== frac.d) {
       onChange({
         ...props.ingredient,
-        quantity_numerator: undefined,
-        quantity_denominator: undefined
-      })
-    } else {
-      onChange({
-        ...props.ingredient,
-        quantity_numerator: amt.n,
-        quantity_denominator: amt.d
+        quantity_numerator: frac.n,
+        quantity_denominator: frac.d
       })
     }
-  }
+  }, [frac])
+
+  useEffect(() => {
+    if (!fractionMatchesIngredient(frac, props.ingredient)) {
+      setAmount(ingredientAmountString(props.ingredient))
+    }
+  }, [
+    props.ingredient.quantity_numerator,
+    props.ingredient.quantity_denominator
+  ])
 
   const unit = _.find(Units, { value: props.ingredient.unit }) || null
   const setUnit = (unit: string) => {
@@ -118,10 +176,16 @@ export function IngredientLine(props: Props) {
       </Col>
       <Col xs="2">
         <FormGroup>
-          <AmountInput
+          <Input
+            type="text"
+            placeholder="2/3…"
+            value={amount}
+            valid={isAmountValid(frac)}
             className={bgClass}
-            amount={amount}
-            onChange={setAmount}
+            onChange={e => {
+              const amount = e.currentTarget.value
+              setAmount(amount)
+            }}
           />
         </FormGroup>
       </Col>
