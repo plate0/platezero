@@ -44,7 +44,7 @@ describe('Blue Apron import recipe', () => {
     source = readFileSync(goudaBurgers, { encoding: 'utf8' })
     const { preheats } = await importer(source)
     expect(preheats).toHaveLength(1)
-    expect(preheats).toEqual([{ name: 'oven', temperature: '450', unit: 'F' }])
+    expect(preheats).toEqual([{ name: 'oven', temperature: 450, unit: 'F' }])
   })
 
   test('get ingredient lists', async () => {
