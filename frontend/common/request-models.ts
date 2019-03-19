@@ -1,4 +1,9 @@
-import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
+import {
+  IngredientListJSON,
+  IngredientLineJSON,
+  ProcedureListJSON,
+  PreheatJSON
+} from '../models'
 
 export interface PostRecipe {
   title: string

@@ -98,13 +98,12 @@ export function IngredientLine(props: Props) {
 
   useEffect(() => {
     if (_.isUndefined(prevFrac)) {
-      // skip the initial fraction assignment
       return
     }
     if (fractionMatchesIngredient(frac, props.ingredient)) {
       return
     }
-    if (prevFrac.n !== frac.n || prevFrac.d !== frac.d) {
+    if (_.get(prevFrac, 'n') !== frac.n || _.get(prevFrac, 'd') !== frac.d) {
       onChange({
         ...props.ingredient,
         quantity_numerator: frac.n,

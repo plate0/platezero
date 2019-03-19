@@ -12,6 +12,7 @@ import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 
 export interface IngredientListJSON {
+  id?: number
   lines: IngredientLineJSON[]
   image_url?: string
   name?: string

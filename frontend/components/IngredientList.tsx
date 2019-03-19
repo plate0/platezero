@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Col, Row } from 'reactstrap'
 import * as _ from 'lodash'
-import * as rfc6902 from 'rfc6902'
 
 import { IngredientLine } from './IngredientLine'
 import { IngredientLineJSON } from '../models/ingredient_line'

@@ -13,7 +13,7 @@ import {
 } from '../components'
 import { getRecipe, getRecipeVersion } from '../common/http'
 import { RecipeVersion as RecipeVersionModel } from '../models'
-import { IngredientListPatch } from '../common/request-models'
+import { RecipeVersionPatch, IngredientListPatch } from '../common/request-models'
 
 interface Props {
   token: string
@@ -22,7 +22,7 @@ interface Props {
 }
 
 interface State {
-  ingredientListPatches: { [number]: IngredientListPatch }
+  ingredientListPatches: { [id: number]: IngredientListPatch }
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
@@ -93,9 +93,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             key={il.id}
             ingredientList={il}
             onChange={(_, patch) =>
-              this.setState(state => ({
-                ingredientListPatches: { [il.id]: patch }
-              }))
+              this.setState({ ingredientListPatches: { [il.id]: patch } })
             }
           />
         ))}
