@@ -79,7 +79,7 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
         },
         {
           model: IngredientList,
-          attributes: ['name', 'image_url'],
+          attributes: ['id', 'name', 'image_url'],
           through: { attributes: [] },
           include: [
             {

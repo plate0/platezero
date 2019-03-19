@@ -6,7 +6,7 @@ import * as rfc6902 from 'rfc6902'
 import { IngredientLine } from './IngredientLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientListJSON } from '../models/ingredient_list'
-import { IngredientListPatch } from '../common/diff'
+import { IngredientListPatch } from '../common/request-models'
 
 let nextIngredientLineId = 0
 
@@ -34,14 +34,16 @@ const newIngredient = (): UIIngredientLine => ({
 })
 
 interface Props {
-  onChange?: (ingredientList: IngredientListJSON, patch?: rfc6902.Patch) => void
+  onChange?: (
+    ingredientList: IngredientListJSON,
+    patch?: IngredientListPatch
+  ) => void
   ingredientList?: IngredientListJSON
 }
 
 interface State {
   name: string
   lines: UIIngredientLine[]
-  patch: IngredientListPatch
 }
 
 const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
@@ -66,6 +68,15 @@ const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
 const defaultUndefined = (val: string): string | undefined =>
   _.isNull(val) || _.isUndefined(val) || val === '' ? undefined : val
 
+function uiLineToJSON(line: UIIngredientLine): IngredientLineJSON {
+  return {
+    ..._.omit(line, ['added', 'changed', 'removed', 'original']),
+    name: defaultUndefined(line.name),
+    preparation: defaultUndefined(line.preparation),
+    unit: defaultUndefined(line.unit)
+  }
+}
+
 export class IngredientList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -75,29 +86,55 @@ export class IngredientList extends React.Component<Props, State> {
     this.replaceLine = this.replaceLine.bind(this)
     this.removeLine = this.removeLine.bind(this)
     this.restoreLine = this.restoreLine.bind(this)
+    this.getPatch = this.getPatch.bind(this)
     const list = fallbackToNewIngredientList(props.ingredientList)
     const { name, lines } = list
-    const patch = new IngredientListPatch(list)
-    this.state = { name, lines, patch }
+    this.state = { name, lines }
   }
 
   public getIngredientList(): IngredientListJSON {
     return {
       name: defaultUndefined(this.state.name),
-      lines: _.map(this.state.lines, line => ({
-        ..._.omit(line, ['id', 'added', 'changed', 'removed', 'original']),
-        name: defaultUndefined(line.name),
-        preparation: defaultUndefined(line.preparation),
-        unit: defaultUndefined(line.unit)
-      }))
+      lines: _.map(this.state.lines, uiLineToJSON)
     }
   }
 
   public notifyChange() {
     if (_.isFunction(this.props.onChange)) {
-      const patch = this.state.patch.getPatch()
       const list = this.getIngredientList()
+      const patch = this.getPatch()
       this.props.onChange(list, patch)
+    }
+  }
+
+  public getPatch(): IngredientListPatch | undefined {
+    const ingredientListId = this.props.ingredientList
+      ? this.props.ingredientList.id
+      : undefined
+    const removedIngredientIds = _.map(
+      _.filter(this.state.lines, { removed: true }),
+      'id'
+    )
+    const changedIngredients = _.map(
+      _.filter(this.state.lines, { changed: true }),
+      uiLineToJSON
+    )
+    const addedIngredients = _.map(
+      _.filter(this.state.lines, { added: true }),
+      uiLineToJSON
+    )
+    if (
+      !removedIngredientIds.length &&
+      !changedIngredients.length &&
+      !addedIngredients.length
+    ) {
+      return undefined
+    }
+    return {
+      ingredientListId,
+      removedIngredientIds,
+      changedIngredients,
+      addedIngredients
     }
   }
 

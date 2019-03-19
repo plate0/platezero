@@ -13,3 +13,14 @@ export interface PostRecipe {
   ingredient_lists?: IngredientListJSON[]
   procedure_lists?: ProcedureListJSON[]
 }
+
+export interface IngredientListPatch {
+  ingredientListId: number
+  removedIngredientIds: number[]
+  changedIngredients: IngredientLineJSON[]
+  addedIngredients: IngredientLineJSON[]
+}
+
+export interface RecipeVersionPatch {
+  changedIngredientLists: IngredientListPatch[]
+}

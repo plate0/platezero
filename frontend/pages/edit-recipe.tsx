@@ -2,11 +2,18 @@ import React from 'react'
 import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
-import rfc6902 from 'rfc6902'
+import { Row, Col, Button } from 'reactstrap'
 
-import { Layout, RecipeNav, ProcedureList, IngredientList } from '../components'
+import {
+  Layout,
+  RecipeNav,
+  ProcedureList,
+  IngredientList,
+  IfLoggedIn
+} from '../components'
 import { getRecipe, getRecipeVersion } from '../common/http'
 import { RecipeVersion as RecipeVersionModel } from '../models'
+import { IngredientListPatch } from '../common/request-models'
 
 interface Props {
   token: string
@@ -15,14 +22,16 @@ interface Props {
 }
 
 interface State {
-  ingredientListPatch: rfc6902.Patch
+  ingredientListPatches: { [number]: IngredientListPatch }
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
+    this.save = this.save.bind(this)
+    this.getPatch = this.getPatch.bind(this)
     this.state = {
-      ingredientListPatch: []
+      ingredientListPatches: {}
     }
   }
 
@@ -46,6 +55,19 @@ export default class EditRecipe extends React.Component<Props, State> {
     }
   }
 
+  public getPatch(): RecipeVersionPatch {
+    return {
+      changedIngredientLists: _.reject(
+        _.values(this.state.ingredientListPatches),
+        _.isUndefined
+      )
+    }
+  }
+
+  public save() {
+    console.log('patching', this.getPatch())
+  }
+
   public render() {
     const v = this.props.recipeVersion
     return (
@@ -54,20 +76,32 @@ export default class EditRecipe extends React.Component<Props, State> {
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
         <RecipeNav recipe={v.recipe} />
-        <h1>Ingredients</h1>
-        {v.ingredientLists.map((il, key) => (
+        <Row>
+          <Col>
+            <h1>Ingredients</h1>
+          </Col>
+          <Col xs="auto">
+            <IfLoggedIn>
+              <Button color="primary" onClick={this.save}>
+                Save Changes
+              </Button>
+            </IfLoggedIn>
+          </Col>
+        </Row>
+        {v.ingredientLists.map(il => (
           <IngredientList
-            key={key}
+            key={il.id}
             ingredientList={il}
-            onChange={(_, ingredientListPatch) => this.setState({ ingredientListPatch })}
+            onChange={(_, patch) =>
+              this.setState(state => ({
+                ingredientListPatches: { [il.id]: patch }
+              }))
+            }
           />
         ))}
         <h1>Instructions</h1>
         {v.procedureLists.map((pl, key) => (
-          <ProcedureList
-            procedureList={pl}
-            key={key}
-          />
+          <ProcedureList procedureList={pl} key={key} />
         ))}
       </Layout>
     )
