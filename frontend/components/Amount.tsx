@@ -9,7 +9,8 @@ interface AmountProps {
 
 export const Amount = (props: AmountProps) => {
   try {
-    const text = new Fraction(props.numerator, props.denominator).toFraction(
+    const f = new Fraction(props.numerator, props.denominator)
+    const text = f.equals(0)? "": f.toFraction(
       true
     )
     return <span>{text}</span>
