@@ -45,10 +45,10 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
       attributes: ['id', 'created_at', 'message'],
       order: [
         l('"ingredientLists.RecipeVersionIngredientList.sort_key" ASC'),
-        l('"ingredientLists.lines.IngredientListLine.sort_key" ASC'),
+        l('"ingredientLists.ingredients.IngredientListLine.sort_key" ASC'),
 
         l('"procedureLists.RecipeVersionProcedureList.sort_key" ASC'),
-        l('"procedureLists.lines.ProcedureListLine.sort_key" ASC')
+        l('"procedureLists.steps.ProcedureListLine.sort_key" ASC')
       ],
       include: [
         {

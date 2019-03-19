@@ -11,7 +11,7 @@ interface Props {
 
 interface State {
   name?: string
-  lines: ProcedureLineJSON[]
+  steps: ProcedureLineJSON[]
 }
 
 export class ProcedureList extends React.Component<Props, State> {
@@ -22,7 +22,7 @@ export class ProcedureList extends React.Component<Props, State> {
     this.state = props.procedureList
       ? props.procedureList
       : {
-          lines: [{ text: '' }]
+          steps: [{ text: '' }]
         }
   }
 
@@ -35,7 +35,7 @@ export class ProcedureList extends React.Component<Props, State> {
   public replaceStep(idx: number, text: string): void {
     this.setState(
       state => ({
-        lines: _.map(state.lines, (line, i) =>
+        steps: _.map(state.steps, (line, i) =>
           Object.assign(line, i === idx ? { text } : undefined)
         )
       }),
@@ -46,7 +46,7 @@ export class ProcedureList extends React.Component<Props, State> {
   public render() {
     return (
       <div>
-        {this.state.lines.map((s, key) => (
+        {this.state.steps.map((s, key) => (
           <Row key={key}>
             <Col className="mb-3">
               <Input
@@ -65,7 +65,7 @@ export class ProcedureList extends React.Component<Props, State> {
           color="secondary"
           onClick={_ =>
             this.setState(
-              state => ({ lines: [...state.lines, { text: '' }] }),
+              state => ({ steps: [...state.steps, { text: '' }] }),
               this.notifyChange
             )
           }

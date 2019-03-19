@@ -12,7 +12,7 @@ import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 
 export interface IngredientListJSON {
-  lines: IngredientLineJSON[]
+  ingredients: IngredientLineJSON[]
   image_url?: string
   name?: string
 }
@@ -32,7 +32,7 @@ export class IngredientList extends Model<IngredientList>
   @Column public image_url: string
 
   @BelongsToMany(() => IngredientLine, () => IngredientListLine)
-  public lines: IngredientLine[]
+  public ingredients: IngredientLine[]
 
   public static async createWithIngredients(
     il: IngredientListJSON,
@@ -43,7 +43,7 @@ export class IngredientList extends Model<IngredientList>
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.lines, ingredient => IngredientLine.create(ingredient, options))
+      _.map(il.ingredients, ingredient => IngredientLine.create(ingredient, options))
     )
     await Promise.all(
       _.map(ingredientLines, (line, sort_key) =>
