@@ -14,7 +14,7 @@ const messages = (e?: string | string[] | Error): string[] => {
   return []
 }
 
-// HTTP 400 Not Found
+// HTTP 400 Bad Request
 export const badRequest = (
   res: Response,
   errors?: string | string[] | Error

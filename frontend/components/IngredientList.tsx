@@ -64,15 +64,21 @@ const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
   }
 }
 
-const defaultUndefined = (val: string): string | undefined =>
-  _.isNull(val) || _.isUndefined(val) || val === '' ? undefined : val
+function defaultUndefined<T>(val: T): T | undefined {
+  if (_.isString(val)) {
+    return _.isNil(val) || val === '' ? undefined : val
+  }
+  return _.isNil(val) ? undefined : val
+}
 
 function uiLineToJSON(line: UIIngredientLine): IngredientLineJSON {
   return {
     ..._.omit(line, ['added', 'changed', 'removed', 'original']),
     name: defaultUndefined(line.name),
     preparation: defaultUndefined(line.preparation),
-    unit: defaultUndefined(line.unit)
+    unit: defaultUndefined(line.unit),
+    quantity_numerator: defaultUndefined(line.quantity_numerator),
+    quantity_denominator: defaultUndefined(line.quantity_denominator)
   }
 }
 

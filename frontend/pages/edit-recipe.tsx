@@ -2,7 +2,7 @@ import React from 'react'
 import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
-import { Row, Col, Button } from 'reactstrap'
+import { Row, Col, Button, Alert } from 'reactstrap'
 
 import {
   Layout,
@@ -11,18 +11,27 @@ import {
   IngredientList,
   IfLoggedIn
 } from '../components'
-import { getRecipe, getRecipeVersion } from '../common/http'
-import { RecipeVersion as RecipeVersionModel } from '../models'
-import { RecipeVersionPatch, IngredientListPatch } from '../common/request-models'
+import {
+  getRecipe,
+  getRecipeVersion,
+  patchBranch,
+  PlateZeroApiError
+} from '../common/http'
+import { RecipeVersionJSON } from '../models'
+import {
+  RecipeVersionPatch,
+  IngredientListPatch
+} from '../common/request-models'
 
 interface Props {
   token: string
   branch: string
-  recipeVersion: RecipeVersionModel
+  recipeVersion: RecipeVersionJSON
 }
 
 interface State {
   ingredientListPatches: { [id: number]: IngredientListPatch }
+  errors: string[]
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
@@ -31,7 +40,8 @@ export default class EditRecipe extends React.Component<Props, State> {
     this.save = this.save.bind(this)
     this.getPatch = this.getPatch.bind(this)
     this.state = {
-      ingredientListPatches: {}
+      ingredientListPatches: {},
+      errors: []
     }
   }
 
@@ -64,8 +74,22 @@ export default class EditRecipe extends React.Component<Props, State> {
     }
   }
 
-  public save() {
-    console.log('patching', this.getPatch())
+  public async save() {
+    this.setState({ errors: [] })
+    const patch = this.getPatch()
+    console.log('patching', patch)
+    try {
+      const slug = this.props.recipeVersion.recipe.slug
+      const { branch, token } = this.props
+      const newVersion = await patchBranch(slug, branch, patch, { token })
+      console.log('applied, new version', newVersion)
+    } catch (e) {
+      if (e instanceof PlateZeroApiError) {
+        this.setState({ errors: e.messages })
+      } else {
+        this.setState({ errors: ['unexpected error, please try again later'] })
+      }
+    }
   }
 
   public render() {
@@ -76,6 +100,11 @@ export default class EditRecipe extends React.Component<Props, State> {
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
         <RecipeNav recipe={v.recipe} />
+        {_.map(this.state.errors, (err, key) => (
+          <Alert key={key} color="danger">
+            {err}
+          </Alert>
+        ))}
         <Row>
           <Col>
             <h1>Ingredients</h1>

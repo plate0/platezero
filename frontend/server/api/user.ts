@@ -2,10 +2,10 @@ import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
 import { importers } from './importer'
-import { validateNewRecipe } from '../validate'
+import { validateNewRecipe, validateRecipePatch } from '../validate'
 import { User } from '../../models/user'
 import { Recipe } from '../../models/recipe'
-import { internalServerError } from '../errors'
+import { badRequest, internalServerError } from '../errors'
 
 interface UserDetail {
   userId: number
@@ -32,6 +32,16 @@ r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
     return res
       .status(201)
       .json(await Recipe.createNewRecipe(req.user.userId, req.body))
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.patch('/recipes/:slug/branches/:branch', validateRecipePatch, async (req, res) => {
+  try {
+    const { slug, branch } = req.params
+    console.log('slug', slug, 'branch', branch)
+    return badRequest(res, ['asdfasdfasdf'])
   } catch (err) {
     return internalServerError(res, err)
   }

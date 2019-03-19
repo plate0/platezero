@@ -18,6 +18,16 @@ const validator = schema => {
   }
 }
 
+const ingredientLine = Joi.object({
+  id: Joi.number(),
+  quantity_numerator: Joi.number(),
+  quantity_denominator: Joi.number(),
+  name: Joi.string().required(),
+  unit: Joi.string(),
+  preparation: Joi.string(),
+  optional: Joi.boolean().required()
+})
+
 export const validateNewRecipe = validator({
   title: Joi.string().required(),
   subtitle: Joi.string(),
@@ -40,14 +50,7 @@ export const validateNewRecipe = validator({
       name: Joi.string(),
       image_url: Joi.string(),
       lines: Joi.array()
-        .items({
-          quantity_numerator: Joi.number(),
-          quantity_denominator: Joi.number(),
-          name: Joi.string().required(),
-          unit: Joi.string(),
-          preparation: Joi.string(),
-          optional: Joi.boolean().required()
-        })
+        .items(ingredientLine)
         .required()
     })
     .required(),
@@ -77,4 +80,21 @@ export const validateNewUser = validator({
   password: Joi.string()
     .min(8)
     .required()
+})
+
+export const validateRecipePatch = validator({
+  changedIngredientLists: Joi.array().items({
+    ingredientListId: Joi.number()
+      .min(0)
+      .required(),
+    removedIngredientIds: Joi.array()
+      .items(Joi.number())
+      .required(),
+    changedIngredients: Joi.array()
+      .items(ingredientLine)
+      .required(),
+    addedIngredients: Joi.array()
+      .items(ingredientLine)
+      .required()
+  })
 })
