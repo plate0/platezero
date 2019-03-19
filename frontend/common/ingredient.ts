@@ -11,8 +11,8 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
   if (!s) {
     return undefined
   }
-  const numMatch = /(^[\d\/\d\s.]*)/gm.exec(s)
-  const num = fraction(numMatch && numMatch[1] ? numMatch[1] : '1')
+  const numMatch = /(^[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒\d\/\d\s.]*)/gm.exec(s)
+  const num = fraction(numMatch && numMatch[1] ? numMatch[1].trim() : '1')
   if (numMatch) {
     s = s.substring(numMatch[1].length)
   }
