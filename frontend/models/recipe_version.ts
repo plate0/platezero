@@ -11,6 +11,7 @@ import {
   Table
 } from 'sequelize-typescript'
 import { fn } from 'sequelize'
+import * as _ from 'lodash'
 
 import { Preheat } from './preheat'
 import { RecipeYield } from './recipe_yield'
@@ -22,6 +23,9 @@ import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { ProcedureList } from './procedure_list'
 import { IngredientList } from './ingredient_list'
+import { RecipeVersionPatch } from '../common/request-models'
+import { IngredientLine } from './ingredient_line'
+import { ProcedureLine } from './procedure_line'
 
 export interface RecipeVersionJSON {
   id?: number
@@ -106,4 +110,61 @@ export class RecipeVersion extends Model<RecipeVersion>
 
   @BelongsToMany(() => Preheat, () => RecipeVersionPreheat)
   public preheats: Preheat[]
+
+  public static async createFromPrevious(
+    id: number,
+    patch: RecipeVersionPatch,
+    transaction?: any
+  ): Promise<RecipeVersion> {
+    console.log('applying', patch, 'to recipe version', id)
+    const prev = await RecipeVersion.findOne({
+      where: { id },
+      include: [
+        { model: IngredientList, include: [{ model: IngredientLine }] },
+        { model: ProcedureList, include: [{ model: ProcedureLine }]},
+        { model: Preheat }
+      ],
+      transaction
+    })
+    const v = await RecipeVersion.create(
+      {
+        recipe_id: prev.recipe_id,
+        user_id: prev.user_id,
+        message: 'Another Version',
+        parent_recipe_version_id: prev.id,
+        recipe_yield_id: prev.recipe_yield_id,
+        recipe_duration_id: prev.recipe_duration_id
+      },
+      { transaction }
+    )
+    await Promise.all(
+      _.map(prev.procedureLists, (pl, sort_key) =>
+        RecipeVersionProcedureList.create(
+          {
+            recipe_version_id: v.id,
+            procedure_list_id: pl.id,
+            sort_key
+          },
+          { transaction }
+        )
+      )
+    )
+    await Promise.all(
+      _.map(prev.ingredientLists, (il, sort_key) =>
+        RecipeVersionIngredientList.create(
+          { recipe_version_id: v.id, ingredient_list_id: il.id, sort_key },
+          { transaction }
+        )
+      )
+    )
+    await Promise.all(
+      _.map(prev.preheats, preheat =>
+        RecipeVersionPreheat.create(
+          { recipe_version_id: v.id, preheat_id: preheat.id },
+          { transaction }
+        )
+      )
+    )
+    return v
+  }
 }

@@ -3,9 +3,8 @@ import { Request } from 'express'
 import * as _ from 'lodash'
 import { importers } from './importer'
 import { validateNewRecipe, validateRecipePatch } from '../validate'
-import { User } from '../../models/user'
-import { Recipe } from '../../models/recipe'
-import { badRequest, internalServerError } from '../errors'
+import { User, Recipe, RecipeBranch, RecipeVersion } from '../../models'
+import { notFound, internalServerError } from '../errors'
 
 interface UserDetail {
   userId: number
@@ -37,15 +36,40 @@ r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
   }
 })
 
-r.patch('/recipes/:slug/branches/:branch', validateRecipePatch, async (req, res) => {
-  try {
-    const { slug, branch } = req.params
-    console.log('slug', slug, 'branch', branch)
-    return badRequest(res, ['asdfasdfasdf'])
-  } catch (err) {
-    return internalServerError(res, err)
+r.patch(
+  '/recipes/:slug/branches/:branch',
+  validateRecipePatch,
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      const { slug, branch } = req.params
+      const currentBranch = await RecipeBranch.findOne({
+        where: {
+          name: branch
+        },
+        include: [
+          {
+            model: RecipeVersion,
+            include: [
+              {
+                model: Recipe,
+                where: {
+                  user_id: req.user.userId,
+                  slug
+                }
+              }
+            ]
+          }
+        ]
+      })
+      if (!currentBranch) {
+        return notFound(res)
+      }
+      res.status(200).json(await currentBranch.applyPatch(req.body))
+    } catch (err) {
+      return internalServerError(res, err)
+    }
   }
-})
+)
 
 r.use('/import', importers)
 

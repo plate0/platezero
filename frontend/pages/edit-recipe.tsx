@@ -107,7 +107,7 @@ export default class EditRecipe extends React.Component<Props, State> {
         ))}
         <Row>
           <Col>
-            <h1>Ingredients</h1>
+            <h4>Ingredients</h4>
           </Col>
           <Col xs="auto">
             <IfLoggedIn>
@@ -126,7 +126,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             }
           />
         ))}
-        <h1>Instructions</h1>
+        <h4 className="mt-3">Instructions</h4>
         {v.procedureLists.map((pl, key) => (
           <ProcedureList procedureList={pl} key={key} />
         ))}
