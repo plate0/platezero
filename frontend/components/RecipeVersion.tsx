@@ -125,7 +125,7 @@ const ProcedureList = ({
     <div className="mb-3">
       {showName && name}
       <Row>
-        {list.lines.map((l, key) => (
+        {list.steps.map((l, key) => (
           <Col xs="12" md="6" key={key}>
             {l.image_url && <img className="w-100" src={l.image_url} />}
             {l.title && (
@@ -189,7 +189,7 @@ const IngredientList = ({
       <Col xs="12" md={image ? '4' : '12'}>
         {title}
         <ul className="list-unstyled">
-          {list.lines.map((line, key) => (
+          {list.ingredients.map((line, key) => (
             <IngredientListLine key={key} line={line} />
           ))}
         </ul>
