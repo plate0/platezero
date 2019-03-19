@@ -64,7 +64,7 @@ r.patch(
       if (!currentBranch) {
         return notFound(res)
       }
-      res.status(200).json(await currentBranch.applyPatch(req.body))
+      res.status(200).json(await currentBranch.applyPatch(req.body, req.user.userId))
     } catch (err) {
       return internalServerError(res, err)
     }

@@ -27,5 +27,6 @@ export interface IngredientListPatch {
 }
 
 export interface RecipeVersionPatch {
+  message: string
   changedIngredientLists: IngredientListPatch[]
 }

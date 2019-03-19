@@ -1,16 +1,20 @@
 import React from 'react'
+import Router from 'next/router'
 import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
-import { Row, Col, Button, Alert } from 'reactstrap'
-
 import {
-  Layout,
-  RecipeNav,
-  ProcedureList,
-  IngredientList,
-  IfLoggedIn
-} from '../components'
+  Card,
+  CardHeader,
+  CardBody,
+  Row,
+  Col,
+  Button,
+  Alert,
+  Input
+} from 'reactstrap'
+
+import { Layout, RecipeNav, ProcedureList, IngredientList } from '../components'
 import {
   getRecipe,
   getRecipeVersion,
@@ -31,6 +35,7 @@ interface Props {
 
 interface State {
   ingredientListPatches: { [id: number]: IngredientListPatch }
+  message: string
   errors: string[]
 }
 
@@ -41,7 +46,8 @@ export default class EditRecipe extends React.Component<Props, State> {
     this.getPatch = this.getPatch.bind(this)
     this.state = {
       ingredientListPatches: {},
-      errors: []
+      errors: [],
+      message: ''
     }
   }
 
@@ -67,6 +73,7 @@ export default class EditRecipe extends React.Component<Props, State> {
 
   public getPatch(): RecipeVersionPatch {
     return {
+      message: this.state.message,
       changedIngredientLists: _.reject(
         _.values(this.state.ingredientListPatches),
         _.isUndefined
@@ -83,6 +90,7 @@ export default class EditRecipe extends React.Component<Props, State> {
       const { branch, token } = this.props
       const newVersion = await patchBranch(slug, branch, patch, { token })
       console.log('applied, new version', newVersion)
+      Router.push(`/${this.props.recipeVersion.recipe.owner.username}/${slug}`)
     } catch (e) {
       if (e instanceof PlateZeroApiError) {
         this.setState({ errors: e.messages })
@@ -105,18 +113,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             {err}
           </Alert>
         ))}
-        <Row>
-          <Col>
-            <h4>Ingredients</h4>
-          </Col>
-          <Col xs="auto">
-            <IfLoggedIn>
-              <Button color="primary" onClick={this.save}>
-                Save Changes
-              </Button>
-            </IfLoggedIn>
-          </Col>
-        </Row>
+        <h4>Ingredients</h4>
         {v.ingredientLists.map(il => (
           <IngredientList
             key={il.id}
@@ -130,6 +127,32 @@ export default class EditRecipe extends React.Component<Props, State> {
         {v.procedureLists.map((pl, key) => (
           <ProcedureList procedureList={pl} key={key} />
         ))}
+        <Card>
+          <CardHeader>
+            <strong>Save New Version</strong>
+          </CardHeader>
+          <CardBody>
+            <Row>
+              <Col>
+                <Input
+                  type="textarea"
+                  value={this.state.message}
+                  placeholder="Briefly describe your changes here"
+                  onChange={e => this.setState({ message: e.target.value })}
+                />
+              </Col>
+              <Col xs="auto">
+                <Button
+                  color="primary"
+                  onClick={this.save}
+                  disabled={this.state.message === ''}
+                >
+                  Save Changes
+                </Button>
+              </Col>
+            </Row>
+          </CardBody>
+        </Card>
       </Layout>
     )
   }

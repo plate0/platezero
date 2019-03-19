@@ -83,6 +83,7 @@ export const validateNewUser = validator({
 })
 
 export const validateRecipePatch = validator({
+  message: Joi.string().required(),
   changedIngredientLists: Joi.array().items({
     ingredientListId: Joi.number()
       .min(0)

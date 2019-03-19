@@ -114,6 +114,7 @@ export class RecipeVersion extends Model<RecipeVersion>
   public static async createFromPrevious(
     id: number,
     patch: RecipeVersionPatch,
+    userId: number,
     transaction?: any
   ): Promise<RecipeVersion> {
     console.log('applying', patch, 'to recipe version', id)
@@ -129,8 +130,8 @@ export class RecipeVersion extends Model<RecipeVersion>
     const v = await RecipeVersion.create(
       {
         recipe_id: prev.recipe_id,
-        user_id: prev.user_id,
-        message: 'Another Version',
+        user_id: userId,
+        message: patch.message,
         parent_recipe_version_id: prev.id,
         recipe_yield_id: prev.recipe_yield_id,
         recipe_duration_id: prev.recipe_duration_id
