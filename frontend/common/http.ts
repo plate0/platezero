@@ -6,6 +6,7 @@ import {
   RecipeJSON,
   RecipeVersion as RecipeVersionModel
 } from '../models'
+import { PostRecipe } from './request-models'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
@@ -124,7 +125,7 @@ export const getRecipeVersion = (
     }
   )
 
-export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
+export const createRecipe = (recipe: PostRecipe, opts?: PlateZeroRequestInfo) =>
   _fetch<RecipeJSON>(`/user/recipe`, {
     body: JSON.stringify(recipe),
     method: 'POST',

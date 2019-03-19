@@ -33,11 +33,6 @@ const newIngredient = (): UIIngredientLine => ({
   added: true
 })
 
-const newIngredientList = (): IngredientListJSON => ({
-  name: '',
-  lines: []
-})
-
 interface Props {
   onChange?: (ingredientList: IngredientListJSON, patch?: rfc6902.Patch) => void
   ingredientList?: IngredientListJSON
@@ -49,35 +44,65 @@ interface State {
   patch: IngredientListPatch
 }
 
+const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
+  if (ingredientList) {
+    return {
+      ...ingredientList,
+      lines: _.map(ingredientList.lines, line => ({
+        ...line,
+        added: false,
+        changed: false,
+        removed: false,
+        original: line
+      }))
+    }
+  }
+  return {
+    name: '',
+    lines: [newIngredient()]
+  }
+}
+
+const defaultUndefined = (val: string): string | undefined =>
+  _.isNull(val) || _.isUndefined(val) || val === '' ? undefined : val
+
 export class IngredientList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.addIngredient = this.addIngredient.bind(this)
     this.notifyChange = this.notifyChange.bind(this)
+    this.getIngredientList = this.getIngredientList.bind(this)
     this.replaceLine = this.replaceLine.bind(this)
     this.removeLine = this.removeLine.bind(this)
-    const list = props.ingredientList || newIngredientList()
-    const lines = _.map(list.lines, line => ({
-      ...line,
-      added: false,
-      changed: false,
-      removed: false
-    }))
+    this.restoreLine = this.restoreLine.bind(this)
+    const list = fallbackToNewIngredientList(props.ingredientList)
+    const { name, lines } = list
     const patch = new IngredientListPatch(list)
-    this.state = { name: list.name, lines, patch }
+    this.state = { name, lines, patch }
+  }
+
+  public getIngredientList(): IngredientListJSON {
+    return {
+      name: defaultUndefined(this.state.name),
+      lines: _.map(this.state.lines, line => ({
+        ..._.omit(line, ['id', 'added', 'changed', 'removed', 'original']),
+        name: defaultUndefined(line.name),
+        preparation: defaultUndefined(line.preparation),
+        unit: defaultUndefined(line.unit)
+      }))
+    }
   }
 
   public notifyChange() {
     if (_.isFunction(this.props.onChange)) {
       const patch = this.state.patch.getPatch()
-      const { name, lines } = this.state
-      this.props.onChange({ name: name === '' ? null : name, lines }, patch)
+      const list = this.getIngredientList()
+      this.props.onChange(list, patch)
     }
   }
 
   public addIngredient() {
     const line = newIngredient()
-    this.state.patch.addIngredient(line)
     this.setState(
       state => ({ ...state, lines: [...state.lines, line] }),
       this.notifyChange
@@ -85,23 +110,21 @@ export class IngredientList extends React.Component<Props, State> {
   }
 
   public replaceLine(ingredient: IngredientLineJSON): void {
-    const old = _.find(this.state.lines, { id: ingredient.id })
-    const newIngredient = old.added
-      ? { ...ingredient, added: true, changed: false, removed: false }
-      : { ...ingredient, added: false, changed: true, removed: false }
-    this.setState(
-      state => ({
+    this.setState(state => {
+      const old = _.find(state.lines, { id: ingredient.id })
+      const newIngredient = old.added
+        ? { ...ingredient, added: true, changed: false, removed: false }
+        : { ...ingredient, added: false, changed: true, removed: false }
+      return {
         ...state,
         lines: _.map(state.lines, line =>
           line.id === ingredient.id ? newIngredient : line
         )
-      }),
-      this.notifyChange
-    )
+      }
+    }, this.notifyChange)
   }
 
   public removeLine(line: UIIngredientLine): void {
-    this.state.patch.removeIngredient(line.id)
     this.setState(
       state => ({
         ...state,
@@ -110,6 +133,29 @@ export class IngredientList extends React.Component<Props, State> {
           : _.map(state.lines, l =>
               l.id === line.id ? { ...line, removed: true } : l
             )
+      }),
+      this.notifyChange
+    )
+  }
+
+  public restoreLine(line: UIIngredientLine): void {
+    this.setState(
+      state => ({
+        ...state,
+        lines: _.map(state.lines, l => {
+          if (l.id !== line.id) {
+            return l
+          }
+          return l.changed
+            ? {
+                ...l.original,
+                original: l.original,
+                added: l.added,
+                changed: false,
+                removed: false
+              }
+            : { ...l, removed: false }
+        })
       }),
       this.notifyChange
     )
@@ -146,7 +192,11 @@ export class IngredientList extends React.Component<Props, State> {
             key={ingredient.id}
             ingredient={ingredient}
             onChange={newIngredient => this.replaceLine(newIngredient)}
+            removed={ingredient.removed}
+            added={ingredient.added}
+            changed={ingredient.changed}
             onRemove={() => this.removeLine(ingredient)}
+            onRestore={() => this.restoreLine(ingredient)}
           />
         ))}
         <Button outline color="secondary" onClick={this.addIngredient}>

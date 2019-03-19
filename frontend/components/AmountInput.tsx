@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Fraction from 'fraction.js'
 import { Input } from 'reactstrap'
 import * as _ from 'lodash'
@@ -35,50 +35,76 @@ const fractionToString = (amt: FractionAmount): string => {
 interface AmountInputProps {
   amount: FractionAmount
   onChange?: (amount: FractionAmount) => void
-  tabIndex?: number
+  className?: string
 }
 
-interface AmountInputState {
-  text: string
-  fraction: FractionAmount
-  valid: boolean
-}
+export function AmountInput(props: AmountInputProps) {
+  const [text, setText] = useState(fractionToString(props.amount))
+  const [valid, setValid] = useState(isValid(props.amount))
 
-export class AmountInput extends React.Component<
-  AmountInputProps,
-  AmountInputState
-> {
-  constructor(props: AmountInputProps) {
-    super(props)
-    this.onChange = this.onChange.bind(this)
-    this.state = {
-      fraction: this.props.amount,
-      text: fractionToString(this.props.amount),
-      valid: isValid(this.props.amount)
-    }
-  }
+  const [n, d] = [useRef(), useRef()]
 
-  public onChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const text = e.currentTarget.value
+  // update the fraction model when the text changes
+  useEffect(() => {
     const fraction = parse(text)
-    const valid = isValid(fraction)
-    this.setState({ text, fraction, valid })
-    if (this.props.onChange) {
-      this.props.onChange(fraction)
-    }
-  }
+    setValid(isValid(fraction))
+    console.log('new fraction', fraction, 'valid', valid)
+  }, [text])
 
-  public render() {
-    return (
-      <Input
-        type="text"
-        name="ingredientAmount"
-        tabIndex={this.props.tabIndex}
-        value={this.state.text}
-        onChange={this.onChange}
-        valid={this.state.valid}
-        placeholder="2/3…"
-      />
-    )
-  }
+  useEffect(() => {
+    console.log('n', n, 'd', d)
+  }, [n.current, d.current])
+
+  return (
+    <Input
+      type="text"
+      value={text}
+      onChange={e => setText(e.currentTarget.value)}
+      valid={valid}
+      placeholder="2/3…"
+      className={props.className}
+    />
+  )
 }
+
+// export class AmountInput extends React.Component<
+//   AmountInputProps,
+//   AmountInputState
+// > {
+//   constructor(props: AmountInputProps) {
+//     super(props)
+//     this.onChange = this.onChange.bind(this)
+//     console.log('received new props', props)
+//     this.state = {
+//       fraction: this.props.amount,
+//       text: fractionToString(this.props.amount),
+//       valid: isValid(this.props.amount)
+//     }
+//   }
+
+//   public onChange = (e: React.FormEvent<HTMLInputElement>) => {
+//     const text = e.currentTarget.value
+//     const fraction = parse(text)
+//     const valid = isValid(fraction)
+//     this.setState({ text, fraction, valid })
+//     if (this.props.onChange) {
+//       this.props.onChange(fraction)
+//     }
+//   }
+
+//   public render() {
+//     console.log('rendering amount input', this.state)
+//     return (
+//       <Input
+//         type="text"
+//         name="ingredientAmount"
+//         tabIndex={this.props.tabIndex}
+//         value={this.state.text}
+//         onChange={this.onChange}
+//         valid={this.state.valid}
+//         placeholder="2/3…"
+//         className={this.props.className}
+//       />
+//     )
+//   }
+// }
