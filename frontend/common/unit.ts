@@ -21,7 +21,8 @@ export const Units = [
   { label: 'teaspoon', value: 'tsp' },
   { label: 'liter', value: 'l' },
   { label: 'milliliter', value: 'ml' },
-  { label: 'deciliter', value: 'dl' }
+  { label: 'deciliter', value: 'dl' },
+  { label: 'ounce', value: 'oz' }
 ]
 
 export const unitfy = (s?: string): Unit | undefined => {
