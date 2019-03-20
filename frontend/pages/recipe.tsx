@@ -3,11 +3,11 @@ import * as _ from 'lodash'
 import ReactMarkdown from 'react-markdown'
 import { Card, CardHeader, CardBody } from 'reactstrap'
 import {
+  Head,
   Layout,
   RecipeNav,
   RecipeVersion as RecipeVersionView
 } from '../components'
-import Head from 'next/head'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipe, getRecipeVersion } from '../common/http'
@@ -35,9 +35,12 @@ export default class Recipe extends React.Component<RecipeProps> {
     const { recipe, recipeVersion } = this.props
     return (
       <Layout>
-        <Head>
-          <title>{recipe.title}</title>
-        </Head>
+        <Head
+          title={`${recipe.title} - PlateZero`}
+          description={recipe.description}
+          image={recipe.image_url}
+          url={`/${recipe.owner.username}/${recipe.slug}`}
+        />
         <RecipeNav recipe={recipe} />
         {recipeVersion && <RecipeEditButton recipe={recipe} branch="master" />}
         {recipe.description && (

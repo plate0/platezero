@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import {
   Collapse,
   NavbarToggler,
@@ -7,9 +7,31 @@ import {
   Navbar as RsNavbar
 } from 'reactstrap'
 import { UserJSON } from '../models'
-import { PlateZeroContext } from '../pages/_app'
+import { UserContext } from '../context/UserContext'
 import { ProfilePicture } from './ProfilePicture'
 import { Link } from '../routes'
+
+export const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const user = useContext(UserContext)
+  return (
+    <RsNavbar expand="md" color="primary" dark={true} className="shadow-sm">
+      <Container>
+        <Link route="/">
+          <a className="navbar-brand py-0">
+            <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
+          </a>
+        </Link>
+        <NavbarToggler onClick={() => setIsOpen(!isOpen)} />
+        <Collapse isOpen={isOpen} navbar>
+          <Nav className="ml-auto" navbar>
+            {user ? <UserCardNav user={user} /> : <AnonNav />}
+          </Nav>
+        </Collapse>
+      </Container>
+    </RsNavbar>
+  )
+}
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
   <Link route={`/${user.username}`}>
@@ -36,49 +58,6 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
     </a>
   </Link>
 )
-
-interface NavbarState {
-  isOpen: boolean
-}
-
-export class Navbar extends React.Component<any, NavbarState> {
-  public static contextType = PlateZeroContext
-
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      isOpen: false
-    }
-    this.toggle = this.toggle.bind(this)
-  }
-
-  public toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    })
-  }
-
-  public render() {
-    const { user } = this.context
-    return (
-      <RsNavbar expand="md" color="primary" dark={true} className="shadow-sm">
-        <Container>
-          <Link route="/">
-            <a className="navbar-brand py-0">
-              <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
-            </a>
-          </Link>
-          <NavbarToggler onClick={this.toggle} />
-          <Collapse isOpen={this.state.isOpen} navbar>
-            <Nav className="ml-auto" navbar>
-              {user ? <UserCardNav user={user} /> : <AnonNav />}
-            </Nav>
-          </Collapse>
-        </Container>
-      </RsNavbar>
-    )
-  }
-}
 
 const AnonNav = () => (
   <div>

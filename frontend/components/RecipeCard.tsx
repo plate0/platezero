@@ -1,5 +1,4 @@
 import React from 'react'
-import { Card, CardImg, CardBody, CardTitle } from 'reactstrap'
 import { Link } from '../routes'
 
 export interface RecipeCardProps {
@@ -12,30 +11,30 @@ export interface RecipeCardProps {
 export const RecipeCard = (props: RecipeCardProps) => (
   <Link route={`/${props.username}/${props.slug}`}>
     <a>
-      <Card>
+      <div>
         {props.image_url && (
-          <CardImg
-            top
+          <img
+            className="rounded shadow-sm"
             width="100%"
             src={props.image_url}
             alt="Card image cap"
             style={{ height: 180, objectFit: 'cover' }}
           />
         )}
-        <CardBody className="p-3">
-          <CardTitle className="m-0">
+        <div className="pt-1">
+          <div className="m-0">
             <strong>{props.title}</strong>
-          </CardTitle>
-          <style jsx>{`
-            strong {
-              color: black;
-            }
-            a:hover {
-              text-decoration: none;
-            }
-          `}</style>
-        </CardBody>
-      </Card>
+          </div>
+        </div>
+      </div>
+      <style jsx>{`
+        a:hover {
+          text-decoration: none;
+        }
+        strong {
+          color: rgb(62, 62, 62);
+        }
+      `}</style>
     </a>
   </Link>
 )

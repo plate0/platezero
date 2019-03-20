@@ -21,7 +21,8 @@ export const Units = [
   { label: 'teaspoon', value: 'tsp' },
   { label: 'liter', value: 'l' },
   { label: 'milliliter', value: 'ml' },
-  { label: 'deciliter', value: 'dl' }
+  { label: 'deciliter', value: 'dl' },
+  { label: 'ounce', value: 'oz' }
 ]
 
 export const unitfy = (s?: string): Unit | undefined => {
@@ -42,12 +43,19 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'dl':
     case 'ml':
       return unit
+    case 'pound':
+    case 'pounds':
     case 'lbs':
       return 'lb'
+    case 'tablespoon':
+    case 'tablespoons':
     case 'tbsps':
       return 'tbsp'
+    case 'teaspoon':
+    case 'teaspoons':
     case 'tsps':
       return 'tsp'
+    case 'cups':
     case 'cup':
       return 'c'
   }

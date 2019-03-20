@@ -1,4 +1,4 @@
-import { BlueApronImporter } from './blue-apron'
+import { BlueApronImporter as importer } from './blue-apron'
 import { readFileSync } from 'fs'
 
 const recipe =
@@ -7,42 +7,48 @@ const goudaBurgers =
   'test/assets/blueapron/smoked-gouda-burgers-with-caramelized-onion-carrot-fries.html'
 
 test('Blue Apron importer exists', () => {
-  expect(BlueApronImporter).toBeDefined()
+  expect(importer).toBeDefined()
 })
 
 describe('Blue Apron import recipe', () => {
-  let importer: BlueApronImporter
+  let source: string
 
   beforeEach(() => {
-    importer = new BlueApronImporter('')
-    importer.setup(readFileSync(recipe, { encoding: 'utf8' }))
+    source = readFileSync(recipe, { encoding: 'utf8' })
   })
 
   test('get title', async () => {
-    const title = await importer.getTitle()
+    const { title } = await importer(source)
     expect(title).toEqual('Mexican-Spiced Chicken & Zucchini Rice')
   })
 
   test('get subtitle', async () => {
-    const subtitle = await importer.getSubtitle()
+    const { subtitle } = await importer(source)
     expect(subtitle).toEqual('with Tomato & Jalapeño Salsa')
   })
 
+  test('get description', async () => {
+    const { description } = await importer(source)
+    expect(description).toEqual(
+      'To top our seared, spiced chicken, we’re making a vibrant salsa with juicy tomatoes, spicy pickled jalapeño, and scallions—contrasted by a finishing dollop of creamy fromage blanc. A simple combo of jasmine rice and sautéed zucchini makes for the perfect base to balance out the bold flavors.'
+    )
+  })
+
   test('get yield', async () => {
-    const yld = await importer.getYield()
+    const { yield: yld } = await importer(source)
     expect(yld).toEqual('2')
   })
 
   test('get preheats', async () => {
     // this recipe has preheats
-    importer.setup(readFileSync(goudaBurgers, { encoding: 'utf8' }))
-    const preheats = await importer.getPreheats()
+    source = readFileSync(goudaBurgers, { encoding: 'utf8' })
+    const { preheats } = await importer(source)
     expect(preheats).toHaveLength(1)
-    expect(preheats).toEqual([{ name: 'oven', temperature: '450', unit: 'F' }])
+    expect(preheats).toEqual([{ name: 'oven', temperature: 450, unit: 'F' }])
   })
 
   test('get ingredient lists', async () => {
-    const list = await importer.getIngredientLists()
+    const { ingredient_lists: list } = await importer(source)
     expect(list).toHaveLength(1)
     expect(list[0].lines).toEqual([
       {
@@ -122,7 +128,7 @@ describe('Blue Apron import recipe', () => {
   })
 
   test('get procedure lists', async () => {
-    const procedures = await importer.getProcedureLists()
+    const { procedure_lists: procedures } = await importer(source)
     expect(procedures).toHaveLength(1)
     expect(procedures[0].name).toEqual('Instructions')
     expect(procedures[0].lines).toHaveLength(5)
