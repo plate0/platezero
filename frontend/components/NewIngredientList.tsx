@@ -38,7 +38,10 @@ export class NewIngredientList extends React.Component<Props, State> {
 
   public notifyChange() {
     if (this.props.onChange) {
-      this.props.onChange(this.state)
+      this.props.onChange({
+        ...this.state,
+        name: this.state.name === '' ? undefined : this.state.name
+      })
     }
   }
 
