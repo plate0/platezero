@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from 'reactstrap'
 import * as _ from 'lodash'
 
@@ -25,43 +25,53 @@ interface Props {
 export function ProcedureLists(props: Props) {
   console.log(props)
   const [addedLists, setAddedLists] = useState([])
+  const [changedLists, setChangedLists] = useState([])
 
-  const onChange = () => {
+  useEffect(() => {
     if (_.isFunction(props.onChange)) {
-      props.onChange(addedLists, [], [])
+      props.onChange(addedLists, [], changedLists)
     }
-  }
+  }, [addedLists, changedLists])
 
-  const removeAddedList = id => {
-    setAddedLists(_.reject(addedLists, { id }), () => onChange())
-  }
+  const addList = () => setAddedLists([...addedLists, newProcedureList()])
 
-  const changeAddedList = (id, newList) => {
+  const removeAddedList = id => setAddedLists(_.reject(addedLists, { id }))
+
+  const changeAddedList = newList =>
     setAddedLists(
-      _.map(addedLists, list => (list.id === newList.id ? newList : list)),
-      () => onChange()
+      _.map(addedLists, list => (list.id === newList.id ? newList : list))
     )
+
+  const changeList = newList => {
+    const alreadyChanged = _.find(changedLists, { id: newList.id })
+    if (alreadyChanged) {
+      setChangedLists(
+        _.map(changedLists, list => (list.id === newList.id ? newList : list))
+      )
+    } else {
+      setChangedLists([...changedLists, newList])
+    }
   }
 
   return (
     <>
       {props.lists.map(pl => (
-        <ProcedureList procedureList={pl} key={pl.id} />
+        <ProcedureList
+          procedureList={pl}
+          key={pl.id}
+          onChange={list => changeList(list)}
+        />
       ))}
       {_.map(addedLists, pl => (
         <ProcedureList
           procedureList={pl}
           key={pl.id}
           onRemove={() => removeAddedList(pl.id)}
-          onChange={list => changeAddedList(pl.id, list)}
+          onChange={list => changeAddedList(list)}
         />
       ))}
       <p>
-        <Button
-          color="secondary"
-          size="sm"
-          onClick={() => setAddedLists([...addedLists, newProcedureList()])}
-        >
+        <Button color="secondary" size="sm" onClick={() => addList()}>
           Add Instruction Section
         </Button>
       </p>
