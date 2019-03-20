@@ -149,7 +149,10 @@ const ProcedureList = ({
 
 const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   return (
-    <li style={{ fontSize: 16, lineHeight: '38px' }} className="d-flex">
+    <li
+      style={{ fontSize: 16, lineHeight: '38px' }}
+      className="d-flex align-items-center"
+    >
       <span className="text-muted text-right mr-2" style={{ width: '80px' }}>
         <Amount
           numerator={line.quantity_numerator}
@@ -159,9 +162,7 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
       </span>
       <strong>{line.name}</strong>
       {line.preparation && ', ' + line.preparation}
-      {line.optional && (
-        <span className="badge badge-secondary ml-1">Optional</span>
-      )}
+      {line.optional && <span className="badge badge-info ml-1">Optional</span>}
     </li>
   )
 }

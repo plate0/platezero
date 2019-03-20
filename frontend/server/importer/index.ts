@@ -2,6 +2,7 @@ import { parse } from 'url'
 import { BlueApronImporter } from './blue-apron'
 import { SeriousEatsImporter } from './serious-eats'
 import { NYTCookingImporter } from './nyt-cooking'
+import { GenericHTMLImporter } from './generic-html-importer'
 
 const importers = {
   'cooking.nytimes.com': NYTCookingImporter,
@@ -15,6 +16,6 @@ export const url = (u: string) => {
   if (importer) {
     return importer
   } else {
-    throw new Error(`unsupported site: '${parsed.hostname}'`)
+    return GenericHTMLImporter
   }
 }

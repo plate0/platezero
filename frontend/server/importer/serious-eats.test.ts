@@ -161,20 +161,20 @@ describe('Serious Eats import', () => {
             unit: 'tsp'
           },
           {
-            name: 'cups long-grain or Basmati rice',
+            name: 'long-grain or Basmati rice',
             quantity_numerator: 3,
             quantity_denominator: 2,
             preparation: undefined,
             optional: false,
-            unit: undefined
+            unit: 'c'
           },
           {
-            name: 'cups chicken broth',
+            name: 'chicken broth',
             quantity_numerator: 5,
             quantity_denominator: 2,
             preparation: undefined,
             optional: false,
-            unit: undefined
+            unit: 'c'
           },
           {
             name: 'Kosher salt and freshly ground black pepper',

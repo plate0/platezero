@@ -54,6 +54,7 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'teaspoons':
     case 'tsps':
       return 'tsp'
+    case 'cups':
     case 'cup':
       return 'c'
   }
