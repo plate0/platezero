@@ -14,18 +14,25 @@ import {
   Input
 } from 'reactstrap'
 
-import { Layout, RecipeNav, ProcedureList, IngredientList } from '../components'
+import {
+  Layout,
+  RecipeNav,
+  ProcedureLists,
+  IngredientList
+} from '../components'
 import {
   getRecipe,
   getRecipeVersion,
   patchBranch,
   PlateZeroApiError
 } from '../common/http'
-import { RecipeVersionJSON } from '../models'
+import { RecipeVersionJSON, ProcedureListJSON } from '../models'
 import {
   RecipeVersionPatch,
-  IngredientListPatch
+  IngredientListPatch,
+  ProcedureListPatch
 } from '../common/request-models'
+import { defaultUndefined } from '../common/textutils'
 
 interface Props {
   token: string
@@ -34,7 +41,10 @@ interface Props {
 }
 
 interface State {
-  ingredientListPatches: { [id: number]: IngredientListPatch }
+  changedIngredientLists: { [id: number]: IngredientListPatch }
+  addedProcedureLists: ProcedureListJSON[]
+  removedProcedureListIds: number[]
+  changedProcedureLists: ProcedureListPatch[]
   message: string
   errors: string[]
 }
@@ -45,7 +55,12 @@ export default class EditRecipe extends React.Component<Props, State> {
     this.save = this.save.bind(this)
     this.getPatch = this.getPatch.bind(this)
     this.state = {
-      ingredientListPatches: {},
+      changedIngredientLists: {},
+
+      addedProcedureLists: [],
+      removedProcedureListIds: [],
+      changedProcedureLists: [],
+
       errors: [],
       message: ''
     }
@@ -75,9 +90,14 @@ export default class EditRecipe extends React.Component<Props, State> {
     return {
       message: this.state.message,
       changedIngredientLists: _.reject(
-        _.values(this.state.ingredientListPatches),
+        _.values(this.state.changedIngredientLists),
         _.isUndefined
-      )
+      ),
+      addedProcedureLists: _.map(this.state.addedProcedureLists, pl =>
+        _.omit({ ...pl, name: defaultUndefined(pl.name) }, ['id'])
+      ),
+      changedProcedureLists: this.state.changedProcedureLists,
+      removedProcedureListIds: this.state.removedProcedureListIds
     }
   }
 
@@ -111,38 +131,32 @@ export default class EditRecipe extends React.Component<Props, State> {
             {err}
           </Alert>
         ))}
-        <Row className="mb-3">
-          <Col>
-            <h4>Ingredients</h4>
-          </Col>
-          <Col xs="auto">
-            <Button
-              color="secondary"
-              size="sm"
-              onClick={() => console.log('add ingredient list')}
-            >
-              <i className="fa fa-plus" /> Add Section
-            </Button>
-          </Col>
-        </Row>
+        <h4>Ingredients</h4>
         {v.ingredientLists.map(il => (
-          <Card key={il.id}>
-            <CardBody>
-              <IngredientList
-                key={il.id}
-                ingredientList={il}
-                onChange={(_, patch) =>
-                  this.setState({ ingredientListPatches: { [il.id]: patch } })
-                }
-              />
-            </CardBody>
-          </Card>
+          <IngredientList
+            key={il.id}
+            ingredientList={il}
+            onChange={(_, patch) =>
+              this.setState({ changedIngredientLists: { [il.id]: patch } })
+            }
+          />
         ))}
         <h4 className="mt-3">Instructions</h4>
-        {v.procedureLists.map((pl, key) => (
-          <ProcedureList procedureList={pl} key={key} />
-        ))}
-        <Card>
+        <ProcedureLists
+          lists={v.procedureLists}
+          onChange={(
+            addedProcedureLists,
+            removedProcedureListIds,
+            changedProcedureLists
+          ) =>
+            this.setState({
+              addedProcedureLists,
+              removedProcedureListIds,
+              changedProcedureLists
+            })
+          }
+        />
+        <Card className="mt-3">
           <CardHeader>
             <strong>Save New Version</strong>
           </CardHeader>
@@ -168,6 +182,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             </Row>
           </CardBody>
         </Card>
+        <pre>{JSON.stringify(this.getPatch(), undefined, 2)}</pre>
       </Layout>
     )
   }

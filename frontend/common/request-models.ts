@@ -26,7 +26,22 @@ export interface IngredientListPatch {
   addedIngredients: IngredientLineJSON[]
 }
 
+export interface ProcedureListPatch {
+  procedureListId: number
+  removedStepIds: number[]
+  changedSteps: ProcedureListJSON[]
+  addedSteps: ProcedureListJSON[]
+}
+
 export interface RecipeVersionPatch {
+  // patch info
   message: string
+
+  // ingredient updates
   changedIngredientLists: IngredientListPatch[]
+
+  // procedure updates
+  addedProcedureLists: ProcedureListJSON[]
+  changedProcedureLists: ProcedureListPatch[]
+  removedProcedureListIds: number[]
 }

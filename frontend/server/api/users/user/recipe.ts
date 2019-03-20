@@ -67,12 +67,11 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
         },
         {
           model: ProcedureList,
-          attributes: ['name'],
+          attributes: ['id', 'name'],
           through: { attributes: [] },
           include: [
             {
               model: ProcedureLine,
-              attributes: ['text', 'title', 'image_url'],
               through: { attributes: [] }
             }
           ]

@@ -12,8 +12,10 @@ import * as _ from 'lodash'
 
 import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
+import { ProcedureListPatch } from '../common/request-models'
 
 export interface ProcedureListJSON {
+  id?: number
   name?: string
   lines: ProcedureLineJSON[]
 }
@@ -59,5 +61,70 @@ export class ProcedureList extends Model<ProcedureList>
       )
     )
     return procedureList
+  }
+
+  public static async createFromPatch(
+    patch: ProcedureListPatch,
+    transaction?: any
+  ): Promise<ProcedureList> {
+    const id = patch.procedureListId
+    const prev = await ProcedureList.findOne({
+      where: { id },
+      include: [{ model: ProcedureLine }],
+      transaction
+    })
+    const list = await ProcedureList.create(
+      { name: prev.name },
+      { transaction }
+    )
+    await Promise.all(
+      _.map(prev.lines, async (line, sort_key) => {
+        const removed = !_.isUndefined(
+          _.find(patch.removedStepIds, id => id === line.id)
+        )
+        if (removed) {
+          return Promise.resolve()
+        }
+        const changed = _.find(patch.changedSteps, { id: line.id })
+        if (!changed) {
+          return ProcedureListLine.create(
+            {
+              procedure_list_id: list.id,
+              procedure_line_id: line.id,
+              sort_key
+            },
+            { transaction }
+          )
+        }
+        console.log('will add changed step', changed)
+        const newLine = await ProcedureLine.create(_.omit(changed, ['id']), {
+          transaction
+        })
+        return ProcedureListLine.create(
+          {
+            procedure_list_id: list.id,
+            procedure_line_id: newLine.id,
+            sort_key
+          },
+          { transaction }
+        )
+      })
+    )
+    await Promise.all(
+      _.map(patch.addedSteps, async (line, sort_key) => {
+        const newLine = await ProcedureLine.create(_.omit(line, ['id']), {
+          transaction
+        })
+        return ProcedureListLine.create(
+          {
+            procedure_list_id: list.id,
+            procedure_line_id: newLine.id,
+            sort_key: prev.lines.length + sort_key
+          },
+          { transaction }
+        )
+      })
+    )
+    return list
   }
 }

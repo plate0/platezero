@@ -6,6 +6,7 @@ import { IngredientLine } from './IngredientLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientListJSON } from '../models/ingredient_list'
 import { IngredientListPatch } from '../common/request-models'
+import { defaultUndefined } from '../common/textutils'
 
 let nextIngredientLineId = 0
 
@@ -62,13 +63,6 @@ const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
     name: '',
     lines: [newIngredient()]
   }
-}
-
-function defaultUndefined<T>(val: T): T | undefined {
-  if (_.isString(val)) {
-    return _.isNil(val) || val === '' ? undefined : val
-  }
-  return _.isNil(val) ? undefined : val
 }
 
 function uiLineToJSON(line: UIIngredientLine): IngredientLineJSON {
@@ -242,7 +236,7 @@ export class IngredientList extends React.Component<Props, State> {
           />
         ))}
         <Button color="secondary" size="sm" onClick={this.addIngredient}>
-          <i className="fa fa-plus" /> Add Ingredient
+          Add Ingredient
         </Button>
       </>
     )

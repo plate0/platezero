@@ -1,5 +1,14 @@
 import React from 'react'
-import { Button, Col, Input, Row } from 'reactstrap'
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  Button,
+  ButtonGroup,
+  Col,
+  Input,
+  Row
+} from 'reactstrap'
 import * as _ from 'lodash'
 
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
@@ -7,6 +16,7 @@ import { ProcedureListJSON, ProcedureLineJSON } from '../models'
 interface Props {
   procedureList?: ProcedureListJSON
   onChange?: (procedureList: ProcedureListJSON) => void
+  onRemove?: () => void
 }
 
 interface State {
@@ -45,34 +55,52 @@ export class ProcedureList extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div>
-        {this.state.lines.map((s, key) => (
-          <Row key={key}>
-            <Col className="mb-3">
-              <Input
-                key={key}
-                type="textarea"
-                placeholder="Step by step instructions..."
-                value={s.text}
-                onChange={e => this.replaceLine(key, e.target.value)}
-              />
-            </Col>
-          </Row>
-        ))}
-        <Button
-          type="button"
-          outline
-          color="secondary"
-          onClick={_ =>
-            this.setState(
-              state => ({ lines: [...state.lines, { text: '' }] }),
-              this.notifyChange
-            )
-          }
-        >
-          Add Another Step
-        </Button>
-      </div>
+      <Card className="mb-3">
+        <CardBody>
+          {this.state.lines.map((s, key) => (
+            <Row key={key}>
+              <Col className="mb-3">
+                <Input
+                  key={key}
+                  type="textarea"
+                  placeholder="Step by step instructions..."
+                  value={s.text}
+                  onChange={e => this.replaceLine(key, e.target.value)}
+                />
+              </Col>
+            </Row>
+          ))}
+        </CardBody>
+        <CardFooter>
+          <ButtonGroup>
+            <Button
+              type="button"
+              color="secondary"
+              size="sm"
+              onClick={() =>
+                this.setState(
+                  state => ({ lines: [...state.lines, { text: '' }] }),
+                  this.notifyChange
+                )
+              }
+            >
+              Add Step
+            </Button>
+            <Button
+              type="button"
+              color="secondary"
+              size="sm"
+              onClick={() =>
+                _.isFunction(this.props.onRemove)
+                  ? this.props.onRemove()
+                  : _.noop()
+              }
+            >
+              Remove Section
+            </Button>
+          </ButtonGroup>
+        </CardFooter>
+      </Card>
     )
   }
 }

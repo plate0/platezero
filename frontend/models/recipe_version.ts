@@ -139,16 +139,42 @@ export class RecipeVersion extends Model<RecipeVersion>
       { transaction }
     )
     await Promise.all(
-      _.map(prev.procedureLists, (pl, sort_key) =>
-        RecipeVersionProcedureList.create(
+      _.map(prev.procedureLists, async (pl, sort_key) => {
+        const removed = !_.isUndefined(
+          _.find(patch.removedProcedureListIds, id => id === pl.id)
+        )
+        if (removed) {
+          return Promise.resolve()
+        }
+        const changedProcedureList = _.find(patch.changedProcedureLists, {
+          procedureListId: pl.id
+        })
+        const procedure_list_id = changedProcedureList
+          ? (await ProcedureList.createFromPatch(
+              changedProcedureList,
+              transaction
+            )).id
+          : pl.id
+        return RecipeVersionProcedureList.create(
+          { recipe_version_id: v.id, procedure_list_id, sort_key },
+          { transaction }
+        )
+      })
+    )
+    await Promise.all(
+      _.map(patch.addedProcedureLists, async (pl, sort_key) => {
+        const procedure_list_id = (await ProcedureList.createWithLines(pl, {
+          transaction
+        })).id
+        return RecipeVersionProcedureList.create(
           {
             recipe_version_id: v.id,
-            procedure_list_id: pl.id,
-            sort_key
+            procedure_list_id,
+            sort_key: prev.procedureLists.length + sort_key
           },
           { transaction }
         )
-      )
+      })
     )
     await Promise.all(
       _.map(prev.ingredientLists, async (il, sort_key) => {
