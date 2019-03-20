@@ -6,11 +6,40 @@ import { ProcedureListJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
 import { ProcedureListPatch } from '../common/request-models'
 
+interface UIProcedureList extends ProcedureListJSON {
+  changed: boolean
+  removed: boolean
+  added: boolean
+  original?: ProcedureListJSON
+}
+
 let nextProcedureListId = 0
-const newProcedureList = (): ProcedureListJSON => ({
+const newProcedureList = (): UIProcedureList => ({
   id: nextProcedureListId--,
   name: '',
-  lines: [{ text: '' }]
+  lines: [{ text: '' }],
+
+  changed: false,
+  removed: false,
+  added: true
+})
+
+const jsonToUI = (lists: ProcedureListJSON[]): UIProcedureList[] =>
+  _.map(lists, list => ({
+    ...list,
+    changed: false,
+    removed: false,
+    added: false,
+    original: list
+  }))
+
+const uiToJSON = (list: UIProcedureList): ProcedureListJSON =>
+  _.omit(list, ['changed', 'removed', 'added', 'original'])
+
+const formatPatch = (lists: UIProcedureList[]) => ({
+  added: _.map(_.filter(lists, { added: true }), uiToJSON),
+  changed: _.map(_.filter(lists, { changed: true }), uiToJSON),
+  removed: _.map(_.filter(lists, { removed: true }), 'id')
 })
 
 interface Props {
@@ -23,51 +52,47 @@ interface Props {
 }
 
 export function ProcedureLists(props: Props) {
-  console.log(props)
-  const [addedLists, setAddedLists] = useState([])
-  const [changedLists, setChangedLists] = useState([])
+  const [lists, setLists] = useState(jsonToUI(props.lists))
 
   useEffect(() => {
     if (_.isFunction(props.onChange)) {
-      props.onChange(addedLists, [], changedLists)
+      console.log('lists', formatPatch(lists))
+      //props.onChange(addedLists, [], changedLists)
     }
-  }, [addedLists, changedLists])
+  }, [lists])
 
-  const addList = () => setAddedLists([...addedLists, newProcedureList()])
+  const addList = () => setLists([...lists, newProcedureList()])
 
-  const removeAddedList = id => setAddedLists(_.reject(addedLists, { id }))
-
-  const changeAddedList = newList =>
-    setAddedLists(
-      _.map(addedLists, list => (list.id === newList.id ? newList : list))
-    )
-
-  const changeList = newList => {
-    const alreadyChanged = _.find(changedLists, { id: newList.id })
-    if (alreadyChanged) {
-      setChangedLists(
-        _.map(changedLists, list => (list.id === newList.id ? newList : list))
-      )
+  const removeList = id => {
+    const oldList = _.find(lists, { id })
+    if (_.get(oldList, 'added', false)) {
+      setLists(_.reject(lists, { id }) as UIProcedureList[])
     } else {
-      setChangedLists([...changedLists, newList])
+      setLists(
+        _.map(lists, list =>
+          list.id === id ? { ...list, removed: true } : list
+        )
+      )
     }
   }
 
+  const changeList = newList =>
+    setLists(
+      _.map(lists, list =>
+        list.id === newList.id
+          ? { ...newList, changed: false, removed: false, added: true }
+          : list
+      )
+    )
+
   return (
     <>
-      {props.lists.map(pl => (
+      {lists.map(list => (
         <ProcedureList
-          procedureList={pl}
-          key={pl.id}
+          procedureList={list}
+          key={list.id}
           onChange={list => changeList(list)}
-        />
-      ))}
-      {_.map(addedLists, pl => (
-        <ProcedureList
-          procedureList={pl}
-          key={pl.id}
-          onRemove={() => removeAddedList(pl.id)}
-          onChange={list => changeAddedList(list)}
+          onRemove={() => removeList(list.id)}
         />
       ))}
       <p>
