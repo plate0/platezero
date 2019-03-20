@@ -39,7 +39,7 @@ export const validateNewRecipe = validator({
     .items({
       name: Joi.string(),
       image_url: Joi.string(),
-      ingredients: Joi.array()
+      lines: Joi.array()
         .items({
           quantity_numerator: Joi.number(),
           quantity_denominator: Joi.number(),
@@ -54,7 +54,7 @@ export const validateNewRecipe = validator({
   procedure_lists: Joi.array()
     .items({
       name: Joi.string(),
-      steps: Joi.array()
+      lines: Joi.array()
         .required()
         .items({
           text: Joi.string().required(),
