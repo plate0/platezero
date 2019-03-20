@@ -1,13 +1,14 @@
 import { parse } from 'url'
+import { composeURL } from './importer'
 import { BlueApronImporter } from './blue-apron'
 import { SeriousEatsImporter } from './serious-eats'
 import { NYTCookingImporter } from './nyt-cooking'
 import { GenericHTMLImporter } from './generic-html-importer'
 
 const importers = {
-  'cooking.nytimes.com': NYTCookingImporter,
-  'www.blueapron.com': BlueApronImporter,
-  'www.seriouseats.com': SeriousEatsImporter
+  'cooking.nytimes.com': composeURL(NYTCookingImporter),
+  'www.blueapron.com': composeURL(BlueApronImporter),
+  'www.seriouseats.com': composeURL(SeriousEatsImporter)
 }
 
 export const url = (u: string) => {
@@ -16,6 +17,6 @@ export const url = (u: string) => {
   if (importer) {
     return importer
   } else {
-    return GenericHTMLImporter
+    return composeURL(GenericHTMLImporter)
   }
 }
