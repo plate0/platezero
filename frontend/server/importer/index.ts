@@ -4,11 +4,13 @@ import { BlueApronImporter } from './blue-apron'
 import { SeriousEatsImporter } from './serious-eats'
 import { NYTCookingImporter } from './nyt-cooking'
 import { GenericHTMLImporter } from './generic-html-importer'
+import { FoodNetworkImporter } from './food-network'
 
 const importers = {
   'cooking.nytimes.com': composeURL(NYTCookingImporter),
   'www.blueapron.com': composeURL(BlueApronImporter),
-  'www.seriouseats.com': composeURL(SeriousEatsImporter)
+  'www.seriouseats.com': composeURL(SeriousEatsImporter),
+  'www.foodnetwork.com': composeURL(FoodNetworkImporter)
 }
 
 export const url = (u: string) => {
