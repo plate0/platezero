@@ -5,7 +5,7 @@ import { mapValues } from 'lodash'
 import { BlueApron } from './blue-apron'
 import { SeriousEats } from './serious-eats'
 import { NYTCooking } from './nyt-cooking'
-// import { GenericHTMLImporter } from './generic-html-importer'
+import { GenericHTML } from './generic-html-importer'
 import { FoodNetwork } from './food-network'
 
 const importers = mapValues(
@@ -24,6 +24,6 @@ export const url = (u: string) => {
   if (importer) {
     return importer
   } else {
-    return //composeURL(GenericHTMLImporter)
+    return fetch(toHTML(dom(GenericHTML)))
   }
 }
