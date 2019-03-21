@@ -74,7 +74,7 @@ export const image_url = (sel?: string) => ($: any) => {
 export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   const utilities = ['oven', 'sous vide', 'stove']
   const regex = new RegExp(
-    `(${utilities.join('|')})\\s[a-z]*\\s?(\\d+)\\s?(degrees|º|°)?\\s?(C|F)`,
+    `(${utilities.join('|')})\\s[a-z]*\\s?(\\d+)\\s?(degrees|º|°)?\\s?(C|F)?`,
     'gim'
   )
   const preheats: PreheatJSON[] = []
@@ -88,7 +88,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
     preheats.push({
       name: m[1],
       temperature: parseInt(m[2]),
-      unit: m[4] //TODO: Default to user preference?
+      unit: m[4] || 'F' //TODO: Default to user preference?
     })
   }
   return preheats

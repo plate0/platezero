@@ -1,4 +1,5 @@
-import { NYTCookingImporter as importer } from './nyt-cooking'
+import { NYTCooking } from './nyt-cooking'
+import { dom } from './html'
 import { readFileSync } from 'fs'
 
 const recipe =
@@ -6,6 +7,7 @@ const recipe =
 
 describe('NYT Cooking import', () => {
   let source: string
+  let importer = dom(NYTCooking)
 
   beforeEach(() => {
     source = readFileSync(recipe, { encoding: 'utf8' })
@@ -13,7 +15,7 @@ describe('NYT Cooking import', () => {
 
   test('get title', async () => {
     const { title } = await importer(source)
-    expect(title).toEqual('Baked Orzo With Artichokes and Peas')
+    expect(title).toEqual('Baked Orzo With Artichokes and Peas Recipe')
   })
 
   test('get subtitle', async () => {
@@ -24,14 +26,14 @@ describe('NYT Cooking import', () => {
   test('get description', async () => {
     const { description } = await importer(source)
     expect(description).toEqual(
-      'This is a Greek-inspired pastitsio, a comforting béchamel-enriched mix of orzo, artichokes and peas. Rather than butter, the béchamel in this dish is made with a couple of glugs of good extra virgin olive oil.'
+      'This is a Greek-inspired pastitsio, a comforting béchamel-enriched mix of orzo, artichokes and peas Rather than butter, the béchamel in this dish is made with a couple of glugs of good extra virgin olive oil.'
     )
   })
 
   test('get image_url', async () => {
     const { image_url } = await importer(source)
     expect(image_url).toEqual(
-      'https://static01.nyt.com/images/2013/04/23/science/23recipehealth/23recipehealth-articleLarge.jpg'
+      'https://static01.nyt.com/images/2013/04/23/science/23recipehealth/23recipehealth-superJumbo.jpg'
     )
   })
 
@@ -49,7 +51,7 @@ describe('NYT Cooking import', () => {
     const { preheats } = await importer(source)
     expect(preheats).toEqual([
       {
-        name: 'the oven',
+        name: 'oven',
         temperature: 350,
         unit: 'F'
       }
@@ -141,8 +143,7 @@ describe('NYT Cooking import', () => {
             quantity_numerator: 2,
             unit: undefined
           }
-        ],
-        name: 'Ingredients'
+        ]
       }
     ])
   })
