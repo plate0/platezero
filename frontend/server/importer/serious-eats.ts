@@ -1,4 +1,4 @@
-import { Importer, fetchHTML, isUrl } from './importer'
+import { Importer } from './importer'
 import { last } from 'lodash'
 import * as moment from 'moment'
 import { Preheat, IngredientListJSON, ProcedureListJSON } from '../../models'
@@ -96,13 +96,7 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
 export const SeriousEatsImporter: Importer = async (
   source: any
 ): Promise<PostRecipe> => {
-  let raw
-  if (isUrl(source)) {
-    raw = await fetchHTML(source)
-  } else {
-    raw = source
-  }
-  const $ = cheerio.load(raw)
+  const $ = cheerio.load(source)
   return {
     title: title($),
     description: description($),

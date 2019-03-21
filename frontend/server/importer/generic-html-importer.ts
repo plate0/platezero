@@ -1,4 +1,4 @@
-import { Importer, fetchHTML, isUrl } from './importer'
+import { Importer } from './importer'
 import * as cheerio from 'cheerio'
 import { PostRecipe } from '../../common/request-models'
 import { parse } from '../../common/ingredient'
@@ -96,13 +96,7 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
 export const GenericHTMLImporter: Importer = async (
   source: any
 ): Promise<PostRecipe> => {
-  let raw
-  if (isUrl(source)) {
-    raw = await fetchHTML(source)
-  } else {
-    raw = source
-  }
-  const $ = cheerio.load(raw)
+  const $ = cheerio.load(source)
   return {
     title: title($),
     // subtitle: subtitle($),
