@@ -1,54 +1,53 @@
 import { parse } from '../../common/ingredient'
-import { trim } from 'lodash'
+import * as _ from 'lodash'
+import * as cheerio from 'cheerio'
 import {
   ProcedureListJSON,
   IngredientListJSON,
   PreheatJSON
 } from '../../models'
-//
-// Helpful importing methods for HTML pages
-//
+const TurndownService = require('turndown')
 
-// Get the text for a CSS selector
-export const text = ($: any, sel: string) =>
-  $(sel)
-    .text()
-    .trim()
+export const text = (sel: string) => ($: any) => _.trim($(sel).text())
 
-export const title = ($: any) => {
-  let title = trim($('meta[name="twitter:title"]').attr('content'))
-  if (title) {
-    return title
+export const title = () => {
+  return ($: any): string => {
+    let title = _.trim($('meta[name="twitter:title"]').attr('content'))
+    if (title) {
+      return title
+    }
+    title = _.trim($('meta[property="og:title"]').attr('content'))
+    if (title) {
+      return title
+    }
+    return text('title')($)
   }
-  title = trim($('meta[property="og:title"]').attr('content'))
-  if (title) {
-    return title
-  }
-  return text($, 'title')
 }
 
-export const description = ($: any, sel?: string) => {
+export const description = (sel?: string) => {
   if (sel) {
-    return text($, sel)
+    return text(sel)
   }
-  let description = trim(
-    $('meta[property="twitter:description"]').attr('content')
-  )
-  if (description) {
-    return description
+  return ($: any) => {
+    let description = _.trim(
+      $('meta[property="twitter:description"]').attr('content')
+    )
+    if (description) {
+      return description
+    }
+    description = _.trim($('meta[property="og:description"]').attr('content'))
+    if (description) {
+      return description
+    }
+    description = _.trim($('meta[itemprop="description"]').attr('content'))
+    if (description) {
+      return description
+    }
+    return undefined
   }
-  description = trim($('meta[property="og:description"]').attr('content'))
-  if (description) {
-    return description
-  }
-  description = trim($('meta[itemprop="description"]').attr('content'))
-  if (description) {
-    return description
-  }
-  return undefined
 }
 
-export const image_url = ($: any, sel?: string) => {
+export const image_url = (sel?: string) => ($: any) => {
   if (sel) {
     return $(sel).attr('src')
   }
@@ -72,7 +71,7 @@ export const image_url = ($: any, sel?: string) => {
 }
 
 // https://regex101.com/r/xqkIKF/1
-export const preheats = ($: any, sel?: string): PreheatJSON[] => {
+export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   const utilities = ['oven', 'sous vide', 'stove']
   const regex = new RegExp(
     `(${utilities.join('|')})\\s[a-z]*\\s?(\\d+)\\s?(degrees|º|°)?\\s?(C|F)`,
@@ -80,7 +79,7 @@ export const preheats = ($: any, sel?: string): PreheatJSON[] => {
   )
   const preheats: PreheatJSON[] = []
   let m
-  const text = sel ? $(sel).text() : $.text()
+  const text = _.trim(sel ? $(sel).text() : $.text())
   while ((m = regex.exec(text)) !== null) {
     // This is necessary to avoid infinite loops with zero-width matches
     if (m.index === regex.lastIndex) {
@@ -95,22 +94,49 @@ export const preheats = ($: any, sel?: string): PreheatJSON[] => {
   return preheats
 }
 
-export const ingredients = ($: any, sel: string): IngredientListJSON[] => [
+export const ingredient_lists = (sel: string) => (
+  $: any
+): IngredientListJSON[] => [
   {
     lines: $(sel)
       .map(function() {
-        return parse(trim($(this).text()))
+        return parse(_.trim($(this).text()))
       })
       .get()
   }
 ]
 
-export const procedure_lists = ($: any, sel: string): ProcedureListJSON[] => [
-  {
-    lines: $(sel)
-      .map(function() {
-        return { text: trim($(this).text()) }
-      })
-      .get()
-  }
-]
+export const procedure_lists = (sel: string) => (
+  $: any
+): ProcedureListJSON[] => {
+  const turndown = new TurndownService()
+  return [
+    {
+      lines: $(sel)
+        .map(function() {
+          return {
+            text: turndown.turndown($(this).html())
+          }
+        })
+        .get()
+    }
+  ]
+}
+
+export const defaults = (overrides: object) => {
+  return _.defaults(overrides, {
+    title: title(),
+    subtitle: undefined,
+    description: description(),
+    image_url: image_url(),
+    source_url: undefined,
+    html_url: undefined,
+    yield: undefined,
+    duration: undefined,
+    preheats: preheats(),
+    ingredient_lists: undefined,
+    procedure_lists: undefined
+  })
+}
+
+export const dom = (f: any) => (html: string) => f(cheerio.load(html))

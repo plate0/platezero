@@ -1,17 +1,7 @@
-import { Importer } from './importer'
+import { mapValues } from './importer'
 import { first, compact } from 'lodash'
 import * as moment from 'moment'
-import * as cheerio from 'cheerio'
-import { PostRecipe } from '../../common/request-models'
-import {
-  description,
-  ingredients,
-  image_url,
-  title,
-  text,
-  preheats,
-  procedure_lists
-} from './html'
+import * as html from './html'
 
 const duration = ($: any): number | undefined => {
   // May want to reuse this in other places too. There are <script> tags which
@@ -36,23 +26,19 @@ const duration = ($: any): number | undefined => {
   )
 }
 
-export const FoodNetworkImporter: Importer = async (
-  source: any
-): Promise<PostRecipe> => {
-  const $ = cheerio.load(source)
-  const yld = text(
-    $,
-    'ul.o-RecipeInfo__m-Yield li span.o-RecipeInfo__a-Description'
-  )
-  return {
-    title: title($),
-    description: description($),
-    image_url: image_url($),
-    source_url: source,
+const preheats = html.preheats('.o-Method ol')
+const ingredient_lists = html.ingredient_lists('div.o-Ingredients__m-Body p')
+const procedure_lists = html.procedure_lists('.o-Method ol li')
+const yld = html.text(
+  'ul.o-RecipeInfo__m-Yield li span.o-RecipeInfo__a-Description'
+)
+
+export const FoodNetwork = mapValues(
+  html.defaults({
+    duration,
     yield: yld,
-    duration: duration($),
-    preheats: preheats($, '.o-Method ol'),
-    ingredient_lists: ingredients($, 'div.o-Ingredients__m-Body p'),
-    procedure_lists: procedure_lists($, '.o-Method ol li')
-  }
-}
+    preheats,
+    ingredient_lists,
+    procedure_lists
+  })
+)

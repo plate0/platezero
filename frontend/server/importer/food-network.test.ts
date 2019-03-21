@@ -1,11 +1,13 @@
-import { FoodNetworkImporter as importer } from './food-network'
+import { FoodNetwork } from './food-network'
 import { readFileSync } from 'fs'
+import { dom } from './html'
 
 const recipe =
   'test/assets/www.foodnetwork.com/roasted-cauliflower-and-chickpeas-recipe-2107641.html'
 
 describe('Food Network importer', () => {
   let source: string
+  let importer = dom(FoodNetwork)
 
   beforeEach(() => {
     source = readFileSync(recipe, { encoding: 'utf8' })
