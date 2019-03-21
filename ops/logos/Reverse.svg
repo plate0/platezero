@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="520px" height="180px" viewBox="0 0 520 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52 (66869) - http://www.bohemiancoding.com/sketch -->
+    <title>Reverse</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Reverse" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <text id="PlateZer" font-family="Futura-Medium, Futura" font-size="80" font-weight="400" line-spacing="80" letter-spacing="1.5" fill="#FFFFFF">
+            <tspan x="50" y="130">PlateZer</tspan>
+        </text>
+        <g id="Zero" transform="translate(375.000000, 50.000000)" stroke="#FFFFFF">
+            <circle id="Oval" stroke-width="8" cx="41.5" cy="41.5" r="41.5"></circle>
+            <circle id="Oval-2" cx="42" cy="42" r="31"></circle>
+        </g>
+    </g>
+</svg>
