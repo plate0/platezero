@@ -12,16 +12,18 @@ import {
 import * as _ from 'lodash'
 
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
+import { ProcedureListPatch } from '../common/request-models'
+import { UITrackable, uiToJSON, jsonToUI } from '../common/model-helpers'
 
 interface Props {
   procedureList?: ProcedureListJSON
-  onChange?: (procedureList: ProcedureListJSON) => void
+  onChange?: (patch: ProcedureListPatch) => void
   onRemove?: () => void
 }
 
 interface State {
   name?: string
-  lines: ProcedureLineJSON[]
+  lines: UITrackable<ProcedureLineJSON>[]
 }
 
 export class ProcedureList extends React.Component<Props, State> {
@@ -30,15 +32,34 @@ export class ProcedureList extends React.Component<Props, State> {
     this.notifyChange = this.notifyChange.bind(this)
     this.replaceLine = this.replaceLine.bind(this)
     this.state = props.procedureList
-      ? props.procedureList
+      ? {
+          name: props.procedureList.name,
+          lines: _.map(props.procedureList.lines, jsonToUI)
+        }
       : {
-          lines: [{ text: '' }]
+          lines: [
+            { json: { text: '' }, added: true, changed: false, removed: false }
+          ]
         }
   }
 
   public notifyChange() {
     if (this.props.onChange) {
-      this.props.onChange(this.state)
+      this.props.onChange({
+        procedureListId: _.get(this.props.procedureList, 'id'),
+        addedSteps: _.map(
+          _.filter(this.state.lines, { added: true }),
+          uiToJSON
+        ),
+        changedSteps: _.map(
+          _.filter(this.state.lines, { changed: true }),
+          uiToJSON
+        ),
+        removedStepIds: _.map(
+          _.filter(this.state.lines, { removed: true }),
+          'id'
+        )
+      })
     }
   }
 
@@ -64,7 +85,7 @@ export class ProcedureList extends React.Component<Props, State> {
                   key={key}
                   type="textarea"
                   placeholder="Step by step instructions..."
-                  value={s.text}
+                  value={s.json.text}
                   onChange={e => this.replaceLine(key, e.target.value)}
                 />
               </Col>
@@ -79,7 +100,17 @@ export class ProcedureList extends React.Component<Props, State> {
               size="sm"
               onClick={() =>
                 this.setState(
-                  state => ({ lines: [...state.lines, { text: '' }] }),
+                  state => ({
+                    lines: [
+                      ...state.lines,
+                      {
+                        json: { text: '' },
+                        added: true,
+                        changed: false,
+                        removed: false
+                      }
+                    ]
+                  }),
                   this.notifyChange
                 )
               }

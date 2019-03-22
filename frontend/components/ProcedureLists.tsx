@@ -5,72 +5,58 @@ import * as _ from 'lodash'
 import { ProcedureListJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
 import { ProcedureListPatch } from '../common/request-models'
-
-interface UIProcedureList extends ProcedureListJSON {
-  changed: boolean
-  removed: boolean
-  added: boolean
-  original?: ProcedureListJSON
-}
+import { UITrackable, jsonToUI, uiToJSON } from '../common/model-helpers'
 
 let nextProcedureListId = 0
-const newProcedureList = (): UIProcedureList => ({
-  id: nextProcedureListId--,
-  name: '',
-  lines: [{ text: '' }],
-
+const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
+  json: {
+    id: nextProcedureListId--,
+    name: '',
+    lines: [{ text: '' }]
+  },
   changed: false,
   removed: false,
   added: true
 })
 
-const jsonToUI = (lists: ProcedureListJSON[]): UIProcedureList[] =>
-  _.map(lists, list => ({
-    ...list,
-    changed: false,
-    removed: false,
-    added: false,
-    original: list
-  }))
-
-const uiToJSON = (list: UIProcedureList): ProcedureListJSON =>
-  _.omit(list, ['changed', 'removed', 'added', 'original'])
-
-const formatPatch = (lists: UIProcedureList[]) => ({
-  added: _.map(_.filter(lists, { added: true }), uiToJSON),
-  changed: _.map(_.filter(lists, { changed: true }), uiToJSON),
-  removed: _.map(_.filter(lists, { removed: true }), 'id')
+const formatPatch = (
+  lists: UITrackable<ProcedureListJSON>[]
+): ProcedureListsPatch => ({
+  addedProcedureLists: _.map(_.filter(lists, { added: true }), uiToJSON),
+  changedProcedureLists: [],
+  removedProcedureListIds: _.map(_.filter(lists, { removed: true }), 'json.id')
 })
+
+interface ProcedureListsPatch {
+  addedProcedureLists: ProcedureListJSON[]
+  changedProcedureLists: ProcedureListPatch[]
+  removedProcedureListIds: number[]
+}
 
 interface Props {
   lists: ProcedureListJSON[]
-  onChange?: (
-    added: ProcedureListJSON[],
-    removed: number[],
-    changed: ProcedureListPatch[]
-  ) => void
+  onChange?: (patch: ProcedureListsPatch) => void
 }
 
 export function ProcedureLists(props: Props) {
-  const [lists, setLists] = useState(jsonToUI(props.lists))
+  const [lists, setLists] = useState(_.map(props.lists, jsonToUI))
 
   useEffect(() => {
     if (_.isFunction(props.onChange)) {
-      console.log('lists', formatPatch(lists))
-      //props.onChange(addedLists, [], changedLists)
+      props.onChange(formatPatch(lists))
     }
   }, [lists])
 
   const addList = () => setLists([...lists, newProcedureList()])
 
   const removeList = id => {
-    const oldList = _.find(lists, { id })
+    const oldList = _.find(lists, list => list.json.id === id)
     if (_.get(oldList, 'added', false)) {
-      setLists(_.reject(lists, { id }) as UIProcedureList[])
+      setLists(_.reject(lists, list => list.json.id === id))
     } else {
       setLists(
         _.map(lists, list =>
-          list.id === id ? { ...list, removed: true } : list
+          list.json.id === id ? { ...list, removed: true } : list
         )
       )
     }
@@ -78,25 +64,31 @@ export function ProcedureLists(props: Props) {
 
   const changeList = newList =>
     setLists(
-      _.map(lists, list =>
-        list.id === newList.id
-          ? { ...newList, changed: false, removed: false, added: true }
-          : list
-      )
+      _.map(lists, list => {
+        if (list.json.id !== newList.id) {
+          return list
+        }
+        if (list.added) {
+          return { added: true, changed: false, removed: false, json: newList }
+        }
+        if (list.changed) {
+          // TODO
+        }
+      })
     )
 
   return (
     <>
       {lists.map(list => (
         <ProcedureList
-          procedureList={list}
-          key={list.id}
-          onChange={list => changeList(list)}
-          onRemove={() => removeList(list.id)}
+          procedureList={list.json}
+          key={list.json.id}
+          onChange={newList => changeList(newList)}
+          onRemove={() => removeList(list.json.id)}
         />
       ))}
       <p>
-        <Button color="secondary" size="sm" onClick={() => addList()}>
+        <Button color="secondary" size="sm" onClick={addList}>
           Add Instruction Section
         </Button>
       </p>

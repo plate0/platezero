@@ -2,6 +2,7 @@ import {
   IngredientListJSON,
   IngredientLineJSON,
   ProcedureListJSON,
+  ProcedureLineJSON,
   PreheatJSON
 } from '../models'
 
@@ -29,8 +30,8 @@ export interface IngredientListPatch {
 export interface ProcedureListPatch {
   procedureListId: number
   removedStepIds: number[]
-  changedSteps: ProcedureListJSON[]
-  addedSteps: ProcedureListJSON[]
+  changedSteps: ProcedureLineJSON[]
+  addedSteps: ProcedureLineJSON[]
 }
 
 export interface RecipeVersionPatch {

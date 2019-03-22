@@ -144,11 +144,11 @@ export default class EditRecipe extends React.Component<Props, State> {
         <h4 className="mt-3">Instructions</h4>
         <ProcedureLists
           lists={v.procedureLists}
-          onChange={(
+          onChange={({
             addedProcedureLists,
-            removedProcedureListIds,
-            changedProcedureLists
-          ) =>
+            changedProcedureLists,
+            removedProcedureListIds
+          }) =>
             this.setState({
               addedProcedureLists,
               removedProcedureListIds,

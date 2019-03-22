@@ -108,7 +108,14 @@ export default class NewRecipe extends React.Component<Props, State> {
           <h2 className="my-3">Steps</h2>
           <ProcedureList
             procedureList={this.state.procedureList}
-            onChange={procedureList => this.setState({ procedureList })}
+            onChange={procedureList =>
+              this.setState({
+                procedureList: {
+                  name: undefined,
+                  lines: procedureList.addedSteps
+                }
+              })
+            }
           />
           <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!
