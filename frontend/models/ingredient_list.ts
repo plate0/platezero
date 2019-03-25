@@ -98,7 +98,6 @@ export class IngredientList extends Model<IngredientList>
             { transaction }
           )
         }
-        console.log('will add changed ingredient', changed)
         const newLine = await IngredientLine.create(normalize(_.omit(changed, ['id'])), {
           transaction
         })

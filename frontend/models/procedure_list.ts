@@ -96,7 +96,6 @@ export class ProcedureList extends Model<ProcedureList>
             { transaction }
           )
         }
-        console.log('will add changed step', changed)
         const newLine = await ProcedureLine.create(_.omit(changed, ['id']), {
           transaction
         })
