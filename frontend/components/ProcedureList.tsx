@@ -48,7 +48,9 @@ export class ProcedureList extends React.Component<Props, State> {
   public getPatch() {
     return {
       procedureListId: _.get(this.props.procedureList, 'id'),
-      addedSteps: _.map(_.filter(this.state.lines, { added: true }), uiToJSON),
+      addedSteps: _.map(_.filter(this.state.lines, { added: true }), step =>
+        _.omit(uiToJSON(step), 'id')
+      ),
       changedSteps: _.map(
         _.filter(this.state.lines, { changed: true }),
         uiToJSON

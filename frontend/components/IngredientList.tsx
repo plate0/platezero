@@ -93,7 +93,7 @@ export class IngredientList extends React.Component<Props, State> {
       : undefined
     const removedIngredientIds = _.map(
       _.filter(this.state.lines, { removed: true }),
-      'id'
+      'json.id'
     )
     const changedIngredients = _.map(
       _.filter(this.state.lines, { changed: true }),

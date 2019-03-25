@@ -61,7 +61,13 @@ export default class NewRecipe extends React.Component<Props, State> {
           ]
         : [],
       procedure_lists: this.state.procedureList
-        ? [this.state.procedureList]
+        ? [
+            {
+              lines: _.map(this.state.procedureList.lines, line =>
+                _.omit(line, 'id')
+              )
+            }
+          ]
         : []
     }
   }
@@ -120,7 +126,6 @@ export default class NewRecipe extends React.Component<Props, State> {
             Create New Recipe!
           </Button>
         </Form>
-        <pre>{JSON.stringify(this.getRecipe(), undefined, 2)}</pre>
       </Layout>
     )
   }

@@ -98,7 +98,21 @@ export function ProcedureLists(props: Props) {
   const handlePatch = patch => {
     const old = _.find(lists, list => list.json.id === patch.procedureListId)
     if (old.added) {
-      console.log('updated added list')
+      setLists(
+        _.map(lists, list =>
+          list.json.id === patch.procedureListId
+            ? {
+                json: {
+                  id: list.json.id,
+                  lines: patch.addedSteps
+                },
+                added: true,
+                changed: false,
+                removed: false
+              }
+            : list
+        )
+      )
     } else {
       setPatches({ ...patches, [patch.procedureListId]: patch })
     }
