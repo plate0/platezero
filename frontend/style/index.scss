@@ -3,3 +3,18 @@ $font-family-sans-serif: 'Lato', sans-serif;
 $enable-responsive-font-sizes: true;
 
 @import 'bootstrap/bootstrap.scss';
+
+$added-base: $success;
+$changed-base: $warning;
+
+.bg-added {
+  background-color: hsl(hue($added-base), saturation($added-base), 90);
+}
+
+.bg-changed {
+  background-color: hsl(hue($changed-base), saturation($changed-base), 90);
+}
+
+.text-strike {
+  text-decoration: line-through;
+}

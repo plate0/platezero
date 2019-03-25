@@ -67,31 +67,22 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
         },
         {
           model: ProcedureList,
-          attributes: ['name'],
+          attributes: ['id', 'name'],
           through: { attributes: [] },
           include: [
             {
               model: ProcedureLine,
-              attributes: ['text', 'title', 'image_url'],
               through: { attributes: [] }
             }
           ]
         },
         {
           model: IngredientList,
-          attributes: ['name', 'image_url'],
+          attributes: ['id', 'name', 'image_url'],
           through: { attributes: [] },
           include: [
             {
               model: IngredientLine,
-              attributes: [
-                'name',
-                'quantity_numerator',
-                'quantity_denominator',
-                'preparation',
-                'unit',
-                'optional'
-              ],
               through: { attributes: [] }
             }
           ]

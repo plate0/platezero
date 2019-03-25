@@ -146,7 +146,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
 
       const procedureLists = await Promise.all(
         _.map(body.procedure_lists, pl =>
-          ProcedureList.createWithSteps(pl, {
+          ProcedureList.createWithLines(pl, {
             transaction
           })
         )

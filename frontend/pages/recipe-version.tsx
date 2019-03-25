@@ -31,7 +31,7 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
         <Head>
           <title>{v.recipe.title}</title>
         </Head>
-        <RecipeNav recipe={v.recipe} selectedRecipeVersion={v.id} />
+        <RecipeNav recipe={v.recipe} />
         <RecipeVersionHeader recipeVersion={v} />
         <RecipeVersionView recipeVersion={v} />
       </Layout>

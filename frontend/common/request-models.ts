@@ -1,4 +1,10 @@
-import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
+import {
+  IngredientListJSON,
+  IngredientLineJSON,
+  ProcedureListJSON,
+  ProcedureLineJSON,
+  PreheatJSON
+} from '../models'
 
 export interface PostRecipe {
   title: string
@@ -12,4 +18,31 @@ export interface PostRecipe {
   preheats?: PreheatJSON[]
   ingredient_lists?: IngredientListJSON[]
   procedure_lists?: ProcedureListJSON[]
+}
+
+export interface IngredientListPatch {
+  ingredientListId: number
+  removedIngredientIds: number[]
+  changedIngredients: IngredientLineJSON[]
+  addedIngredients: IngredientLineJSON[]
+}
+
+export interface ProcedureListPatch {
+  procedureListId: number
+  removedStepIds: number[]
+  changedSteps: ProcedureLineJSON[]
+  addedSteps: ProcedureLineJSON[]
+}
+
+export interface RecipeVersionPatch {
+  // patch info
+  message: string
+
+  // ingredient updates
+  changedIngredientLists: IngredientListPatch[]
+
+  // procedure updates
+  addedProcedureLists: ProcedureListJSON[]
+  changedProcedureLists: ProcedureListPatch[]
+  removedProcedureListIds: number[]
 }

@@ -1,15 +1,12 @@
 import React from 'react'
 import { FormGroup, Input, Label } from 'reactstrap'
 
-export interface NewRecipeFormGroupProps {
+export interface Props {
   value: string
   onChange: (e: React.FormEvent<HTMLInputElement>) => void
 }
 
-export const NewRecipeTitle = ({
-  value,
-  onChange
-}: NewRecipeFormGroupProps) => (
+export const NewRecipeTitle = ({ value, onChange }: Props) => (
   <FormGroup>
     <Label for="title" className="m-0">
       <strong>Title</strong>

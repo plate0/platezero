@@ -1,7 +1,12 @@
 import 'isomorphic-fetch'
 import getConfig from 'next/config'
 import * as _ from 'lodash'
-import { UserJSON, RecipeJSON } from '../models'
+import {
+  UserJSON,
+  RecipeJSON,
+  RecipeVersionJSON
+} from '../models'
+import { PostRecipe, RecipeVersionPatch } from './request-models'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
@@ -113,11 +118,14 @@ export const getRecipeVersion = (
   versionId: number,
   opts?: PlateZeroRequestInfo
 ) =>
-  _fetch(`/users/${username}/recipes/${slug}/versions/${versionId}`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
+  _fetch<RecipeVersionJSON>(
+    `/users/${username}/recipes/${slug}/versions/${versionId}`,
+    {
+      headers: authHeaders(opts ? opts.token : '')
+    }
+  )
 
-export const createRecipe = (recipe: any, opts?: PlateZeroRequestInfo) =>
+export const createRecipe = (recipe: PostRecipe, opts?: PlateZeroRequestInfo) =>
   _fetch<RecipeJSON>(`/user/recipe`, {
     body: JSON.stringify(recipe),
     method: 'POST',
@@ -128,5 +136,17 @@ export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
   _fetch<RecipeJSON>(`/user/import/url`, {
     body: JSON.stringify({ url }),
     method: 'POST',
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
+export const patchBranch = (
+  slug: string,
+  branch: string,
+  patch: RecipeVersionPatch,
+  opts?: PlateZeroRequestInfo
+) =>
+  _fetch<RecipeVersionJSON>(`/user/recipes/${slug}/branches/${branch}`, {
+    body: JSON.stringify(patch),
+    method: 'PATCH',
     headers: authHeaders(opts ? opts.token : '')
   })

@@ -8,7 +8,7 @@ import { PostRecipe } from '../common/request-models'
 import {
   Layout,
   NewRecipeTitle,
-  NewIngredientList,
+  IngredientList,
   ProcedureList
 } from '../components'
 import nextCookie from 'next-cookies'
@@ -52,10 +52,22 @@ export default class NewRecipe extends React.Component<Props, State> {
       title: this.state.title,
       preheats: [],
       ingredient_lists: this.state.ingredientList
-        ? [this.state.ingredientList]
+        ? [
+            {
+              lines: _.map(this.state.ingredientList.lines, line =>
+                _.omit(line, 'id')
+              )
+            }
+          ]
         : [],
       procedure_lists: this.state.procedureList
-        ? [this.state.procedureList]
+        ? [
+            {
+              lines: _.map(this.state.procedureList.lines, line =>
+                _.omit(line, 'id')
+              )
+            }
+          ]
         : []
     }
   }
@@ -100,7 +112,8 @@ export default class NewRecipe extends React.Component<Props, State> {
               <h2>Ingredients</h2>
             </Col>
           </Row>
-          <NewIngredientList
+          <IngredientList
+            ingredientList={this.state.ingredientList}
             onChange={ingredientList => this.setState({ ingredientList })}
           />
           <h2 className="my-3">Steps</h2>

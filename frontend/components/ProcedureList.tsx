@@ -1,42 +1,153 @@
 import React from 'react'
-import { Button, Col, Input, Row } from 'reactstrap'
+import { Card, CardBody, Button, Col, Input, Row } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
+import { ProcedureListPatch } from '../common/request-models'
+import { ActionLine } from './ActionLine'
+import { UITrackable, uiToJSON, jsonToUI } from '../common/model-helpers'
 
 interface Props {
   procedureList?: ProcedureListJSON
-  onChange?: (procedureList: ProcedureListJSON) => void
+  onChange?: (list: ProcedureListJSON) => void
+  onPatch?: (patch: ProcedureListPatch) => void
 }
 
 interface State {
   name?: string
-  lines: ProcedureLineJSON[]
+  lines: UITrackable<ProcedureLineJSON>[]
 }
+
+let nextProcedureLineId = 0
+const newProcedureLine = (): UITrackable<ProcedureLineJSON> => ({
+  json: {
+    id: nextProcedureLineId--,
+    text: ''
+  },
+  added: true,
+  changed: false,
+  removed: false
+})
 
 export class ProcedureList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.notifyChange = this.notifyChange.bind(this)
-    this.replaceStep = this.replaceStep.bind(this)
+    this.replaceLine = this.replaceLine.bind(this)
+    this.restoreLine = this.restoreLine.bind(this)
+    this.removeLine = this.removeLine.bind(this)
+    this.getPatch = this.getPatch.bind(this)
     this.state = props.procedureList
-      ? props.procedureList
-      : {
-          lines: [{ text: '' }]
+      ? {
+          name: props.procedureList.name,
+          lines: _.map(props.procedureList.lines, jsonToUI)
         }
+      : { lines: [newProcedureLine()] }
   }
 
-  public notifyChange() {
-    if (this.props.onChange) {
-      this.props.onChange(this.state)
+  public getPatch() {
+    return {
+      procedureListId: _.get(this.props.procedureList, 'id'),
+      addedSteps: _.map(_.filter(this.state.lines, { added: true }), step =>
+        _.omit(uiToJSON(step), 'id')
+      ),
+      changedSteps: _.map(
+        _.filter(this.state.lines, { changed: true }),
+        uiToJSON
+      ),
+      removedStepIds: _.map(
+        _.filter(this.state.lines, { removed: true }),
+        'json.id'
+      )
     }
   }
 
-  public replaceStep(idx: number, text: string): void {
+  public notifyChange() {
+    if (_.isFunction(this.props.onPatch)) {
+      this.props.onPatch(this.getPatch())
+    }
+    if (_.isFunction(this.props.onChange)) {
+      this.props.onChange({
+        name: undefined,
+        lines: _.map(_.reject(this.state.lines, { removed: true }), uiToJSON)
+      })
+    }
+  }
+
+  public restoreLine(line: UITrackable<ProcedureLineJSON>): void {
+    if (line.changed) {
+      this.setState(
+        state => ({
+          lines: _.map(state.lines, l =>
+            l.json.id === line.json.id
+              ? {
+                  changed: false,
+                  added: l.added,
+                  removed: false,
+                  json: l.original,
+                  original: l.original
+                }
+              : l
+          )
+        }),
+        this.notifyChange
+      )
+      return
+    }
+    if (line.removed) {
+      this.setState(
+        state => ({
+          lines: _.map(state.lines, l =>
+            l.json.id === line.json.id
+              ? {
+                  ...l,
+                  removed: false
+                }
+              : l
+          )
+        }),
+        this.notifyChange
+      )
+      return
+    }
+  }
+
+  public removeLine(line: UITrackable<ProcedureLineJSON>): void {
+    if (line.added) {
+      this.setState(
+        state => ({
+          lines: _.reject(state.lines, l => l.json.id === line.json.id)
+        }),
+        this.notifyChange
+      )
+    } else {
+      this.setState(
+        state => ({
+          lines: _.map(state.lines, l =>
+            l.json.id === line.json.id ? { ...l, removed: true } : l
+          )
+        }),
+        this.notifyChange
+      )
+    }
+  }
+
+  public replaceLine(idx: number, text: string): void {
     this.setState(
       state => ({
         lines: _.map(state.lines, (line, i) =>
-          Object.assign(line, i === idx ? { text } : undefined)
+          i === idx
+            ? {
+                json: {
+                  id: line.json.id,
+                  text
+                },
+                changed: !line.added,
+                added: line.added,
+                removed: false,
+                original: line.original
+              }
+            : line
         )
       }),
       this.notifyChange
@@ -45,34 +156,61 @@ export class ProcedureList extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div>
-        {this.state.lines.map((s, key) => (
-          <Row key={key}>
-            <Col className="mb-3">
-              <Input
+      <Card className="mb-3">
+        <CardBody>
+          {this.state.lines.map((line, key) => {
+            if (line.removed) {
+              return (
+                <ActionLine
+                  icon="fal fa-undo"
+                  key={key}
+                  onAction={() => this.restoreLine(line)}
+                >
+                  <div className="text-muted text-strike">{line.json.text}</div>
+                </ActionLine>
+              )
+            }
+            return (
+              <ActionLine
+                icon={line.changed ? 'fal fa-undo' : 'fal fa-times'}
+                onAction={() =>
+                  line.changed ? this.restoreLine(line) : this.removeLine(line)
+                }
                 key={key}
-                type="textarea"
-                placeholder="Step by step instructions..."
-                value={s.text}
-                onChange={e => this.replaceStep(key, e.target.value)}
-              />
+              >
+                <Input
+                  type="textarea"
+                  placeholder="Step by step instructions..."
+                  className={`mb-3 ${line.changed ? 'bg-changed' : ''} ${
+                    line.added ? 'bg-added' : ''
+                  }`}
+                  value={line.json.text}
+                  onChange={e => this.replaceLine(key, e.target.value)}
+                />
+              </ActionLine>
+            )
+          })}
+          <Row>
+            <Col>
+              <Button
+                type="button"
+                color="secondary"
+                size="sm"
+                onClick={() =>
+                  this.setState(
+                    state => ({
+                      lines: [...state.lines, newProcedureLine()]
+                    }),
+                    this.notifyChange
+                  )
+                }
+              >
+                Add Step
+              </Button>
             </Col>
           </Row>
-        ))}
-        <Button
-          type="button"
-          outline
-          color="secondary"
-          onClick={_ =>
-            this.setState(
-              state => ({ lines: [...state.lines, { text: '' }] }),
-              this.notifyChange
-            )
-          }
-        >
-          Add Another Step
-        </Button>
-      </div>
+        </CardBody>
+      </Card>
     )
   }
 }
