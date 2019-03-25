@@ -28,15 +28,18 @@ const ingredientLine = Joi.object({
   optional: Joi.boolean().required()
 })
 
+const procedureLine = Joi.object({
+  id: Joi.number().min(0),
+  text: Joi.string().required(),
+  image_url: Joi.string(),
+  title: Joi.string()
+})
+
 const procedureList = Joi.object({
   name: Joi.string(),
   lines: Joi.array()
     .required()
-    .items({
-      text: Joi.string().required(),
-      image_url: Joi.string(),
-      title: Joi.string()
-    })
+    .items(procedureLine)
 })
 
 export const validateNewRecipe = validator({
@@ -101,6 +104,19 @@ export const validateRecipePatch = validator({
       .required()
   }),
   addedProcedureLists: Joi.array().items(procedureList),
-  changedProcedureLists: Joi.array().items(procedureList),
+  changedProcedureLists: Joi.array().items({
+    procedureListId: Joi.number()
+      .min(0)
+      .required(),
+    removedStepIds: Joi.array()
+      .items(Joi.number())
+      .required(),
+    changedSteps: Joi.array()
+      .items(procedureLine)
+      .required(),
+    addedSteps: Joi.array()
+      .items(procedureLine)
+      .required()
+  }),
   removedProcedureListIds: Joi.array().items(Joi.number())
 })

@@ -181,7 +181,6 @@ export default class EditRecipe extends React.Component<Props, State> {
             </Row>
           </CardBody>
         </Card>
-        <pre>{JSON.stringify(this.getPatch(), undefined, 2)}</pre>
       </Layout>
     )
   }

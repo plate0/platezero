@@ -52,7 +52,13 @@ export default class NewRecipe extends React.Component<Props, State> {
       title: this.state.title,
       preheats: [],
       ingredient_lists: this.state.ingredientList
-        ? [_.omit(this.state.ingredientList, 'name')]
+        ? [
+            {
+              lines: _.map(this.state.ingredientList.lines, line =>
+                _.omit(line, 'id')
+              )
+            }
+          ]
         : [],
       procedure_lists: this.state.procedureList
         ? [this.state.procedureList]
@@ -108,17 +114,13 @@ export default class NewRecipe extends React.Component<Props, State> {
           <h2 className="my-3">Steps</h2>
           <ProcedureList
             procedureList={this.state.procedureList}
-            onChange={procedureList => {
-              console.log('got change', procedureList)
-              this.setState({
-                procedureList
-              })
-            }}
+            onChange={procedureList => this.setState({ procedureList })}
           />
           <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!
           </Button>
         </Form>
+        <pre>{JSON.stringify(this.getRecipe(), undefined, 2)}</pre>
       </Layout>
     )
   }

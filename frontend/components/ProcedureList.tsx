@@ -46,7 +46,7 @@ export class ProcedureList extends React.Component<Props, State> {
         _.filter(this.state.lines, { changed: true }),
         uiToJSON
       ),
-      removedStepIds: _.map(_.filter(this.state.lines, { removed: true }), 'id')
+      removedStepIds: _.map(_.filter(this.state.lines, { removed: true }), 'json.id')
     }
   }
 
