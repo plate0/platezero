@@ -1,26 +1,16 @@
 import React from 'react'
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  Button,
-  ButtonGroup,
-  Col,
-  Input,
-  Row
-} from 'reactstrap'
+import { Card, CardBody, Button, Col, Input, Row } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
 import { ProcedureListPatch } from '../common/request-models'
+import { ActionLine } from './ActionLine'
 import { UITrackable, uiToJSON, jsonToUI } from '../common/model-helpers'
 
 interface Props {
   procedureList?: ProcedureListJSON
   onChange?: (list: ProcedureListJSON) => void
   onPatch?: (patch: ProcedureListPatch) => void
-
-  onRemove?: () => void
 }
 
 interface State {
@@ -96,59 +86,47 @@ export class ProcedureList extends React.Component<Props, State> {
     return (
       <Card className="mb-3">
         <CardBody>
-          {this.state.lines.map((s, key) => (
-            <Row key={key}>
-              <Col className="mb-3">
+          {this.state.lines.map((line, key) => {
+            return (
+              <ActionLine icon="fal fa-times" key={key}>
                 <Input
-                  key={key}
                   type="textarea"
                   placeholder="Step by step instructions..."
-                  value={s.json.text}
+                  className="mb-3"
+                  value={line.json.text}
                   onChange={e => this.replaceLine(key, e.target.value)}
                 />
-              </Col>
-            </Row>
-          ))}
+              </ActionLine>
+            )
+          })}
+          <Row>
+            <Col>
+              <Button
+                type="button"
+                color="secondary"
+                size="sm"
+                onClick={() =>
+                  this.setState(
+                    state => ({
+                      lines: [
+                        ...state.lines,
+                        {
+                          json: { text: '' },
+                          added: true,
+                          changed: false,
+                          removed: false
+                        }
+                      ]
+                    }),
+                    this.notifyChange
+                  )
+                }
+              >
+                Add Step
+              </Button>
+            </Col>
+          </Row>
         </CardBody>
-        <CardFooter>
-          <ButtonGroup>
-            <Button
-              type="button"
-              color="secondary"
-              size="sm"
-              onClick={() =>
-                this.setState(
-                  state => ({
-                    lines: [
-                      ...state.lines,
-                      {
-                        json: { text: '' },
-                        added: true,
-                        changed: false,
-                        removed: false
-                      }
-                    ]
-                  }),
-                  this.notifyChange
-                )
-              }
-            >
-              Add Step
-            </Button>
-            <Button
-              type="button"
-              color="secondary"
-              size="sm"
-              onClick={() =>
-                _.isFunction(this.props.onRemove)
-                  ? this.props.onRemove()
-                  : _.noop()
-              }
-            >
-              Remove Section
-            </Button>
-          </ButtonGroup>
-        </CardFooter>
       </Card>
     )
   }

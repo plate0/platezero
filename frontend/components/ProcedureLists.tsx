@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 
 import { ProcedureListJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
-import { Restorable } from './Restorable'
+import { ActionLine } from './ActionLine'
 import { ProcedureListPatch } from '../common/request-models'
 import { UITrackable, jsonToUI, uiToJSON } from '../common/model-helpers'
 
@@ -105,12 +105,13 @@ export function ProcedureLists(props: Props) {
             onRestore={() => restoreList(list.json.id)}
           />
         ) : (
-          <ProcedureList
-            procedureList={list.json}
+          <ActionLine
+            icon="fal fa-times"
+            onAction={() => removeList(list.json.id)}
             key={list.json.id}
-            onPatch={handlePatch}
-            onRemove={() => removeList(list.json.id)}
-          />
+          >
+            <ProcedureList procedureList={list.json} onPatch={handlePatch} />
+          </ActionLine>
         )
       )}
       <p>
@@ -127,7 +128,7 @@ function RemovedProcedureList(props: {
   onRestore?: () => void
 }) {
   return (
-    <Restorable onRestore={props.onRestore}>
+    <ActionLine icon="fal fa-undo" onAction={props.onRestore}>
       <Card className="mb-3">
         <CardBody>
           {props.list.lines.map((line, key) => (
@@ -137,6 +138,6 @@ function RemovedProcedureList(props: {
           ))}
         </CardBody>
       </Card>
-    </Restorable>
+    </ActionLine>
   )
 }

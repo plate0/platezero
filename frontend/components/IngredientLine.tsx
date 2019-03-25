@@ -6,8 +6,7 @@ import * as _ from 'lodash'
 
 import { Units } from '../common'
 import { Amount } from './Amount'
-import { Restorable } from './Restorable'
-import { Removable } from './Removable'
+import { ActionLine } from './ActionLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { usePrevious } from '../hooks/usePrevious'
 
@@ -130,7 +129,7 @@ export function IngredientLine(props: Props) {
 
   if (props.removed) {
     return (
-      <Restorable onRestore={onRestore}>
+      <ActionLine icon="fal fa-undo" onAction={onRestore}>
         <Row className="text-muted">
           <Col xs="2" className="text-strike">
             <Amount
@@ -149,12 +148,15 @@ export function IngredientLine(props: Props) {
             {props.ingredient.optional ? 'optional' : undefined}
           </Col>
         </Row>
-      </Restorable>
+      </ActionLine>
     )
   }
 
   return (
-    <Removable onRemove={() => (props.changed ? onRestore() : onRemove())}>
+    <ActionLine
+      icon={props.changed ? 'fal fa-undo' : 'fal fa-times'}
+      onAction={() => (props.changed ? onRestore() : onRemove())}
+    >
       <Row>
         <Col xs="2">
           <FormGroup>
@@ -241,6 +243,6 @@ export function IngredientLine(props: Props) {
           </FormGroup>
         </Col>
       </Row>
-    </Removable>
+    </ActionLine>
   )
 }
