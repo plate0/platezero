@@ -3,7 +3,9 @@ import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
 import {
   ProcedureListJSON,
+  ProcedureLineJSON,
   IngredientListJSON,
+  IngredientLineJSON,
   PreheatJSON
 } from '../../models'
 const TurndownService = require('turndown')
@@ -94,6 +96,39 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   return preheats
 }
 
+/* Ingredient List Strategies */
+
+// 1. https://schema.org/Recipe
+export const recipeSchemaIngredientLists = ($: any) => {
+  return $('li[itemprop="recipeIngredient"]')
+    .map(function() {
+      return parse(_.trim($(this).text()))
+    })
+    .get()
+}
+
+// 2. PlateZero::thing
+export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
+  const lines = $('*')
+    .filter(function() {
+      return /^ingredients$/gim.test(
+        $(this)
+          .text()
+          .trim()
+      )
+    })
+    .first()
+    .next()
+    .closest('ul')
+    .find('li')
+    .map(function() {
+      return parse($(this).text())
+    })
+    .get()
+  return lines
+}
+
+// 3. Find them yourself
 export const ingredient_lists = (sel: string) => (
   $: any
 ): IngredientListJSON[] => [
@@ -106,6 +141,43 @@ export const ingredient_lists = (sel: string) => (
   }
 ]
 
+/* END Ingredient List Strategies */
+
+/* Find Procedure Lists Strategies */
+
+// 1. https://schema.org/Recipe
+export const recipeSchemaProcedureLists = ($: any) => {
+  // EM: I am not sure this is always the correct markup, but
+  // it's how some sites do it.
+  return $('ol[itemprop="recipeInstructions"] li')
+    .map(function() {
+      return { text: _.trim($(this).text()) }
+    })
+    .get()
+}
+
+// 2. PlateZero Custom
+export const plateZeroProcedureLists = ($: any): ProcedureLineJSON[] => {
+  const lines = $('*')
+    .filter(function() {
+      return /^instructions$/gim.test(
+        $(this)
+          .text()
+          .trim()
+      )
+    })
+    .first()
+    .next()
+    .closest('ol')
+    .find('li')
+    .map(function() {
+      return { text: $(this).text() }
+    })
+    .get()
+  return lines
+}
+
+// 3. Find your own
 export const procedure_lists = (sel: string) => (
   $: any
 ): ProcedureListJSON[] => {

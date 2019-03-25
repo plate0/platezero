@@ -176,4 +176,107 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('paleogrubs.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/paleogrubs.com/best-paleo-brownie-recipe.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('title', async () => {
+      const { title } = await importer(source)
+      expect(title).toEqual(
+        'The Best Fudgy Paleo Brownies Ever – Easy and Flourless Brownie Recipe'
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'almond butter',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'grade-A maple syrup',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'egg',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'ghee',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'vanilla',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'cocoa powder',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'pure baking soda',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Preheat the oven to 325 degrees F. In a large bowl, whisk together the almond butter, syrup, egg, ghee, and vanilla. Stir in the cocoa powder and baking soda.'
+            },
+            {
+              text:
+                'Pour the batter into a 9-inch baking pan. Bake for 20-23 minutes, until the brownie is done, but still soft in the middle.'
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
