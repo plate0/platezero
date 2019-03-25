@@ -10,6 +10,10 @@ export type Unit =
   | 'l'
   | 'dl'
   | 'ml'
+  | 'in'
+  | 'ft'
+  | 'cm'
+  | 'm'
 
 export const Units = [
   { label: 'gram', value: 'g' },
@@ -22,7 +26,11 @@ export const Units = [
   { label: 'liter', value: 'l' },
   { label: 'milliliter', value: 'ml' },
   { label: 'deciliter', value: 'dl' },
-  { label: 'ounce', value: 'oz' }
+  { label: 'ounce', value: 'oz' },
+  { label: 'inch', value: 'in' },
+  { label: 'foot', value: 'ft' },
+  { label: 'centimeter', value: 'cm' },
+  { label: 'meter', value: 'm' }
 ]
 
 export const unitfy = (s?: string): Unit | undefined => {
@@ -42,6 +50,10 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'l':
     case 'dl':
     case 'ml':
+    case 'in':
+    case 'ft':
+    case 'cm':
+    case 'm':
       return unit
     case 'pound':
     case 'pounds':

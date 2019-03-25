@@ -56,7 +56,13 @@ export class IngredientLine extends Model<IngredientLine>
       'tsp',
       'l',
       'dl',
-      'ml'
+      'ml',
+
+      // distance
+      'in',
+      'ft',
+      'cm',
+      'm'
     ]
   ])
   @Column
