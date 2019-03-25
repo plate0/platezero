@@ -10,6 +10,7 @@ r.post('/url', async (req: AuthenticatedRequest, res) => {
   try {
     const importer = Importers.url(req.body.url)
     const recipe = await importer(req.body.url)
+    recipe.source_url = req.body.url
     return res
       .status(201)
       .json(await Recipe.createNewRecipe(req.user.userId, recipe))
