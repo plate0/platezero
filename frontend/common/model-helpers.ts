@@ -27,14 +27,7 @@ export const jsonToUI = <T>(json: T): UITrackable<T> => ({
 export const uiToJSON = <T>(ui: UITrackable<T>): T => {
   const val = { ...ui.json }
   _.each(_.keys(val), k => {
-    val[k] = defaultUndefined(val[k])
+    val[k] = normalize(val[k])
   })
   return val
-}
-
-function defaultUndefined<T>(val: T): T | undefined {
-  if (_.isString(val)) {
-    return _.isNil(val) || val === '' ? undefined : val
-  }
-  return _.isNil(val) ? undefined : val
 }
