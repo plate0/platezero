@@ -13,7 +13,7 @@ const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
   json: {
     id: nextProcedureListId--,
     name: '',
-    lines: [{ text: '' }]
+    lines: []
   },
   changed: false,
   removed: false,

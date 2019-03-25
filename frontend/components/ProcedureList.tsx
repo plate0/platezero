@@ -18,6 +18,17 @@ interface State {
   lines: UITrackable<ProcedureLineJSON>[]
 }
 
+let nextProcedureLineId = 0
+const newProcedureLine = (): UITrackable<ProcedureLineJSON> => ({
+  json: {
+    id: nextProcedureLineId--,
+    text: ''
+  },
+  added: true,
+  changed: false,
+  removed: false
+})
+
 export class ProcedureList extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -31,11 +42,7 @@ export class ProcedureList extends React.Component<Props, State> {
           name: props.procedureList.name,
           lines: _.map(props.procedureList.lines, jsonToUI)
         }
-      : {
-          lines: [
-            { json: { text: '' }, added: true, changed: false, removed: false }
-          ]
-        }
+      : { lines: [newProcedureLine()] }
   }
 
   public getPatch() {
@@ -46,7 +53,10 @@ export class ProcedureList extends React.Component<Props, State> {
         _.filter(this.state.lines, { changed: true }),
         uiToJSON
       ),
-      removedStepIds: _.map(_.filter(this.state.lines, { removed: true }), 'json.id')
+      removedStepIds: _.map(
+        _.filter(this.state.lines, { removed: true }),
+        'json.id'
+      )
     }
   }
 
@@ -187,15 +197,7 @@ export class ProcedureList extends React.Component<Props, State> {
                 onClick={() =>
                   this.setState(
                     state => ({
-                      lines: [
-                        ...state.lines,
-                        {
-                          json: { text: '' },
-                          added: true,
-                          changed: false,
-                          removed: false
-                        }
-                      ]
+                      lines: [...state.lines, newProcedureLine()]
                     }),
                     this.notifyChange
                   )
