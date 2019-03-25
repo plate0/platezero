@@ -44,8 +44,8 @@ export const validateNewRecipe = validator({
           quantity_numerator: Joi.number(),
           quantity_denominator: Joi.number(),
           name: Joi.string().required(),
-          unit: Joi.string(),
-          preparation: Joi.string(),
+          unit: Joi.string().allow(''),
+          preparation: Joi.string().allow(''),
           optional: Joi.boolean().required()
         })
         .required()
