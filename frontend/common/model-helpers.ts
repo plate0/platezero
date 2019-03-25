@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import { UserJSON } from '../models/user'
-import { defaultUndefined } from './textutils'
 
 export const getName = (user: UserJSON): string =>
   user.name ? user.name : user.username
@@ -27,4 +26,11 @@ export const uiToJSON = <T>(ui: UITrackable<T>): T => {
     val[k] = defaultUndefined(val[k])
   })
   return val
+}
+
+function defaultUndefined<T>(val: T): T | undefined {
+  if (_.isString(val)) {
+    return _.isNil(val) || val === '' ? undefined : val
+  }
+  return _.isNil(val) ? undefined : val
 }

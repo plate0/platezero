@@ -32,7 +32,6 @@ import {
   IngredientListPatch,
   ProcedureListPatch
 } from '../common/request-models'
-import { defaultUndefined } from '../common/textutils'
 
 interface Props {
   token: string
@@ -94,7 +93,7 @@ export default class EditRecipe extends React.Component<Props, State> {
         _.isUndefined
       ),
       addedProcedureLists: _.map(this.state.addedProcedureLists, pl =>
-        _.omit({ ...pl, name: defaultUndefined(pl.name) }, ['id'])
+        _.omit(pl, ['id'])
       ),
       changedProcedureLists: this.state.changedProcedureLists,
       removedProcedureListIds: this.state.removedProcedureListIds

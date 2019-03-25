@@ -6,28 +6,20 @@ import { IngredientLine } from './IngredientLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientListJSON } from '../models/ingredient_list'
 import { IngredientListPatch } from '../common/request-models'
-import { defaultUndefined } from '../common/textutils'
+import { UITrackable, uiToJSON } from '../common/model-helpers'
 
 let nextIngredientLineId = 0
 
-interface UIIngredientLine extends IngredientLineJSON {
-  changed: boolean
-  removed: boolean
-  added: boolean
-
-  // if changed === true, store a copy of the original values so they can be
-  // reverted if desired
-  original?: IngredientLineJSON
-}
-
-const newIngredient = (): UIIngredientLine => ({
-  id: nextIngredientLineId--,
-  quantity_numerator: undefined,
-  quantity_denominator: undefined,
-  name: '',
-  preparation: '',
-  optional: false,
-  unit: '',
+const newIngredient = (): UITrackable<IngredientLineJSON> => ({
+  json: {
+    id: nextIngredientLineId--,
+    quantity_numerator: undefined,
+    quantity_denominator: undefined,
+    name: '',
+    preparation: '',
+    optional: false,
+    unit: ''
+  },
   changed: false,
   removed: false,
   added: true
@@ -43,7 +35,7 @@ interface Props {
 
 interface State {
   name: string
-  lines: UIIngredientLine[]
+  lines: UITrackable<IngredientLineJSON>[]
 }
 
 const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
@@ -51,7 +43,7 @@ const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
     return {
       ...ingredientList,
       lines: _.map(ingredientList.lines, line => ({
-        ...line,
+        json: line,
         added: false,
         changed: false,
         removed: false,
@@ -62,17 +54,6 @@ const fallbackToNewIngredientList = (ingredientList?: IngredientListJSON) => {
   return {
     name: '',
     lines: [newIngredient()]
-  }
-}
-
-function uiLineToJSON(line: UIIngredientLine): IngredientLineJSON {
-  return {
-    ..._.omit(line, ['added', 'changed', 'removed', 'original']),
-    name: defaultUndefined(line.name),
-    preparation: defaultUndefined(line.preparation),
-    unit: defaultUndefined(line.unit),
-    quantity_numerator: defaultUndefined(line.quantity_numerator),
-    quantity_denominator: defaultUndefined(line.quantity_denominator)
   }
 }
 
@@ -93,8 +74,8 @@ export class IngredientList extends React.Component<Props, State> {
 
   public getIngredientList(): IngredientListJSON {
     return {
-      name: defaultUndefined(this.state.name),
-      lines: _.map(this.state.lines, uiLineToJSON)
+      name: this.state.name,
+      lines: _.map(this.state.lines, uiToJSON)
     }
   }
 
@@ -116,11 +97,11 @@ export class IngredientList extends React.Component<Props, State> {
     )
     const changedIngredients = _.map(
       _.filter(this.state.lines, { changed: true }),
-      uiLineToJSON
+      uiToJSON
     )
     const addedIngredients = _.map(
       _.filter(this.state.lines, { added: true }),
-      uiLineToJSON
+      uiToJSON
     )
     if (
       !removedIngredientIds.length &&
@@ -147,44 +128,49 @@ export class IngredientList extends React.Component<Props, State> {
 
   public replaceLine(ingredient: IngredientLineJSON): void {
     this.setState(state => {
-      const old = _.find(state.lines, { id: ingredient.id })
+      const old = _.find(state.lines, l => l.json.id === ingredient.id)
       const newIngredient = old.added
-        ? { ...ingredient, added: true, changed: false, removed: false }
-        : { ...ingredient, added: false, changed: true, removed: false }
+        ? { json: ingredient, added: true, changed: false, removed: false }
+        : {
+            json: ingredient,
+            added: false,
+            changed: true,
+            removed: false,
+            original: old.original
+          }
       return {
-        ...state,
         lines: _.map(state.lines, line =>
-          line.id === ingredient.id ? newIngredient : line
+          line.json.id === ingredient.id ? newIngredient : line
         )
       }
     }, this.notifyChange)
   }
 
-  public removeLine(line: UIIngredientLine): void {
+  public removeLine(line: UITrackable<IngredientLineJSON>): void {
     this.setState(
       state => ({
         ...state,
         lines: line.added
-          ? _.reject(state.lines, { id: line.id })
+          ? _.reject(state.lines, l => l.json.id === line.json.id)
           : _.map(state.lines, l =>
-              l.id === line.id ? { ...line, removed: true } : l
+              l.json.id === line.json.id ? { ...line, removed: true } : l
             )
       }),
       this.notifyChange
     )
   }
 
-  public restoreLine(line: UIIngredientLine): void {
+  public restoreLine(line: UITrackable<IngredientLineJSON>): void {
     this.setState(
       state => ({
         ...state,
         lines: _.map(state.lines, l => {
-          if (l.id !== line.id) {
+          if (l.json.id !== line.json.id) {
             return l
           }
           return l.changed
             ? {
-                ...l.original,
+                json: l.original,
                 original: l.original,
                 added: l.added,
                 changed: false,
@@ -225,8 +211,8 @@ export class IngredientList extends React.Component<Props, State> {
         </Row>
         {this.state.lines.map(ingredient => (
           <IngredientLine
-            key={ingredient.id}
-            ingredient={ingredient}
+            key={ingredient.json.id}
+            ingredient={ingredient.json}
             onChange={newIngredient => this.replaceLine(newIngredient)}
             removed={ingredient.removed}
             added={ingredient.added}
