@@ -1,4 +1,5 @@
-import { BlueApronImporter as importer } from './blue-apron'
+import { BlueApron } from './blue-apron'
+import { dom } from './html'
 import { readFileSync } from 'fs'
 
 const recipe =
@@ -6,12 +7,9 @@ const recipe =
 const goudaBurgers =
   'test/assets/blueapron/smoked-gouda-burgers-with-caramelized-onion-carrot-fries.html'
 
-test('Blue Apron importer exists', () => {
-  expect(importer).toBeDefined()
-})
-
-describe('Blue Apron import recipe', () => {
+describe('Blue Apron', () => {
   let source: string
+  let importer = dom(BlueApron)
 
   beforeEach(() => {
     source = readFileSync(recipe, { encoding: 'utf8' })

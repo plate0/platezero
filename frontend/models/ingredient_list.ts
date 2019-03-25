@@ -11,6 +11,7 @@ import * as _ from 'lodash'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 import { IngredientListPatch } from '../common/request-models'
+import { normalize } from '../common/model-helpers'
 
 export interface IngredientListJSON {
   id?: number
@@ -45,7 +46,9 @@ export class IngredientList extends Model<IngredientList>
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.lines, ingredient => IngredientLine.create(ingredient, options))
+      _.map(il.lines, ingredient =>
+        IngredientLine.create(normalize(ingredient), options)
+      )
     )
     await Promise.all(
       _.map(ingredientLines, (line, sort_key) =>
@@ -96,7 +99,7 @@ export class IngredientList extends Model<IngredientList>
           )
         }
         console.log('will add changed ingredient', changed)
-        const newLine = await IngredientLine.create(_.omit(changed, ['id']), {
+        const newLine = await IngredientLine.create(normalize(_.omit(changed, ['id'])), {
           transaction
         })
         return IngredientListLine.create(
@@ -111,7 +114,7 @@ export class IngredientList extends Model<IngredientList>
     )
     await Promise.all(
       _.map(patch.addedIngredients, async (line, sort_key) => {
-        const newLine = await IngredientLine.create(_.omit(line, ['id']), {
+        const newLine = await IngredientLine.create(normalize(_.omit(line, ['id'])), {
           transaction
         })
         return IngredientListLine.create(

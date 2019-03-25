@@ -1,4 +1,5 @@
-import { SeriousEatsImporter as importer } from './serious-eats'
+import { SeriousEats } from './serious-eats'
+import { dom } from './html'
 import { readFileSync } from 'fs'
 
 const recipe =
@@ -7,6 +8,7 @@ const pizza = 'test/assets/www.seriouseats.com/detroit-style-pizza-recipe.html'
 
 describe('Serious Eats import', () => {
   let source: string
+  let importer = dom(SeriousEats)
 
   beforeEach(() => {
     source = readFileSync(recipe, { encoding: 'utf8' })
@@ -15,7 +17,7 @@ describe('Serious Eats import', () => {
   test('get title', async () => {
     const { title } = await importer(source)
     expect(title).toEqual(
-      `Serious Eats' Halal Cart-Style Chicken and Rice With White Sauce`
+      `Serious Eats' Halal Cart-Style Chicken and Rice With White Sauce Recipe`
     )
   })
 

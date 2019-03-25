@@ -1,9 +1,11 @@
-import { GenericHTMLImporter as importer } from './generic-html-importer'
+import { GenericHTML } from './generic-html-importer'
+import { dom } from './html'
 import { readFileSync } from 'fs'
 
 describe('Generic HTML import', () => {
   describe('www.wholelivinglauren.com', () => {
     let source: string
+    let importer = dom(GenericHTML)
 
     beforeEach(() => {
       source = readFileSync(

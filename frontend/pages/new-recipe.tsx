@@ -79,7 +79,6 @@ export default class NewRecipe extends React.Component<Props, State> {
     const recipe = this.getRecipe()
     try {
       const res = await createRecipe(recipe, { token })
-      console.log('Created!', res)
       Router.push(res.html_url)
     } catch (err) {
       if (err instanceof PlateZeroApiError) {

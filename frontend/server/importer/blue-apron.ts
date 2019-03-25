@@ -1,13 +1,11 @@
-import { Importer, fetchHTML, isUrl } from './importer'
 import * as moment from 'moment'
+import { mapValues } from './importer'
 import {
   Preheat,
   IngredientListJSON,
   ProcedureListJSON,
   ProcedureLineJSON
 } from '../../models'
-import * as cheerio from 'cheerio'
-import { PostRecipe } from '../../common/request-models'
 import { fraction } from '../../common/fraction'
 import { unitfy } from '../../common/unit'
 const TurndownService = require('turndown')
@@ -116,26 +114,14 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
   ]
 }
 
-export const BlueApronImporter: Importer = async (
-  source: any
-): Promise<PostRecipe> => {
-  let raw
-  if (isUrl(source)) {
-    raw = await fetchHTML(source)
-  } else {
-    raw = source
-  }
-  const $ = cheerio.load(raw)
-  return {
-    title: title($),
-    subtitle: subtitle($),
-    description: description($),
-    image_url: image_url($),
-    source_url: source as string,
-    yield: getYield($),
-    duration: duration($),
-    preheats: preheats($),
-    ingredient_lists: ingredient_lists($),
-    procedure_lists: procedure_lists($)
-  }
-}
+export const BlueApron = mapValues({
+  title: title,
+  subtitle: subtitle,
+  description: description,
+  image_url: image_url,
+  yield: getYield,
+  duration: duration,
+  preheats: preheats,
+  ingredient_lists: ingredient_lists,
+  procedure_lists: procedure_lists
+})

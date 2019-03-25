@@ -1,39 +1,9 @@
-import { Importer, fetchHTML, isUrl } from './importer'
-import * as cheerio from 'cheerio'
-import { PostRecipe } from '../../common/request-models'
+import { mapValues } from './importer'
 import { parse } from '../../common/ingredient'
 import { IngredientListJSON, ProcedureListJSON } from '../../models'
+import * as html from './html'
 
-const title = ($: any) => {
-  let title = $('meta[property="og:title"]')
-    .attr('content')
-    .trim()
-  if (title) {
-    return title
-  }
-  return undefined
-}
-
-const description = ($: any) => {
-  let description = $('meta[property="og:description"]')
-    .attr('content')
-    .trim()
-  if (description) {
-    return description
-  }
-  return undefined
-}
-
-const image_url = ($: any) => {
-  let image = $('meta[property="og:image"]')
-    .attr('content')
-    .trim()
-  if (image) {
-    return image
-  }
-}
-
-const getYield = ($: any) => {
+const yld = ($: any) => {
   const regex = /(serves|makes)\s([\d-]*)/gim
   const match = regex.exec($.text())
   if (match && match[2]) {
@@ -51,6 +21,8 @@ const duration = ($: any) => {
   }
   return undefined
 }
+
+const preheats = html.preheats('body')
 
 const ingredient_lists = ($: any): IngredientListJSON[] => {
   const lines = $('*')
@@ -92,27 +64,12 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
   return [{ lines }]
 }
 
-//
-export const GenericHTMLImporter: Importer = async (
-  source: any
-): Promise<PostRecipe> => {
-  let raw
-  if (isUrl(source)) {
-    raw = await fetchHTML(source)
-  } else {
-    raw = source
-  }
-  const $ = cheerio.load(raw)
-  return {
-    title: title($),
-    // subtitle: subtitle($),
-    description: description($),
-    image_url: image_url($),
-    source_url: source as string,
-    yield: getYield($),
-    duration: duration($),
-    // preheats: preheats($),
-    ingredient_lists: ingredient_lists($),
-    procedure_lists: procedure_lists($)
-  }
-}
+export const GenericHTML = mapValues(
+  html.defaults({
+    yield: yld,
+    duration,
+    preheats,
+    ingredient_lists,
+    procedure_lists
+  })
+)
