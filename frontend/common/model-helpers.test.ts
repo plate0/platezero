@@ -7,7 +7,6 @@ describe('normalize', () => {
   })
 
   test('keep zeroes', () => {
-    const res = normalize({ a: 0 })
-    expect(res).toEqual({ a: 0 })
+    expect(normalize({ a: 0 })).toEqual({ a: 0 })
   })
 })
