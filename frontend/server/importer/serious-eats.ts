@@ -71,6 +71,13 @@ const ingredient_lists = ($: any): IngredientListJSON[] => {
         lines: []
       }
     } else {
+      if (!list) {
+        // Default list
+        list = {
+          name: el.text(),
+          lines: []
+        }
+      }
       list.lines.push(parse(el.text()))
     }
   })

@@ -65,10 +65,10 @@ export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
         ))}
       </Row>
       {recipes.length > 0 && seeAll && (
-        <Row className="d-block d-md-none">
-          <Col>
+        <Row className="mt-3 d-block d-md-none">
+          <Col className="d-flex justify-content-center">
             <Link to={`/${user.username}/recipes`}>
-              <a className="btn btn-secondary" role="button">
+              <a className="btn btn-link" role="button">
                 See All
               </a>
             </Link>
