@@ -24,10 +24,4 @@ export const jsonToUI = <T>(json: T): UITrackable<T> => ({
   original: json
 })
 
-export const uiToJSON = <T>(ui: UITrackable<T>): T => {
-  const val = { ...ui.json }
-  _.each(_.keys(val), k => {
-    val[k] = normalize(val[k])
-  })
-  return val
-}
+export const uiToJSON = <T>(ui: UITrackable<T>): T => normalize(ui.json)
