@@ -20,7 +20,7 @@ export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
   return (
     <section>
       <Row className="align-items-center border-bottom pb-1">
-        <Col xs={8 + (loggedInUser ? 0 : 3) + (seeAll ? 0 : 1)}>
+        <Col xs={5 + (loggedInUser ? 0 : 3) + (seeAll ? 0 : 1)}>
           <IfLoggedIn username={user.username} else={not}>
             {me}
           </IfLoggedIn>
@@ -40,7 +40,7 @@ export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
           </Col>
         </IfLoggedIn>
         {seeAll && (
-          <Col xs="1" className="text-right">
+          <Col xs="3" className="text-right">
             <Link to={`/${user.username}/recipes`}>
               <a>See All</a>
             </Link>
@@ -64,6 +64,17 @@ export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
           </Col>
         ))}
       </Row>
+      {recipes.length > 0 && seeAll && (
+        <Row className="d-block d-md-none">
+          <Col>
+            <Link to={`/${user.username}/recipes`}>
+              <a className="btn btn-secondary" role="button">
+                See All
+              </a>
+            </Link>
+          </Col>
+        </Row>
+      )}
     </section>
   )
 }
