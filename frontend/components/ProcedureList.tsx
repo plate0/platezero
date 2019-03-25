@@ -17,7 +17,9 @@ import { UITrackable, uiToJSON, jsonToUI } from '../common/model-helpers'
 
 interface Props {
   procedureList?: ProcedureListJSON
-  onChange?: (patch: ProcedureListPatch) => void
+  onChange?: (list: ProcedureListJSON) => void
+  onPatch?: (patch: ProcedureListPatch) => void
+
   onRemove?: () => void
 }
 
@@ -31,6 +33,7 @@ export class ProcedureList extends React.Component<Props, State> {
     super(props)
     this.notifyChange = this.notifyChange.bind(this)
     this.replaceLine = this.replaceLine.bind(this)
+    this.getPatch = this.getPatch.bind(this)
     this.state = props.procedureList
       ? {
           name: props.procedureList.name,
@@ -43,22 +46,26 @@ export class ProcedureList extends React.Component<Props, State> {
         }
   }
 
+  public getPatch() {
+    return {
+      procedureListId: _.get(this.props.procedureList, 'id'),
+      addedSteps: _.map(_.filter(this.state.lines, { added: true }), uiToJSON),
+      changedSteps: _.map(
+        _.filter(this.state.lines, { changed: true }),
+        uiToJSON
+      ),
+      removedStepIds: _.map(_.filter(this.state.lines, { removed: true }), 'id')
+    }
+  }
+
   public notifyChange() {
-    if (this.props.onChange) {
+    if (_.isFunction(this.props.onPatch)) {
+      this.props.onPatch(this.getPatch())
+    }
+    if (_.isFunction(this.props.onChange)) {
       this.props.onChange({
-        procedureListId: _.get(this.props.procedureList, 'id'),
-        addedSteps: _.map(
-          _.filter(this.state.lines, { added: true }),
-          uiToJSON
-        ),
-        changedSteps: _.map(
-          _.filter(this.state.lines, { changed: true }),
-          uiToJSON
-        ),
-        removedStepIds: _.map(
-          _.filter(this.state.lines, { removed: true }),
-          'id'
-        )
+        name: undefined,
+        lines: _.map(_.reject(this.state.lines, { removed: true }), uiToJSON)
       })
     }
   }
@@ -67,7 +74,18 @@ export class ProcedureList extends React.Component<Props, State> {
     this.setState(
       state => ({
         lines: _.map(state.lines, (line, i) =>
-          Object.assign(line, i === idx ? { text } : undefined)
+          i === idx
+            ? {
+                json: {
+                  id: line.json.id,
+                  text
+                },
+                changed: !line.added,
+                added: line.added,
+                removed: false,
+                original: line.original
+              }
+            : line
         )
       }),
       this.notifyChange

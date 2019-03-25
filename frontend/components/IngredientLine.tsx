@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Fraction from 'fraction.js'
-import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap'
+import { Col, FormGroup, Input, Label, Row } from 'reactstrap'
 import Select from 'react-select'
 import * as _ from 'lodash'
 
 import { Units } from '../common'
 import { Amount } from './Amount'
+import { Restorable } from './Restorable'
+import { Removable } from './Removable'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { usePrevious } from '../hooks/usePrevious'
 
@@ -128,134 +130,117 @@ export function IngredientLine(props: Props) {
 
   if (props.removed) {
     return (
-      <Row className="text-muted">
-        <Col xs="auto" className="d-flex align-items-center pr-0">
-          <Button
-            color="link"
-            className="text-muted"
-            title="Restore removed ingredient"
-            onClick={onRestore}
-          >
-            <i className="fal fa-undo" />
-          </Button>
-        </Col>
-        <Col xs="2" className="d-flex align-items-center text-strike">
-          <Amount
-            numerator={props.ingredient.quantity_numerator}
-            denominator={props.ingredient.quantity_denominator}
-          />
-        </Col>
-        <Col xs="2" className="d-flex align-items-center text-strike">
-          {props.ingredient.unit}
-        </Col>
-        <Col className="d-flex align-items-center text-strike">
-          {props.ingredient.name}
-        </Col>
-        <Col xs="3" className="d-flex align-items-center text-strike">
-          {props.ingredient.preparation}
-        </Col>
-        <Col xs="1" className="d-flex align-items-center text-strike">
-          {props.ingredient.optional ? 'optional' : undefined}
-        </Col>
-      </Row>
+      <Restorable onRestore={onRestore}>
+        <Row className="text-muted">
+          <Col xs="2" className="text-strike">
+            <Amount
+              numerator={props.ingredient.quantity_numerator}
+              denominator={props.ingredient.quantity_denominator}
+            />
+          </Col>
+          <Col xs="2" className="text-strike">
+            {props.ingredient.unit}
+          </Col>
+          <Col className="text-strike">{props.ingredient.name}</Col>
+          <Col xs="3" className="text-strike">
+            {props.ingredient.preparation}
+          </Col>
+          <Col xs="auto" className="text-strike">
+            {props.ingredient.optional ? 'optional' : undefined}
+          </Col>
+        </Row>
+      </Restorable>
     )
   }
 
   return (
-    <Row>
-      <Col xs="auto" className="d-flex align-items-center pr-0">
-        <Button
-          color="link"
-          className="text-secondary"
-          title={props.changed ? 'Restore' : 'Remove'}
-          onClick={() => (props.changed ? onRestore() : onRemove())}
-        >
-          <i className={`fal ${props.changed ? 'fa-undo' : 'fa-times'} pb-3`} />
-        </Button>
-      </Col>
-      <Col xs="2">
-        <FormGroup>
-          <Input
-            type="text"
-            placeholder="2/3…"
-            value={amount}
-            valid={isAmountValid(frac)}
-            className={bgClass}
-            onChange={e => {
-              const amount = e.currentTarget.value
-              setAmount(amount)
-            }}
-          />
-        </FormGroup>
-      </Col>
-      <Col xs="2">
-        <FormGroup>
-          <Select
-            options={Units}
-            value={unit}
-            onChange={(e: any) => setUnit(e.value)}
-            className={bgClass}
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                color: '#495057',
-                borderColor: state.isFocused ? '#7adaef' : '#ced4da',
-                boxShadow: state.isFocused
-                  ? '0 0 0 0.2rem rgba(25, 175, 208, 0.25)'
-                  : 'none',
-                backgroundColor: bgColor,
-                '&:hover': {
-                  borderColor: state.isFocused ? '#7adaef' : '#ced4da'
-                }
-              })
-            }}
-          />
-        </FormGroup>
-      </Col>
-      <Col>
-        <FormGroup>
-          <Input
-            type="text"
-            placeholder="onion, head of lettuce, ground black pepper…"
-            value={props.ingredient.name || ''}
-            className={bgClass}
-            onChange={e => {
-              const name = e.currentTarget.value
-              setName(name)
-            }}
-          />
-        </FormGroup>
-      </Col>
-      <Col xs="3">
-        <FormGroup>
-          <Input
-            type="text"
-            placeholder="finely diced, cleaned, peeled…"
-            value={props.ingredient.preparation || ''}
-            className={bgClass}
-            onChange={e => {
-              const preparation = e.currentTarget.value
-              setPreparation(preparation)
-            }}
-          />
-        </FormGroup>
-      </Col>
-      <Col xs="1" className="d-flex align-items-center">
-        <FormGroup check className="mb-3">
-          <Input
-            type="checkbox"
-            defaultChecked={props.ingredient.optional}
-            className={bgClass}
-            onChange={e => {
-              const optional = e.currentTarget.checked
-              setOptional(optional)
-            }}
-          />
-          <Label className="m-0" check>
-            <small>Optional</small>
-          </Label>
-        </FormGroup>
-      </Col>
-    </Row>
+    <Removable onRemove={() => (props.changed ? onRestore() : onRemove())}>
+      <Row>
+        <Col xs="2">
+          <FormGroup>
+            <Input
+              type="text"
+              placeholder="2/3…"
+              value={amount}
+              valid={isAmountValid(frac)}
+              className={bgClass}
+              onChange={e => {
+                const amount = e.currentTarget.value
+                setAmount(amount)
+              }}
+            />
+          </FormGroup>
+        </Col>
+        <Col xs="2">
+          <FormGroup>
+            <Select
+              options={Units}
+              placeholder="cup, gram…"
+              value={unit}
+              onChange={(e: any) => setUnit(e.value)}
+              className={bgClass}
+              styles={{
+                control: (base, state) => ({
+                  ...base,
+                  color: '#495057',
+                  borderColor: state.isFocused ? '#7adaef' : '#ced4da',
+                  boxShadow: state.isFocused
+                    ? '0 0 0 0.2rem rgba(25, 175, 208, 0.25)'
+                    : 'none',
+                  backgroundColor: bgColor,
+                  '&:hover': {
+                    borderColor: state.isFocused ? '#7adaef' : '#ced4da'
+                  }
+                })
+              }}
+            />
+          </FormGroup>
+        </Col>
+        <Col>
+          <FormGroup>
+            <Input
+              type="text"
+              placeholder="onion, head of lettuce, ground black pepper…"
+              value={props.ingredient.name || ''}
+              className={bgClass}
+              onChange={e => {
+                const name = e.currentTarget.value
+                setName(name)
+              }}
+            />
+          </FormGroup>
+        </Col>
+        <Col xs="3">
+          <FormGroup>
+            <Input
+              type="text"
+              placeholder="finely diced, cleaned, peeled…"
+              value={props.ingredient.preparation || ''}
+              className={bgClass}
+              onChange={e => {
+                const preparation = e.currentTarget.value
+                setPreparation(preparation)
+              }}
+            />
+          </FormGroup>
+        </Col>
+        <Col xs="auto" className="d-flex align-items-center">
+          <FormGroup check className="mb-3">
+            <Input
+              type="checkbox"
+              defaultChecked={props.ingredient.optional}
+              className={bgClass}
+              onChange={e => {
+                const optional = e.currentTarget.checked
+                setOptional(optional)
+              }}
+            />
+            <Label className="m-0" check>
+              <small>Optional</small>
+            </Label>
+          </FormGroup>
+        </Col>
+      </Row>
+    </Removable>
   )
 }

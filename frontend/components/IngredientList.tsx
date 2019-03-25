@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Col, Row } from 'reactstrap'
+import { Button } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { IngredientLine } from './IngredientLine'
@@ -186,29 +186,6 @@ export class IngredientList extends React.Component<Props, State> {
   public render() {
     return (
       <>
-        <Row>
-          <Col xs="auto" className="pr-0">
-            <button
-              className="btn btn-link text-secondary invisible"
-              onClick={e => e.preventDefault()}
-            >
-              <i className="fal fa-times invisible" />
-            </button>
-          </Col>
-          <Col xs="2">
-            <small>Amount</small>
-          </Col>
-          <Col xs="2">
-            <small>Unit</small>
-          </Col>
-          <Col>
-            <small>Ingredient</small>
-          </Col>
-          <Col xs="3">
-            <small>Preparation</small>
-          </Col>
-          <Col xs="1" />
-        </Row>
         {this.state.lines.map(ingredient => (
           <IngredientLine
             key={ingredient.json.id}
