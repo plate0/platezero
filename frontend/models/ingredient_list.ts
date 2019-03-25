@@ -10,6 +10,7 @@ import {
 import * as _ from 'lodash'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
+import { normalize } from '../common/model-helpers'
 
 export interface IngredientListJSON {
   lines: IngredientLineJSON[]
@@ -43,7 +44,9 @@ export class IngredientList extends Model<IngredientList>
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.lines, ingredient => IngredientLine.create(ingredient, options))
+      _.map(il.lines, ingredient =>
+        IngredientLine.create(normalize(ingredient), options)
+      )
     )
     await Promise.all(
       _.map(ingredientLines, (line, sort_key) =>
