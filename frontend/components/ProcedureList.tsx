@@ -23,6 +23,8 @@ export class ProcedureList extends React.Component<Props, State> {
     super(props)
     this.notifyChange = this.notifyChange.bind(this)
     this.replaceLine = this.replaceLine.bind(this)
+    this.restoreLine = this.restoreLine.bind(this)
+    this.removeLine = this.removeLine.bind(this)
     this.getPatch = this.getPatch.bind(this)
     this.state = props.procedureList
       ? {
@@ -60,6 +62,64 @@ export class ProcedureList extends React.Component<Props, State> {
     }
   }
 
+  public restoreLine(line: UITrackable<ProcedureLineJSON>): void {
+    if (line.changed) {
+      this.setState(
+        state => ({
+          lines: _.map(state.lines, l =>
+            l.json.id === line.json.id
+              ? {
+                  changed: false,
+                  added: l.added,
+                  removed: false,
+                  json: l.original,
+                  original: l.original
+                }
+              : l
+          )
+        }),
+        this.notifyChange
+      )
+      return
+    }
+    if (line.removed) {
+      this.setState(
+        state => ({
+          lines: _.map(state.lines, l =>
+            l.json.id === line.json.id
+              ? {
+                  ...l,
+                  removed: false
+                }
+              : l
+          )
+        }),
+        this.notifyChange
+      )
+      return
+    }
+  }
+
+  public removeLine(line: UITrackable<ProcedureLineJSON>): void {
+    if (line.added) {
+      this.setState(
+        state => ({
+          lines: _.reject(state.lines, l => l.json.id === line.json.id)
+        }),
+        this.notifyChange
+      )
+    } else {
+      this.setState(
+        state => ({
+          lines: _.map(state.lines, l =>
+            l.json.id === line.json.id ? { ...l, removed: true } : l
+          )
+        }),
+        this.notifyChange
+      )
+    }
+  }
+
   public replaceLine(idx: number, text: string): void {
     this.setState(
       state => ({
@@ -87,12 +147,31 @@ export class ProcedureList extends React.Component<Props, State> {
       <Card className="mb-3">
         <CardBody>
           {this.state.lines.map((line, key) => {
+            if (line.removed) {
+              return (
+                <ActionLine
+                  icon="fal fa-undo"
+                  key={key}
+                  onAction={() => this.restoreLine(line)}
+                >
+                  <div className="text-muted text-strike">{line.json.text}</div>
+                </ActionLine>
+              )
+            }
             return (
-              <ActionLine icon="fal fa-times" key={key}>
+              <ActionLine
+                icon={line.changed ? 'fal fa-undo' : 'fal fa-times'}
+                onAction={() =>
+                  line.changed ? this.restoreLine(line) : this.removeLine(line)
+                }
+                key={key}
+              >
                 <Input
                   type="textarea"
                   placeholder="Step by step instructions..."
-                  className="mb-3"
+                  className={`mb-3 ${line.changed ? 'bg-changed' : ''} ${
+                    line.added ? 'bg-added' : ''
+                  }`}
                   value={line.json.text}
                   onChange={e => this.replaceLine(key, e.target.value)}
                 />

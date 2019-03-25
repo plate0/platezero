@@ -28,9 +28,18 @@ const formatPatch = (
     _.filter(lists, { removed: true }),
     'json.id'
   )
-  const changedProcedureLists = _.filter(
-    _.values(patches),
-    patch => _.indexOf(removedProcedureListIds, patch.procedureListId) < 0
+  const changedProcedureLists = _.reject(
+    _.filter(
+      _.values(patches),
+      patch => _.indexOf(removedProcedureListIds, patch.procedureListId) < 0
+    ),
+    patch => {
+      return (
+        _.size(patch.addedSteps) === 0 &&
+        _.size(patch.changedSteps) === 0 &&
+        _.size(patch.removedStepIds) === 0
+      )
+    }
   )
   const addedProcedureLists = _.map(_.filter(lists, { added: true }), uiToJSON)
   return { addedProcedureLists, changedProcedureLists, removedProcedureListIds }
