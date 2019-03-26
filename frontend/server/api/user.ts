@@ -3,7 +3,7 @@ import { Request } from 'express'
 import * as _ from 'lodash'
 import { importers } from './importer'
 import { validateNewRecipe, validateRecipePatch } from '../validate'
-import { User, Recipe, RecipeBranch, RecipeVersion } from '../../models'
+import { User, Recipe, RecipeBranch } from '../../models'
 import { notFound, internalServerError } from '../errors'
 
 interface UserDetail {
@@ -42,29 +42,21 @@ r.patch(
   async (req: AuthenticatedRequest, res) => {
     try {
       const { slug, branch } = req.params
+      const recipe = await Recipe.findOne({
+        where: { user_id: req.user.userId, slug }
+      })
+      if (!recipe) {
+        return notFound(res)
+      }
       const currentBranch = await RecipeBranch.findOne({
-        where: {
-          name: branch
-        },
-        include: [
-          {
-            model: RecipeVersion,
-            include: [
-              {
-                model: Recipe,
-                where: {
-                  user_id: req.user.userId,
-                  slug
-                }
-              }
-            ]
-          }
-        ]
+        where: { recipe_id: recipe.id, name: branch }
       })
       if (!currentBranch) {
         return notFound(res)
       }
-      res.status(200).json(await currentBranch.applyPatch(req.body, req.user.userId))
+      res
+        .status(200)
+        .json(await currentBranch.applyPatch(req.body, req.user.userId))
     } catch (err) {
       return internalServerError(res, err)
     }
