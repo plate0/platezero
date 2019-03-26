@@ -108,3 +108,28 @@ export function replaceItem<T extends { id?: number }>(
       : prev
   )
 }
+
+export interface ListPatch<L extends {}, I extends {}> {
+  addedItems: L[]
+  changedItems: ItemPatch<I>[]
+  removedIds: number[]
+}
+
+export function formatListPatch<L extends { id?: number }, I extends {}>(
+  items: UITrackable<L>[],
+  patches: { [id: number]: ItemPatch<I> }
+): ListPatch<L, I> {
+  const removedIds = _.map(
+    _.filter(items, { removed: true }),
+    item => item.json.id
+  )
+  const changedItems = _.reject(
+    _.filter(_.values(patches), patch => _.indexOf(removedIds, patch.id) < 0),
+    patch =>
+      _.size(patch.addedItems) === 0 &&
+      _.size(patch.changedItems) === 0 &&
+      _.size(patch.removedItemIds) === 0
+  )
+  const addedItems = _.map(_.filter(items, { added: true }), uiToJSON)
+  return { addedItems, changedItems, removedIds }
+}

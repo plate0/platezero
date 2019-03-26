@@ -5,7 +5,12 @@ import * as _ from 'lodash'
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
 import { ActionLine } from './ActionLine'
-import { UITrackable, jsonToUI, uiToJSON, ItemPatch } from '../common/changes'
+import {
+  UITrackable,
+  jsonToUI,
+  ListPatch,
+  formatListPatch
+} from '../common/changes'
 
 let nextProcedureListId = 0
 const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
@@ -19,40 +24,9 @@ const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
   added: true
 })
 
-const formatPatch = (
-  lists: UITrackable<ProcedureListJSON>[],
-  patches: { [id: number]: ItemPatch<ProcedureLineJSON> }
-): ProcedureListsPatch => {
-  const removedProcedureListIds = _.map(
-    _.filter(lists, { removed: true }),
-    'json.id'
-  )
-  const changedProcedureLists = _.reject(
-    _.filter(
-      _.values(patches),
-      patch => _.indexOf(removedProcedureListIds, patch.id) < 0
-    ),
-    patch => {
-      return (
-        _.size(patch.addedItems) === 0 &&
-        _.size(patch.changedItems) === 0 &&
-        _.size(patch.removedItemIds) === 0
-      )
-    }
-  )
-  const addedProcedureLists = _.map(_.filter(lists, { added: true }), uiToJSON)
-  return { addedProcedureLists, changedProcedureLists, removedProcedureListIds }
-}
-
-interface ProcedureListsPatch {
-  addedProcedureLists: ProcedureListJSON[]
-  changedProcedureLists: ItemPatch<ProcedureLineJSON>[]
-  removedProcedureListIds: number[]
-}
-
 interface Props {
   lists: ProcedureListJSON[]
-  onChange?: (patch: ProcedureListsPatch) => void
+  onChange?: (patch: ListPatch<ProcedureListJSON, ProcedureLineJSON>) => void
 }
 
 export function ProcedureLists(props: Props) {
@@ -61,7 +35,7 @@ export function ProcedureLists(props: Props) {
 
   useEffect(() => {
     if (_.isFunction(props.onChange)) {
-      props.onChange(formatPatch(lists, patches))
+      props.onChange(formatListPatch(lists, patches))
     }
   }, [lists, patches])
 
@@ -95,15 +69,15 @@ export function ProcedureLists(props: Props) {
   }
 
   const handlePatch = patch => {
-    const old = _.find(lists, list => list.json.id === patch.procedureListId)
+    const old = _.find(lists, list => list.json.id === patch.id)
     if (old.added) {
       setLists(
         _.map(lists, list =>
-          list.json.id === patch.procedureListId
+          list.json.id === patch.id
             ? {
                 json: {
                   id: list.json.id,
-                  lines: patch.addedSteps
+                  lines: patch.addedItems
                 },
                 added: true,
                 changed: false,
@@ -113,7 +87,7 @@ export function ProcedureLists(props: Props) {
         )
       )
     } else {
-      setPatches({ ...patches, [patch.procedureListId]: patch })
+      setPatches({ ...patches, [patch.id]: patch })
     }
   }
 

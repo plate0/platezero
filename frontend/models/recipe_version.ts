@@ -117,7 +117,6 @@ export class RecipeVersion extends Model<RecipeVersion>
     userId: number,
     transaction?: any
   ): Promise<RecipeVersion> {
-    console.log('applying', patch, 'to recipe version', id)
     const prev = await RecipeVersion.findOne({
       where: { id },
       include: [
@@ -141,12 +140,12 @@ export class RecipeVersion extends Model<RecipeVersion>
     await Promise.all(
       _.map(prev.procedureLists, async (pl, sort_key) => {
         const removed = !_.isUndefined(
-          _.find(patch.removedProcedureListIds, id => id === pl.id)
+          _.find(patch.procedureLists.removedIds, id => id === pl.id)
         )
         if (removed) {
           return Promise.resolve()
         }
-        const changedProcedureList = _.find(patch.changedProcedureLists, {
+        const changedProcedureList = _.find(patch.procedureLists.changedItems, {
           id: pl.id
         })
         const procedure_list_id = changedProcedureList
@@ -162,7 +161,7 @@ export class RecipeVersion extends Model<RecipeVersion>
       })
     )
     await Promise.all(
-      _.map(patch.addedProcedureLists, async (pl, sort_key) => {
+      _.map(patch.procedureLists.addedItems, async (pl, sort_key) => {
         const procedure_list_id = (await ProcedureList.createWithLines(pl, {
           transaction
         })).id

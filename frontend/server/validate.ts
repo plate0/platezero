@@ -103,20 +103,22 @@ export const validateRecipePatch = validator({
       .items(ingredientLine)
       .required()
   }),
-  addedProcedureLists: Joi.array().items(procedureList),
-  changedProcedureLists: Joi.array().items({
-    id: Joi.number()
-      .min(0)
-      .required(),
-    removedItemIds: Joi.array()
-      .items(Joi.number())
-      .required(),
-    changedItems: Joi.array()
-      .items(procedureLine)
-      .required(),
-    addedItems: Joi.array()
-      .items(procedureLine)
-      .required()
-  }),
-  removedProcedureListIds: Joi.array().items(Joi.number())
+  procedureLists: Joi.object({
+    addedItems: Joi.array().items(procedureList),
+    changedItems: Joi.array().items({
+      id: Joi.number()
+        .min(0)
+        .required(),
+      removedItemIds: Joi.array()
+        .items(Joi.number())
+        .required(),
+      changedItems: Joi.array()
+        .items(procedureLine)
+        .required(),
+      addedItems: Joi.array()
+        .items(procedureLine)
+        .required()
+    }),
+    removedIds: Joi.array().items(Joi.number())
+  })
 })
