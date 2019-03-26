@@ -368,4 +368,131 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('avocadopesto.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/avocadopesto.com/roasted-cauliflower-soup.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'head cauliflower chopped into florets',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'head garlic',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'extra virgin olive oil divided',
+              quantity_numerator: 3,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'carrot peeled and diced',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'stalk celery diced',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'small yellow onion diced',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'smoked paprika optional',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: true,
+              unit: 'tsp'
+            },
+            {
+              name: 'hot smoked paprika optional',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: true,
+              unit: 'tsp'
+            },
+            {
+              name: 'vegetable broth',
+              quantity_numerator: 4,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'can coconut milk (optional',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation:
+                'use almond flour instead if sensitive to the taste of coconut milk)',
+              optional: true,
+              unit: undefined
+            },
+            {
+              name: 'nutritional yeast',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'For garnish:',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'handful chopped parsley',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
