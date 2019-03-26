@@ -6,6 +6,16 @@ import { PostRecipe, RecipeVersionPatch } from './request-models'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
+export enum HttpStatus {
+  Ok = 200,
+  Created = 201,
+  NoContent = 204,
+  BadRequest = 400,
+  Unauthorized = 401,
+  NotFound = 404,
+  InternalServerError = 500
+}
+
 const headers = {
   Accept: 'application/json',
   'Content-Type': 'application/json'
@@ -31,7 +41,7 @@ const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
 }
 
 const handleError = async (res: Response): Promise<any> => {
-  if (res.status === 204) {
+  if (res.status === HttpStatus.NoContent) {
     return Promise.resolve()
   }
   if (res.status >= 200 && res.status < 400) {

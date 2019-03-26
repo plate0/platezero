@@ -1,5 +1,6 @@
 import { Response } from 'express'
 import * as _ from 'lodash'
+import { HttpStatus } from '../common/http'
 
 const messages = (e?: string | string[] | Error): string[] => {
   if (_.isError(e)) {
@@ -19,7 +20,7 @@ export const badRequest = (
   res: Response,
   errors?: string | string[] | Error
 ) => {
-  return res.status(400).json({ errors: messages(errors) })
+  return res.status(HttpStatus.BadRequest).json({ errors: messages(errors) })
 }
 
 // HTTP 401 Unauthorized
@@ -27,19 +28,23 @@ export const unauthorized = (res: Response, error?: any) => {
   if (error) {
     console.error(error)
   }
-  return res.status(401).json({ errors: ['unauthorized'] })
+  return res.status(HttpStatus.Unauthorized).json({ errors: ['unauthorized'] })
 }
 
 // HTTP 401 Unauthorized
 export const invalidAuthentication = (res: Response) =>
-  res.status(401).json({ errors: ['invalid username and/or password'] })
+  res
+    .status(HttpStatus.Unauthorized)
+    .json({ errors: ['invalid username and/or password'] })
 
 // HTTP 404 Not Found
 export const notFound = (res: Response) =>
-  res.status(404).json({ errors: ['not found'] })
+  res.status(HttpStatus.NotFound).json({ errors: ['not found'] })
 
 // HTTP 500 Internal Server Error
 export const internalServerError = (res: Response, error?: any) => {
   console.error(error || 'internal server error')
-  return res.status(500).json({ errors: ['internal server error'] })
+  return res
+    .status(HttpStatus.InternalServerError)
+    .json({ errors: ['internal server error'] })
 }
