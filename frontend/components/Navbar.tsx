@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react'
 import {
-  Button,
   Collapse,
   NavbarToggler,
   Nav,
@@ -8,8 +7,7 @@ import {
   Navbar as RsNavbar,
   UncontrolledDropdown,
   DropdownToggle,
-  DropdownMenu,
-  DropdownItem
+  DropdownMenu
 } from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
@@ -65,7 +63,7 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
   </Link>
 )
 
-const NewRecipeDropdown = ({ user }: { user: User }) => (
+const NewRecipeDropdown = () => (
   <UncontrolledDropdown className="d-none d-md-block">
     <DropdownToggle caret className="add-recipe text-white" color="link">
       <i className="fal fa-plus" />
