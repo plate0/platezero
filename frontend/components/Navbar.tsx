@@ -1,10 +1,15 @@
 import React, { useState, useContext } from 'react'
 import {
+  Button,
   Collapse,
   NavbarToggler,
   Nav,
   Container,
-  Navbar as RsNavbar
+  Navbar as RsNavbar,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
 } from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
@@ -57,6 +62,31 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
       </style>
     </a>
   </Link>
+)
+
+const NewRecipeDropdown = () => (
+  <UncontrolledDropdown>
+    <DropdownToggle caret className="add-recipe text-white">
+      <i className="fal fa-plus" />
+    </DropdownToggle>
+    <DropdownMenu right>
+      <DropdownItem>New recipe</DropdownItem>
+      <DropdownItem>Import recipe</DropdownItem>
+    </DropdownMenu>
+    <style jsx global>
+      {`
+        /* Fix styling from reactstrap */
+        nav div.dropdown button.add-recipe,
+        nav div.dropdown button.add-recipe:active,
+        nav div.dropdown button.add-recipe:focus,
+        nav div.dropdown button.add-recipe:hover {
+          border: none !important;
+          background-color: initial !important;
+          box-shadow: none !important;
+        }
+      `}
+    </style>
+  </UncontrolledDropdown>
 )
 
 const AnonNav = () => (
