@@ -128,7 +128,7 @@ export default class EditRecipe extends React.Component<Props, State> {
         <Head>
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
-        <RecipeNav recipe={v.recipe} />
+        <RecipeNav recipe={v.recipe} token={this.props.token} />
         {_.map(this.state.errors, (err, key) => (
           <Alert key={key} color="danger">
             {err}

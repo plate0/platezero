@@ -1,27 +1,17 @@
 import React from 'react'
-import Router from 'next/router'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 import ReactMarkdown from 'react-markdown'
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  Modal,
-  ModalBody
-} from 'reactstrap'
+import { Card, CardHeader, CardBody } from 'reactstrap'
 import {
   Head,
   Layout,
-  IfLoggedIn,
   RecipeNav,
   RecipeVersion as RecipeVersionView
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { getRecipe, getRecipeVersion, deleteRecipe } from '../common/http'
-import { Link } from '../routes'
+import { getRecipe, getRecipeVersion } from '../common/http'
 
 interface Props {
   token: string
@@ -65,18 +55,7 @@ export default class Recipe extends React.Component<Props, State> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <RecipeNav recipe={recipe} />
-        <IfLoggedIn username={recipe.owner.username}>
-          <RecipeEditButton recipe={recipe} branch="master" />{' '}
-          <Button
-            color="danger"
-            outline
-            size="sm"
-            onClick={() => this.setState({ showDeleteModal: true })}
-          >
-            Delete&hellip;
-          </Button>
-        </IfLoggedIn>
+        <RecipeNav recipe={recipe} token={this.props.token} />
         {recipe.description && (
           <Card className="mb-3">
             <CardHeader>
@@ -98,57 +77,7 @@ export default class Recipe extends React.Component<Props, State> {
           </Card>
         )}
         {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
-        <Modal
-          isOpen={this.state.showDeleteModal}
-          toggle={() =>
-            this.setState(state => ({
-              showDeleteModal: !state.showDeleteModal
-            }))
-          }
-        >
-          <ModalBody>
-            <h5>Permanently delete {recipe.title}</h5>
-            <p>
-              Are you sure you want to permanently delete{' '}
-              <strong>{recipe.title}</strong>?
-            </p>
-            <Button
-              color="danger"
-              block
-              onClick={() =>
-                deleteRecipe(recipe.slug, { token: this.props.token }).then(
-                  () => Router.push('/')
-                )
-              }
-            >
-              Yes, delete it forever
-            </Button>
-            <Button
-              color="link"
-              className="text-muted"
-              outline
-              block
-              onClick={() => this.setState({ showDeleteModal: false })}
-            >
-              Never mind, keep it for now
-            </Button>
-          </ModalBody>
-        </Modal>
       </Layout>
     )
   }
 }
-
-interface RecipeEditButtonProps {
-  recipe: RecipeJSON
-  branch: string
-}
-const RecipeEditButton = (props: RecipeEditButtonProps) => (
-  <Link
-    route={`/${props.recipe.owner.username}/${props.recipe.slug}/branches/${
-      props.branch
-    }/edit`}
-  >
-    <a className="btn btn-sm btn-outline-primary">Edit</a>
-  </Link>
-)
