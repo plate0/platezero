@@ -12,7 +12,7 @@ import * as _ from 'lodash'
 
 import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
-import { ProcedureListPatch } from '../common/request-models'
+import { ItemPatch } from '../common/changes'
 
 export interface ProcedureListJSON {
   id?: number
@@ -64,12 +64,11 @@ export class ProcedureList extends Model<ProcedureList>
   }
 
   public static async createFromPatch(
-    patch: ProcedureListPatch,
+    patch: ItemPatch<ProcedureLineJSON>,
     transaction?: any
   ): Promise<ProcedureList> {
-    const id = patch.procedureListId
     const prev = await ProcedureList.findOne({
-      where: { id },
+      where: { id: patch.id },
       include: [{ model: ProcedureLine }],
       transaction
     })
@@ -80,12 +79,12 @@ export class ProcedureList extends Model<ProcedureList>
     await Promise.all(
       _.map(prev.lines, async (line, sort_key) => {
         const removed = !_.isUndefined(
-          _.find(patch.removedStepIds, id => id === line.id)
+          _.find(patch.removedItemIds, id => id === line.id)
         )
         if (removed) {
           return Promise.resolve()
         }
-        const changed = _.find(patch.changedSteps, { id: line.id })
+        const changed = _.find(patch.changedItems, { id: line.id })
         if (!changed) {
           return ProcedureListLine.create(
             {
@@ -110,7 +109,7 @@ export class ProcedureList extends Model<ProcedureList>
       })
     )
     await Promise.all(
-      _.map(patch.addedSteps, async (line, sort_key) => {
+      _.map(patch.addedItems, async (line, sort_key) => {
         const newLine = await ProcedureLine.create(_.omit(line, ['id']), {
           transaction
         })

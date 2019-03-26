@@ -147,7 +147,7 @@ export class RecipeVersion extends Model<RecipeVersion>
           return Promise.resolve()
         }
         const changedProcedureList = _.find(patch.changedProcedureLists, {
-          procedureListId: pl.id
+          id: pl.id
         })
         const procedure_list_id = changedProcedureList
           ? (await ProcedureList.createFromPatch(
@@ -179,7 +179,7 @@ export class RecipeVersion extends Model<RecipeVersion>
     await Promise.all(
       _.map(prev.ingredientLists, async (il, sort_key) => {
         const changedIngredientList = _.find(patch.changedIngredientLists, {
-          ingredientListId: il.id
+          id: il.id
         })
         const ingredient_list_id = changedIngredientList
           ? (await IngredientList.createFromPatch(

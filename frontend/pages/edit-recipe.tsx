@@ -26,12 +26,14 @@ import {
   patchBranch,
   PlateZeroApiError
 } from '../common/http'
-import { RecipeVersionJSON, ProcedureListJSON } from '../models'
 import {
-  RecipeVersionPatch,
-  IngredientListPatch,
-  ProcedureListPatch
-} from '../common/request-models'
+  RecipeVersionJSON,
+  ProcedureListJSON,
+  IngredientLineJSON,
+  ProcedureLineJSON
+} from '../models'
+import { RecipeVersionPatch } from '../common/request-models'
+import { ItemPatch } from '../common/changes'
 
 interface Props {
   token: string
@@ -40,10 +42,10 @@ interface Props {
 }
 
 interface State {
-  changedIngredientLists: { [id: number]: IngredientListPatch }
+  changedIngredientLists: { [id: number]: ItemPatch<IngredientLineJSON> }
   addedProcedureLists: ProcedureListJSON[]
   removedProcedureListIds: number[]
-  changedProcedureLists: ProcedureListPatch[]
+  changedProcedureLists: ItemPatch<ProcedureLineJSON>[]
   message: string
   errors: string[]
 }

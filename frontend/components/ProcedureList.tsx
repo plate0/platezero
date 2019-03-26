@@ -3,14 +3,22 @@ import { Card, CardBody, Button, Col, Input, Row } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
-import { ProcedureListPatch } from '../common/request-models'
 import { ActionLine } from './ActionLine'
-import { UITrackable, uiToJSON, jsonToUI } from '../common/model-helpers'
+import {
+  UITrackable,
+  uiToJSON,
+  jsonToUI,
+  ItemPatch,
+  formatItemPatch,
+  restoreItem,
+  removeItem,
+  replaceItem
+} from '../common/changes'
 
 interface Props {
   procedureList?: ProcedureListJSON
   onChange?: (list: ProcedureListJSON) => void
-  onPatch?: (patch: ProcedureListPatch) => void
+  onPatch?: (patch: ItemPatch<ProcedureLineJSON>) => void
 }
 
 interface State {
@@ -36,7 +44,6 @@ export class ProcedureList extends React.Component<Props, State> {
     this.replaceLine = this.replaceLine.bind(this)
     this.restoreLine = this.restoreLine.bind(this)
     this.removeLine = this.removeLine.bind(this)
-    this.getPatch = this.getPatch.bind(this)
     this.state = props.procedureList
       ? {
           name: props.procedureList.name,
@@ -45,26 +52,13 @@ export class ProcedureList extends React.Component<Props, State> {
       : { lines: [newProcedureLine()] }
   }
 
-  public getPatch() {
-    return {
-      procedureListId: _.get(this.props.procedureList, 'id'),
-      addedSteps: _.map(_.filter(this.state.lines, { added: true }), step =>
-        _.omit(uiToJSON(step), 'id')
-      ),
-      changedSteps: _.map(
-        _.filter(this.state.lines, { changed: true }),
-        uiToJSON
-      ),
-      removedStepIds: _.map(
-        _.filter(this.state.lines, { removed: true }),
-        'json.id'
-      )
-    }
-  }
-
   public notifyChange() {
     if (_.isFunction(this.props.onPatch)) {
-      this.props.onPatch(this.getPatch())
+      const patch = formatItemPatch(
+        _.get(this.props.procedureList, 'id'),
+        this.state.lines
+      )
+      this.props.onPatch(patch)
     }
     if (_.isFunction(this.props.onChange)) {
       this.props.onChange({
@@ -75,80 +69,25 @@ export class ProcedureList extends React.Component<Props, State> {
   }
 
   public restoreLine(line: UITrackable<ProcedureLineJSON>): void {
-    if (line.changed) {
-      this.setState(
-        state => ({
-          lines: _.map(state.lines, l =>
-            l.json.id === line.json.id
-              ? {
-                  changed: false,
-                  added: l.added,
-                  removed: false,
-                  json: l.original,
-                  original: l.original
-                }
-              : l
-          )
-        }),
-        this.notifyChange
-      )
-      return
-    }
-    if (line.removed) {
-      this.setState(
-        state => ({
-          lines: _.map(state.lines, l =>
-            l.json.id === line.json.id
-              ? {
-                  ...l,
-                  removed: false
-                }
-              : l
-          )
-        }),
-        this.notifyChange
-      )
-      return
-    }
+    this.setState(
+      state => ({
+        lines: restoreItem(state.lines, line)
+      }),
+      this.notifyChange
+    )
   }
 
   public removeLine(line: UITrackable<ProcedureLineJSON>): void {
-    if (line.added) {
-      this.setState(
-        state => ({
-          lines: _.reject(state.lines, l => l.json.id === line.json.id)
-        }),
-        this.notifyChange
-      )
-    } else {
-      this.setState(
-        state => ({
-          lines: _.map(state.lines, l =>
-            l.json.id === line.json.id ? { ...l, removed: true } : l
-          )
-        }),
-        this.notifyChange
-      )
-    }
+    this.setState(
+      state => ({ lines: removeItem(state.lines, line) }),
+      this.notifyChange
+    )
   }
 
-  public replaceLine(idx: number, text: string): void {
+  public replaceLine(id: number, text: string): void {
     this.setState(
       state => ({
-        lines: _.map(state.lines, (line, i) =>
-          i === idx
-            ? {
-                json: {
-                  id: line.json.id,
-                  text
-                },
-                changed: !line.added,
-                added: line.added,
-                removed: false,
-                original: line.original
-              }
-            : line
-        )
+        lines: replaceItem(state.lines, { id, text })
       }),
       this.notifyChange
     )
@@ -185,7 +124,7 @@ export class ProcedureList extends React.Component<Props, State> {
                     line.added ? 'bg-added' : ''
                   }`}
                   value={line.json.text}
-                  onChange={e => this.replaceLine(key, e.target.value)}
+                  onChange={e => this.replaceLine(line.json.id, e.target.value)}
                 />
               </ActionLine>
             )

@@ -5,8 +5,15 @@ import * as _ from 'lodash'
 import { IngredientLine } from './IngredientLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientListJSON } from '../models/ingredient_list'
-import { IngredientListPatch } from '../common/request-models'
-import { UITrackable, uiToJSON } from '../common/model-helpers'
+import {
+  UITrackable,
+  uiToJSON,
+  ItemPatch,
+  formatItemPatch,
+  removeItem,
+  restoreItem,
+  replaceItem
+} from '../common/changes'
 
 let nextIngredientLineId = 0
 
@@ -28,7 +35,7 @@ const newIngredient = (): UITrackable<IngredientLineJSON> => ({
 interface Props {
   onChange?: (
     ingredientList: IngredientListJSON,
-    patch?: IngredientListPatch
+    patch?: ItemPatch<IngredientLineJSON>
   ) => void
   ingredientList?: IngredientListJSON
 }
@@ -66,7 +73,6 @@ export class IngredientList extends React.Component<Props, State> {
     this.replaceLine = this.replaceLine.bind(this)
     this.removeLine = this.removeLine.bind(this)
     this.restoreLine = this.restoreLine.bind(this)
-    this.getPatch = this.getPatch.bind(this)
     const list = fallbackToNewIngredientList(props.ingredientList)
     const { name, lines } = list
     this.state = { name, lines }
@@ -82,79 +88,35 @@ export class IngredientList extends React.Component<Props, State> {
   public notifyChange() {
     if (_.isFunction(this.props.onChange)) {
       const list = this.getIngredientList()
-      const patch = this.getPatch()
+      const patch = formatItemPatch(
+        _.get(this.props.ingredientList, 'id'),
+        this.state.lines
+      )
       this.props.onChange(list, patch)
-    }
-  }
-
-  public getPatch(): IngredientListPatch | undefined {
-    const ingredientListId = this.props.ingredientList
-      ? this.props.ingredientList.id
-      : undefined
-    const removedIngredientIds = _.map(
-      _.filter(this.state.lines, { removed: true }),
-      'json.id'
-    )
-    const changedIngredients = _.map(
-      _.filter(this.state.lines, { changed: true }),
-      uiToJSON
-    )
-    const addedIngredients = _.map(
-      _.filter(this.state.lines, { added: true }),
-      uiToJSON
-    )
-    if (
-      !removedIngredientIds.length &&
-      !changedIngredients.length &&
-      !addedIngredients.length
-    ) {
-      return undefined
-    }
-    return {
-      ingredientListId,
-      removedIngredientIds,
-      changedIngredients,
-      addedIngredients
     }
   }
 
   public addIngredient() {
     const line = newIngredient()
     this.setState(
-      state => ({ ...state, lines: [...state.lines, line] }),
+      state => ({ lines: [...state.lines, line] }),
       this.notifyChange
     )
   }
 
   public replaceLine(ingredient: IngredientLineJSON): void {
-    this.setState(state => {
-      const old = _.find(state.lines, l => l.json.id === ingredient.id)
-      const newIngredient = old.added
-        ? { json: ingredient, added: true, changed: false, removed: false }
-        : {
-            json: ingredient,
-            added: false,
-            changed: true,
-            removed: false,
-            original: old.original
-          }
-      return {
-        lines: _.map(state.lines, line =>
-          line.json.id === ingredient.id ? newIngredient : line
-        )
-      }
-    }, this.notifyChange)
+    this.setState(
+      state => ({
+        lines: replaceItem(state.lines, ingredient)
+      }),
+      this.notifyChange
+    )
   }
 
   public removeLine(line: UITrackable<IngredientLineJSON>): void {
     this.setState(
       state => ({
-        ...state,
-        lines: line.added
-          ? _.reject(state.lines, l => l.json.id === line.json.id)
-          : _.map(state.lines, l =>
-              l.json.id === line.json.id ? { ...line, removed: true } : l
-            )
+        lines: removeItem(state.lines, line)
       }),
       this.notifyChange
     )
@@ -163,21 +125,7 @@ export class IngredientList extends React.Component<Props, State> {
   public restoreLine(line: UITrackable<IngredientLineJSON>): void {
     this.setState(
       state => ({
-        ...state,
-        lines: _.map(state.lines, l => {
-          if (l.json.id !== line.json.id) {
-            return l
-          }
-          return l.changed
-            ? {
-                json: l.original,
-                original: l.original,
-                added: l.added,
-                changed: false,
-                removed: false
-              }
-            : { ...l, removed: false }
-        })
+        lines: restoreItem(state.lines, line)
       }),
       this.notifyChange
     )

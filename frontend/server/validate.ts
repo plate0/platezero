@@ -90,31 +90,31 @@ export const validateNewUser = validator({
 export const validateRecipePatch = validator({
   message: Joi.string().required(),
   changedIngredientLists: Joi.array().items({
-    ingredientListId: Joi.number()
+    id: Joi.number()
       .min(0)
       .required(),
-    removedIngredientIds: Joi.array()
+    removedItemIds: Joi.array()
       .items(Joi.number())
       .required(),
-    changedIngredients: Joi.array()
+    changedItems: Joi.array()
       .items(ingredientLine)
       .required(),
-    addedIngredients: Joi.array()
+    addedItems: Joi.array()
       .items(ingredientLine)
       .required()
   }),
   addedProcedureLists: Joi.array().items(procedureList),
   changedProcedureLists: Joi.array().items({
-    procedureListId: Joi.number()
+    id: Joi.number()
       .min(0)
       .required(),
-    removedStepIds: Joi.array()
+    removedItemIds: Joi.array()
       .items(Joi.number())
       .required(),
-    changedSteps: Joi.array()
+    changedItems: Joi.array()
       .items(procedureLine)
       .required(),
-    addedSteps: Joi.array()
+    addedItems: Joi.array()
       .items(procedureLine)
       .required()
   }),

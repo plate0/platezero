@@ -10,8 +10,8 @@ import {
 import * as _ from 'lodash'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
-import { IngredientListPatch } from '../common/request-models'
 import { normalize } from '../common/model-helpers'
+import { ItemPatch } from '../common/changes'
 
 export interface IngredientListJSON {
   id?: number
@@ -66,12 +66,11 @@ export class IngredientList extends Model<IngredientList>
   }
 
   public static async createFromPatch(
-    patch: IngredientListPatch,
+    patch: ItemPatch<IngredientLineJSON>,
     transaction?: any
   ): Promise<IngredientList> {
-    const id = patch.ingredientListId
     const prev = await IngredientList.findOne({
-      where: { id },
+      where: { id: patch.id },
       include: [{ model: IngredientLine }],
       transaction
     })
@@ -82,12 +81,12 @@ export class IngredientList extends Model<IngredientList>
     await Promise.all(
       _.map(prev.lines, async (line, sort_key) => {
         const removed = !_.isUndefined(
-          _.find(patch.removedIngredientIds, id => id === line.id)
+          _.find(patch.removedItemIds, id => id === line.id)
         )
         if (removed) {
           return Promise.resolve()
         }
-        const changed = _.find(patch.changedIngredients, { id: line.id })
+        const changed = _.find(patch.changedItems, { id: line.id })
         if (!changed) {
           return IngredientListLine.create(
             {
@@ -112,7 +111,7 @@ export class IngredientList extends Model<IngredientList>
       })
     )
     await Promise.all(
-      _.map(patch.addedIngredients, async (line, sort_key) => {
+      _.map(patch.addedItems, async (line, sort_key) => {
         const newLine = await IngredientLine.create(normalize(_.omit(line, ['id'])), {
           transaction
         })

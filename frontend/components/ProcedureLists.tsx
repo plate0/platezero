@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Button, Card, CardBody } from 'reactstrap'
 import * as _ from 'lodash'
 
-import { ProcedureListJSON } from '../models'
+import { ProcedureListJSON, ProcedureLineJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
 import { ActionLine } from './ActionLine'
-import { ProcedureListPatch } from '../common/request-models'
-import { UITrackable, jsonToUI, uiToJSON } from '../common/model-helpers'
+import { UITrackable, jsonToUI, uiToJSON, ItemPatch } from '../common/changes'
 
 let nextProcedureListId = 0
 const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
@@ -22,7 +21,7 @@ const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
 
 const formatPatch = (
   lists: UITrackable<ProcedureListJSON>[],
-  patches: { [id: number]: ProcedureListPatch }
+  patches: { [id: number]: ItemPatch<ProcedureLineJSON> }
 ): ProcedureListsPatch => {
   const removedProcedureListIds = _.map(
     _.filter(lists, { removed: true }),
@@ -31,13 +30,13 @@ const formatPatch = (
   const changedProcedureLists = _.reject(
     _.filter(
       _.values(patches),
-      patch => _.indexOf(removedProcedureListIds, patch.procedureListId) < 0
+      patch => _.indexOf(removedProcedureListIds, patch.id) < 0
     ),
     patch => {
       return (
-        _.size(patch.addedSteps) === 0 &&
-        _.size(patch.changedSteps) === 0 &&
-        _.size(patch.removedStepIds) === 0
+        _.size(patch.addedItems) === 0 &&
+        _.size(patch.changedItems) === 0 &&
+        _.size(patch.removedItemIds) === 0
       )
     }
   )
@@ -47,7 +46,7 @@ const formatPatch = (
 
 interface ProcedureListsPatch {
   addedProcedureLists: ProcedureListJSON[]
-  changedProcedureLists: ProcedureListPatch[]
+  changedProcedureLists: ItemPatch<ProcedureLineJSON>[]
   removedProcedureListIds: number[]
 }
 
