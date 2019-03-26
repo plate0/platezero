@@ -1,5 +1,4 @@
 import { mapValues } from './importer'
-import { parse } from '../../common/ingredient'
 import { IngredientListJSON, ProcedureListJSON } from '../../models'
 import * as html from './html'
 
@@ -25,43 +24,27 @@ const duration = ($: any) => {
 const preheats = html.preheats('body')
 
 const ingredient_lists = ($: any): IngredientListJSON[] => {
-  const lines = $('*')
-    .filter(function() {
-      return /^ingredients$/gim.test(
-        $(this)
-          .text()
-          .trim()
-      )
-    })
-    .first()
-    .next()
-    .closest('ul')
-    .find('li')
-    .map(function() {
-      return parse($(this).text())
-    })
-    .get()
-  return [{ lines }]
+  let lines = html.recipeSchemaIngredientLists($)
+  if (lines.length !== 0) {
+    return [{ lines }]
+  }
+  lines = html.plateZeroIngredientLists($)
+  if (lines.length !== 0) {
+    return [{ lines }]
+  }
+  return undefined
 }
 
 const procedure_lists = ($: any): ProcedureListJSON[] => {
-  const lines = $('*')
-    .filter(function() {
-      return /^instructions$/gim.test(
-        $(this)
-          .text()
-          .trim()
-      )
-    })
-    .first()
-    .next()
-    .closest('ol')
-    .find('li')
-    .map(function() {
-      return { text: $(this).text() }
-    })
-    .get()
-  return [{ lines }]
+  let lines = html.recipeSchemaProcedureLists($)
+  if (lines.length > 0) {
+    return [{ lines }]
+  }
+  lines = html.plateZeroProcedureLists($)
+  if (lines.length > 0) {
+    return [{ lines }]
+  }
+  return undefined
 }
 
 export const GenericHTML = mapValues(

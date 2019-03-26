@@ -3,7 +3,9 @@ import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
 import {
   ProcedureListJSON,
+  ProcedureLineJSON,
   IngredientListJSON,
+  IngredientLineJSON,
   PreheatJSON
 } from '../../models'
 const TurndownService = require('turndown')
@@ -94,6 +96,88 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   return preheats
 }
 
+// find and map dom elements
+export interface FindMap {
+  id?: RegExp
+  css?: RegExp
+  selector?: string
+  map: Function
+}
+
+const findMap = ($: any, options: FindMap) => {
+  const opts = _.defaults(options, {
+    selector: '*'
+  })
+  return $(opts.selector)
+    .filter(function() {
+      if (opts.css) {
+        return ($(this).attr('class') || '').match(opts.css)
+      }
+      if (opts.id) {
+        return ($(this).attr('id') || '').match(opts.id)
+      }
+      return true
+    })
+    .map(function() {
+      return opts.map.apply(this, arguments)
+    })
+    .get()
+}
+
+/* Ingredient List Strategies */
+function ingredientMapper($: any) {
+  return function() {
+    return parse(_.trim($(this).text()))
+  }
+}
+
+// 1. https://schema.org/Recipe
+// Search for well known paths
+export const recipeSchemaIngredientLists = ($: any) => {
+  const search = [
+    // https://schema.org/Recipe
+    { selector: 'li[itemprop="recipeIngredient"]' },
+    // https://easyrecipeplugin.com/
+    { selector: 'li[itemprop="ingredients"]' },
+    { selector: 'ul li', css: /ingredient/i },
+    // https://www.wptasty.com/tasty-recipes
+    { selector: 'div.tasty-recipes ul li' }
+  ]
+  for (let s of search) {
+    const found = findMap($, {
+      ...s,
+      ...{ map: ingredientMapper($) }
+    })
+    if (found.length > 1) {
+      return found
+    }
+  }
+  return []
+}
+
+// 2. PlateZero::thing
+// TODO: will probably remove
+export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
+  const lines = $('*')
+    .filter(function() {
+      return /^ingredients$/gim.test(
+        $(this)
+          .text()
+          .trim()
+      )
+    })
+    .first()
+    .next()
+    .closest('ul')
+    .find('li')
+    .map(function() {
+      return parse($(this).text())
+    })
+    .get()
+  return lines
+}
+
+// 3. Find them yourself
 export const ingredient_lists = (sel: string) => (
   $: any
 ): IngredientListJSON[] => [
@@ -106,6 +190,62 @@ export const ingredient_lists = (sel: string) => (
   }
 ]
 
+/* END Ingredient List Strategies */
+
+/* Find Procedure Lists Strategies */
+
+function procedureMapper($: any) {
+  return function() {
+    return { text: _.trim($(this).text()) }
+  }
+}
+
+// Search for well known paths
+export const recipeSchemaProcedureLists = ($: any) => {
+  const search = [
+    { selector: 'ol[itemprop="recipeInstructions"] li' },
+    { selector: 'ol li[itemprop="recipeInstructions"]' },
+    { selector: 'div[itemprop="recipeInstructions"] ol li' },
+    { selector: 'ol li', css: /instruction/i },
+    // https://www.wptasty.com/tasty-recipes
+    { selector: 'div.tasty-recipes ol li' }
+    // https://easyrecipeplugin.com/
+  ]
+  for (let s of search) {
+    const found = findMap($, {
+      ...s,
+      ...{ map: procedureMapper($) }
+    })
+    // Maybe 1?
+    if (found.length > 0) {
+      return found
+    }
+  }
+  return []
+}
+
+// 2. PlateZero Custom
+export const plateZeroProcedureLists = ($: any): ProcedureLineJSON[] => {
+  const lines = $('*')
+    .filter(function() {
+      return /^instructions$/gim.test(
+        $(this)
+          .text()
+          .trim()
+      )
+    })
+    .first()
+    .next()
+    .closest('ol')
+    .find('li')
+    .map(function() {
+      return { text: $(this).text() }
+    })
+    .get()
+  return lines
+}
+
+// 3. Find your own
 export const procedure_lists = (sel: string) => (
   $: any
 ): ProcedureListJSON[] => {
