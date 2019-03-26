@@ -125,7 +125,6 @@ const findMap = ($: any, options: FindMap) => {
 }
 
 /* Ingredient List Strategies */
-
 function ingredientMapper($: any) {
   return function() {
     return parse(_.trim($(this).text()))
@@ -152,6 +151,7 @@ export const recipeSchemaIngredientLists = ($: any) => {
 }
 
 // 2. PlateZero::thing
+// TODO: will probably remove
 export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
   const lines = $('*')
     .filter(function() {
@@ -189,15 +189,30 @@ export const ingredient_lists = (sel: string) => (
 
 /* Find Procedure Lists Strategies */
 
+function procedureMapper($: any) {
+  return function() {
+    return { text: _.trim($(this).text()) }
+  }
+}
+
 // 1. https://schema.org/Recipe
+// Search for well known paths
 export const recipeSchemaProcedureLists = ($: any) => {
-  // EM: I am not sure this is always the correct markup, but
-  // it's how some sites do it.
-  return $('ol[itemprop="recipeInstructions"] li')
-    .map(function() {
-      return { text: _.trim($(this).text()) }
+  const search = [
+    { selector: 'ol[itemprop="recipeInstructions"] li' },
+    { selector: 'ol li', css: /instruction/i }
+  ]
+  for (let s of search) {
+    const found = findMap($, {
+      ...s,
+      ...{ map: procedureMapper($) }
     })
-    .get()
+    // Maybe 1?
+    if (found.length > 0) {
+      return found
+    }
+  }
+  return []
 }
 
 // 2. PlateZero Custom

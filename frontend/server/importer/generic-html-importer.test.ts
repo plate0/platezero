@@ -340,7 +340,32 @@ describe('Generic HTML import', () => {
 
     test('procedure_lists', async () => {
       const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([{ lines: [] }])
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Preheat the oven to 350ºF and line a baking sheet with parchment paper.'
+            },
+            {
+              text:
+                'In a large bowl, combine the peanut butter, coconut sugar, egg, and baking soda. Add a pinch of salt, if desired. (If using unsalted peanut butter, add at least 1/4 to 1/2 teaspoon of fine salt to compensate.)'
+            },
+            {
+              text:
+                'Drop the cookie dough by the tablespoon onto the lined baking sheet, then use a fork to flatten them in a criss-cross shape. Once all of the cookies have been flattened, bake them until lightly golden, about 10 to 12 minutes at 350ºF.'
+            },
+            {
+              text:
+                'Let the cookies cool on the pan for 10 minutes, then transfer them to a wire rack to cool completely. These cookies can be served at room temperature, or place them in the freezer to firm up even more. My husband likes to eat them straight from the freezer for a crispy texture.'
+            },
+            {
+              text:
+                'Store the cookies at room temperature for up to 3 days, or in the fridge or freezer for up to 3 months in an airtight container.'
+            }
+          ]
+        }
+      ])
     })
   })
 })
