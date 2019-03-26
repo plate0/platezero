@@ -96,15 +96,59 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   return preheats
 }
 
-/* Ingredient List Strategies */
+// find and map dom elements
+export interface FindMap {
+  id?: RegExp
+  css?: RegExp
+  selector?: string
+  map: Function
+}
 
-// 1. https://schema.org/Recipe
-export const recipeSchemaIngredientLists = ($: any) => {
-  return $('li[itemprop="recipeIngredient"]')
+const findMap = ($: any, options: FindMap) => {
+  const opts = _.defaults(options, {
+    selector: '*'
+  })
+  return $(opts.selector)
+    .filter(function() {
+      if (opts.css) {
+        return ($(this).attr('class') || '').match(opts.css)
+      }
+      if (opts.id) {
+        return ($(this).attr('id') || '').match(opts.id)
+      }
+      return true
+    })
     .map(function() {
-      return parse(_.trim($(this).text()))
+      return opts.map.apply(this, arguments)
     })
     .get()
+}
+
+/* Ingredient List Strategies */
+
+function ingredientMapper($: any) {
+  return function() {
+    return parse(_.trim($(this).text()))
+  }
+}
+
+// 1. https://schema.org/Recipe
+// Search for well known paths
+export const recipeSchemaIngredientLists = ($: any) => {
+  const search = [
+    { selector: 'li[itemprop="recipeIngredient"]' },
+    { selector: 'ul li', css: /ingredient/i }
+  ]
+  for (let s of search) {
+    const found = findMap($, {
+      ...s,
+      ...{ map: ingredientMapper($) }
+    })
+    if (found.length > 1) {
+      return found
+    }
+  }
+  return []
 }
 
 // 2. PlateZero::thing
