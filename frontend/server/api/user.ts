@@ -3,7 +3,7 @@ import { Request } from 'express'
 import * as _ from 'lodash'
 import { importers } from './importer'
 import { validateNewRecipe, validateRecipePatch } from '../validate'
-import { User, Recipe, RecipeBranch } from '../../models'
+import { User, Recipe, RecipeBranch, RecipeVersion } from '../../models'
 import { notFound, internalServerError } from '../errors'
 
 interface UserDetail {
@@ -42,14 +42,24 @@ r.patch(
   async (req: AuthenticatedRequest, res) => {
     try {
       const { slug, branch } = req.params
-      const recipe = await Recipe.findOne({
-        where: { user_id: req.user.userId, slug }
-      })
-      if (!recipe) {
-        return notFound(res)
-      }
       const currentBranch = await RecipeBranch.findOne({
-        where: { recipe_id: recipe.id, name: branch }
+        where: {
+          name: branch
+        },
+        include: [
+          {
+            model: RecipeVersion,
+            include: [
+              {
+                model: Recipe,
+                where: {
+                  user_id: req.user.userId,
+                  slug
+                }
+              }
+            ]
+          }
+        ]
       })
       if (!currentBranch) {
         return notFound(res)
@@ -62,6 +72,22 @@ r.patch(
     }
   }
 )
+
+r.delete('/recipes/:slug', async (req: AuthenticatedRequest, res) => {
+  try {
+    const { slug } = req.params
+    const recipe = await Recipe.findOne({
+      where: { user_id: req.user.userId, slug }
+    })
+    if (!recipe) {
+      return notFound(res)
+    }
+    await recipe.destroy()
+    res.status(204).json()
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
 
 r.use('/import', importers)
 

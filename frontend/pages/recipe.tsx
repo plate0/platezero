@@ -1,25 +1,42 @@
 import React from 'react'
+import Router from 'next/router'
+import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 import ReactMarkdown from 'react-markdown'
-import { Card, CardHeader, CardBody } from 'reactstrap'
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  Modal,
+  ModalBody
+} from 'reactstrap'
 import {
   Head,
   Layout,
+  IfLoggedIn,
   RecipeNav,
   RecipeVersion as RecipeVersionView
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { getRecipe, getRecipeVersion } from '../common/http'
+import { getRecipe, getRecipeVersion, deleteRecipe } from '../common/http'
 import { Link } from '../routes'
 
-interface RecipeProps {
+interface Props {
+  token: string
   recipe: RecipeJSON
   recipeVersion?: RecipeVersionJSON
 }
 
-export default class Recipe extends React.Component<RecipeProps> {
-  static async getInitialProps({ query }) {
+interface State {
+  showDeleteModal: boolean
+}
+
+export default class Recipe extends React.Component<Props, State> {
+  static async getInitialProps(ctx): Promise<Props> {
+    const { query } = ctx
+    const { token } = nextCookie(ctx)
     const recipe = await getRecipe(query.username, query.slug)
     const masterBranch = _.head(
       _.filter(recipe.branches, r => r.name === 'master')
@@ -28,7 +45,14 @@ export default class Recipe extends React.Component<RecipeProps> {
     const recipeVersion = versionId
       ? await getRecipeVersion(query.username, query.slug, versionId)
       : undefined
-    return { recipe, recipeVersion }
+    return { token, recipe, recipeVersion }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      showDeleteModal: false
+    }
   }
 
   public render() {
@@ -42,7 +66,17 @@ export default class Recipe extends React.Component<RecipeProps> {
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
         <RecipeNav recipe={recipe} />
-        {recipeVersion && <RecipeEditButton recipe={recipe} branch="master" />}
+        <IfLoggedIn username={recipe.owner.username}>
+          <RecipeEditButton recipe={recipe} branch="master" />{' '}
+          <Button
+            color="danger"
+            outline
+            size="sm"
+            onClick={() => this.setState({ showDeleteModal: true })}
+          >
+            Delete&hellip;
+          </Button>
+        </IfLoggedIn>
         {recipe.description && (
           <Card className="mb-3">
             <CardHeader>
@@ -64,6 +98,42 @@ export default class Recipe extends React.Component<RecipeProps> {
           </Card>
         )}
         {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
+        <Modal
+          isOpen={this.state.showDeleteModal}
+          toggle={() =>
+            this.setState(state => ({
+              showDeleteModal: !state.showDeleteModal
+            }))
+          }
+        >
+          <ModalBody>
+            <h5>Permanently delete {recipe.title}</h5>
+            <p>
+              Are you sure you want to permanently delete{' '}
+              <strong>{recipe.title}</strong>?
+            </p>
+            <Button
+              color="danger"
+              block
+              onClick={() =>
+                deleteRecipe(recipe.slug, { token: this.props.token }).then(
+                  () => Router.push('/')
+                )
+              }
+            >
+              Yes, delete it forever
+            </Button>
+            <Button
+              color="link"
+              className="text-muted"
+              outline
+              block
+              onClick={() => this.setState({ showDeleteModal: false })}
+            >
+              Never mind, keep it for now
+            </Button>
+          </ModalBody>
+        </Modal>
       </Layout>
     )
   }
@@ -79,6 +149,6 @@ const RecipeEditButton = (props: RecipeEditButtonProps) => (
       props.branch
     }/edit`}
   >
-    <a className="btn btn-secondary">Edit</a>
+    <a className="btn btn-sm btn-outline-primary">Edit</a>
   </Link>
 )
