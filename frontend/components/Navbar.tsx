@@ -30,6 +30,7 @@ export const Navbar = () => {
         <NavbarToggler onClick={() => setIsOpen(!isOpen)} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="ml-auto" navbar>
+            {user && <NewRecipeDropdown />}
             {user ? <UserCardNav user={user} /> : <AnonNav />}
           </Nav>
         </Collapse>
@@ -40,7 +41,7 @@ export const Navbar = () => {
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
   <Link route={`/${user.username}`}>
-    <a className="d-block p-1 rounded">
+    <a className="d-block py-1 px-2 rounded">
       <div className="d-flex align-items-center">
         <div className="text-white">
           {user.name ? user.name : user.username}
@@ -64,28 +65,23 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
   </Link>
 )
 
-const NewRecipeDropdown = () => (
-  <UncontrolledDropdown>
-    <DropdownToggle caret className="add-recipe text-white">
+const NewRecipeDropdown = ({ user }: { user: User }) => (
+  <UncontrolledDropdown className="d-none d-md-block">
+    <DropdownToggle caret className="add-recipe text-white" color="link">
       <i className="fal fa-plus" />
     </DropdownToggle>
     <DropdownMenu right>
-      <DropdownItem>New recipe</DropdownItem>
-      <DropdownItem>Import recipe</DropdownItem>
+      <Link route="/recipes/new">
+        <a className="dropdown-item text-dark" role="menuitem">
+          New recipe
+        </a>
+      </Link>
+      <Link route="/recipes/import">
+        <a className="dropdown-item text-dark" role="menuitem">
+          Import recipe
+        </a>
+      </Link>
     </DropdownMenu>
-    <style jsx global>
-      {`
-        /* Fix styling from reactstrap */
-        nav div.dropdown button.add-recipe,
-        nav div.dropdown button.add-recipe:active,
-        nav div.dropdown button.add-recipe:focus,
-        nav div.dropdown button.add-recipe:hover {
-          border: none !important;
-          background-color: initial !important;
-          box-shadow: none !important;
-        }
-      `}
-    </style>
   </UncontrolledDropdown>
 )
 
