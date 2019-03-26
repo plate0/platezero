@@ -26,12 +26,14 @@ import {
   patchBranch,
   PlateZeroApiError
 } from '../common/http'
-import { RecipeVersionJSON, ProcedureListJSON } from '../models'
 import {
-  RecipeVersionPatch,
-  IngredientListPatch,
-  ProcedureListPatch
-} from '../common/request-models'
+  RecipeVersionJSON,
+  ProcedureListJSON,
+  IngredientLineJSON,
+  ProcedureLineJSON
+} from '../models'
+import { RecipeVersionPatch } from '../common/request-models'
+import { ItemPatch } from '../common/changes'
 
 interface Props {
   token: string
@@ -40,10 +42,10 @@ interface Props {
 }
 
 interface State {
-  changedIngredientLists: { [id: number]: IngredientListPatch }
+  changedIngredientLists: { [id: number]: ItemPatch<IngredientLineJSON> }
   addedProcedureLists: ProcedureListJSON[]
   removedProcedureListIds: number[]
-  changedProcedureLists: ProcedureListPatch[]
+  changedProcedureLists: ItemPatch<ProcedureLineJSON>[]
   message: string
   errors: string[]
 }
@@ -92,11 +94,13 @@ export default class EditRecipe extends React.Component<Props, State> {
         _.values(this.state.changedIngredientLists),
         _.isUndefined
       ),
-      addedProcedureLists: _.map(this.state.addedProcedureLists, pl =>
-        _.omit(pl, ['id'])
-      ),
-      changedProcedureLists: this.state.changedProcedureLists,
-      removedProcedureListIds: this.state.removedProcedureListIds
+      procedureLists: {
+        addedItems: _.map(this.state.addedProcedureLists, pl =>
+          _.omit(pl, ['id'])
+        ),
+        changedItems: this.state.changedProcedureLists,
+        removedIds: this.state.removedProcedureListIds
+      }
     }
   }
 
@@ -143,15 +147,11 @@ export default class EditRecipe extends React.Component<Props, State> {
         <h4 className="mt-3">Instructions</h4>
         <ProcedureLists
           lists={v.procedureLists}
-          onChange={({
-            addedProcedureLists,
-            changedProcedureLists,
-            removedProcedureListIds
-          }) =>
+          onChange={({ addedItems, changedItems, removedIds }) =>
             this.setState({
-              addedProcedureLists,
-              removedProcedureListIds,
-              changedProcedureLists
+              addedProcedureLists: addedItems,
+              removedProcedureListIds: removedIds,
+              changedProcedureLists: changedItems
             })
           }
         />

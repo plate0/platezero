@@ -8,20 +8,3 @@ export const getName = (user: UserJSON): string =>
 export const normalize = <T extends {}>(model: T): T =>
   pickBy(model, (val: any) => val !== '') as T
 
-export interface UITrackable<T> {
-  json: T
-  added: boolean
-  changed: boolean
-  removed: boolean
-  original?: T
-}
-
-export const jsonToUI = <T>(json: T): UITrackable<T> => ({
-  json,
-  added: false,
-  changed: false,
-  removed: false,
-  original: json
-})
-
-export const uiToJSON = <T>(ui: UITrackable<T>): T => normalize(ui.json)

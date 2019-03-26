@@ -90,33 +90,35 @@ export const validateNewUser = validator({
 export const validateRecipePatch = validator({
   message: Joi.string().required(),
   changedIngredientLists: Joi.array().items({
-    ingredientListId: Joi.number()
+    id: Joi.number()
       .min(0)
       .required(),
-    removedIngredientIds: Joi.array()
+    removedItemIds: Joi.array()
       .items(Joi.number())
       .required(),
-    changedIngredients: Joi.array()
+    changedItems: Joi.array()
       .items(ingredientLine)
       .required(),
-    addedIngredients: Joi.array()
+    addedItems: Joi.array()
       .items(ingredientLine)
       .required()
   }),
-  addedProcedureLists: Joi.array().items(procedureList),
-  changedProcedureLists: Joi.array().items({
-    procedureListId: Joi.number()
-      .min(0)
-      .required(),
-    removedStepIds: Joi.array()
-      .items(Joi.number())
-      .required(),
-    changedSteps: Joi.array()
-      .items(procedureLine)
-      .required(),
-    addedSteps: Joi.array()
-      .items(procedureLine)
-      .required()
-  }),
-  removedProcedureListIds: Joi.array().items(Joi.number())
+  procedureLists: Joi.object({
+    addedItems: Joi.array().items(procedureList),
+    changedItems: Joi.array().items({
+      id: Joi.number()
+        .min(0)
+        .required(),
+      removedItemIds: Joi.array()
+        .items(Joi.number())
+        .required(),
+      changedItems: Joi.array()
+        .items(procedureLine)
+        .required(),
+      addedItems: Joi.array()
+        .items(procedureLine)
+        .required()
+    }),
+    removedIds: Joi.array().items(Joi.number())
+  })
 })
