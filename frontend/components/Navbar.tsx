@@ -4,7 +4,10 @@ import {
   NavbarToggler,
   Nav,
   Container,
-  Navbar as RsNavbar
+  Navbar as RsNavbar,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu
 } from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
@@ -25,6 +28,7 @@ export const Navbar = () => {
         <NavbarToggler onClick={() => setIsOpen(!isOpen)} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="ml-auto" navbar>
+            {user && <NewRecipeDropdown />}
             {user ? <UserCardNav user={user} /> : <AnonNav />}
           </Nav>
         </Collapse>
@@ -35,7 +39,7 @@ export const Navbar = () => {
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
   <Link route={`/${user.username}`}>
-    <a className="d-block p-1 rounded">
+    <a className="d-block py-1 px-2 rounded">
       <div className="d-flex align-items-center">
         <div className="text-white">
           {user.name ? user.name : user.username}
@@ -57,6 +61,26 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
       </style>
     </a>
   </Link>
+)
+
+const NewRecipeDropdown = () => (
+  <UncontrolledDropdown className="d-none d-md-block">
+    <DropdownToggle caret className="add-recipe text-white" color="link">
+      <i className="fal fa-plus" />
+    </DropdownToggle>
+    <DropdownMenu right>
+      <Link route="/recipes/new">
+        <a className="dropdown-item text-dark" role="menuitem">
+          New recipe
+        </a>
+      </Link>
+      <Link route="/recipes/import">
+        <a className="dropdown-item text-dark" role="menuitem">
+          Import recipe
+        </a>
+      </Link>
+    </DropdownMenu>
+  </UncontrolledDropdown>
 )
 
 const AnonNav = () => (
