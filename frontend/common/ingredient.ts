@@ -16,7 +16,7 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
   if (numMatch) {
     s = s.substring(numMatch[1].length)
   }
-  const [maybeUnit, ...rest] = s.split(' ')
+  const [maybeUnit, ...rest] = s.split(/\s/)
   const unit = unitfy(maybeUnit)
   if (unit) {
     s = rest.join(' ')

@@ -37,6 +37,9 @@ export const unitfy = (s?: string): Unit | undefined => {
   if (!s) {
     return undefined
   }
+  if (s === 'T') {
+    return 'tbsp'
+  }
   const unit = s.toLowerCase()
   switch (unit) {
     case 'oz':
@@ -66,6 +69,7 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'teaspoon':
     case 'teaspoons':
     case 'tsps':
+    case 't':
       return 'tsp'
     case 'cups':
     case 'cup':

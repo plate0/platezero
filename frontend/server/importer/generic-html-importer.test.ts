@@ -280,6 +280,174 @@ describe('Generic HTML import', () => {
     })
   })
 
+  describe('kitchen.benburwell.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/kitchen.benburwell.com/palak-paneer.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('title', async () => {
+      const { title } = await importer(source)
+      expect(title).toEqual('Palak Paneer')
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'turmeric',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'salt',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'canola oil',
+              quantity_numerator: 6,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'paneer',
+              quantity_numerator: 24,
+              quantity_denominator: 1,
+              preparation: 'cut into 1/2 inch cubes',
+              optional: false,
+              unit: 'oz'
+            },
+            {
+              name: 'spinach',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: 'pureed',
+              optional: false,
+              unit: 'lb'
+            },
+            {
+              name: 'medium white onion',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: 'finely diced',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'fresh ginger',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: 'minced',
+              optional: false,
+              unit: 'in'
+            },
+            {
+              name: 'garlic cloves',
+              quantity_numerator: 8,
+              quantity_denominator: 1,
+              preparation: 'minced',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'garam masala',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'ground coriander',
+              quantity_numerator: 4,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'ground cumin',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'plain yogurt',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'rice',
+              quantity_numerator: 3,
+              quantity_denominator: 2,
+              preparation: 'cooked',
+              optional: false,
+              unit: 'c'
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Whisk the turmeric, salt, and canola oil together. Add the paneer cubes, toss, and marinate while prepping other ingredients.'
+            },
+            {
+              text:
+                'In a large skillet, brown the paneer cubes on all sides over medium heat and remove from pan.'
+            },
+            {
+              text:
+                'Add the onion, ginger, and garlic to the pan and saute until toffee colored. This will take a solid 30 minutes, maybe more.'
+            },
+            {
+              text:
+                'Add the garam masala, ground coriander, and ground cumin and cook for another 3-5 minutes.'
+            },
+            {
+              text:
+                'Incorporate the spinach and season with salt. Cook for 10 minutes, adding water as needed.'
+            },
+            {
+              text:
+                'Reduce heat to low. Slowly stir in yogurt. Mix in browned paneer and cover to warm, about 5 minutes.'
+            },
+            {
+              text: 'Serve over rice.'
+            }
+          ]
+        }
+      ])
+    })
+  })
+
   describe('detoxinista.com', () => {
     let source: string
     let importer = dom(GenericHTML)
