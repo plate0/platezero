@@ -17,11 +17,7 @@ interface Props {
   recipeVersion?: RecipeVersionJSON
 }
 
-interface State {
-  showDeleteModal: boolean
-}
-
-export default class Recipe extends React.Component<Props, State> {
+export default class Recipe extends React.Component<Props> {
   static async getInitialProps({ query }): Promise<Props> {
     const recipe = await getRecipe(query.username, query.slug)
     const masterBranch = _.head(
@@ -32,13 +28,6 @@ export default class Recipe extends React.Component<Props, State> {
       ? await getRecipeVersion(query.username, query.slug, versionId)
       : undefined
     return { recipe, recipeVersion }
-  }
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      showDeleteModal: false
-    }
   }
 
   public render() {
