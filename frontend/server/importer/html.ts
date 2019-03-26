@@ -135,8 +135,13 @@ function ingredientMapper($: any) {
 // Search for well known paths
 export const recipeSchemaIngredientLists = ($: any) => {
   const search = [
+    // https://schema.org/Recipe
     { selector: 'li[itemprop="recipeIngredient"]' },
-    { selector: 'ul li', css: /ingredient/i }
+    // https://easyrecipeplugin.com/
+    { selector: 'li[itemprop="ingredients"]' },
+    { selector: 'ul li', css: /ingredient/i },
+    // https://www.wptasty.com/tasty-recipes
+    { selector: 'div.tasty-recipes ul li' }
   ]
   for (let s of search) {
     const found = findMap($, {
@@ -195,12 +200,16 @@ function procedureMapper($: any) {
   }
 }
 
-// 1. https://schema.org/Recipe
 // Search for well known paths
 export const recipeSchemaProcedureLists = ($: any) => {
   const search = [
     { selector: 'ol[itemprop="recipeInstructions"] li' },
-    { selector: 'ol li', css: /instruction/i }
+    { selector: 'ol li[itemprop="recipeInstructions"]' },
+    { selector: 'div[itemprop="recipeInstructions"] ol li' },
+    { selector: 'ol li', css: /instruction/i },
+    // https://www.wptasty.com/tasty-recipes
+    { selector: 'div.tasty-recipes ol li' }
+    // https://easyrecipeplugin.com/
   ]
   for (let s of search) {
     const found = findMap($, {
