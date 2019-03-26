@@ -1,11 +1,7 @@
 import 'isomorphic-fetch'
 import getConfig from 'next/config'
 import * as _ from 'lodash'
-import {
-  UserJSON,
-  RecipeJSON,
-  RecipeVersionJSON
-} from '../models'
+import { UserJSON, RecipeJSON, RecipeVersionJSON } from '../models'
 import { PostRecipe, RecipeVersionPatch } from './request-models'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
@@ -138,6 +134,16 @@ export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
     method: 'POST',
     headers: authHeaders(opts ? opts.token : '')
   })
+
+export const importFiles = (body: any, opts?: PlateZeroRequestInfo) =>
+  fetch(`${API_URL}/user/import/file`, {
+    body,
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      ...authHeaders(opts ? opts.token : '')
+    }
+  }).then(handleError)
 
 export const patchBranch = (
   slug: string,

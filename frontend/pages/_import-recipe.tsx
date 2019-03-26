@@ -17,7 +17,7 @@ import Head from 'next/head'
 import { Layout } from '../components'
 import { useDropzone } from 'react-dropzone'
 import * as parse from 'url-parse'
-import { importUrl, PlateZeroApiError } from '../common'
+import { importUrl, importFiles, PlateZeroApiError } from '../common'
 import { RecipeJSON } from '../models'
 import { Link } from '../routes'
 
@@ -172,9 +172,11 @@ export default class ImportRecipe extends React.Component<
   }
 
   public onDrop(files: any) {
-    // TODO: Finish
     console.log(files)
-    console.log(Dropzone)
+    const { token } = this.state
+    const formData = new FormData()
+    files.forEach(f => formData.append('file', f, f.name))
+    importFiles(formData, { token })
   }
 
   public onUrlChange(e: React.FormEvent<HTMLInputElement>) {
@@ -242,6 +244,7 @@ export default class ImportRecipe extends React.Component<
               </Button>
             </InputGroupAddon>
           </InputGroup>
+          <Dropzone onDrop={this.onDrop} />
         </Form>
         <ImportsStatus urls={this.state.urls} />
       </Layout>
