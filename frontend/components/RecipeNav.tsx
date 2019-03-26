@@ -8,10 +8,10 @@ import { IfLoggedIn } from './IfLoggedIn'
 import { Link } from '../routes'
 import { deleteRecipe } from '../common/http'
 import { UserContext } from '../context/UserContext'
+import { TokenContext } from '../context/TokenContext'
 
 interface RecipeNavProps {
   recipe: RecipeJSON
-  token: string
 }
 
 export const RecipeNav = (props: RecipeNavProps) => {
@@ -33,7 +33,7 @@ export const RecipeNav = (props: RecipeNavProps) => {
       <IfLoggedIn username={props.recipe.owner.username}>
         <div className="text-right">
           <EditButton recipe={recipe} branch="master" />{' '}
-          <DeleteButton recipe={recipe} token={props.token} />
+          <DeleteButton recipe={recipe} />
         </div>
       </IfLoggedIn>
     </div>
@@ -50,12 +50,13 @@ const EditButton = (props: { recipe: RecipeJSON; branch: string }) => (
   </Link>
 )
 
-const DeleteButton = (props: { token: string; recipe: RecipeJSON }) => {
+const DeleteButton = (props: { recipe: RecipeJSON }) => {
   const [isOpen, setOpen] = useState(false)
   const user = useContext(UserContext)
+  const token = useContext(TokenContext)
   const handleDelete = async () => {
     try {
-      await deleteRecipe(props.recipe.slug, { token: props.token })
+      await deleteRecipe(props.recipe.slug, { token })
     } catch {}
     Router.push(`/${user.username}`)
   }

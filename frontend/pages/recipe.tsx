@@ -1,5 +1,4 @@
 import React from 'react'
-import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 import ReactMarkdown from 'react-markdown'
 import { Card, CardHeader, CardBody } from 'reactstrap'
@@ -14,7 +13,6 @@ import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipe, getRecipeVersion } from '../common/http'
 
 interface Props {
-  token: string
   recipe: RecipeJSON
   recipeVersion?: RecipeVersionJSON
 }
@@ -24,9 +22,7 @@ interface State {
 }
 
 export default class Recipe extends React.Component<Props, State> {
-  static async getInitialProps(ctx): Promise<Props> {
-    const { query } = ctx
-    const { token } = nextCookie(ctx)
+  static async getInitialProps({ query }): Promise<Props> {
     const recipe = await getRecipe(query.username, query.slug)
     const masterBranch = _.head(
       _.filter(recipe.branches, r => r.name === 'master')
@@ -35,7 +31,7 @@ export default class Recipe extends React.Component<Props, State> {
     const recipeVersion = versionId
       ? await getRecipeVersion(query.username, query.slug, versionId)
       : undefined
-    return { token, recipe, recipeVersion }
+    return { recipe, recipeVersion }
   }
 
   constructor(props) {
@@ -55,7 +51,7 @@ export default class Recipe extends React.Component<Props, State> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <RecipeNav recipe={recipe} token={this.props.token} />
+        <RecipeNav recipe={recipe} />
         {recipe.description && (
           <Card className="mb-3">
             <CardHeader>

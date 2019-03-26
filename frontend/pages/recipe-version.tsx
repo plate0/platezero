@@ -1,6 +1,5 @@
 import React from 'react'
 import Head from 'next/head'
-import nextCookie from 'next-cookies'
 import {
   Layout,
   RecipeNav,
@@ -11,16 +10,12 @@ import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipeVersion } from '../common/http'
 
 interface RecipeVersionProps {
-  token: string
   recipeVersion: RecipeVersionJSON
 }
 
 export default class RecipeVersion extends React.Component<RecipeVersionProps> {
-  static async getInitialProps(ctx) {
-    const { query } = ctx
-    const { token } = nextCookie(ctx)
+  static async getInitialProps({ query }) {
     return {
-      token,
       recipeVersion: await getRecipeVersion(
         query.username,
         query.slug,
@@ -36,7 +31,7 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
         <Head>
           <title>{v.recipe.title}</title>
         </Head>
-        <RecipeNav recipe={v.recipe} token={this.props.token} />
+        <RecipeNav recipe={v.recipe} />
         <RecipeVersionHeader recipeVersion={v} />
         <RecipeVersionView recipeVersion={v} />
       </Layout>
