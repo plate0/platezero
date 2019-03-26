@@ -3,18 +3,9 @@ import getConfig from 'next/config'
 import * as _ from 'lodash'
 import { UserJSON, RecipeJSON, RecipeVersionJSON } from '../models'
 import { PostRecipe, RecipeVersionPatch } from './request-models'
+import { HttpStatus } from './http-status'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
-
-export enum HttpStatus {
-  Ok = 200,
-  Created = 201,
-  NoContent = 204,
-  BadRequest = 400,
-  Unauthorized = 401,
-  NotFound = 404,
-  InternalServerError = 500
-}
 
 const headers = {
   Accept: 'application/json',

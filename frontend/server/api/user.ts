@@ -5,7 +5,7 @@ import { importers } from './importer'
 import { validateNewRecipe, validateRecipePatch } from '../validate'
 import { User, Recipe, RecipeBranch } from '../../models'
 import { notFound, internalServerError } from '../errors'
-import { HttpStatus } from '../../common/http'
+import { HttpStatus } from '../../common/http-status'
 
 interface UserDetail {
   userId: number

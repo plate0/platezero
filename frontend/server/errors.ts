@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import * as _ from 'lodash'
-import { HttpStatus } from '../common/http'
+import { HttpStatus } from '../common/http-status'
 
 const messages = (e?: string | string[] | Error): string[] => {
   if (_.isError(e)) {

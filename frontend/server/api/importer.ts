@@ -3,7 +3,7 @@ import * as Importers from '../importer'
 import { AuthenticatedRequest } from './user'
 import { Recipe } from '../../models/recipe'
 import { internalServerError } from '../errors'
-import { HttpStatus } from '../../common/http'
+import { HttpStatus } from '../../common/http-status'
 
 const r = express.Router()
 

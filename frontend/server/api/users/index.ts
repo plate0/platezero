@@ -5,7 +5,7 @@ import { User } from '../../../models/user'
 import { validateNewUser } from '../../validate'
 import { user, UserRequest } from './user'
 import { internalServerError, badRequest, notFound } from '../../errors'
-import { HttpStatus } from '../../../common/http'
+import { HttpStatus } from '../../../common/http-status'
 
 const r = express.Router()
 

@@ -1,7 +1,7 @@
 import * as Joi from 'joi'
 import { Request, Response } from 'express'
 import * as _ from 'lodash'
-import { HttpStatus } from '../common/http'
+import { HttpStatus } from '../common/http-status'
 
 const validator = schema => {
   return (req: Request, res: Response, next) => {
