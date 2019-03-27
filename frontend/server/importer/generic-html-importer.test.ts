@@ -973,4 +973,171 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('joyfoodsunshine.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/joyfoodsunshine.com/paleo-banana-bread.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'large overripe bananas\nabout 1 cup',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: 'mashed',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'coconut oil',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'creamy almond butter',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'TBS\npure maple syrup',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'vanilla extract',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'eggs\nlightly beaten',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'of coconut flour',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'almond flour',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'baking powder',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'baking soda',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'sea salt',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'cinnamon',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'chocolate chips',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Preheat oven to 350 degrees F. Line an 8x4” baking pan (you can use a 9x5” pan but your loaf will be thinner and baking time will be less) with parchment paper and grease. Set aside.'
+            },
+            {
+              text:
+                'In a small bowl combine coconut flour, almond flour, baking powder, baking soda, salt and cinnamon). Set aside.'
+            },
+            {
+              text:
+                'In a large, glass mixing bowl melt together coconut oil and almond butter (for about 1 minute on high), stir until combined.'
+            },
+            {
+              text:
+                'Add mashed banana, maple syrup and vanilla extract and mix.'
+            },
+            { text: 'Add eggs and stir until smooth.' },
+            {
+              text:
+                'Add dry ingredients to wet ingredients and mix until completely combined.'
+            },
+            { text: 'Gently mix in chocolate chips.' },
+            {
+              text:
+                'Pour batter into prepared pan and bake for 30-40 minutes, until top is set and a toothpick inserted in the center comes out clean.'
+            },
+            {
+              text:
+                'Let cool in the pan for 5 minutes before gently removing the loaf from the pan to a wire rack to cool.'
+            },
+            { text: 'Enjoy!' }
+          ]
+        }
+      ])
+    })
+  })
 })
