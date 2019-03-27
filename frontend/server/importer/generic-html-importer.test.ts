@@ -1331,4 +1331,73 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('www.becomingness.com.au', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/www.becomingness.com.au/slow-cooker-butter-chicken.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('title', async () => {
+      const { title } = await importer(source)
+      expect(title).toEqual('Slow Cooker Butter Chicken')
+    })
+
+    test('description', async () => {
+      const { description } = await importer(source)
+      expect(description).toEqual('My healthy slow cooker butter chicken is one of the tastiest slow cooker meals ever. It is so easy to prepare too.')
+    })
+
+    test('image_url', async () => {
+      const { image_url } = await importer(source)
+      expect(image_url).toEqual('https://www.becomingness.com.au/wp-content/uploads/2018/06/Slow-cooker-butter-chicken-4.jpg')
+    })
+
+    test('yield', async () => {
+      const { yield: yld } = await importer(source)
+      expect(yld).toEqual('4-6')
+    })
+
+    test('duration', async () => {
+      const { duration } = await importer(source)
+      expect(duration).toBeUndefined()
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text: 'Heat coconut oil in a large saucepan on medium high heat'
+            },
+            {
+              text:
+                'Add onion and garlic, cook, stirring frequently for approximately 3 minutes or until the onions have become translucent.'
+            },
+            {
+              text:
+                'Add coconut milk, tomato paste, tapioca flour, garam masala, curry powder, chili powder and ginger powder, stirring until well combined and the sauce has started to thicken. Season with salt and pepper.'
+            },
+            {
+              text:
+                'Add chicken to the slow cooker, then add the sauce and mix through the chicken'
+            },
+            {
+              text: 'Cover and cook on low heat for 5 hours.'
+            },
+            {
+              text:
+                'Serve with the coriander and your favourite sides (mine with quinoa).'
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
