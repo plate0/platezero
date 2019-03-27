@@ -53,7 +53,6 @@ const preheats = ($: any): Preheat[] => {
 
 const ingredient_lists = ($: any): IngredientListJSON[] => [
   {
-    name: 'Ingredients',
     image_url: $('.section-recipe.recipe-ingredients img').attr('src'),
     lines: $('.section-recipe.recipe-ingredients ul li')
       .map(function() {
@@ -86,7 +85,6 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
   const turndown = new TurndownService()
   return [
     {
-      name: 'Instructions',
       lines: $('.section-recipe.recipe-instructions .step.row .col-md-6')
         .map(function(): ProcedureLineJSON {
           return {
