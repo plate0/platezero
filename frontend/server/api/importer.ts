@@ -3,6 +3,7 @@ import * as Importers from '../importer'
 import { AuthenticatedRequest } from './user'
 import { Recipe } from '../../models/recipe'
 import { internalServerError } from '../errors'
+import { HttpStatus } from '../../common/http-status'
 
 const r = express.Router()
 
@@ -12,7 +13,7 @@ r.post('/url', async (req: AuthenticatedRequest, res) => {
     const recipe = await importer(req.body.url)
     recipe.source_url = req.body.url
     return res
-      .status(201)
+      .status(HttpStatus.Created)
       .json(await Recipe.createNewRecipe(req.user.userId, recipe))
   } catch (err) {
     return internalServerError(res, err)

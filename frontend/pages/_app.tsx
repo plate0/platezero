@@ -4,6 +4,7 @@ import App, { Container } from 'next/app'
 import '../style/index.scss'
 import { UserJSON } from '../models/user'
 import { UserContext } from '../context/UserContext'
+import { TokenContext } from '../context/TokenContext'
 import { getCurrentUser } from '../common/http'
 
 const currentUser = async (token: string): Promise<UserJSON | undefined> => {
@@ -18,6 +19,7 @@ const currentUser = async (token: string): Promise<UserJSON | undefined> => {
 interface MyAppProps {
   pageProps: any
   user?: UserJSON
+  token?: string
 }
 
 interface MyAppState {
@@ -31,6 +33,7 @@ export default class MyApp extends App<MyAppProps, MyAppState> {
       : {}
     const { token } = nextCookie(ctx)
     return {
+      token,
       pageProps,
       user: await currentUser(token)
     }
@@ -47,9 +50,11 @@ export default class MyApp extends App<MyAppProps, MyAppState> {
     const { Component, pageProps } = this.props
     return (
       <UserContext.Provider value={this.state.user}>
-        <Container>
-          <Component {...pageProps} />
-        </Container>
+        <TokenContext.Provider value={this.props.token}>
+          <Container>
+            <Component {...pageProps} />
+          </Container>
+        </TokenContext.Provider>
       </UserContext.Provider>
     )
   }

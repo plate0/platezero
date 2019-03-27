@@ -1,6 +1,7 @@
 import * as Joi from 'joi'
 import { Request, Response } from 'express'
 import * as _ from 'lodash'
+import { HttpStatus } from '../common/http-status'
 
 const validator = schema => {
   return (req: Request, res: Response, next) => {
@@ -11,7 +12,7 @@ const validator = schema => {
     })
     if (result.error) {
       return res
-        .status(400)
+        .status(HttpStatus.BadRequest)
         .json({ errors: _.map(result.error.details, 'message') })
     }
     next()
