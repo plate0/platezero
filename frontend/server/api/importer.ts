@@ -5,6 +5,7 @@ import { Recipe } from '../../models/recipe'
 import { internalServerError } from '../errors'
 import { S3 } from 'aws-sdk'
 import fetch from 'node-fetch'
+import { HttpStatus } from '../../common/http-status'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const s3 = new S3()
@@ -17,7 +18,7 @@ r.post('/url', async (req: AuthenticatedRequest, res) => {
     const recipe = await importer(req.body.url)
     recipe.source_url = req.body.url
     return res
-      .status(201)
+      .status(HttpStatus.Created)
       .json(await Recipe.createNewRecipe(req.user.userId, recipe))
   } catch (err) {
     return internalServerError(res, err)
@@ -51,7 +52,7 @@ Find them here: https://s3.console.aws.amazon.com/s3/buckets/com-platezero-recip
 ${req.files.map(f => f.originalname).join('\n')}`
     })
   })
-  res.json({
+  res.status(HttpStatus.Accepted).json({
     upload: 'success'
   })
 })

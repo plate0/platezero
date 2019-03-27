@@ -1,4 +1,5 @@
 import { parse } from '../../common/ingredient'
+import * as moment from 'moment'
 import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
 import {
@@ -72,6 +73,26 @@ export const image_url = (sel?: string) => ($: any) => {
     .attr('src')
 }
 
+export const duration = () => ($: any): number => {
+  const node = $('[itemprop="totalTime"]')
+  if (!node) {
+    return undefined
+  }
+  const time = node.attr('content') || node.attr('datetime')
+  if (time) {
+    return moment.duration(time).asSeconds()
+  }
+  return undefined
+}
+
+export const yld = () => ($: any): string => {
+  const node = $('[itemprop="recipeYield"]')
+  if (!node) {
+    return undefined
+  }
+  return node.attr('content') || node.text()
+}
+
 // https://regex101.com/r/xqkIKF/1
 export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   const utilities = ['oven', 'sous vide', 'stove']
@@ -136,12 +157,12 @@ function ingredientMapper($: any) {
 export const recipeSchemaIngredientLists = ($: any) => {
   const search = [
     // https://schema.org/Recipe
-    { selector: 'li[itemprop="recipeIngredient"]' },
+    { selector: '[itemprop="recipeIngredient"]' },
     // https://easyrecipeplugin.com/
     { selector: 'li[itemprop="ingredients"]' },
     { selector: 'ul li', css: /ingredient/i },
     // https://www.wptasty.com/tasty-recipes
-    { selector: 'div.tasty-recipes ul li' }
+    { selector: 'div.tasty-recipes-ingredients ul li' }
   ]
   for (let s of search) {
     const found = findMap($, {
@@ -192,6 +213,20 @@ export const ingredient_lists = (sel: string) => (
 
 /* END Ingredient List Strategies */
 
+export const recipeSchemaYield = ($: any): string | undefined => {
+  const y = $('[itemprop="recipeYield"]').text()
+  if (_.isNil(y)) {
+    return undefined
+  }
+  if (_.isString(y)) {
+    return y
+  }
+  if (_.isArray(y)) {
+    return y[0]
+  }
+  return undefined
+}
+
 /* Find Procedure Lists Strategies */
 
 function procedureMapper($: any) {
@@ -204,12 +239,15 @@ function procedureMapper($: any) {
 export const recipeSchemaProcedureLists = ($: any) => {
   const search = [
     { selector: 'ol[itemprop="recipeInstructions"] li' },
-    { selector: 'ol li[itemprop="recipeInstructions"]' },
-    { selector: 'div[itemprop="recipeInstructions"] ol li' },
+    { selector: ':not([itemscope])[itemprop="recipeInstructions"]' },
+    {
+      selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
+    },
     { selector: 'ol li', css: /instruction/i },
+    // Seriously, people?
+    { selector: 'ul li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes
-    { selector: 'div.tasty-recipes ol li' }
-    // https://easyrecipeplugin.com/
+    { selector: 'div.tasty-recipes-instructions ol li' }
   ]
   for (let s of search) {
     const found = findMap($, {
@@ -271,8 +309,8 @@ export const defaults = (overrides: object) => {
     image_url: image_url(),
     source_url: undefined,
     html_url: undefined,
-    yield: undefined,
-    duration: undefined,
+    yield: yld(),
+    duration: duration(),
     preheats: preheats(),
     ingredient_lists: undefined,
     procedure_lists: undefined

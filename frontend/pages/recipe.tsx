@@ -11,15 +11,14 @@ import {
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipe, getRecipeVersion } from '../common/http'
-import { Link } from '../routes'
 
-interface RecipeProps {
+interface Props {
   recipe: RecipeJSON
   recipeVersion?: RecipeVersionJSON
 }
 
-export default class Recipe extends React.Component<RecipeProps> {
-  static async getInitialProps({ query }) {
+export default class Recipe extends React.Component<Props> {
+  static async getInitialProps({ query }): Promise<Props> {
     const recipe = await getRecipe(query.username, query.slug)
     const masterBranch = _.head(
       _.filter(recipe.branches, r => r.name === 'master')
@@ -42,7 +41,6 @@ export default class Recipe extends React.Component<RecipeProps> {
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
         <RecipeNav recipe={recipe} />
-        {recipeVersion && <RecipeEditButton recipe={recipe} branch="master" />}
         {recipe.description && (
           <Card className="mb-3">
             <CardHeader>
@@ -68,17 +66,3 @@ export default class Recipe extends React.Component<RecipeProps> {
     )
   }
 }
-
-interface RecipeEditButtonProps {
-  recipe: RecipeJSON
-  branch: string
-}
-const RecipeEditButton = (props: RecipeEditButtonProps) => (
-  <Link
-    route={`/${props.recipe.owner.username}/${props.recipe.slug}/branches/${
-      props.branch
-    }/edit`}
-  >
-    <a className="btn btn-secondary">Edit</a>
-  </Link>
-)

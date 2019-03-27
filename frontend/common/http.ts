@@ -3,6 +3,7 @@ import getConfig from 'next/config'
 import * as _ from 'lodash'
 import { UserJSON, RecipeJSON, RecipeVersionJSON } from '../models'
 import { PostRecipe, RecipeVersionPatch } from './request-models'
+import { HttpStatus } from './http-status'
 import { get } from 'lodash'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
@@ -31,6 +32,9 @@ const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
 }
 
 const handleError = async (res: Response): Promise<any> => {
+  if (res.status === HttpStatus.NoContent) {
+    return Promise.resolve()
+  }
   if (res.status >= 200 && res.status < 400) {
     return res.json()
   }
@@ -154,5 +158,11 @@ export const patchBranch = (
   _fetch<RecipeVersionJSON>(`/user/recipes/${slug}/branches/${branch}`, {
     body: JSON.stringify(patch),
     method: 'PATCH',
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
+export const deleteRecipe = (slug: string, opts?: PlateZeroRequestInfo) =>
+  _fetch(`/user/recipes/${slug}`, {
+    method: 'DELETE',
     headers: authHeaders(opts ? opts.token : '')
   })

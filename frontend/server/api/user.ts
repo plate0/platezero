@@ -5,6 +5,7 @@ import { importers } from './importer'
 import { validateNewRecipe, validateRecipePatch } from '../validate'
 import { User, Recipe, RecipeBranch } from '../../models'
 import { notFound, internalServerError } from '../errors'
+import { HttpStatus } from '../../common/http-status'
 
 interface UserDetail {
   userId: number
@@ -29,7 +30,7 @@ r.get('/', async (req: AuthenticatedRequest, res) => {
 r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
   try {
     return res
-      .status(201)
+      .status(HttpStatus.Created)
       .json(await Recipe.createNewRecipe(req.user.userId, req.body))
   } catch (err) {
     return internalServerError(res, err)
@@ -55,13 +56,29 @@ r.patch(
         return notFound(res)
       }
       res
-        .status(200)
+        .status(HttpStatus.Ok)
         .json(await currentBranch.applyPatch(req.body, req.user.userId))
     } catch (err) {
       return internalServerError(res, err)
     }
   }
 )
+
+r.delete('/recipes/:slug', async (req: AuthenticatedRequest, res) => {
+  try {
+    const { slug } = req.params
+    const recipe = await Recipe.findOne({
+      where: { user_id: req.user.userId, slug }
+    })
+    if (!recipe) {
+      return notFound(res)
+    }
+    await recipe.destroy()
+    res.status(HttpStatus.NoContent).json()
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
 
 r.use('/import', importers)
 

@@ -128,7 +128,6 @@ describe('Blue Apron', () => {
   test('get procedure lists', async () => {
     const { procedure_lists: procedures } = await importer(source)
     expect(procedures).toHaveLength(1)
-    expect(procedures[0].name).toEqual('Instructions')
     expect(procedures[0].lines).toHaveLength(5)
     expect(procedures[0].lines[0]).toEqual({
       image_url:
