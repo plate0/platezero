@@ -21,6 +21,9 @@ const fractionMapping = {
 }
 
 export const fraction = (s: string): Fraction => {
-  s = s.replace(/[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒]/gm, m => ` ${fractionMapping[m]}`).trim()
+  s = s
+    .replace(/[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒]/gm, m => ` ${fractionMapping[m]}`)
+    .replace(/\s\s+/, ' ')
+    .trim()
   return new Fraction(s)
 }
