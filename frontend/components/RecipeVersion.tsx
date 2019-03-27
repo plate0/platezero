@@ -10,13 +10,10 @@ import { ProcedureListJSON } from '../models/procedure_list'
 import { get } from 'lodash'
 
 interface RecipeHeaderProps {
-  title: string
-  subtitle?: string
   description?: string
   duration?: number | string
   yield?: string
   imageUrl?: string
-  source?: string
 }
 
 const StepNumber = ({ i }: { i: number }) => (
@@ -39,18 +36,6 @@ const StepNumber = ({ i }: { i: number }) => (
 )
 
 const RecipeHeader = (props: RecipeHeaderProps) => {
-  const source = props.source && (
-    <Col xs="auto">
-      <a target="_blank" href={props.source}>
-        <i className="fal fa-external-link" />
-      </a>
-    </Col>
-  )
-  const subtitle = props.subtitle && (
-    <h2 style={{ fontSize: 16 }} className="mb-3 text-muted">
-      {props.subtitle}
-    </h2>
-  )
   const details = (props.duration || props.yield) && (
     <Row className="border-top border-bottom align-items-center">
       {props.duration && (
@@ -81,13 +66,6 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
         md={{ order: 1, size: 6 }}
         className="py-2"
       >
-        <Row className="align-items-center justify-content-between">
-          <Col xs="12">
-            <h1 className="mb-1">{props.title}</h1>
-            {subtitle}
-          </Col>
-          {source}
-        </Row>
         {details}
         {description}
       </Col>
@@ -109,21 +87,11 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
   )
 }
 
-const ProcedureList = ({
-  list,
-  showName
-}: {
-  list: ProcedureListJSON
-  showName?: boolean
-}) => {
-  const name = (
-    <div>
-      <strong>{list.name || 'Instructions'}</strong>
-    </div>
-  )
+const ProcedureList = ({ list }: { list: ProcedureListJSON }) => {
+  const name = list.name && <div className="lead">{list.name}</div>
   return (
     <div className="mb-3">
-      {showName && name}
+      {name}
       <Row>
         {list.lines.map((l, key) => (
           <Col xs="12" md="6" key={key}>
@@ -167,18 +135,8 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   )
 }
 
-const IngredientList = ({
-  list,
-  showTitle
-}: {
-  list: IngredientListJSON
-  showTitle?: boolean
-}) => {
-  const title = showTitle && (
-    <div>
-      <strong>{list.name || 'Ingredients'}</strong>
-    </div>
-  )
+const IngredientList = ({ list }: { list: IngredientListJSON }) => {
+  const title = list.name && <div className="lead">{list.name}</div>
   const image = list.image_url && (
     <Col xs="12" md="8">
       <img className="w-100" src={list.image_url} />
@@ -205,33 +163,22 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
     <Row>
       <Col xs="12">
         <RecipeHeader
-          title={v.recipe.title}
-          subtitle={get(v.recipe, 'subtitle')}
           description={get(v.recipe, 'description')}
           duration={get(v.recipeDuration, 'duration_seconds')}
           yield={get(v.recipeYield, 'text')}
           imageUrl={get(v.recipe, 'image_url')}
-          source={get(v.recipe, 'source_url')}
         />
       </Col>
       <Col xs={12} className="mt-5">
         <h2>Ingredients</h2>
         {v.ingredientLists.map((il, key) => (
-          <IngredientList
-            key={key}
-            list={il}
-            showTitle={v.ingredientLists.length > 1}
-          />
+          <IngredientList key={key} list={il} />
         ))}
       </Col>
       <Col xs={12} className="mt-5">
         <h2>Instructions</h2>
         {v.procedureLists.map((pl, key) => (
-          <ProcedureList
-            key={key}
-            list={pl}
-            showName={v.procedureLists.length > 1}
-          />
+          <ProcedureList key={key} list={pl} />
         ))}
       </Col>
     </Row>

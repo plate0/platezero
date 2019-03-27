@@ -2,7 +2,6 @@ import React from 'react'
 import Head from 'next/head'
 import {
   Layout,
-  RecipeNav,
   RecipeVersion as RecipeVersionView,
   RecipeVersionHeader
 } from '../components'
@@ -31,7 +30,7 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
         <Head>
           <title>{v.recipe.title}</title>
         </Head>
-        <RecipeNav recipe={v.recipe} />
+        <h1>{v.recipe.title}</h1>
         <RecipeVersionHeader recipeVersion={v} />
         <RecipeVersionView recipeVersion={v} />
       </Layout>
