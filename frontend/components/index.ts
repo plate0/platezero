@@ -1,4 +1,5 @@
 export * from './Amount'
+export * from './Dropzone'
 export * from './IfLoggedIn'
 export * from './IngredientList'
 export * from './Meta'
