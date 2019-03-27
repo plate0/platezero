@@ -13,7 +13,7 @@ const baseStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column' as any
 }
 
 const activeStyle = {

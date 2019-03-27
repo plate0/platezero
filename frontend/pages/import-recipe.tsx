@@ -1,7 +1,6 @@
 import React from 'react'
 import nextCookie from 'next-cookies'
 import {
-  Label,
   Row,
   Alert,
   Col,
@@ -16,13 +15,14 @@ import {
 } from 'reactstrap'
 import Head from 'next/head'
 import { Dropzone, Layout } from '../components'
-import * as parse from 'url-parse'
 import * as _ from 'lodash'
 import { importUrl, importFiles, PlateZeroApiError } from '../common'
 import { RecipeJSON } from '../models'
 import { Link } from '../routes'
+import uuid from 'uuid/v4'
 
 interface ImportRequest {
+  id: string
   body: File | string
   done?: boolean
   success?: boolean
@@ -30,59 +30,69 @@ interface ImportRequest {
   errors?: string[]
 }
 
+const errMessages = (err: PlateZeroApiError | Error) => {
+  let messages = []
+  if (err instanceof PlateZeroApiError) {
+    messages = err.messages
+  } else {
+    messages = [err.message]
+  }
+  return messages
+}
+
+const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
+  const name = _.isString(upload.body) ? upload.body : upload.body.name
+  const errors = upload.errors && (
+    <Alert color="danger">{upload.errors.join('\n')}</Alert>
+  )
+  const spinnerOrDone = upload.done ? (
+    <i className="ml-2 far fa-check text-success" />
+  ) : (
+    <Spinner color="info" className="ml-2" size="sm" />
+  )
+  const file = !_.isString(upload.body) && (
+    <Alert color="success" className="col-12">
+      Upload Success! We will send you an email when your import has finished.
+      This may take a few days.
+    </Alert>
+  )
+  return (
+    <Row>
+      <Col xs="10" className="d-flex align-items-end">
+        <p className="m-0">{name}</p>
+        {spinnerOrDone}
+        {errors}
+      </Col>
+      <Col xs="2" className="align-items-center justify-content-end d-flex">
+        {upload.recipe && upload.recipe.html_url && (
+          <Link route={upload.recipe.html_url}>
+            <a className="btn btn-success">View</a>
+          </Link>
+        )}
+      </Col>
+      {upload.success && file}
+    </Row>
+  )
+}
+
 const ImportsStatus = ({ uploads }: { uploads: ImportRequest[] }) => (
-  <div>
+  <>
     <h3 className="my-3">Import Status</h3>
     <ListGroup flush>
-      {urls.map(u => (
-        <ListGroupItem key={u.url}>
-          <Row>
-            <Col xs="11">
-              <h4 className="m-0">{parse(u.url).hostname}</h4>
-              <small className="text-muted">{u.url}</small>
-              {u.errors ? (
-                <Alert color="danger">{u.errors.join(' ')}</Alert>
-              ) : (
-                undefined
-              )}
-            </Col>
-            {!u.done ? (
-              <Col
-                xs="1"
-                className="align-items-center justify-content-center d-flex"
-              >
-                <Spinner color="info" />
-              </Col>
-            ) : (
-              undefined
-            )}
-            {u.success ? (
-              <Col
-                xs="1"
-                className="align-items-center justify-content-center d-flex"
-              >
-                <i className="far fa-check fa-2x text-success" />
-              </Col>
-            ) : (
-              undefined
-            )}
-            {u.recipe ? (
-              <Link route={u.recipe.html_url}>
-                <a className="btn btn-success">View</a>
-              </Link>
-            ) : (
-              undefined
-            )}
-          </Row>
+      {uploads.map((u, key) => (
+        <ListGroupItem key={key}>
+          <ImportStatus upload={u} />
         </ListGroupItem>
       ))}
     </ListGroup>
-  </div>
+  </>
 )
 
 interface ImportRecipeState {
   url: string
-  uploads: ImportRequest[]
+  uploads: {
+    [key: string]: ImportRequest
+  }
 }
 
 interface ImportRecipeProps {
@@ -96,7 +106,7 @@ export default class ImportRecipe extends React.Component<
   constructor(props: ImportRecipeProps) {
     super(props)
     this.state = {
-      uploads: [],
+      uploads: {},
       url: ''
     }
     this.onDrop = this.onDrop.bind(this)
@@ -108,60 +118,91 @@ export default class ImportRecipe extends React.Component<
     return { token }
   }
 
-  public onDrop(files: any) {
-    this.setState(state => ({
-      ...state,
-      files: [...state.files, files]
-    }))
-    /*
+  public async onDrop(files: File[]) {
     const { token } = this.props
     const formData = new FormData()
     files.forEach(f => formData.append('file', f, f.name))
+    const uploads = _.keyBy(
+      _.map(files, body => ({
+        id: uuid(),
+        body
+      })),
+      'id'
+    )
+    this.setState(s => ({
+      ...s,
+      uploads: {
+        ...s.uploads,
+        ...uploads
+      }
+    }))
+
     try {
       await importFiles(formData, { token })
+      this.setState(s => ({
+        ...s,
+        uploads: {
+          ...s.uploads,
+          ..._.mapValues(uploads, u => ({
+            ...u,
+            ...{ success: true, done: true }
+          }))
+        }
+      }))
     } catch (err) {
-      console.log(err)
+      this.setState(s => ({
+        ...s,
+        uploads: {
+          ...s.uploads,
+          ..._.mapValues(uploads, u => ({
+            ...u,
+            ...{ success: false, done: true, errors: errMessages(err) }
+          }))
+        }
+      }))
     }
-    */
   }
 
   public async onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const { token } = this.props
-    const { url, urls } = this.state
-    const i = urls.length
+    const { url } = this.state
+    const upload = { body: url, id: uuid() }
     this.setState(s => ({
-      urls: [...s.urls, { url }],
-      url: ''
+      url: '',
+      uploads: {
+        ...s.uploads,
+        [upload.id]: upload
+      }
     }))
     try {
-      const res = await importUrl(url, { token })
-      this.setState(s => {
-        const imprt = s.urls[i]
-        imprt.success = true
-        imprt.done = true
-        imprt.recipe = res
-        return s
-      })
+      const recipe = await importUrl(url, { token })
+      this.setState(s => ({
+        ...s,
+        uploads: {
+          ...s.uploads,
+          [upload.id]: {
+            ...s.uploads[upload.id],
+            ...{ success: true, done: true, recipe }
+          }
+        }
+      }))
     } catch (err) {
-      let messages = []
-      if (err instanceof PlateZeroApiError) {
-        messages = err.messages
-      } else {
-        messages = [err.message]
-      }
-      this.setState(s => {
-        const imprt = s.urls[i]
-        imprt.success = false
-        imprt.done = true
-        imprt.errors = messages
-        return s
-      })
+      this.setState(s => ({
+        ...s,
+        uploads: {
+          ...s.uploads,
+          [upload.id]: {
+            ...s.uploads[upload.id],
+            ...{ success: false, done: true, errors: errMessages(err) }
+          }
+        }
+      }))
     }
   }
 
   public render() {
-    const { uploads } = this.state
+    const uploads = _.values(this.state.uploads)
     return (
       <Layout>
         <Head>
