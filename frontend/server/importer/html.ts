@@ -217,6 +217,7 @@ function procedureMapper($: any) {
 // Search for well known paths
 export const recipeSchemaProcedureLists = ($: any) => {
   const search = [
+    { selector: 'ol[itemprop="recipeInstructions"] li' },
     { selector: ':not([itemscope])[itemprop="recipeInstructions"]' },
     {
       selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
@@ -224,7 +225,6 @@ export const recipeSchemaProcedureLists = ($: any) => {
     { selector: 'ol li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes
     { selector: 'div.tasty-recipes ol li' }
-    // https://easyrecipeplugin.com/
   ]
   for (let s of search) {
     const found = findMap($, {

@@ -1400,4 +1400,109 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('paleoleap.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/paleoleap.com/flourless-banana-pancakes.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'large ripe bananas;',
+              quantity_numerator: 3,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'eggs;',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'tsp. vanilla extract;',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'tsp. ground cinnamon;',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'tsp. baking powder;',
+              quantity_numerator: 1,
+              quantity_denominator: 8,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'Maple syrup; (optional)',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: true,
+              unit: undefined
+            },
+            {
+              name: 'Fresh fruits; (optional)',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: true,
+              unit: undefined
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            { text: 'Crack the eggs in a bowl and whisk them.' },
+            {
+              text:
+                'In another bowl, lightly mash the bananas with a potato masher or a fork.'
+            },
+            {
+              text:
+                'Add the egg, the baking powder,  the vanilla, and the cinnamon to the mashed bananas and stir to combine.'
+            },
+            {
+              text:
+                'Pour about 2 tablespoons of the batter at a time onto a skillet placed over a medium-low heat and cook until the bottom appears set (1 to 2 minutes). Flip with a spatula and cook another minute.'
+            },
+            {
+              text:
+                'Serve immediately, topped with fresh fruit and maple syrup (if you like).'
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
