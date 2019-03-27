@@ -1438,28 +1438,28 @@ describe('Generic HTML import', () => {
               unit: undefined
             },
             {
-              name: 'tsp. vanilla extract;',
+              name: 'vanilla extract;',
               quantity_numerator: 1,
               quantity_denominator: 2,
               preparation: undefined,
               optional: false,
-              unit: undefined
+              unit: 'tsp'
             },
             {
-              name: 'tsp. ground cinnamon;',
+              name: 'ground cinnamon;',
               quantity_numerator: 1,
               quantity_denominator: 4,
               preparation: undefined,
               optional: false,
-              unit: undefined
+              unit: 'tsp'
             },
             {
-              name: 'tsp. baking powder;',
+              name: 'baking powder;',
               quantity_numerator: 1,
               quantity_denominator: 8,
               preparation: undefined,
               optional: false,
-              unit: undefined
+              unit: 'tsp'
             },
             {
               name: 'Maple syrup; (optional)',
@@ -1764,6 +1764,134 @@ describe('Generic HTML import', () => {
             {
               text:
                 'When done, remove from oven, transfer to serving dish and drizzle with remaining buffalo sauce. Top with green onions and/or parsley and serve with ranch for dipping.'
+            }
+          ]
+        }
+      ])
+    })
+  })
+
+  describe('whatmollymade.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/whatmollymade.com/fudgy-paleo-brownies.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'creamy almond butter',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'coconut sugar',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'pure maple syrup',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'vanilla extract',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'eggs + 1 egg yolk',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'unsweetened cocoa powder',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'coconut flour',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'baking soda',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'salt',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'dark chocolate baking bar chopped',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Preheat oven to 350°F. Line and grease a square baking pan (8x8 or 9x9 inch) with parchment paper nonstick cooking spray. Set aside.'
+            },
+            {
+              text:
+                'In a large bowl, combine the almond butter, coconut sugar, maple syrup, vanilla extract, eggs and egg yolk until smooth and well combined. Gently fold in cocoa powder, coconut flour, salt and baking soda until there are no clumps. Fold in 1/3 cup chocolate chips or chopped chocolate into the batter. The batter will be thick.'
+            },
+            {
+              text:
+                'Pour and spread batter evenly into the prepared baking pan. Bake for 25-30 minutes or until knife inserted into the middle comes out mostly clean (some crumbs are okay). Be careful not to overbake!'
+            },
+            {
+              text:
+                'Remove and cool on a wire rack for 10-15 minutes. Grab parchment paper on the sides and lift the brownies out of the pan to cool completely.'
             }
           ]
         }

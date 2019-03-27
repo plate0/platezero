@@ -223,6 +223,8 @@ export const recipeSchemaProcedureLists = ($: any) => {
       selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
     },
     { selector: 'ol li', css: /instruction/i },
+    // Seriously, people?
+    { selector: 'ul li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes
     { selector: 'div.tasty-recipes-instructions ol li' }
   ]
