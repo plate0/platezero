@@ -156,3 +156,14 @@ export const deleteRecipe = (slug: string, opts?: PlateZeroRequestInfo) =>
     method: 'DELETE',
     headers: authHeaders(opts ? opts.token : '')
   })
+
+export const patchRecipe = (
+  slug: string,
+  body: object,
+  opts?: PlateZeroRequestInfo
+) =>
+  _fetch(`/user/recipes/${slug}`, {
+    method: 'PATCH',
+    body: JSON.stringify(body),
+    headers: authHeaders(opts ? opts.token : '')
+  })
