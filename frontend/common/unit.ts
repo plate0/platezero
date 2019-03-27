@@ -16,6 +16,7 @@ export type Unit =
   | 'm'
 
 export const Units = [
+  { label: '', value: undefined },
   { label: 'gram', value: 'g' },
   { label: 'milligram', value: 'mg' },
   { label: 'kilogram', value: 'kg' },
