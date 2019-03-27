@@ -47,11 +47,7 @@ export default class Recipe extends React.Component<Props> {
         <div className="my-3">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>
-              <h1>
-                <Link route={`/${recipe.owner.username}/${recipe.slug}`}>
-                  <a>{recipe.title}</a>
-                </Link>
-              </h1>
+              <h1>{recipe.title}</h1>
               {recipe.subtitle && <div className="lead">{recipe.subtitle}</div>}
             </div>
             <UserCard user={recipe.owner} />
