@@ -14,12 +14,7 @@ import {
   Input
 } from 'reactstrap'
 
-import {
-  Layout,
-  RecipeNav,
-  ProcedureLists,
-  IngredientList
-} from '../components'
+import { Layout, ProcedureLists, IngredientList } from '../components'
 import {
   getRecipe,
   getRecipeVersion,
@@ -128,7 +123,7 @@ export default class EditRecipe extends React.Component<Props, State> {
         <Head>
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
-        <RecipeNav recipe={v.recipe} />
+        <h1>Editing {v.recipe.title}</h1>
         {_.map(this.state.errors, (err, key) => (
           <Alert key={key} color="danger">
             {err}

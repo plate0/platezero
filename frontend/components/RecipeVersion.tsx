@@ -42,7 +42,7 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
   const source = props.source && (
     <Col xs="auto">
       <a target="_blank" href={props.source}>
-        <i className="fal fa-external-link" />
+        View Original <i className="fal fa-external-link" />
       </a>
     </Col>
   )
@@ -109,21 +109,11 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
   )
 }
 
-const ProcedureList = ({
-  list,
-  showName
-}: {
-  list: ProcedureListJSON
-  showName?: boolean
-}) => {
-  const name = (
-    <div>
-      <strong>{list.name || 'Instructions'}</strong>
-    </div>
-  )
+const ProcedureList = ({ list }: { list: ProcedureListJSON }) => {
+  const name = list.name && <div className="lead">{list.name}</div>
   return (
     <div className="mb-3">
-      {showName && name}
+      {name}
       <Row>
         {list.lines.map((l, key) => (
           <Col xs="12" md="6" key={key}>
@@ -167,18 +157,8 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   )
 }
 
-const IngredientList = ({
-  list,
-  showTitle
-}: {
-  list: IngredientListJSON
-  showTitle?: boolean
-}) => {
-  const title = showTitle && (
-    <div>
-      <strong>{list.name || 'Ingredients'}</strong>
-    </div>
-  )
+const IngredientList = ({ list }: { list: IngredientListJSON }) => {
+  const title = list.name && <div className="lead">{list.name}</div>
   const image = list.image_url && (
     <Col xs="12" md="8">
       <img className="w-100" src={list.image_url} />
@@ -217,21 +197,13 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
       <Col xs={12} className="mt-5">
         <h2>Ingredients</h2>
         {v.ingredientLists.map((il, key) => (
-          <IngredientList
-            key={key}
-            list={il}
-            showTitle={v.ingredientLists.length > 1}
-          />
+          <IngredientList key={key} list={il} />
         ))}
       </Col>
       <Col xs={12} className="mt-5">
         <h2>Instructions</h2>
         {v.procedureLists.map((pl, key) => (
-          <ProcedureList
-            key={key}
-            list={pl}
-            showName={v.procedureLists.length > 1}
-          />
+          <ProcedureList key={key} list={pl} />
         ))}
       </Col>
     </Row>
