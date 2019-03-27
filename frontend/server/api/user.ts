@@ -2,7 +2,11 @@ import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
 import { importers } from './importer'
-import { validateNewRecipe, validateRecipePatch } from '../validate'
+import {
+  validateNewRecipe,
+  validateRecipePatch,
+  validateRecipeVersionPatch
+} from '../validate'
 import { User, Recipe, RecipeBranch } from '../../models'
 import { notFound, internalServerError } from '../errors'
 import { HttpStatus } from '../../common/http-status'
@@ -38,8 +42,28 @@ r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
 })
 
 r.patch(
-  '/recipes/:slug/branches/:branch',
+  '/recipes/:slug',
   validateRecipePatch,
+  async (req: AuthenticatedRequest, res) => {
+    try {
+      const { slug } = req.params
+      const recipe = await Recipe.findOne({
+        where: { user_id: req.user.userId, slug }
+      })
+      if (!recipe) {
+        return notFound(res)
+      }
+      await recipe.update(req.body)
+      return res.json(recipe)
+    } catch (err) {
+      return internalServerError(res, err)
+    }
+  }
+)
+
+r.patch(
+  '/recipes/:slug/branches/:branch',
+  validateRecipeVersionPatch,
   async (req: AuthenticatedRequest, res) => {
     try {
       const { slug, branch } = req.params

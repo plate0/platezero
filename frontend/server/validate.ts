@@ -88,7 +88,7 @@ export const validateNewUser = validator({
     .required()
 })
 
-export const validateRecipePatch = validator({
+export const validateRecipeVersionPatch = validator({
   message: Joi.string().required(),
   changedIngredientLists: Joi.array().items({
     id: Joi.number()
@@ -122,4 +122,10 @@ export const validateRecipePatch = validator({
     }),
     removedIds: Joi.array().items(Joi.number())
   })
+})
+
+export const validateRecipePatch = validator({
+  title: Joi.string(),
+  subtitle: Joi.string().allow(''),
+  description: Joi.string().allow('')
 })
