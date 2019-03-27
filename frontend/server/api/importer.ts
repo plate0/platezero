@@ -6,9 +6,11 @@ import { internalServerError } from '../errors'
 import { S3 } from 'aws-sdk'
 import fetch from 'node-fetch'
 import { HttpStatus } from '../../common/http-status'
+import { getConfig } from '../config'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const s3 = new S3()
+const { slackHook } = getConfig()
 
 const r = express.Router()
 
@@ -35,23 +37,21 @@ const upload = multer({
 })
 
 r.post('/file', upload.array('file'), async (req: any, res) => {
-  console.log('Uploaded', req.files)
-  const slack =
-    'https://hooks.slack.com/services/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'
-
-  fetch(slack, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      text: `${req.user.username} (id: ${req.user.userId}) uploaded ${
-        req.files.length
-      } recipes. 
+  if (slackHook) {
+    fetch(slackHook, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        text: `${req.user.username} (id: ${req.user.userId}) uploaded ${
+          req.files.length
+        } recipes. 
 Find them here: https://s3.console.aws.amazon.com/s3/buckets/com-platezero-recipes/?region=us-east-1
 ${req.files.map(f => f.originalname).join('\n')}`
+      })
     })
-  })
+  }
   res.status(HttpStatus.Accepted).json({
     upload: 'success'
   })

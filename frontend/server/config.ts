@@ -9,6 +9,7 @@ interface Config {
   dbUser: string
   dbPassword: string
   dbHost: string
+  slackHook?: string
 }
 
 export const getConfig = (): Config => {
@@ -22,6 +23,7 @@ export const getConfig = (): Config => {
     dbName: process.env.DATABASE_NAME || 'postgres',
     dbUser: process.env.DATABASE_USER || 'postgres',
     dbPassword: process.env.DATABASE_PASSWORD || undefined,
-    dbHost: process.env.DATABASE_HOST
+    dbHost: process.env.DATABASE_HOST,
+    slackHook: process.env.SLACK_HOOK
   }
 }
