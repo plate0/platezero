@@ -1180,7 +1180,7 @@ describe('Generic HTML import', () => {
 
     test('duration', async () => {
       const { duration } = await importer(source)
-      expect(duration).toBeUndefined()
+      expect(duration).toEqual(1800)
     })
 
     test('ingredient_lists', async () => {

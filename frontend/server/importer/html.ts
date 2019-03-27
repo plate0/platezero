@@ -1,4 +1,5 @@
 import { parse } from '../../common/ingredient'
+import * as moment from 'moment'
 import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
 import {
@@ -70,6 +71,18 @@ export const image_url = (sel?: string) => ($: any) => {
   return $('main img')
     .first()
     .attr('src')
+}
+
+export const duration = () => ($: any): number => {
+  const node = $('[itemprop="totalTime"]')
+  if (!node) {
+    return undefined
+  }
+  const time = node.attr('content') || node.attr('datetime')
+  if (time) {
+    return moment.duration(time).asSeconds()
+  }
+  return undefined
 }
 
 // https://regex101.com/r/xqkIKF/1
@@ -289,7 +302,7 @@ export const defaults = (overrides: object) => {
     source_url: undefined,
     html_url: undefined,
     yield: undefined,
-    duration: undefined,
+    duration: duration(),
     preheats: preheats(),
     ingredient_lists: undefined,
     procedure_lists: undefined

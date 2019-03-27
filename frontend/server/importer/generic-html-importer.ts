@@ -15,16 +15,6 @@ const yld = ($: any) => {
   return undefined
 }
 
-const duration = ($: any) => {
-  const regex = /(duration|takes|time)\s([\d]*)/gim
-  const match = regex.exec($.text())
-  if (match && match[2]) {
-    return 0
-    //    return match[2].trim()
-  }
-  return undefined
-}
-
 const preheats = html.preheats('body')
 
 const ingredient_lists = ($: any): IngredientListJSON[] => {
@@ -54,7 +44,6 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
 export const GenericHTML = mapValues(
   html.defaults({
     yield: yld,
-    duration,
     preheats,
     ingredient_lists,
     procedure_lists
