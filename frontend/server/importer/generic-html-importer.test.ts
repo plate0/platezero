@@ -1350,12 +1350,16 @@ describe('Generic HTML import', () => {
 
     test('description', async () => {
       const { description } = await importer(source)
-      expect(description).toEqual('My healthy slow cooker butter chicken is one of the tastiest slow cooker meals ever. It is so easy to prepare too.')
+      expect(description).toEqual(
+        'My healthy slow cooker butter chicken is one of the tastiest slow cooker meals ever. It is so easy to prepare too.'
+      )
     })
 
     test('image_url', async () => {
       const { image_url } = await importer(source)
-      expect(image_url).toEqual('https://www.becomingness.com.au/wp-content/uploads/2018/06/Slow-cooker-butter-chicken-4.jpg')
+      expect(image_url).toEqual(
+        'https://www.becomingness.com.au/wp-content/uploads/2018/06/Slow-cooker-butter-chicken-4.jpg'
+      )
     })
 
     test('yield', async () => {
@@ -1499,6 +1503,142 @@ describe('Generic HTML import', () => {
             {
               text:
                 'Serve immediately, topped with fresh fruit and maple syrup (if you like).'
+            }
+          ]
+        }
+      ])
+    })
+  })
+
+  describe('www.wellplated.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/www.wellplated.com/no-bake-protein-balls.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('title', async () => {
+      const { title } = await importer(source)
+      expect(title).toEqual('No Bake Cookie Dough Protein Balls')
+    })
+
+    test('description', async () => {
+      const { description } = await importer(source)
+      expect(description).toEqual(
+        `If you’ve ever wondered why chocolate chip cookies have to contain calories (can’t we delegate that task to celery sticks?), these Cookie Dough No Bake Protein Balls are for you! Clean-eating approved, low carb, and protein-packed, these healthy energy bites taste like chocolate chip cookie dough but are made entirely from wholesome, good-for-you ingredients. Translation: with this protein ball recipe, cookie dough is a health food. Celery, consider yourself replaced. As someone who mutates into Oscar the Grouch when she’s hungry, I’m constantly looking for easy, healthy snack ideas. Call it hanger-management. These Cookie Dough Protein Balls are everything I`
+      )
+    })
+
+    test('image_url', async () => {
+      const { image_url } = await importer(source)
+      expect(image_url).toEqual(
+        'https://www.wellplated.com/wp-content/uploads/2016/07/Protein-Balls.jpg'
+      )
+    })
+
+    test('yield', async () => {
+      const { yield: yld } = await importer(source)
+      expect(yld).toBeUndefined()
+    })
+
+    test('duration', async () => {
+      const { duration } = await importer(source)
+      expect(duration).toBeUndefined()
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'natural almond butter',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 2,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name:
+                'vanilla whey protein powder  — about 2 scoops—use plant-based protein powder to make dairy free',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 2,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name:
+                'coconut flour* — plus 1-2 tablespoons additional as needed',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 3,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name: 'honey — or pure maple syrup',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 2,
+              quantity_numerator: 3,
+              unit: 'tbsp'
+            },
+            {
+              name: 'pure vanilla extract',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'cinnamon',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 4,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name:
+                '-4\ntablespoons\nAlmond Breeze Unsweetened Vanilla Almondmilk',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 2,
+              unit: undefined
+            },
+            {
+              name: 'dark chocolate chips — dairy free if needed',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 2,
+              unit: 'tbsp'
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'In a large bowl, stir together the almond butter, protein powder, 1/3 cup coconut flour, honey, vanilla extract, cinnamon, and 2 tablespoons almondmilk. Stir until the mixture forms a dough that is soft enough to roll into balls, but not overly sticky. Add additional coconut flour or almondmilk as needed to make the mixture more or less dry. Stir in the chocolate chips.'
+            },
+            {
+              text:
+                'Roll into 12 balls. Enjoy immediately or store in the refrigerator for later.'
             }
           ]
         }
