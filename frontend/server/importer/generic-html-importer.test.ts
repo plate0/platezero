@@ -663,4 +663,314 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('kblog.lunchboxbunch.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/kblog.lunchboxbunch.com/easy-sweet-potato-veggie-burgers-with.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'medium sweet potato',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'baked and peeled',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'oz. cooked white beans (canned',
+              quantity_numerator: 16,
+              quantity_denominator: 1,
+              preparation: 'drained and rinsed)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'white onion',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: 'chopped',
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: '-3 Tbsp tahini',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'apple cider vinegar',
+              quantity_numerator: 3,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'garlic powder',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name:
+                '- 1 tsp chipotle powder (or cajun spice) (use more for spicier burgers)',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'salt',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'black pepper (add more for more bite!)',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'nutritional yeast OR any flour (try oat flour)',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: '- 1 cup finely chopped greens (kale',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: 'spinach, parsley)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'toppings: avocado',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'tomato, vegenaise, burger buns, greens',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'skillet: 1 Tbsp oil ( extra virgin olive oil',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'coconut oil, or other)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'optional: Panko bread crumbs for crispy coating',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: true,
+              unit: undefined
+            },
+            {
+              name: 'medium sweet potato',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'baked and peeled',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'oz. cooked white beans (canned',
+              quantity_numerator: 16,
+              quantity_denominator: 1,
+              preparation: 'drained and rinsed)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'white onion',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: 'chopped',
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: '-3 Tbsp tahini',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'apple cider vinegar',
+              quantity_numerator: 3,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'garlic powder',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name:
+                '- 1 tsp chipotle powder (or cajun spice) (use more for spicier burgers)',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'salt',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'black pepper (add more for more bite!)',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'nutritional yeast OR any flour (try oat flour)',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: '- 1 cup finely chopped greens (kale',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: 'spinach, parsley)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'toppings: avocado',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'tomato, vegenaise, burger buns, greens',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'skillet: 1 Tbsp oil ( extra virgin olive oil',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'coconut oil, or other)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'optional: Panko bread crumbs for crispy coating',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: true,
+              unit: undefined
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Bake your sweet potato in a 400 degree oven for 40-60 minutes or until tender. If in a hurry, you could use the microwave, but oven-baked yields a bit more flavor.'
+            },
+            {
+              text:
+                'Add the potato and beans to a large mixing bowl. Using a large fork, mash well. Fold in the onion and keep mashing. Add all the remaining burger ingredients and mash, mash, mash well until thickened and mashed well. Tip! Rinse your beans in hot water before adding to bowl, this heats them, making them easier to mash.'
+            },
+            { text: 'Warm oven to 400 degrees.' },
+            { text: 'Warm a skillet over high heat and add the oil.' },
+            {
+              text:
+                'Using hands, form the burger mixture into large patties.  Place patties in the hot skillet. Note: If using Panko bread crumbs, before placing burgers in skillet, roll patties in Panko to coat well. In skillet: Cook 1-3 minutes on each side, until lightly browned. Repeat until all the burger mixture has been used. Optional: Before forming patties, place mixture in the fridge for a half hour or longer.'
+            },
+            {
+              text:
+                'Place the skillet-cooked patties on a baking sheet and bake for 10-15 minutes, until cooked through. Note: YES you could skip the skillet part and just bake the veggie burgers, but the flavor is better with those crispy oil-seared edges. If just baking, the baking time will be around 20 minutes, depending on patty size.'
+            },
+            {
+              text:
+                'Slice up all your burger toppings and toast the buns. Sprouted grain were used! Add vegan mayo or spicy mustard and the patty and toppings. Serve warm!'
+            },
+            {
+              text:
+                'Store leftover burgers, sealed, in the fridge for up to a day, or freeze and consume within a few weeks for best flavor and texture. To reheat: warm in a 400 degree oven until warmed through, about 12 minutes, depending on burger thickness.'
+            },
+            {
+              text:
+                'Bake your sweet potato in a 400 degree oven for 40-60 minutes or until tender. If in a hurry, you could use the microwave, but oven-baked yields a bit more flavor.'
+            },
+            {
+              text:
+                'Add the potato and beans to a large mixing bowl. Using a large fork, mash well. Fold in the onion and keep mashing. Add all the remaining burger ingredients and mash, mash, mash well until thickened and mashed well. Tip! Rinse your beans in hot water before adding to bowl, this heats them, making them easier to mash.'
+            },
+            { text: 'Warm oven to 400 degrees.' },
+            { text: 'Warm a skillet over high heat and add the oil.' },
+            {
+              text:
+                'Using hands, form the burger mixture into large patties.  Place patties in the hot skillet. Note: If using Panko bread crumbs, before placing burgers in skillet, roll patties in Panko to coat well. In skillet: Cook 1-3 minutes on each side, until lightly browned. Repeat until all the burger mixture has been used. Optional: Before forming patties, place mixture in the fridge for a half hour or longer.'
+            },
+            {
+              text:
+                'Place the skillet-cooked patties on a baking sheet and bake for 10-15 minutes, until cooked through. Note: YES you could skip the skillet part and just bake the veggie burgers, but the flavor is better with those crispy oil-seared edges. If just baking, the baking time will be around 20 minutes, depending on patty size.'
+            },
+            {
+              text:
+                'Slice up all your burger toppings and toast the buns. Sprouted grain were used! Add vegan mayo or spicy mustard and the patty and toppings. Serve warm!'
+            },
+            {
+              text:
+                'Store leftover burgers, sealed, in the fridge for up to a day, or freeze and consume within a few weeks for best flavor and texture. To reheat: warm in a 400 degree oven until warmed through, about 12 minutes, depending on burger thickness.'
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
