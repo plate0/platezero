@@ -1645,4 +1645,129 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('therealfoodrds.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/therealfoodrds.com/cauliflower-buffalo-bites.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'large head of cauliflower',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation:
+                'stems removed (or 2 – 10 oz. bag cauliflower florets)',
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'Frank’s Red Hot Sauce',
+              quantity_numerator: 1,
+              quantity_denominator: 3,
+              preparation: undefined,
+              optional: false,
+              unit: 'c'
+            },
+            {
+              name: 'ghee',
+              quantity_numerator: 2,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'coconut aminos',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tbsp'
+            },
+            {
+              name: 'apple cider vinegar',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'garlic powder',
+              quantity_numerator: 1,
+              quantity_denominator: 2,
+              preparation: undefined,
+              optional: false,
+              unit: 'tsp'
+            },
+            {
+              name: 'cayenne pepper (optional)',
+              quantity_numerator: 1,
+              quantity_denominator: 4,
+              preparation: undefined,
+              optional: true,
+              unit: 'tsp'
+            },
+            {
+              name: 'Ranch for dipping (Homemade Ranch or Whole30 Compliant)',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'Parsley or green onions',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: 'chopped (optional)',
+              optional: true,
+              unit: undefined
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Preheat oven to 425 degrees. Line baking sheet with parchment.'
+            },
+            {
+              text:
+                'Make buffalo sauce by placing small saucepan over medium heat and adding the hot sauce, ghee, coconut aminos, apple cider vinegar, garlic powder and optional cayenne. Once ghee is melted, whisk well to combine or transfer to small food processor or blender and process until smooth.'
+            },
+            {
+              text:
+                'In a large bowl combine the cauliflower florets and 1/4-1/3 cup of the buffalo sauce. Toss to coat.'
+            },
+            {
+              text:
+                'Transfer cauliflower to the sheet pan and bake for 15-17 min tossing 1/2 through baking time.'
+            },
+            {
+              text:
+                'When done, remove from oven, transfer to serving dish and drizzle with remaining buffalo sauce. Top with green onions and/or parsley and serve with ranch for dipping.'
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
