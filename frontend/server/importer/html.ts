@@ -141,7 +141,7 @@ export const recipeSchemaIngredientLists = ($: any) => {
     { selector: 'li[itemprop="ingredients"]' },
     { selector: 'ul li', css: /ingredient/i },
     // https://www.wptasty.com/tasty-recipes
-    { selector: 'div.tasty-recipes ul li' }
+    { selector: 'div.tasty-recipes-ingredients ul li' }
   ]
   for (let s of search) {
     const found = findMap($, {
@@ -224,7 +224,7 @@ export const recipeSchemaProcedureLists = ($: any) => {
     },
     { selector: 'ol li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes
-    { selector: 'div.tasty-recipes ol li' }
+    { selector: 'div.tasty-recipes-instructions ol li' }
   ]
   for (let s of search) {
     const found = findMap($, {
