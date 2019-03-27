@@ -1,15 +1,7 @@
 import React, { useState, useContext } from 'react'
 import Router from 'next/router'
 import * as _ from 'lodash'
-import ReactMarkdown from 'react-markdown'
-import {
-  Modal,
-  ModalBody,
-  Button,
-  Card,
-  CardHeader,
-  CardBody
-} from 'reactstrap'
+import { Modal, ModalBody, Button } from 'reactstrap'
 import {
   Head,
   Layout,
@@ -64,33 +56,22 @@ export default class Recipe extends React.Component<Props> {
             </div>
             <UserCard user={recipe.owner} />
           </div>
-          <IfLoggedIn username={recipe.owner.username}>
-            <div className="text-right">
+          <div className="text-right">
+            {recipe.source_url && (
+              <a
+                target="_blank"
+                href={recipe.source_url}
+                className="btn btn-link btn-sm"
+              >
+                View Original <i className="fal fa-external-link" />
+              </a>
+            )}{' '}
+            <IfLoggedIn username={recipe.owner.username}>
               <EditButton recipe={recipe} branch="master" />{' '}
               <DeleteButton recipe={recipe} />
-            </div>
-          </IfLoggedIn>
+            </IfLoggedIn>
+          </div>
         </div>
-        {recipe.description && (
-          <Card className="mb-3">
-            <CardHeader>
-              <strong>About {recipe.title}</strong>
-            </CardHeader>
-            <CardBody>
-              <ReactMarkdown
-                source={recipe.description}
-                disallowedTypes={[
-                  'link',
-                  'image',
-                  'linkReference',
-                  'imageReference',
-                  'html',
-                  'virtualHtml'
-                ]}
-              />
-            </CardBody>
-          </Card>
-        )}
         {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
       </Layout>
     )

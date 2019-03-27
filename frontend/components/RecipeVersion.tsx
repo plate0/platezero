@@ -10,13 +10,10 @@ import { ProcedureListJSON } from '../models/procedure_list'
 import { get } from 'lodash'
 
 interface RecipeHeaderProps {
-  title: string
-  subtitle?: string
   description?: string
   duration?: number | string
   yield?: string
   imageUrl?: string
-  source?: string
 }
 
 const StepNumber = ({ i }: { i: number }) => (
@@ -39,18 +36,6 @@ const StepNumber = ({ i }: { i: number }) => (
 )
 
 const RecipeHeader = (props: RecipeHeaderProps) => {
-  const source = props.source && (
-    <Col xs="auto">
-      <a target="_blank" href={props.source}>
-        View Original <i className="fal fa-external-link" />
-      </a>
-    </Col>
-  )
-  const subtitle = props.subtitle && (
-    <h2 style={{ fontSize: 16 }} className="mb-3 text-muted">
-      {props.subtitle}
-    </h2>
-  )
   const details = (props.duration || props.yield) && (
     <Row className="border-top border-bottom align-items-center">
       {props.duration && (
@@ -81,13 +66,6 @@ const RecipeHeader = (props: RecipeHeaderProps) => {
         md={{ order: 1, size: 6 }}
         className="py-2"
       >
-        <Row className="align-items-center justify-content-between">
-          <Col xs="12">
-            <h1 className="mb-1">{props.title}</h1>
-            {subtitle}
-          </Col>
-          {source}
-        </Row>
         {details}
         {description}
       </Col>
@@ -185,13 +163,10 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
     <Row>
       <Col xs="12">
         <RecipeHeader
-          title={v.recipe.title}
-          subtitle={get(v.recipe, 'subtitle')}
           description={get(v.recipe, 'description')}
           duration={get(v.recipeDuration, 'duration_seconds')}
           yield={get(v.recipeYield, 'text')}
           imageUrl={get(v.recipe, 'image_url')}
-          source={get(v.recipe, 'source_url')}
         />
       </Col>
       <Col xs={12} className="mt-5">
