@@ -192,6 +192,20 @@ export const ingredient_lists = (sel: string) => (
 
 /* END Ingredient List Strategies */
 
+export const recipeSchemaYield = ($: any): string | undefined => {
+  const y = $('[itemprop="recipeYield"]').text()
+  if (_.isNil(y)) {
+    return undefined
+  }
+  if (_.isString(y)) {
+    return y
+  }
+  if (_.isArray(y)) {
+    return y[0]
+  }
+  return undefined
+}
+
 /* Find Procedure Lists Strategies */
 
 function procedureMapper($: any) {
@@ -204,7 +218,9 @@ function procedureMapper($: any) {
 export const recipeSchemaProcedureLists = ($: any) => {
   const search = [
     { selector: ':not([itemscope])[itemprop="recipeInstructions"]' },
-    { selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]' },
+    {
+      selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
+    },
     { selector: 'ol li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes
     { selector: 'div.tasty-recipes ol li' }

@@ -1140,4 +1140,195 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('www.ambitiouskitchen.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/www.ambitiouskitchen.com/chocolate-chip-coconut-flour-pumpkin-bars.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('title', async () => {
+      const { title } = await importer(source)
+      expect(title).toEqual(
+        'Chocolate Chip Coconut Flour Pumpkin Bars | Ambitious Kitchen'
+      )
+    })
+
+    test('description', async () => {
+      const { description } = await importer(source)
+      expect(description).toEqual(
+        'Incredible paleo chocolate chip coconut flour pumpkin bars that taste like pumpkin pie. Healthy enjoy to enjoy as a snack but indulgent like a dessert.'
+      )
+    })
+
+    test('image_url', async () => {
+      const { image_url } = await importer(source)
+      expect(image_url).toEqual(
+        'https://www.ambitiouskitchen.com/wp-content/uploads/2015/09/Chocolate-Pumpkin-Bars-2.jpg'
+      )
+    })
+
+    test('yield', async () => {
+      const { yield: yld } = await importer(source)
+      expect(yld).toEqual('12 bars')
+    })
+
+    test('duration', async () => {
+      const { duration } = await importer(source)
+      expect(duration).toBeUndefined()
+    })
+
+    test('ingredient_lists', async () => {
+      const { ingredient_lists } = await importer(source)
+      expect(ingredient_lists).toEqual([
+        {
+          lines: [
+            {
+              name: 'canned pumpkin puree',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name: 'pure maple syrup',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 4,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name: 'vanilla extract',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'almond butter (or nut butter of choice)',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 4,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name: 'unsweetened almond milk',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 1,
+              unit: 'tbsp'
+            },
+            {
+              name: 'eggs',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 2,
+              unit: undefined
+            },
+            {
+              name: 'coconut flour',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 2,
+              quantity_numerator: 1,
+              unit: 'c'
+            },
+            {
+              name: 'baking soda',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 4,
+              quantity_numerator: 3,
+              unit: 'tsp'
+            },
+            {
+              name: 'salt',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 8,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'cinnamon',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 1,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'ginger',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 2,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'nutmeg',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 4,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'ground cloves',
+              optional: false,
+              preparation: undefined,
+              quantity_denominator: 8,
+              quantity_numerator: 1,
+              unit: 'tsp'
+            },
+            {
+              name: 'dark chocolate chips',
+              optional: false,
+              preparation: 'divided',
+              quantity_denominator: 2,
+              quantity_numerator: 1,
+              unit: 'c'
+            }
+          ]
+        }
+      ])
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Preheat oven to 350 degrees F. Line an 8x8 inch baking pan with parchment paper and spray with nonstick cooking spray.'
+            },
+            {
+              text:
+                'Add pumpkin puree, maple syrup, vanilla extract, almond butter, almond milk and eggs to a large bowl and mix until well combined, smooth and creamy.'
+            },
+            {
+              text:
+                'Add in coconut flour, baking soda, salt and the remaining spices. Gently fold in 1/3 cup of chocolate chips into the batter. Spread batter evenly in prepared pan. Bake for 20-25 minutes or until toothpick comes out clean in the middle. Transfer pan to a wire rack to cool.'
+            },
+            {
+              text:
+                "Melt remaining 1/4 cup of chocolate chip in a small saucepan over low heat. Once completely melted, drizzle the chocolate over the bars. Another option is to sprinkle the remaining chocolate over the top of the bars right when they come out of the oven. It's up to you! Cut into 12 bars. Enjoy!"
+            }
+          ]
+        }
+      ])
+    })
+  })
 })

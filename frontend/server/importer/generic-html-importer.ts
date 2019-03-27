@@ -3,6 +3,10 @@ import { IngredientListJSON, ProcedureListJSON } from '../../models'
 import * as html from './html'
 
 const yld = ($: any) => {
+  const schemaYield = html.recipeSchemaYield($)
+  if (schemaYield) {
+    return schemaYield
+  }
   const regex = /(serves|makes)\s([\d-]*)/gim
   const match = regex.exec($.text())
   if (match && match[2]) {
