@@ -85,6 +85,14 @@ export const duration = () => ($: any): number => {
   return undefined
 }
 
+export const yld = () => ($: any): string => {
+  const node = $('[itemprop="recipeYield"]')
+  if (!node) {
+    return undefined
+  }
+  return node.attr('content') || node.text()
+}
+
 // https://regex101.com/r/xqkIKF/1
 export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
   const utilities = ['oven', 'sous vide', 'stove']
@@ -301,7 +309,7 @@ export const defaults = (overrides: object) => {
     image_url: image_url(),
     source_url: undefined,
     html_url: undefined,
-    yield: undefined,
+    yield: yld(),
     duration: duration(),
     preheats: preheats(),
     ingredient_lists: undefined,
