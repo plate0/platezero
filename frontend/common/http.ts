@@ -139,6 +139,16 @@ export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
     headers: authHeaders(opts ? opts.token : '')
   })
 
+export const importFiles = (body: any, opts?: PlateZeroRequestInfo) =>
+  fetch(`${API_URL}/user/import/file`, {
+    body,
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      ...authHeaders(opts ? opts.token : '')
+    }
+  }).then(handleError)
+
 export const patchBranch = (
   slug: string,
   branch: string,
