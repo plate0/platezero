@@ -46,7 +46,7 @@ yarn transcribe
 
 8. Create the recipe
 ```
-create.ts --id $USER_ID --username $USERNAME [--dev]
+yarn post --id $USER_ID --username $USERNAME [--dev]
 ```
 You can use `--dev` to test on dev first.
 
