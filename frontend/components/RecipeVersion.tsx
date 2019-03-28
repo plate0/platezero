@@ -22,7 +22,7 @@ const getStats = (v: RecipeVersionJSON) => {
   }
   const y = get(v.recipeYield, 'text')
   if (y) {
-    stats.push({ name: 'Servings', icon: 'utensils', value: y })
+    stats.push({ name: 'Yield', icon: 'utensils', value: y })
   }
   return stats
 }
