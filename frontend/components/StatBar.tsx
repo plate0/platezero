@@ -15,9 +15,9 @@ export const StatBar = (props: { stats: Stat[] }) => {
     <Row className="border-top border-bottom align-items-center">
       {props.stats.map((stat, key) => (
         <Col key={key} className="my-2 text-center">
-          <i className={`fal fa-${stat.icon} fa-2x`} />
-          <div className="text-uppercase">{stat.name}</div>
-          <div>{stat.value}</div>
+          <i className={`fal fa-${stat.icon} fa-2x text-muted`} />
+          <div className="text-uppercase small text-muted">{stat.name}</div>
+          <div className="lead">{stat.value}</div>
         </Col>
       ))}
     </Row>
