@@ -77,7 +77,7 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => (
       numerator={line.quantity_numerator}
       denominator={line.quantity_denominator}
     />{' '}
-    {line.unit} <strong>{line.name}</strong>
+    {line.unit} {line.name}
     {line.preparation && ', ' + line.preparation}
     {line.optional && <span className="badge badge-info ml-1">Optional</span>}
   </li>
