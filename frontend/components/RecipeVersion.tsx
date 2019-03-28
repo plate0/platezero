@@ -27,24 +27,33 @@ const getStats = (v: RecipeVersionJSON) => {
   return stats
 }
 
-const RecipeHeader = (props: { recipeVersion: RecipeVersionJSON }) => (
-  <Row>
-    <Col xs="12" lg="8" className="py-2">
-      <StatBar stats={getStats(props.recipeVersion)} />
-      {get(props.recipeVersion, 'recipe.description') && (
-        <p className="my-2 lead">
-          {get(props.recipeVersion, 'recipe.description')}
-        </p>
-      )}
-    </Col>
-    <Col xs="12" lg="4" className="px-0 px-md-3">
-      <img
-        src={get(props.recipeVersion, 'recipe.image_url')}
-        className="w-100"
-      />
-    </Col>
-  </Row>
-)
+const RecipeHeader = ({
+  recipeVersion
+}: {
+  recipeVersion: RecipeVersionJSON
+}) => {
+  const stats = getStats(recipeVersion)
+  const description = get(recipeVersion, 'recipe.description')
+  const imageUrl = get(recipeVersion, 'recipe.image_url')
+  if (!stats.length && !description && !imageUrl) {
+    return null
+  }
+  return (
+    <Row>
+      <Col xs="12" lg="8" className="py-2">
+        <StatBar stats={stats} />
+        {description && <p className="my-2 lead">{description}</p>}
+      </Col>
+      <Col xs="12" lg="4" className="px-0 px-md-3">
+        <img
+          src={imageUrl}
+          className="w-100"
+          alt={`Picture of ${recipeVersion.recipe.title}`}
+        />
+      </Col>
+    </Row>
+  )
+}
 
 const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
   <div className="mb-3">
