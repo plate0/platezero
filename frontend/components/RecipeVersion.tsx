@@ -40,11 +40,11 @@ const RecipeHeader = ({
   }
   return (
     <Row>
-      <Col xs="12" lg="8" className="py-2">
+      <Col xs="12" lg="8" className="d-flex flex-column">
         <StatBar stats={stats} />
-        {description && <p className="my-2 lead">{description}</p>}
+        {description && <p className="lead my-auto">{description}</p>}
       </Col>
-      <Col xs="12" lg="4" className="px-0 px-md-3">
+      <Col xs="12" lg="4">
         <img
           src={imageUrl}
           className="w-100"
