@@ -4,6 +4,8 @@ import * as _ from 'lodash'
 import {
   Alert,
   FormGroup,
+  Row,
+  Col,
   Label,
   Input,
   Modal,
@@ -76,25 +78,23 @@ export default class Recipe extends React.Component<Props, State> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <div className="mt-3">
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <h1>{recipe.title}</h1>
-              {recipe.subtitle && (
-                <p className="lead">{recipe.subtitle}</p>
-              )}
-              <p className="text-muted">
-                By{' '}
-                <Link route={`/${recipe.owner.username}`}>
-                  <a>{getName(recipe.owner)}</a>
-                </Link>
-              </p>
-            </div>
+        <Row className="mt-3">
+          <Col>
+            <h1>{recipe.title}</h1>
+            {recipe.subtitle && <p className="lead">{recipe.subtitle}</p>}
+            <p className="text-muted">
+              By{' '}
+              <Link route={`/${recipe.owner.username}`}>
+                <a>{getName(recipe.owner)}</a>
+              </Link>
+            </p>
+          </Col>
+          <Col xs="auto">
             <IfLoggedIn username={recipe.owner.username}>
               <ActionMenu recipe={recipe} />
             </IfLoggedIn>
-          </div>
-        </div>
+          </Col>
+        </Row>
         {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
       </Layout>
     )
