@@ -241,6 +241,7 @@ export default class ImportRecipe extends React.Component<
           </InputGroup>
         </Form>
         {uploads.length > 0 && <ImportsStatus uploads={uploads} />}
+        <div className="mb-5" />
       </Layout>
     )
   }

@@ -11,14 +11,20 @@ export interface RecipesProps {
   user: UserJSON
   recipes: RecipeJSON[]
   seeAll?: boolean
+  className?: string
 }
 
-export const RecipeList = ({ recipes, seeAll, user }: RecipesProps) => {
+export const RecipeList = ({
+  className,
+  recipes,
+  seeAll,
+  user
+}: RecipesProps) => {
   const me = <h2 className="m-0">Your Recipes</h2>
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
   const loggedInUser = useContext(UserContext)
   return (
-    <section>
+    <section className={className ? className : ''}>
       <Row className="align-items-center border-bottom pb-1">
         <Col xs={5 + (loggedInUser ? 0 : 3) + (seeAll ? 0 : 1)}>
           <IfLoggedIn username={user.username} else={not}>
