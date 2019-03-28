@@ -1,5 +1,7 @@
+import React from 'react'
 import { Container } from 'reactstrap'
 import { Navbar } from './Navbar'
+import { Footer } from './Footer'
 
 export interface LayoutProps {
   fluid?: boolean
@@ -16,5 +18,6 @@ export const Layout = (props: LayoutProps) => (
     >
       {props.children}
     </Container>
+    <Footer />
   </div>
 )

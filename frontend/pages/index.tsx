@@ -33,7 +33,7 @@ export default class Index extends Component<{ users: UserJSON[] }> {
             <Button color="primary">Get started</Button>
           </Link>
         </Jumbotron>
-        <CardColumns>
+        <CardColumns className="pb-5">
           {this.props.users.map(user => (
             <Card key={user.id}>
               <CardBody>
