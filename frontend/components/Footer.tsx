@@ -18,7 +18,7 @@ export const Footer = () => (
         <Col xs="12" md="6">
           <ul className="mb-0 list-unstyled">
             <li>
-              <a className="ml-2" href="mailto:hello@platezero.com">
+              <a href="mailto:hello@platezero.com">
                 <i className="fal fa-envelope mr-2" />
                 Contact us
               </a>
