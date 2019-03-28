@@ -1,11 +1,4 @@
-import {
-  IngredientListJSON,
-  IngredientLineJSON,
-  ProcedureListJSON,
-  ProcedureLineJSON,
-  PreheatJSON
-} from '../models'
-import { ItemPatch, ListPatch } from './changes'
+import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
 
 export interface PostRecipe {
   title: string
@@ -22,11 +15,7 @@ export interface PostRecipe {
 }
 
 export interface RecipeVersionPatch {
-  // patch info
   message: string
-
-  // ingredient updates
-  changedIngredientLists: ItemPatch<IngredientLineJSON>[]
-
-  procedureLists: ListPatch<ProcedureListJSON, ProcedureLineJSON>
+  ingredientLists: IngredientListJSON[]
+  procedureLists: ProcedureListJSON[]
 }

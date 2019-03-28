@@ -120,20 +120,20 @@ export function IngredientLine(props: Props) {
   if (props.removed) {
     return (
       <ActionLine icon="fal fa-undo" onAction={onRestore}>
-        <Row className="text-muted">
-          <Col xs="auto" md="2" className="text-strike">
+        <Row className="text-muted" noGutters={true}>
+          <Col xs="auto" md="2" className="text-strike pl-3">
             <Amount
               numerator={props.ingredient.quantity_numerator}
               denominator={props.ingredient.quantity_denominator}
             />
           </Col>
-          <Col xs="auto" md="2" className="text-strike">
+          <Col xs="auto" md="2" className="text-strike pl-3">
             {props.ingredient.unit}
           </Col>
-          <Col xs="auto" md={true} className="text-strike">
+          <Col xs="auto" md={true} className="text-strike pl-3">
             {props.ingredient.name}
           </Col>
-          <Col xs="auto" md="3" className="text-strike">
+          <Col xs="auto" md="3" className="text-strike pl-3">
             {props.ingredient.preparation}
           </Col>
           <Col
@@ -142,7 +142,15 @@ export function IngredientLine(props: Props) {
               props.ingredient.optional ? '' : 'invisible'
             }`}
           >
-            optional
+            <FormGroup check>
+              <Label check>
+                <Input
+                  type="checkbox"
+                  className={props.ingredient.optional ? '' : 'invisible'}
+                />
+                <small>Optional</small>
+              </Label>
+            </FormGroup>
           </Col>
         </Row>
       </ActionLine>
@@ -154,7 +162,7 @@ export function IngredientLine(props: Props) {
       icon={props.changed ? 'fal fa-undo' : 'fal fa-times'}
       onAction={() => (props.changed ? onRestore() : onRemove())}
     >
-      <Row>
+      <Row noGutters={true}>
         <Col xs="12" md="2">
           <FormGroup>
             <PlainInput
@@ -210,16 +218,16 @@ export function IngredientLine(props: Props) {
         </Col>
         <Col xs="12" md="auto" className="d-flex align-items-center">
           <FormGroup check className="mb-3">
-            <Input
-              type="checkbox"
-              defaultChecked={props.ingredient.optional}
-              className={bgClass}
-              onChange={e => {
-                const optional = e.currentTarget.checked
-                setOptional(optional)
-              }}
-            />
             <Label className="m-0" check>
+              <Input
+                type="checkbox"
+                defaultChecked={props.ingredient.optional}
+                className={bgClass}
+                onChange={e => {
+                  const optional = e.currentTarget.checked
+                  setOptional(optional)
+                }}
+              />
               <small>Optional</small>
             </Label>
           </FormGroup>

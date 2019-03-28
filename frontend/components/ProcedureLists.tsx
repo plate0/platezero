@@ -2,119 +2,105 @@ import React, { useState, useEffect } from 'react'
 import { Button, Card, CardBody } from 'reactstrap'
 import * as _ from 'lodash'
 
-import { ProcedureListJSON, ProcedureLineJSON } from '../models'
+import { ProcedureListJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
 import { ActionLine } from './ActionLine'
 import {
   UITrackable,
   jsonToUI,
-  ListPatch,
-  formatListPatch
+  uiToJSON,
+  generateUITrackable,
+  restore
 } from '../common/changes'
 
-let nextProcedureListId = 0
-const newProcedureList = (): UITrackable<ProcedureListJSON> => ({
-  json: {
-    id: nextProcedureListId--,
-    name: '',
-    lines: []
-  },
-  changed: false,
-  removed: false,
-  added: true
+const newProcedureList = generateUITrackable({
+  id: undefined,
+  name: '',
+  lines: []
 })
 
 interface Props {
   lists: ProcedureListJSON[]
-  onChange?: (patch: ListPatch<ProcedureListJSON, ProcedureLineJSON>) => void
+  onChange?: (lists: ProcedureListJSON[]) => void
+}
+
+function setIndex<T>(items: T[], idx: number, item: T): T[] {
+  const newItems = [...items]
+  newItems[idx] = item
+  return newItems
+}
+
+function setJSON<T>(
+  items: UITrackable<T>[],
+  idx: number,
+  json: T
+): UITrackable<T>[] {
+  const newItems = [...items]
+  newItems[idx].json = json
+  return newItems
+}
+
+function dropIndex<T>(items: T[], idx: number): T[] {
+  return _.reject(items, (_, i) => idx === i)
 }
 
 export function ProcedureLists(props: Props) {
-  const [lists, setLists] = useState(_.map(props.lists, jsonToUI))
-  const [patches, setPatches] = useState({})
+  const [lists, setLists] = useState(jsonToUI(props.lists))
 
   useEffect(() => {
     if (_.isFunction(props.onChange)) {
-      props.onChange(formatListPatch(lists, patches))
+      props.onChange(uiToJSON(lists))
     }
-  }, [lists, patches])
+  }, [lists])
 
-  const addList = () => setLists([...lists, newProcedureList()])
+  const addSectionBtn = (
+    <p>
+      <Button
+        color="secondary"
+        size="sm"
+        onClick={() => setLists([...lists, newProcedureList.next().value])}
+      >
+        Add Instruction Section
+      </Button>
+    </p>
+  )
 
-  const removeList = id => {
-    const oldList = _.find(lists, list => list.json.id === id)
-    if (_.get(oldList, 'added', false)) {
-      setLists(_.reject(lists, list => list.json.id === id))
-    } else {
-      setLists(
-        _.map(lists, list =>
-          list.json.id === id ? { ...list, removed: true } : list
-        )
-      )
-    }
-  }
-
-  const restoreList = id => {
-    setLists(
-      _.map(lists, list => {
-        if (list.json.id !== id) {
-          return list
-        }
-        if (list.removed) {
-          return { ...list, removed: false }
-        }
-      })
+  if (lists.length === 1) {
+    return (
+      <>
+        <ProcedureList
+          procedureList={lists[0].json}
+          onChange={newList => setLists(setJSON(lists, 0, newList))}
+          minimal={true}
+        />
+        {addSectionBtn}
+      </>
     )
-    setPatches(_.omit(patches, [id]))
-  }
-
-  const handlePatch = patch => {
-    const old = _.find(lists, list => list.json.id === patch.id)
-    if (old.added) {
-      setLists(
-        _.map(lists, list =>
-          list.json.id === patch.id
-            ? {
-                json: {
-                  id: list.json.id,
-                  lines: patch.addedItems
-                },
-                added: true,
-                changed: false,
-                removed: false
-              }
-            : list
-        )
-      )
-    } else {
-      setPatches({ ...patches, [patch.id]: patch })
-    }
   }
 
   return (
     <>
-      {lists.map(list =>
+      {lists.map((list, idx) =>
         list.removed ? (
           <RemovedProcedureList
             list={list.json}
             key={list.json.id}
-            onRestore={() => restoreList(list.json.id)}
+            onRestore={() => setLists(setIndex(lists, idx, restore(list)))}
           />
         ) : (
           <ActionLine
             icon="fal fa-times"
-            onAction={() => removeList(list.json.id)}
+            onAction={() => setLists(dropIndex(lists, idx))}
             key={list.json.id}
           >
-            <ProcedureList procedureList={list.json} onPatch={handlePatch} />
+            <ProcedureList
+              procedureList={list.json}
+              onChange={newList => setLists(setJSON(lists, idx, newList))}
+            />
           </ActionLine>
         )
       )}
-      <p>
-        <Button color="secondary" size="sm" onClick={addList}>
-          Add Instruction Section
-        </Button>
-      </p>
+      {addSectionBtn}
     </>
   )
 }

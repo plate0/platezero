@@ -4,72 +4,64 @@ import { normalize } from './model-helpers'
 export interface UITrackable<T extends {}> {
   json: T
   added: boolean
-  changed: boolean
   removed: boolean
   original?: T
 }
 
-export const jsonToUI = <T extends {}>(json: T): UITrackable<T> => ({
-  json,
-  added: false,
-  changed: false,
-  removed: false,
-  original: json
-})
+export const jsonToUI = <T extends {}>(items: T[]): UITrackable<T>[] =>
+  _.map(items, json => ({
+    json,
+    added: false,
+    removed: false,
+    original: json
+  }))
 
-export const uiToJSON = <T extends {}>(ui: UITrackable<T>): T =>
-  normalize(ui.json)
-
-export interface ItemPatch<T extends {}> {
-  id: number
-  addedItems: T[]
-  changedItems: T[]
-  removedItemIds: number[]
+export function isChanged<T extends {}>(item: UITrackable<T>): boolean {
+  if (item.added) {
+    return false
+  }
+  const [a, b] = _.map([item.json, item.original], x =>
+    normalize(_.omit(x, 'id'))
+  )
+  return !_.isEqual(a, b)
 }
 
-export function formatItemPatch<T extends {}>(
-  id: number,
-  items: UITrackable<T>[]
-): ItemPatch<T> {
+export const uiToJSON = <T extends {}>(items: UITrackable<T>[]): T[] =>
+  _.map(_.reject(items, { removed: true }), item => {
+    const json = normalize(item.json)
+    const changed = isChanged(item)
+    return changed || item.added ? _.omit(json, ['id']) : json
+  })
+
+/**
+ * Restore a single UITrackable. If the item has been marked as removed, it
+ * will be marked as not removed. If the item has been changed, its `json`
+ * property will be restored to the original value of `json`
+ */
+export function restore<T extends { id?: number }>(
+  item: UITrackable<T>
+): UITrackable<T> {
+  if (item.removed) {
+    return { ...item, removed: false }
+  }
   return {
-    id,
-    addedItems: _.map(_.filter(items, { added: true }), item =>
-      _.omit(uiToJSON(item), 'id')
-    ),
-    changedItems: _.map(_.filter(items, { changed: true }), uiToJSON),
-    removedItemIds: _.map(_.filter(items, { removed: true }), 'json.id')
+    added: item.added,
+    removed: false,
+    json: item.original,
+    original: item.original
   }
 }
 
 /**
- * Given a list of UITrackable items, restore a single item. If the item has
- * been marked as removed, it will be marked as not removed. If the item has
- * been changed, its `json` property will be restored to the original value of
- * `json`
+ * Given a list of UITrackable items, restore a single specified item.
  */
 export function restoreItem<T extends { id?: number }>(
   prevs: UITrackable<T>[],
   item: UITrackable<T>
 ): UITrackable<T>[] {
-  if (item.removed) {
-    return _.map(prevs, prev =>
-      prev.json.id === item.json.id ? { ...prev, removed: false } : prev
-    )
-  }
-  if (item.changed) {
-    return _.map(prevs, prev =>
-      prev.json.id === item.json.id
-        ? {
-            changed: false,
-            added: prev.added,
-            removed: false,
-            json: prev.original,
-            original: prev.original
-          }
-        : prev
-    )
-  }
-  return prevs
+  return _.map(prevs, prev =>
+    prev.json.id === item.json.id ? restore(prev) : prev
+  )
 }
 
 /**
@@ -100,7 +92,6 @@ export function replaceItem<T extends { id?: number }>(
     prev.json.id === item.id
       ? {
           json: item,
-          changed: !prev.added,
           added: prev.added,
           removed: false,
           original: prev.original
@@ -109,27 +100,24 @@ export function replaceItem<T extends { id?: number }>(
   )
 }
 
-export interface ListPatch<L extends {}, I extends {}> {
-  addedItems: L[]
-  changedItems: ItemPatch<I>[]
-  removedIds: number[]
+function addedItem<T extends { id?: number }>(json: T): UITrackable<T> {
+  return { json, added: true, removed: false }
 }
 
-export function formatListPatch<L extends { id?: number }, I extends {}>(
-  items: UITrackable<L>[],
-  patches: { [id: number]: ItemPatch<I> }
-): ListPatch<L, I> {
-  const removedIds = _.map(
-    _.filter(items, { removed: true }),
-    item => item.json.id
+export function* generateUITrackable<T extends { id?: number }>(
+  json: T
+): IterableIterator<UITrackable<T>> {
+  let nextId = 0
+  while (true) {
+    const id = nextId--
+    yield addedItem({ ...json, id })
+  }
+}
+
+export function hasModifiedItems<T>(items: UITrackable<T>[]): boolean {
+  return _.reduce(
+    items,
+    (acc, item) => acc || isChanged(item) || item.added || item.removed,
+    false
   )
-  const changedItems = _.reject(
-    _.filter(_.values(patches), patch => _.indexOf(removedIds, patch.id) < 0),
-    patch =>
-      _.size(patch.addedItems) === 0 &&
-      _.size(patch.changedItems) === 0 &&
-      _.size(patch.removedItemIds) === 0
-  )
-  const addedItems = _.map(_.filter(items, { added: true }), uiToJSON)
-  return { addedItems, changedItems, removedIds }
 }

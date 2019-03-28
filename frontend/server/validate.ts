@@ -29,6 +29,15 @@ const ingredientLine = Joi.object({
   optional: Joi.boolean().required()
 })
 
+const ingredientList = Joi.object({
+  id: Joi.number().min(0),
+  name: Joi.string(),
+  image_url: Joi.string(),
+  lines: Joi.array()
+    .items(ingredientLine)
+    .required()
+})
+
 const procedureLine = Joi.object({
   id: Joi.number().min(0),
   text: Joi.string().required(),
@@ -37,6 +46,7 @@ const procedureLine = Joi.object({
 })
 
 const procedureList = Joi.object({
+  id: Joi.number().min(0),
   name: Joi.string(),
   lines: Joi.array()
     .required()
@@ -61,13 +71,7 @@ export const validateNewRecipe = validator({
       .required()
   }),
   ingredient_lists: Joi.array()
-    .items({
-      name: Joi.string(),
-      image_url: Joi.string(),
-      lines: Joi.array()
-        .items(ingredientLine)
-        .required()
-    })
+    .items(ingredientList)
     .required(),
   procedure_lists: Joi.array()
     .items(procedureList)
@@ -90,38 +94,8 @@ export const validateNewUser = validator({
 
 export const validateRecipeVersionPatch = validator({
   message: Joi.string().required(),
-  changedIngredientLists: Joi.array().items({
-    id: Joi.number()
-      .min(0)
-      .required(),
-    removedItemIds: Joi.array()
-      .items(Joi.number())
-      .required(),
-    changedItems: Joi.array()
-      .items(ingredientLine)
-      .required(),
-    addedItems: Joi.array()
-      .items(ingredientLine)
-      .required()
-  }),
-  procedureLists: Joi.object({
-    addedItems: Joi.array().items(procedureList),
-    changedItems: Joi.array().items({
-      id: Joi.number()
-        .min(0)
-        .required(),
-      removedItemIds: Joi.array()
-        .items(Joi.number())
-        .required(),
-      changedItems: Joi.array()
-        .items(procedureLine)
-        .required(),
-      addedItems: Joi.array()
-        .items(procedureLine)
-        .required()
-    }),
-    removedIds: Joi.array().items(Joi.number())
-  })
+  ingredientLists: Joi.array().items(ingredientList),
+  procedureLists: Joi.array().items(procedureList)
 })
 
 export const validateRecipePatch = validator({
