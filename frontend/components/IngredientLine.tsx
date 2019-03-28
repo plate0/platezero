@@ -131,21 +131,28 @@ export function IngredientLine(props: Props) {
     return (
       <ActionLine icon="fal fa-undo" onAction={onRestore}>
         <Row className="text-muted">
-          <Col xs="2" className="text-strike">
+          <Col xs="auto" md="2" className="text-strike">
             <Amount
               numerator={props.ingredient.quantity_numerator}
               denominator={props.ingredient.quantity_denominator}
             />
           </Col>
-          <Col xs="2" className="text-strike">
+          <Col xs="auto" md="2" className="text-strike">
             {props.ingredient.unit}
           </Col>
-          <Col className="text-strike">{props.ingredient.name}</Col>
-          <Col xs="3" className="text-strike">
+          <Col xs="auto" md={true} className="text-strike">
+            {props.ingredient.name}
+          </Col>
+          <Col xs="auto" md="3" className="text-strike">
             {props.ingredient.preparation}
           </Col>
-          <Col xs="auto" className="text-strike">
-            {props.ingredient.optional ? 'optional' : undefined}
+          <Col
+            xs="auto"
+            className={`text-strike ${
+              props.ingredient.optional ? '' : 'invisible'
+            }`}
+          >
+            optional
           </Col>
         </Row>
       </ActionLine>
@@ -158,7 +165,7 @@ export function IngredientLine(props: Props) {
       onAction={() => (props.changed ? onRestore() : onRemove())}
     >
       <Row>
-        <Col xs="2">
+        <Col xs="12" md="2">
           <FormGroup>
             <Input
               type="text"
@@ -173,7 +180,7 @@ export function IngredientLine(props: Props) {
             />
           </FormGroup>
         </Col>
-        <Col xs="2">
+        <Col xs="12" md="2">
           <FormGroup>
             <Select
               options={Units}
@@ -198,7 +205,7 @@ export function IngredientLine(props: Props) {
             />
           </FormGroup>
         </Col>
-        <Col>
+        <Col xs="12" md={true}>
           <FormGroup>
             <Input
               type="text"
@@ -212,7 +219,7 @@ export function IngredientLine(props: Props) {
             />
           </FormGroup>
         </Col>
-        <Col xs="3">
+        <Col xs="12" md="3">
           <FormGroup>
             <Input
               type="text"
@@ -226,7 +233,7 @@ export function IngredientLine(props: Props) {
             />
           </FormGroup>
         </Col>
-        <Col xs="auto" className="d-flex align-items-center">
+        <Col xs="12" md="auto" className="d-flex align-items-center">
           <FormGroup check className="mb-3">
             <Input
               type="checkbox"
