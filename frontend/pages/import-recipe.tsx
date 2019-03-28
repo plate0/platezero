@@ -61,7 +61,6 @@ const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
       <Col xs="10" className="d-flex align-items-end">
         <p className="m-0">{name}</p>
         {spinnerOrDone}
-        {errors}
       </Col>
       <Col xs="2" className="align-items-center justify-content-end d-flex">
         {upload.recipe && upload.recipe.html_url && (
@@ -70,6 +69,7 @@ const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
           </Link>
         )}
       </Col>
+      {errors}
       {upload.success && file}
     </Row>
   )
