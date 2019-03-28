@@ -124,12 +124,16 @@ export default class EditRecipe extends React.Component<Props, State> {
         <Head>
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
-        <div className="d-flex justify-content-between align-items-center my-5">
-          <h1>Editing {v.recipe.title}</h1>
-          <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
-            <a className="btn btn-outline-primary">Back to Recipe</a>
-          </Link>
-        </div>
+        <Row className="mt-3">
+          <Col>
+            <h1>Editing {v.recipe.title}</h1>
+          </Col>
+          <Col xs="auto">
+            <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
+              <a className="btn btn-outline-primary">Back to Recipe</a>
+            </Link>
+          </Col>
+        </Row>
         {_.map(this.state.errors, (err, key) => (
           <Alert key={key} color="danger">
             {err}
@@ -156,7 +160,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             })
           }
         />
-        <Card className="mt-3">
+        <Card className="my-3">
           <CardHeader>
             <strong>Save New Version</strong>
           </CardHeader>
