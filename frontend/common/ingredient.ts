@@ -1,6 +1,7 @@
 import { IngredientLineJSON } from '../models'
 import { fraction } from './fraction'
 import { unitfy } from './unit'
+import { trim } from 'lodash'
 
 // get the number
 // get the unit, if known
@@ -11,10 +12,16 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
   if (!s) {
     return undefined
   }
-  const numMatch = /(^[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒\d\/\d\s.]*)/gm.exec(s)
-  const num = fraction(numMatch && numMatch[1] ? numMatch[1].trim() : '1')
-  if (numMatch) {
-    s = s.substring(numMatch[1].length)
+  const numMatch = /(^[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒\d\/\d\s.]*)/gim.exec(s)
+  // See parse 8 test
+  const numMatchDash = /(^[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒\d\/\d\s.]*-[a-z])/gim.exec(s)
+  let amount = numMatch && numMatch[1] ? numMatch[1].trim() : undefined
+  if (amount && numMatchDash && numMatchDash[1]) {
+    amount = trim(numMatchDash[1].replace(/(\d+-[a-z]$)/, ''))
+  }
+  const num = amount ? fraction(amount) : undefined
+  if (amount) {
+    s = trim(s.substring(amount.length))
   }
   const [maybeUnit, ...rest] = s.split(/\s/)
   const unit = unitfy(maybeUnit)
@@ -27,8 +34,8 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
   const preparation = restPrep.join(',').trim()
   return {
     name: name.trim(),
-    quantity_numerator: num.n,
-    quantity_denominator: num.d,
+    quantity_numerator: num ? num.n : undefined,
+    quantity_denominator: num ? num.d : undefined,
     preparation: preparation ? preparation.trim() : undefined,
     optional: optional,
     unit

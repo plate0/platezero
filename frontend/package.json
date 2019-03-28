@@ -5,10 +5,14 @@
     "build": "next build && tsc --project tsconfig.server.json && cp -R static dist",
     "prestart": "npm run build",
     "start": "node dist/server/index.js",
-    "test": "jest"
+    "test": "jest",
+    "ocr-compile": "tsc --outDir ./ocr/dist --project tsconfig.server.json",
+    "ocr": "node ocr/dist/ocr/ocr.js",
+    "transcribe": "node ocr/dist/ocr/transcribe.js"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "7.4.0",
+    "@google-cloud/vision": "0.25.0",
     "@types/cheerio": "0.22.11",
     "@types/express": "4.16.1",
     "@types/isomorphic-fetch": "0.0.35",
@@ -37,6 +41,7 @@
     "joi": "14.3.1",
     "js-cookie": "2.2.0",
     "lodash": "4.17.11",
+    "marked": "0.6.1",
     "multer": "1.4.1",
     "multer-s3": "2.9.0",
     "next": "8.0.3",
@@ -59,6 +64,7 @@
     "turndown": "5.0.3",
     "typescript": "3.3.4000",
     "url-parse": "1.4.4",
-    "uuid": "3.3.2"
+    "uuid": "3.3.2",
+    "yargs": "13.2.2"
   }
 }

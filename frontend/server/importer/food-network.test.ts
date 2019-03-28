@@ -124,8 +124,8 @@ describe('Food Network importer', () => {
           },
           {
             name: 'One 19-ounce can chickpeas',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: 'drained',
             optional: false,
             unit: undefined
@@ -140,32 +140,32 @@ describe('Food Network importer', () => {
           },
           {
             name: 'Kosher salt and freshly cracked black pepper',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
           },
           {
             name: 'Kosher salt and freshly cracked black pepper',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
           },
           {
             name: 'Fresh cilantro sprigs',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: 'for garnish',
             optional: false,
             unit: undefined
           },
           {
             name: 'Juice of 1/2 lime',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
