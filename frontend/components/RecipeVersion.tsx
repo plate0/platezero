@@ -57,24 +57,29 @@ const RecipeHeader = ({
 
 const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
   <div className="mb-3">
-    {list.name && <div className="lead">{list.name}</div>}
+    {list.name && <h3>{list.name}</h3>}
     {list.lines.map((l, key) => (
-      <div key={key}>
-        {l.image_url && <img className="w-100" src={l.image_url} />}
+      <div key={key} className="mb-3">
         {l.title && (
           <div>
-            <h3
-              style={{ fontSize: 16 }}
-              className="border-bottom font-weight-bold py-2"
-            >
+            <h4 className="border-bottom pb-2">
               <Badge color="primary" pill className="mr-2">
                 {key + 1}
               </Badge>
               {l.title}
-            </h3>
+            </h4>
           </div>
         )}
-        <ReactMarkdown source={l.text} />
+        <Row>
+          {l.image_url && (
+            <Col xs="12" lg="4">
+              <img className="w-100" src={l.image_url} />
+            </Col>
+          )}
+          <Col>
+            <ReactMarkdown source={l.text} />
+          </Col>
+        </Row>
       </div>
     ))}
   </div>
@@ -94,7 +99,7 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => (
 
 const IngredientList = ({ list }: { list: IngredientListJSON }) => (
   <>
-    {list.name && <div className="lead">{list.name}</div>}
+    {list.name && <h3>{list.name}</h3>}
     <ul className="list-unstyled">
       {list.lines.map((line, key) => (
         <IngredientListLine key={key} line={line} />
