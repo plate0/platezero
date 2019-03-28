@@ -25,13 +25,17 @@ s3cmd ls s3://com-platezero-recipes/USER_ID/
 
 2. Download one of the files.
 ```
-s3cmd get 's3://com-platezero-recipes/5/Tortilla Soup.pdf' [local_name.pdf]
+s3cmd get 's3://com-platezero-recipes/5/Tortilla Soup.pdf' [recipe.pdf]
 ```
 
 3. Open the file and take a look. Make sure it's a recipe.
+3.5 If it's a pdf, you need to conver tit.
+```
+convert -density 600 recipe.pdf recipe.jpg
+```
 4. Run OCR
 ```
-yarn ocr FILE_NAME.pdf|jpg
+yarn ocr FILE_NAME.jpg
 ```
 5. This outputs the text in `recipe.txt`
 6. Copy the recipe template and write it up.
@@ -52,15 +56,10 @@ You can use `--dev` to test on dev first.
 
 9. Delete the file from s3
 ```
-s3cmd rm 's3://com-platezero-recipes/USER_ID/name'
+s3cmd mv 's3://com-platezero-recipes/USER_ID/name' "s3://com-platezero-recipe-archive/$(uuid)"
 ```
 
-10. Cleanup
-```
-make clean
-```
-
-11. Send the user an email
+10. Send the user an email
 ```
 Hi ${NAME_OR_USERNAME},
 
@@ -69,4 +68,10 @@ Thanks for using the PlateZero importer! We've finished importing the recipe ${R
 If you have any questions or thoughts, please let us know by replying to this email!
 
 Thank you
+```
+
+
+11. Cleanup
+```
+make clean
 ```

@@ -7,7 +7,6 @@ const ocr = async (file: string): Promise<string> => {
     keyFilename: 'ocr/credentials.json'
   })
   const [result] = await client.documentTextDetection(file)
-  console.log(result)
   const { text } = result.fullTextAnnotation
   return text
 }
@@ -21,7 +20,6 @@ const main = async () => {
   try {
     const text = await ocr(`ocr/${file}`)
     writeFileSync('ocr/recipe.txt', text)
-    console.log(text)
   } catch (err) {
     console.log(err)
   }
