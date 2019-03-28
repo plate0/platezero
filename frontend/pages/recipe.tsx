@@ -22,6 +22,7 @@ import {
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
+import { getName } from '../common/model-helpers'
 import {
   PlateZeroApiError,
   getRecipe,
@@ -31,6 +32,7 @@ import {
 } from '../common/http'
 import { UserContext } from '../context/UserContext'
 import { TokenContext } from '../context/TokenContext'
+import { Link } from '../routes'
 
 interface Props {
   recipe: RecipeJSON
@@ -74,12 +76,19 @@ export default class Recipe extends React.Component<Props, State> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <div className="my-3">
-          <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="mt-3">
+          <div className="d-flex justify-content-between align-items-center">
             <div>
               <h1>{recipe.title}</h1>
-              {recipe.subtitle && <div className="lead">{recipe.subtitle}</div>}
-              <div>By {recipe.owner.username}</div>
+              {recipe.subtitle && (
+                <p className="lead">{recipe.subtitle}</p>
+              )}
+              <p className="text-muted">
+                By{' '}
+                <Link route={`/${recipe.owner.username}`}>
+                  <a>{getName(recipe.owner)}</a>
+                </Link>
+              </p>
             </div>
             <IfLoggedIn username={recipe.owner.username}>
               <ActionMenu recipe={recipe} />
