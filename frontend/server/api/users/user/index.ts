@@ -27,7 +27,6 @@ r.get('/', async (req: UserRequest, res) => {
     }
     return res.json(json)
   } catch (err) {
-    console.log(err)
     return internalServerError(res, err)
   }
 })
