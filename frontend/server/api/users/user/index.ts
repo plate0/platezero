@@ -14,11 +14,21 @@ export interface UserRequest extends Request {
 }
 
 r.get('/', async (req: UserRequest, res) => {
-  return res.json(
-    await req.user.reload({
-      include: [{ model: Recipe, limit: 20 }]
+  try {
+    const recipes = await Recipe.findAll({
+      where: { user_id: req.user.id },
+      order: [['updated_at', 'DESC']],
+      limit: 20
     })
-  )
+    const user = await req.user.reload()
+    const json = {
+      ...user.toJSON(),
+      recipes
+    }
+    return res.json(json)
+  } catch (err) {
+    return internalServerError(res, err)
+  }
 })
 
 r.get('/recipes', async (req: UserRequest, res) => {
