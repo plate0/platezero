@@ -1,0 +1,20 @@
+.plain-input {
+  border-color: transparent;
+
+  &:hover {
+    border-color: $input-border-color;
+  }
+
+  &:focus {
+    border-color: $input-border-color;
+  }
+}
+
+.plain-input::placeholder {
+  opacity: 0;
+}
+
+.plain-input:focus::placeholder,
+.plain-input:hover::placeholder {
+  opacity: 1;
+}

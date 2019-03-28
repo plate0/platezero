@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Fraction from 'fraction.js'
 import { Col, FormGroup, Input, Label, Row } from 'reactstrap'
-import Select from 'react-select'
 import * as _ from 'lodash'
 
+import { PlainInput, PlainSelect } from './PlainInput'
 import { Units } from '../common'
 import { Amount } from './Amount'
 import { ActionLine } from './ActionLine'
@@ -22,10 +22,6 @@ function ingredientAmountString(line: IngredientLineJSON): string {
   } catch {
     return ''
   }
-}
-
-function isAmountValid(f: FractionAmount): boolean {
-  return !_.isNil(f) && !_.isNil(f.n) && !_.isNil(f.d)
 }
 
 interface FractionAmount {
@@ -70,12 +66,6 @@ export function IngredientLine(props: Props) {
   const onChange = _.isFunction(props.onChange) ? props.onChange : _.noop
 
   const bgClass = props.changed ? 'bg-changed' : props.added ? 'bg-added' : ''
-
-  const bgColor = props.changed
-    ? '#fff2cc'
-    : props.added
-    ? '#d6f5dd'
-    : undefined
 
   const setName = (name: string) => {
     onChange({ ...props.ingredient, name })
@@ -167,11 +157,10 @@ export function IngredientLine(props: Props) {
       <Row>
         <Col xs="12" md="2">
           <FormGroup>
-            <Input
+            <PlainInput
               type="text"
               placeholder="2/3…"
               value={amount}
-              valid={isAmountValid(frac)}
               className={bgClass}
               onChange={e => {
                 const amount = e.currentTarget.value
@@ -182,32 +171,18 @@ export function IngredientLine(props: Props) {
         </Col>
         <Col xs="12" md="2">
           <FormGroup>
-            <Select
+            <PlainSelect
               options={Units}
               placeholder="cup, gram…"
               value={unit}
               onChange={(e: any) => setUnit(e.value)}
               className={bgClass}
-              styles={{
-                control: (base, state) => ({
-                  ...base,
-                  color: '#495057',
-                  borderColor: state.isFocused ? '#7adaef' : '#ced4da',
-                  boxShadow: state.isFocused
-                    ? '0 0 0 0.2rem rgba(25, 175, 208, 0.25)'
-                    : 'none',
-                  backgroundColor: bgColor,
-                  '&:hover': {
-                    borderColor: state.isFocused ? '#7adaef' : '#ced4da'
-                  }
-                })
-              }}
             />
           </FormGroup>
         </Col>
         <Col xs="12" md={true}>
           <FormGroup>
-            <Input
+            <PlainInput
               type="text"
               placeholder="onion, head of lettuce, ground black pepper…"
               value={props.ingredient.name || ''}
@@ -221,7 +196,7 @@ export function IngredientLine(props: Props) {
         </Col>
         <Col xs="12" md="3">
           <FormGroup>
-            <Input
+            <PlainInput
               type="text"
               placeholder="finely diced, cleaned, peeled…"
               value={props.ingredient.preparation || ''}

@@ -1,8 +1,9 @@
 import React from 'react'
-import { Card, CardBody, Button, Col, Input, Row } from 'reactstrap'
+import { Card, CardBody, Button, Col, Row } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { ProcedureListJSON, ProcedureLineJSON } from '../models'
+import { PlainInput } from './PlainInput'
 import { ActionLine } from './ActionLine'
 import {
   UITrackable,
@@ -117,7 +118,7 @@ export class ProcedureList extends React.Component<Props, State> {
                 }
                 key={key}
               >
-                <Input
+                <PlainInput
                   type="textarea"
                   placeholder="Step by step instructions..."
                   className={`mb-3 ${line.changed ? 'bg-changed' : ''} ${
