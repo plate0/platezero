@@ -10,7 +10,7 @@ export interface LayoutProps {
 }
 
 export const Layout = (props: LayoutProps) => (
-  <div>
+  <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
     <Navbar />
     <Container
       fluid={props.fluid}
