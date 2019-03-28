@@ -1,7 +1,6 @@
-<meta itemprop="cookTime">COOK_TIME</meta>
-<meta itemprop="recipeYield">RECIPE_YIELD</meta>
-<meta itemprop="preheat">NAME TEMPERATURE UNIT</meta>
-<meta itemprop="preheat">Oven 450 F</meta>
+<meta itemprop="cookTime" content="COOK_TIME"></meta>
+<meta itemprop="recipeYield" content="RECIPE_YIELD"></meta>
+<meta itemprop="preheat" content="NAME TEMPERATURE UNIT"></meta>
 
 # RECIPE_TITLE
 ## RECIPE_SUBTITLE

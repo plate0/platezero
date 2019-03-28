@@ -21,10 +21,10 @@ const preheats = ($: any) => {
     .get()
 }
 
-const yld = ($: any) => $('meta[itemprop="recipeYield"]').text()
+const yld = ($: any) => $('meta[itemprop="recipeYield"]').attr('content')
 
 const duration = ($: any) =>
-  moment.duration($('meta[itemprop="cookTime"]').text()).asSeconds()
+  moment.duration($('meta[itemprop="cookTime"]').attr('content')).asSeconds()
 
 const ingredient_lists = html.ingredient_lists('ul li')
 const procedure_lists = html.procedure_lists('ol li')

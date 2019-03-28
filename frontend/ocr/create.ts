@@ -5,9 +5,9 @@ import fetch from 'node-fetch'
 const { argv } = require('yargs')
   .alias('u', 'id')
   .alias('U', 'username')
-  .default('file', 'recipe.json')
+  .default('file', 'ocr/recipe.json')
   .boolean('dev')
-  .demandOption(['u, U'])
+  .demandOption(['u', 'U'])
 
 const config = argv.dev
   ? {

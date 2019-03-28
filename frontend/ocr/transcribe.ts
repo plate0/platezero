@@ -20,7 +20,7 @@ const parse = (html: string) => importer(html)
 const main = () => {
   const { i, o } = argv
   const data = readFileSync(i, { encoding: 'utf8' })
-  console.log(data)
+  console.log('html', markdown(data))
   const transformed = parse(markdown(data))
   writeFileSync(o, JSON.stringify(transformed, null, 2))
 }
