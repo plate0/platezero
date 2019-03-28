@@ -35,13 +35,15 @@ convert -density 600 recipe.pdf recipe.jpg
 ```
 4. Run OCR
 ```
-yarn ocr FILE_NAME.jpg
+yarn ocr recipe.jpg
 ```
 5. This outputs the text in `recipe.txt`
 6. Copy the recipe template and write it up.
 ```
 cp recipe.md.template recipe.md
 ```
+Okay, now you need to fill in the template.
+
 7. Run the parser to get it into the JSON
 ```
 yarn transcribe
@@ -54,7 +56,7 @@ yarn post --id $USER_ID --username $USERNAME [--dev]
 ```
 You can use `--dev` to test on dev first.
 
-9. Delete the file from s3
+9. Archive the file from s3
 ```
 s3cmd mv 's3://com-platezero-recipes/USER_ID/name' "s3://com-platezero-recipe-archive/$(uuid)"
 ```

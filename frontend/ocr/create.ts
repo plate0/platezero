@@ -65,7 +65,21 @@ const main = async () => {
   console.log(recipe)
 
   const res = await create(recipe, { token })
-  console.log(await res.text())
+  const json = await res.json()
+
+  console.log(json.owner.email)
+  console.log(`PlateZero Import Success`)
+  console.log(`
+Hi ${json.owner.username},
+
+Thanks for using the PlateZero importer! We've finished importing the recipe ${
+    json.title
+  } for you. You can find it here: ${json.html_url}
+
+If you have any questions or thoughts, please let us know by replying to this email!
+
+Thank you
+`)
 }
 
 main()
