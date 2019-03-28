@@ -222,23 +222,26 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
         >
           Actions
         </DropdownToggle>
-        <DropdownMenu>
+        <DropdownMenu right>
           <DropdownItem onClick={() => setRenameModalOpen(true)}>
-            Rename&hellip;
+            Edit Title and Description
           </DropdownItem>
           <DropdownItem
             href={`/${recipe.owner.username}/${
               recipe.slug
             }/branches/master/edit`}
           >
-            Edit
+            Update Recipe
           </DropdownItem>
-          <DropdownItem onClick={() => setDeleteModalOpen(true)}>
-            Delete&hellip;
+          <DropdownItem
+            onClick={() => setDeleteModalOpen(true)}
+            className="text-danger"
+          >
+            Delete Recipe&hellip;
           </DropdownItem>
           {recipe.source_url && (
             <DropdownItem href={recipe.source_url} target="_blank">
-              View Original
+              Visit Source Website
             </DropdownItem>
           )}
         </DropdownMenu>
