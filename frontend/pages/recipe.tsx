@@ -211,11 +211,15 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
   const [isOpen, setOpen] = useState(false)
   const [isRenameModalOpen, setRenameModalOpen] = useState(false)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
-  const toggle = () => setOpen(!isOpen)
   return (
     <>
-      <ButtonDropdown isOpen={isOpen} toggle={toggle}>
-        <DropdownToggle caret outline color="primary">
+      <ButtonDropdown isOpen={isOpen} toggle={() => setOpen(!isOpen)}>
+        <DropdownToggle
+          caret
+          outline
+          color="primary"
+          onClick={() => setOpen(true)}
+        >
           Actions
         </DropdownToggle>
         <DropdownMenu>

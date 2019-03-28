@@ -93,7 +93,7 @@ export default class NewRecipe extends React.Component<Props, State> {
         <Head>
           <title>Create New Recipe on PlateZero</title>
         </Head>
-        <Form onSubmit={this.create} className="mt-3">
+        <Form onSubmit={this.create} className="mt-3 pb-5">
           {this.state.errors.map((err, key) => (
             <Alert key={key} color="danger">
               {err}

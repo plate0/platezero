@@ -145,7 +145,7 @@ export class User extends Model<User> implements UserJSON {
       jwt.sign(
         { userId: this.id, username: this.username },
         cfg.jwtSecret,
-        { expiresIn: '24h' },
+        { expiresIn: '7d' },
         (err, token) => {
           if (err) {
             return reject(err)

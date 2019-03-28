@@ -31,7 +31,7 @@ export default class User extends React.Component<UserProps> {
           </title>
         </Head>
         <ProfileHeader user={user} />
-        <RecipeList recipes={recipes} user={user} />
+        <RecipeList recipes={recipes} user={user} className="pb-5" />
       </Layout>
     )
   }
