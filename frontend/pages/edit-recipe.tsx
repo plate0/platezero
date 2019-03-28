@@ -29,6 +29,7 @@ import {
 } from '../models'
 import { RecipeVersionPatch } from '../common/request-models'
 import { ItemPatch } from '../common/changes'
+import { Link } from '../routes'
 
 interface Props {
   token: string
@@ -123,7 +124,12 @@ export default class EditRecipe extends React.Component<Props, State> {
         <Head>
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
-        <h1>Editing {v.recipe.title}</h1>
+        <div className="d-flex justify-content-between align-items-center my-5">
+          <h1>Editing {v.recipe.title}</h1>
+          <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
+            <a className="btn btn-outline-primary">Back to Recipe</a>
+          </Link>
+        </div>
         {_.map(this.state.errors, (err, key) => (
           <Alert key={key} color="danger">
             {err}
