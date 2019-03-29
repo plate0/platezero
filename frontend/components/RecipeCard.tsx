@@ -9,32 +9,28 @@ export interface RecipeCardProps {
 }
 
 export const RecipeCard = (props: RecipeCardProps) => (
-  <Link route={`/${props.username}/${props.slug}`}>
-    <a>
-      <div>
-        {props.image_url && (
-          <img
-            className="rounded shadow-sm"
-            width="100%"
-            src={props.image_url}
-            alt="Card image cap"
-            style={{ height: 180, objectFit: 'cover' }}
-          />
-        )}
-        <div className="pt-1">
-          <div className="m-0">
-            <strong>{props.title}</strong>
-          </div>
-        </div>
+  <div>
+    <div
+      className="rounded shadow-sm"
+      style={{
+        height: 180,
+        width: '100%',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundColor: props.image_url ? 'transparent' : 'var(--primary)',
+        backgroundImage: `url(${props.image_url ||
+          '/static/recipe-placeholder-md.jpg'})`,
+        backgroundBlendMode: 'luminosity'
+      }}
+    />
+    <div className="pt-1">
+      <div className="m-0">
+        <Link route={`/${props.username}/${props.slug}`}>
+          <a className="text-dark stretched-link font-weight-bold">
+            {props.title}
+          </a>
+        </Link>
       </div>
-      <style jsx>{`
-        a:hover {
-          text-decoration: none;
-        }
-        strong {
-          color: rgb(62, 62, 62);
-        }
-      `}</style>
-    </a>
-  </Link>
+    </div>
+  </div>
 )
