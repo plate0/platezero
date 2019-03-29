@@ -57,15 +57,15 @@ const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
     </Alert>
   )
   return (
-    <Row>
-      <Col xs="10" className="d-flex align-items-end">
-        <p className="m-0">{name}</p>
-        {spinnerOrDone}
+    <Row className="align-items-center">
+      <Col xs={true} className="text-truncate text-monospace small text-muted">
+        {name}
       </Col>
-      <Col xs="2" className="align-items-center justify-content-end d-flex">
+      <Col xs="auto">{spinnerOrDone}</Col>
+      <Col xs="12" md="2">
         {upload.recipe && upload.recipe.html_url && (
           <Link route={upload.recipe.html_url}>
-            <a className="btn btn-success">View</a>
+            <a className="btn btn-success btn-block">View</a>
           </Link>
         )}
       </Col>
@@ -223,22 +223,40 @@ export default class ImportRecipe extends React.Component<
             </Col>
           </Row>
           <p className="my-2">Or a URL to a recipe</p>
-          <InputGroup>
-            <Input
-              placeholder="Recipe URL to import..."
-              type="text"
-              name="url"
-              id="url"
-              required
-              value={this.state.url}
-              onChange={e => this.setState({ url: e.target.value })}
-            />
-            <InputGroupAddon addonType="append">
-              <Button color="primary" type="submit">
-                Import recipe
-              </Button>
-            </InputGroupAddon>
-          </InputGroup>
+          <div className="d-none d-md-block">
+            <InputGroup>
+              <Input
+                placeholder="Recipe URL to import..."
+                type="text"
+                name="url"
+                id="url"
+                required
+                value={this.state.url}
+                onChange={e => this.setState({ url: e.target.value })}
+              />
+              <InputGroupAddon addonType="append">
+                <Button color="primary" type="submit">
+                  Import recipe
+                </Button>
+              </InputGroupAddon>
+            </InputGroup>
+          </div>
+          <div className="d-md-none">
+            <p>
+              <Input
+                placeholder="Recipe URL to import..."
+                type="text"
+                name="url"
+                id="url"
+                required
+                value={this.state.url}
+                onChange={e => this.setState({ url: e.target.value })}
+              />
+            </p>
+            <Button color="primary" block type="submit">
+              Import recipe
+            </Button>
+          </div>
         </Form>
         {uploads.length > 0 && <ImportsStatus uploads={uploads} />}
         <div className="mb-5" />
