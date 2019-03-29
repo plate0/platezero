@@ -1,11 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Col, Row } from 'reactstrap'
+import * as _ from 'lodash'
+
 import { UserJSON, RecipeJSON } from '../models'
 import { RecipeCard } from './RecipeCard'
 import { Link } from '../routes'
 import { getName } from '../common/model-helpers'
 import { IfLoggedIn } from './IfLoggedIn'
-import { UserContext } from '../context/UserContext'
 
 export interface RecipesProps {
   user: UserJSON
@@ -22,36 +23,28 @@ export const RecipeList = ({
 }: RecipesProps) => {
   const me = <h2 className="m-0">Your Recipes</h2>
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
-  const loggedInUser = useContext(UserContext)
   return (
     <section className={className ? className : ''}>
       <Row className="align-items-center border-bottom pb-1">
-        <Col xs={5 + (loggedInUser ? 0 : 3) + (seeAll ? 0 : 1)}>
+        <Col>
           <IfLoggedIn username={user.username} else={not}>
             {me}
           </IfLoggedIn>
         </Col>
         <IfLoggedIn username={user.username}>
-          <Col xs="3" className="d-flex justify-content-around">
+          <Col xs="auto">
             <Link route="new-recipe">
-              <a role="button" className="btn btn-primary">
+              <a role="button" className="btn btn-link">
                 Add Recipe
               </a>
-            </Link>
+            </Link>{' '}
             <Link route="import-recipe">
-              <a role="button" className="btn btn-primary">
+              <a role="button" className="btn btn-link">
                 Import Recipe
               </a>
             </Link>
           </Col>
         </IfLoggedIn>
-        {seeAll && (
-          <Col xs="3" className="text-right">
-            <Link to={`/${user.username}/recipes`}>
-              <a>See All</a>
-            </Link>
-          </Col>
-        )}
       </Row>
       <Row>
         {!recipes.length && (
@@ -59,28 +52,12 @@ export const RecipeList = ({
             <RecipeListBlankslate username={user.username} />
           </Col>
         )}
-        {recipes.map(r => (
-          <Col xs="12" md="4" xl="3" key={r.slug} className="mt-3">
-            <RecipeCard
-              title={r.title}
-              slug={r.slug!}
-              image_url={r.image_url}
-              username={user.username}
-            />
-          </Col>
-        ))}
+        {seeAll ? (
+          <PreviewRecipeList recipes={recipes} user={user} />
+        ) : (
+          <FullRecipeList recipes={recipes} user={user} />
+        )}
       </Row>
-      {recipes.length > 0 && seeAll && (
-        <Row className="mt-3 d-block d-md-none">
-          <Col className="d-flex justify-content-center">
-            <Link to={`/${user.username}/recipes`}>
-              <a className="btn btn-link" role="button">
-                See All
-              </a>
-            </Link>
-          </Col>
-        </Row>
-      )}
     </section>
   )
 }
@@ -95,3 +72,106 @@ export const RecipeListBlankslate = (props: { username: string }) => (
     </IfLoggedIn>
   </div>
 )
+
+const RecipeCol = ({
+  className,
+  children
+}: {
+  className?: string
+  children: any
+}) => (
+  <Col xs="12" md="4" xl="3" className={`mt-3 ${className || ''}`}>
+    {children}
+  </Col>
+)
+
+const SeeMore = ({ username }: { username: string }) => (
+  <div
+    style={{
+      backgroundColor: 'var(--light)',
+      height: 180,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}
+  >
+    <Link to={`/${username}/recipes`}>
+      <a className="text-secondary">See more&hellip;</a>
+    </Link>
+  </div>
+)
+
+const PreviewRecipeList = ({
+  recipes,
+  user
+}: {
+  recipes: RecipeJSON[]
+  user: UserJSON
+}) => {
+  const smalls = mapToPreviewRow(recipes, 3, 'd-xl-none', user.username)
+  const larges = mapToPreviewRow(recipes, 4, 'd-none d-xl-block', user.username)
+  return (
+    <>
+      {smalls}
+      {larges}
+    </>
+  )
+}
+
+const mapToPreviewRow = (
+  recipes: RecipeJSON[],
+  max: number,
+  className: string,
+  username: string
+) => {
+  return _.reject(
+    _.map(recipes, (r, idx) => {
+      const cardCol = (
+        <RecipeCol className={className} key={idx}>
+          <RecipeCard
+            title={r.title}
+            slug={r.slug!}
+            image_url={r.image_url}
+            username={username}
+          />
+        </RecipeCol>
+      )
+      if (idx < max - 1) {
+        return cardCol
+      }
+      if (idx === max - 1) {
+        return _.size(recipes) > max ? (
+          <RecipeCol className={className} key={idx}>
+            <SeeMore username={username} />
+          </RecipeCol>
+        ) : (
+          cardCol
+        )
+      }
+    }),
+    _.isUndefined
+  )
+}
+
+export const FullRecipeList = ({
+  user,
+  recipes
+}: {
+  user: UserJSON
+  recipes: RecipeJSON[]
+}) => {
+  return (
+    <>
+      {recipes.map(r => (
+        <RecipeCol key={r.slug}>
+          <RecipeCard
+            title={r.title}
+            slug={r.slug!}
+            image_url={r.image_url}
+            username={user.username}
+          />
+        </RecipeCol>
+      ))}
+    </>
+  )
+}
