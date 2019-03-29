@@ -10,6 +10,17 @@ import { IngredientListJSON } from '../models/ingredient_list'
 import { ProcedureListJSON } from '../models/procedure_list'
 import { get } from 'lodash'
 
+const formatDuration = (seconds: number) => {
+  const dur = moment.duration(seconds, 'seconds')
+  const [h, m] = [dur.hours(), dur.minutes()]
+  const hs = `${h}h`
+  const ms = `${m}m`
+  if (h > 0) {
+    return m !== 0 ? `${hs} ${ms}` : hs
+  }
+  return ms
+}
+
 const getStats = (v: RecipeVersionJSON) => {
   const stats = []
   const duration = get(v.recipeDuration, 'duration_seconds')
@@ -17,7 +28,7 @@ const getStats = (v: RecipeVersionJSON) => {
     stats.push({
       name: 'Time',
       icon: 'clock',
-      value: `${moment.duration(duration, 'seconds').asMinutes()} min`
+      value: formatDuration(duration)
     })
   }
   const y = get(v.recipeYield, 'text')
