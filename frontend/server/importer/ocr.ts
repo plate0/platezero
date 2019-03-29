@@ -10,11 +10,11 @@ const preheats = ($: any) => {
   return $('meta[itemprop="preheat"]')
     .map(function() {
       const [name, temperature, unit] = $(this)
-        .text()
+        .attr('content')
         .split(' ')
       return {
         name,
-        temperature,
+        temperature: parseInt(temperature),
         unit
       }
     })
