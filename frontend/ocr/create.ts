@@ -1,6 +1,8 @@
 import { readFileSync } from 'fs'
 import * as jwt from 'jsonwebtoken'
 import fetch from 'node-fetch'
+import { SES } from 'aws-sdk'
+require('aws-sdk').config.update({ region: 'us-east-1' })
 
 const { argv } = require('yargs')
   .alias('u', 'id')
@@ -52,6 +54,35 @@ const create = (recipe, { token }) => {
   })
 }
 
+const email = ({ to, name, title, url }) => {
+  const params = {
+    Destination: {
+      ToAddresses: [to]
+    },
+    Message: {
+      Body: {
+        Text: {
+          Charset: 'UTF-8',
+          Data: `Hi ${name},
+
+Thanks for using the PlateZero importer! We've finished importing the recipe ${title} for you. You can find it here: ${url}
+
+If you have any questions or thoughts, please let us know by replying to this email!
+
+Thank you`
+        }
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: 'PlateZero Importer Success'
+      }
+    },
+    Source: 'importer@platezero.com',
+    ReplyToAddresses: ['importer@platezero.com']
+  }
+  return new SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise()
+}
+
 const main = async () => {
   const { id, username, file } = argv
   console.log('id', id)
@@ -67,19 +98,12 @@ const main = async () => {
   const res = await create(recipe, { token })
   const json = await res.json()
 
-  console.log(json.owner.email)
-  console.log(`PlateZero Import Success`)
-  console.log(`
-Hi ${json.owner.username},
-
-Thanks for using the PlateZero importer! We've finished importing the recipe ${
-    json.title
-  } for you. You can find it here: ${json.html_url}
-
-If you have any questions or thoughts, please let us know by replying to this email!
-
-Thank you
-`)
+  await email({
+    to: json.owner.email,
+    name: json.owner.name || json.owner.username,
+    title: json.title,
+    url: json.html_url
+  })
 }
 
 main()
