@@ -104,6 +104,7 @@ const main = async () => {
     title: json.title,
     url: json.html_url
   })
+  console.log('Sent email')
 }
 
 main()
