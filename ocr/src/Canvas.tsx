@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { writeFileSync } from 'fs'
 
 // https://codepen.io/techslides/pen/zowLd
 export class Canvas extends React.Component<undefined, undefined> {
@@ -67,7 +68,8 @@ export class Canvas extends React.Component<undefined, undefined> {
         lastY = evt.offsetY || evt.pageY - canvas.offsetTop
 
         if (evt.ctrlKey) {
-          const { x, y } = ctx.transformedPoint(lastX, lastY)
+          let x = evt.pageX - canvas.offsetLeft
+          let y = evt.pageY - canvas.offsetTop
           self.setState(s => ({
             ...s,
             rect: {
@@ -126,6 +128,29 @@ export class Canvas extends React.Component<undefined, undefined> {
     // Load image
     // TODO: Get from state
     image.src = 'recipe.jpg'
+
+    window.addEventListener('keydown', e => {
+      if (e.keyCode == 32) {
+        console.log('gogo time')
+        const { rect } = this.state
+        let { x, y } = ctx.transformedPoint(rect.x, rect.y)
+        let pos = ctx.transformedPoint(rect.width, rect.height)
+        let width = pos.x - x
+        let height = pos.y - y
+        let testW = rect.width - rect.x
+        let testH = rect.height - rect.y
+        console.log('Cropping from...', x, y, width, height)
+        var newCanvas = document.createElement('canvas')
+        newCanvas.width = width
+        newCanvas.height = height
+        console.log('test', x, y, width, height)
+        var newContext = newCanvas.getContext('2d')
+        newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
+        let data = newCanvas.toDataURL('image/jpeg')
+        data = data.replace(/^data:image\/jpeg;base64,/, '')
+        writeFileSync('test-data.jpg', data, 'base64')
+      }
+    })
   }
 
   private trackTransforms(ctx: CanvasRenderingContext2D) {
@@ -209,15 +234,19 @@ export class Canvas extends React.Component<undefined, undefined> {
     ctx.restore()
     ctx.drawImage(image, 0, 0)
 
-    if (rect.x) {
+    if (rect.x && rect.width) {
       ctx.beginPath()
       let { x, y } = ctx.transformedPoint(rect.x, rect.y)
+      let pos = ctx.transformedPoint(rect.width, rect.height)
+      let width = pos.x - x
+      let height = pos.y - y
       // let imatrix = ctx.getTransform()
       // var x = rect.x * imatrix.a + rect.y * imatrix.c + imatrix.e
       // var y = rect.x * imatrix.b + rect.y * imatrix.d + imatrix.f
       //  let { x, y } = invMat.applyToPoint(rect.x, rect.y)
-      ctx.arc(x, y, 10, 0, Math.PI * 2)
-      ctx.fill()
+      // ctx.arc(x, y, 10, 0, Math.PI * 2)
+      ctx.strokeRect(x, y, width, height)
+      ctx.stroke()
     }
   }
 
