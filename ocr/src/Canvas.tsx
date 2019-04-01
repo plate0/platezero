@@ -34,10 +34,10 @@ export class Canvas extends React.Component<undefined, undefined> {
       function(evt) {
         console.log(evt)
         if (evt.ctrlKey) {
-          let { x, y } = ctx.transformedPoint(evt.pageX, evt.pageY)
+          // let { x, y } = ctx.transformedPoint(evt.pageX, evt.pageY)
           // let { x, y } = ctx.transformedPoint(100, 100)
-          x = evt.pageX
-          y = evt.pageY
+          let x = evt.pageX - canvas.offsetLeft
+          let y = evt.pageY - canvas.offsetTop
           self.setState(s => ({
             ...s,
             rect: {
@@ -95,7 +95,6 @@ export class Canvas extends React.Component<undefined, undefined> {
       'mouseup',
       function(evt) {
         dragStart = null
-        if (!dragged) zoom(evt.shiftKey ? -1 : 1)
       },
       false
     )
@@ -210,17 +209,15 @@ export class Canvas extends React.Component<undefined, undefined> {
     ctx.restore()
     ctx.drawImage(image, 0, 0)
 
-    if (rect.x && rect.width) {
+    if (rect.x) {
       ctx.beginPath()
-      ctx.lineWidth = '6'
-      ctx.strokeStyle = 'red'
-      let invMat = ctx.getTransform()
-      let x = rect.x * invMat.a + rect.y * invMat.c + invMat.e
-      let y = rect.x * invMat.b + rect.y * invMat.d + invMat.f
-      console.log('ugh', x, y)
-      ctx.moveTo(x, y)
-      ctx.rect(x, y, rect.width - x, rect.height - y)
-      ctx.stroke()
+      let { x, y } = ctx.transformedPoint(rect.x, rect.y)
+      // let imatrix = ctx.getTransform()
+      // var x = rect.x * imatrix.a + rect.y * imatrix.c + imatrix.e
+      // var y = rect.x * imatrix.b + rect.y * imatrix.d + imatrix.f
+      //  let { x, y } = invMat.applyToPoint(rect.x, rect.y)
+      ctx.arc(x, y, 10, 0, Math.PI * 2)
+      ctx.fill()
     }
   }
 
@@ -235,8 +232,7 @@ export class Canvas extends React.Component<undefined, undefined> {
     }
     return (
       <div>
-        <canvas ref="canvas" style={{ width: '100%' }} />
-        <canvas ref="tmp" style={{ width: '100%' }} />
+        <canvas ref="canvas" />
       </div>
     )
   }
