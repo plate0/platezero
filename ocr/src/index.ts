@@ -4,6 +4,8 @@ import installExtension, {
 } from 'electron-devtools-installer'
 import { enableLiveReload } from 'electron-compile'
 
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: Electron.BrowserWindow | null = null
@@ -17,8 +19,11 @@ if (isDevMode) {
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600
+    width: 1680,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
 
   // and load the index.html of the app.

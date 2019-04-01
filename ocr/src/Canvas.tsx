@@ -20,7 +20,7 @@ export class Canvas extends React.Component<undefined, undefined> {
     const rect = { x: 0, y: 0, width: 0, height: 0 }
     this.setState({ canvas, ctx, image, rect })
     let self = this
-    canvas.width = 800
+    canvas.width = this.refs.parent.offsetWidth
     canvas.height = 600
 
     var lastX = canvas.width / 2,
@@ -260,7 +260,7 @@ export class Canvas extends React.Component<undefined, undefined> {
       this.draw()
     }
     return (
-      <div>
+      <div ref="parent">
         <canvas ref="canvas" />
       </div>
     )
