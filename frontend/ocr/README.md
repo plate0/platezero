@@ -48,6 +48,7 @@ Okay, now you need to fill in the template.
 ```
 yarn transcribe
 ```
+
 (Note, defaults to `recipe.md`. Outputs to `recipe.json`)
 
 8. Create the recipe
