@@ -78,7 +78,7 @@ export default class EditRecipe extends React.Component<Props, State> {
   public getPatch(): RecipeVersionPatch {
     return {
       message: this.state.message,
-      ingredientLists: [],
+      ingredientLists: this.state.ingredientLists,
       procedureLists: this.state.procedureLists
     }
   }
@@ -125,7 +125,10 @@ export default class EditRecipe extends React.Component<Props, State> {
           </Alert>
         ))}
         <h4>Ingredients</h4>
-        <IngredientLists lists={v.ingredientLists} onChange={() => {}} />
+        <IngredientLists
+          lists={v.ingredientLists}
+          onChange={ingredientLists => this.setState({ ingredientLists })}
+        />
         <h4 className="mt-3">Instructions</h4>
         <ProcedureLists
           lists={v.procedureLists}

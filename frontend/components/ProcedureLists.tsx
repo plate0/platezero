@@ -15,7 +15,6 @@ import {
 } from '../common/changes'
 
 const newProcedureList = generateUITrackable({
-  id: undefined,
   name: '',
   lines: []
 })
@@ -34,76 +33,54 @@ export function ProcedureLists(props: Props) {
     }
   }, [lists])
 
-  const addSectionBtn = (
-    <p>
-      <Button
-        color="secondary"
-        size="sm"
-        onClick={() => setLists([...lists, newProcedureList.next().value])}
-      >
-        Add Instruction Section
-      </Button>
-    </p>
-  )
-
-  // if (lists.length === 1) {
-  //   const list = _.head(lists)
-  //   return (
-  //     <>
-  //       <ProcedureList
-  //         procedureList={list.json}
-  //         onChange={newList => setLists(replaceItem(lists, list.id, newList))}
-  //         minimal={true}
-  //       />
-  //       {addSectionBtn}
-  //     </>
-  //   )
-  // }
+  const act = list => () => {
+    const f = list.removed ? restoreItem : removeItem
+    setLists(f(lists, list.id))
+  }
 
   return (
     <>
-      {lists.map(list =>
-        list.removed ? (
-          <RemovedProcedureList
-            list={list.json}
-            key={list.id}
-            onRestore={() => setLists(restoreItem(lists, list.id))}
-          />
-        ) : (
-          <ActionLine
-            icon="fal fa-times"
-            onAction={() => setLists(removeItem(lists, list.id))}
-            key={list.id}
-          >
+      {lists.map(list => (
+        <ActionLine
+          icon={`fal fa-${list.removed ? 'undo' : 'times'}`}
+          onAction={act(list)}
+          key={list.id}
+        >
+          {list.removed ? (
+            <RemovedProcedureList list={list.json} />
+          ) : (
             <ProcedureList
               procedureList={list.json}
               onChange={newList =>
                 setLists(replaceItem(lists, list.id, newList))
               }
             />
-          </ActionLine>
-        )
-      )}
-      {addSectionBtn}
+          )}
+        </ActionLine>
+      ))}
+      <p>
+        <Button
+          color="secondary"
+          size="sm"
+          onClick={() => setLists([...lists, newProcedureList.next().value])}
+        >
+          Add Instruction Section
+        </Button>
+      </p>
     </>
   )
 }
 
-function RemovedProcedureList(props: {
-  list: ProcedureListJSON
-  onRestore?: () => void
-}) {
+function RemovedProcedureList(props: { list: ProcedureListJSON }) {
   return (
-    <ActionLine icon="fal fa-undo" onAction={props.onRestore}>
-      <Card className="mb-3">
-        <CardBody>
-          {props.list.lines.map((line, key) => (
-            <p key={key} className="text-muted text-strike">
-              {line.text}
-            </p>
-          ))}
-        </CardBody>
-      </Card>
-    </ActionLine>
+    <Card className="mb-3">
+      <CardBody>
+        {props.list.lines.map((line, key) => (
+          <p key={key} className="text-muted text-strike">
+            {line.text}
+          </p>
+        ))}
+      </CardBody>
+    </Card>
   )
 }

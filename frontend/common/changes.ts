@@ -30,11 +30,7 @@ export function isChanged<T extends {}>(item: UITrackable<T>): boolean {
 }
 
 export const uiToJSON = <T extends {}>(items: UITrackable<T>[]): T[] =>
-  _.map(_.reject(items, { removed: true }), item => {
-    const json = normalize(item.json)
-    const changed = isChanged(item)
-    return changed || item.added ? _.omit(json, ['id']) : json
-  })
+  _.map(_.reject(items, { removed: true }), item => normalize(item.json))
 
 /**
  * Restore a single UITrackable. If the item has been marked as removed, it
@@ -92,13 +88,13 @@ export function removeItem<T extends {}>(
 export function replaceItem<T extends {}>(
   prevs: UITrackable<T>[],
   id: string,
-  item: T
+  json: T
 ): UITrackable<T>[] {
   return _.map(prevs, prev =>
     prev.id === id
       ? {
           id,
-          json: item,
+          json: _.omit(json, 'id'),
           added: prev.added,
           removed: false,
           original: prev.original
@@ -122,24 +118,4 @@ export function hasModifiedItems<T>(items: UITrackable<T>[]): boolean {
     (acc, item) => acc || isChanged(item) || item.added || item.removed,
     false
   )
-}
-
-export function setIndex<T>(items: T[], idx: number, item: T): T[] {
-  const newItems = [...items]
-  newItems[idx] = item
-  return newItems
-}
-
-export function setJSON<T>(
-  items: UITrackable<T>[],
-  idx: number,
-  json: T
-): UITrackable<T>[] {
-  const newItems = [...items]
-  newItems[idx].json = json
-  return newItems
-}
-
-export function dropIndex<T>(items: T[], idx: number): T[] {
-  return _.reject(items, (_, i) => idx === i)
 }

@@ -1,92 +1,91 @@
-//import React, { useState, useEffect } from 'react'
-//import { Button, Card, CardBody } from 'reactstrap'
-//import * as _ from 'lodash'
+import React, { useState, useEffect } from 'react'
+import { Button, Card, CardBody } from 'reactstrap'
+import * as _ from 'lodash'
 
 import { IngredientListJSON } from '../models'
-//import { IngredientList } from './IngredientList'
-//import { ActionLine } from './ActionLine'
-//import { jsonToUI, generateUITrackable } from '../common/changes'
+import { IngredientList } from './IngredientList'
+import { ActionLine } from './ActionLine'
+import { Amount } from './Amount'
+import {
+  jsonToUI,
+  uiToJSON,
+  generateUITrackable,
+  removeItem,
+  restoreItem,
+  replaceItem
+} from '../common/changes'
 
-//const newIngredientList = generateUITrackable({
-//  id: undefined,
-//  name: '',
-//  lines: []
-//})
+const newIngredientList = generateUITrackable({
+  name: '',
+  lines: []
+})
 
 interface Props {
   lists: IngredientListJSON[]
-  onChange?: (list: IngredientListJSON) => void
+  onChange?: (lists: IngredientListJSON[]) => void
 }
 
 export function IngredientLists(props: Props) {
-  return <pre>IngredientLists {JSON.stringify(props)}</pre>
+  const [lists, setLists] = useState(jsonToUI(props.lists))
+
+  useEffect(() => {
+    if (_.isFunction(props.onChange)) {
+      props.onChange(uiToJSON(lists))
+    }
+  }, [lists])
+
+  const act = list => () => {
+    const f = list.removed ? restoreItem : removeItem
+    setLists(f(lists, list.id))
+  }
+
+  return (
+    <>
+      {lists.map(list => (
+        <ActionLine
+          icon={`fal fa-${list.removed ? 'undo' : 'times'}`}
+          onAction={act(list)}
+          key={list.id}
+        >
+          {list.removed ? (
+            <RemovedIngredientList list={list.json} />
+          ) : (
+            <IngredientList
+              ingredientList={list.json}
+              onChange={newList =>
+                setLists(replaceItem(lists, list.id, newList))
+              }
+            />
+          )}
+        </ActionLine>
+      ))}
+      <p>
+        <Button
+          color="secondary"
+          size="sm"
+          onClick={() => setLists([...lists, newIngredientList.next().value])}
+        >
+          Add Ingredient Section
+        </Button>
+      </p>
+    </>
+  )
 }
 
-//export function IngredientLists(props: Props) {
-//  const [lists, setLists] = useState(_.map(props.lists, jsonToUI))
-
-//  useEffect(() => {
-//    if (_.isFunction(props.onChange)) {
-//      //props.onChange(formatListPatch(lists))
-//    }
-//  }, [lists])
-
-//  const addSectionBtn = (
-//    <p>
-//      <Button
-//        color="secondary"
-//        size="sm"
-//        onClick={() => setLists([...lists, newIngredientList.next().value])}
-//      >
-//        Add Ingredient Section
-//      </Button>
-//    </p>
-//  )
-
-//  if (lists.length < 2) {
-//    return (
-//      <>
-//        <IngredientList ingredientList={lists[0].json} />
-//        {addSectionBtn}
-//      </>
-//    )
-//  }
-
-//  return (
-//    <>
-//      {lists.map(list =>
-//        list.removed ? (
-//          <RemovedIngredientList
-//            list={list.json}
-//            key={list.json.id}
-//            onRestore={() => {}}
-//          />
-//        ) : (
-//          <ActionLine
-//            icon="fal fa-times"
-//            onAction={() => {}}
-//            key={list.json.id}
-//          >
-//            <IngredientList ingredientList={list.json} />
-//          </ActionLine>
-//        )
-//      )}
-//      {addSectionBtn}
-//    </>
-//  )
-//}
-
-//function RemovedIngredientList(props: {
-//  list: IngredientListJSON
-//  onRestore?: () => void
-//}) {
-//  return (
-//    <ActionLine icon="fal fa-undo" onAction={props.onRestore}>
-//      <Card className="mb-3">
-//        <CardBody>
-//          <p>:(</p>
-//        </CardBody>
-//      </Card>
-//    </ActionLine>
-//  )
-//}
+function RemovedIngredientList(props: { list: IngredientListJSON }) {
+  return (
+    <Card className="mb-3">
+      <CardBody>
+        {props.list.lines.map((line, key) => (
+          <p key={key} className="text-muted text-strike">
+            <Amount
+              numerator={line.quantity_numerator}
+              denominator={line.quantity_denominator}
+            />{' '}
+            {line.unit} {line.name}
+          </p>
+        ))}
+      </CardBody>
+    </Card>
+  )
+}
