@@ -46,7 +46,7 @@ export function ProcedureList(props: Props) {
             <ActionLine
               icon="fal fa-undo"
               key={key}
-              onAction={() => setLines(restoreItem(lines, line))}
+              onAction={() => setLines(restoreItem(lines, line.id))}
             >
               <div className="text-muted text-strike">{line.json.text}</div>
             </ActionLine>
@@ -57,7 +57,7 @@ export function ProcedureList(props: Props) {
             icon={isChanged(line) ? 'fal fa-undo' : 'fal fa-times'}
             onAction={() =>
               setLines(
-                (isChanged(line) ? restoreItem : removeItem)(lines, line)
+                (isChanged(line) ? restoreItem : removeItem)(lines, line.id)
               )
             }
             key={key}
@@ -71,7 +71,10 @@ export function ProcedureList(props: Props) {
               value={line.json.text}
               onChange={e =>
                 setLines(
-                  replaceItem(lines, { id: line.json.id, text: e.target.value })
+                  replaceItem(lines, line.id, {
+                    id: line.json.id,
+                    text: e.target.value
+                  })
                 )
               }
             />

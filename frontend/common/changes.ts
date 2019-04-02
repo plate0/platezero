@@ -1,7 +1,9 @@
 import * as _ from 'lodash'
 import { normalize } from './model-helpers'
+import shortid from 'shortid'
 
 export interface UITrackable<T extends {}> {
+  id: string
   json: T
   added: boolean
   removed: boolean
@@ -10,6 +12,7 @@ export interface UITrackable<T extends {}> {
 
 export const jsonToUI = <T extends {}>(items: T[]): UITrackable<T>[] =>
   _.map(items, json => ({
+    id: shortid.generate(),
     json,
     added: false,
     removed: false,
@@ -38,13 +41,12 @@ export const uiToJSON = <T extends {}>(items: UITrackable<T>[]): T[] =>
  * will be marked as not removed. If the item has been changed, its `json`
  * property will be restored to the original value of `json`
  */
-export function restore<T extends { id?: number }>(
-  item: UITrackable<T>
-): UITrackable<T> {
+export function restore<T extends {}>(item: UITrackable<T>): UITrackable<T> {
   if (item.removed) {
     return { ...item, removed: false }
   }
   return {
+    id: item.id,
     added: item.added,
     removed: false,
     json: item.original,
@@ -55,13 +57,11 @@ export function restore<T extends { id?: number }>(
 /**
  * Given a list of UITrackable items, restore a single specified item.
  */
-export function restoreItem<T extends { id?: number }>(
+export function restoreItem<T extends {}>(
   prevs: UITrackable<T>[],
-  item: UITrackable<T>
+  id: string
 ): UITrackable<T>[] {
-  return _.map(prevs, prev =>
-    prev.json.id === item.json.id ? restore(prev) : prev
-  )
+  return _.map(prevs, prev => (prev.id === id ? restore(prev) : prev))
 }
 
 /**
@@ -69,28 +69,35 @@ export function restoreItem<T extends { id?: number }>(
  * been added, it will be omitted entirely. If it originally existed, it will
  * be marked for removal.
  */
-export function removeItem<T extends { id?: number }>(
+export function removeItem<T extends {}>(
   prevs: UITrackable<T>[],
-  item: UITrackable<T>
+  id: string
 ): UITrackable<T>[] {
-  if (item.added) {
-    return _.reject(prevs, prev => prev.json.id === item.json.id)
-  }
-  return _.map(prevs, prev =>
-    prev.json.id === item.json.id ? { ...prev, removed: true } : prev
+  return _.compact(
+    _.map(prevs, prev => {
+      if (prev.id !== id) {
+        return prev
+      }
+      if (prev.added) {
+        return undefined
+      }
+      return { ...prev, removed: true }
+    })
   )
 }
 
 /**
  * Given a list of UITrackable items, update a single item.
  */
-export function replaceItem<T extends { id?: number }>(
+export function replaceItem<T extends {}>(
   prevs: UITrackable<T>[],
+  id: string,
   item: T
 ): UITrackable<T>[] {
   return _.map(prevs, prev =>
-    prev.json.id === item.id
+    prev.id === id
       ? {
+          id,
           json: item,
           added: prev.added,
           removed: false,
@@ -100,17 +107,12 @@ export function replaceItem<T extends { id?: number }>(
   )
 }
 
-function addedItem<T extends { id?: number }>(json: T): UITrackable<T> {
-  return { json, added: true, removed: false }
-}
-
-export function* generateUITrackable<T extends { id?: number }>(
+export function* generateUITrackable<T extends {}>(
   json: T
 ): IterableIterator<UITrackable<T>> {
-  let nextId = 0
   while (true) {
-    const id = nextId--
-    yield addedItem({ ...json, id })
+    const id = shortid.generate()
+    yield { added: true, removed: false, json, id }
   }
 }
 
@@ -120,4 +122,24 @@ export function hasModifiedItems<T>(items: UITrackable<T>[]): boolean {
     (acc, item) => acc || isChanged(item) || item.added || item.removed,
     false
   )
+}
+
+export function setIndex<T>(items: T[], idx: number, item: T): T[] {
+  const newItems = [...items]
+  newItems[idx] = item
+  return newItems
+}
+
+export function setJSON<T>(
+  items: UITrackable<T>[],
+  idx: number,
+  json: T
+): UITrackable<T>[] {
+  const newItems = [...items]
+  newItems[idx].json = json
+  return newItems
+}
+
+export function dropIndex<T>(items: T[], idx: number): T[] {
+  return _.reject(items, (_, i) => idx === i)
 }

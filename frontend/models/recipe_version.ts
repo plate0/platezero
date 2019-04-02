@@ -152,7 +152,19 @@ export class RecipeVersion extends Model<RecipeVersion>
       })
     )
 
-    // TODO: ingredients
+    // ingredients
+    await Promise.all(
+      _.map(patch.ingredientLists, async (item, sort_key) => {
+        const { id } = await IngredientList.findOrCreateWithIngredients(
+          item,
+          transaction
+        )
+        return RecipeVersionIngredientList.create(
+          { recipe_version_id: v.id, ingredient_list_id: id, sort_key },
+          { transaction }
+        )
+      })
+    )
 
     await Promise.all(
       _.map(prev.preheats, preheat =>

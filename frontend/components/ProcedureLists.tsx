@@ -6,11 +6,12 @@ import { ProcedureListJSON } from '../models'
 import { ProcedureList } from './ProcedureList'
 import { ActionLine } from './ActionLine'
 import {
-  UITrackable,
   jsonToUI,
   uiToJSON,
   generateUITrackable,
-  restore
+  removeItem,
+  restoreItem,
+  replaceItem
 } from '../common/changes'
 
 const newProcedureList = generateUITrackable({
@@ -22,26 +23,6 @@ const newProcedureList = generateUITrackable({
 interface Props {
   lists: ProcedureListJSON[]
   onChange?: (lists: ProcedureListJSON[]) => void
-}
-
-function setIndex<T>(items: T[], idx: number, item: T): T[] {
-  const newItems = [...items]
-  newItems[idx] = item
-  return newItems
-}
-
-function setJSON<T>(
-  items: UITrackable<T>[],
-  idx: number,
-  json: T
-): UITrackable<T>[] {
-  const newItems = [...items]
-  newItems[idx].json = json
-  return newItems
-}
-
-function dropIndex<T>(items: T[], idx: number): T[] {
-  return _.reject(items, (_, i) => idx === i)
 }
 
 export function ProcedureLists(props: Props) {
@@ -65,37 +46,40 @@ export function ProcedureLists(props: Props) {
     </p>
   )
 
-  if (lists.length === 1) {
-    return (
-      <>
-        <ProcedureList
-          procedureList={lists[0].json}
-          onChange={newList => setLists(setJSON(lists, 0, newList))}
-          minimal={true}
-        />
-        {addSectionBtn}
-      </>
-    )
-  }
+  // if (lists.length === 1) {
+  //   const list = _.head(lists)
+  //   return (
+  //     <>
+  //       <ProcedureList
+  //         procedureList={list.json}
+  //         onChange={newList => setLists(replaceItem(lists, list.id, newList))}
+  //         minimal={true}
+  //       />
+  //       {addSectionBtn}
+  //     </>
+  //   )
+  // }
 
   return (
     <>
-      {lists.map((list, idx) =>
+      {lists.map(list =>
         list.removed ? (
           <RemovedProcedureList
             list={list.json}
-            key={list.json.id}
-            onRestore={() => setLists(setIndex(lists, idx, restore(list)))}
+            key={list.id}
+            onRestore={() => setLists(restoreItem(lists, list.id))}
           />
         ) : (
           <ActionLine
             icon="fal fa-times"
-            onAction={() => setLists(dropIndex(lists, idx))}
-            key={list.json.id}
+            onAction={() => setLists(removeItem(lists, list.id))}
+            key={list.id}
           >
             <ProcedureList
               procedureList={list.json}
-              onChange={newList => setLists(setJSON(lists, idx, newList))}
+              onChange={newList =>
+                setLists(replaceItem(lists, list.id, newList))
+              }
             />
           </ActionLine>
         )
