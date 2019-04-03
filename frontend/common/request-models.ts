@@ -18,4 +18,5 @@ export interface RecipeVersionPatch {
   message: string
   ingredientLists: IngredientListJSON[]
   procedureLists: ProcedureListJSON[]
+  preheats: PreheatJSON[]
 }

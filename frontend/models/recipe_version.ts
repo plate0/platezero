@@ -166,13 +166,19 @@ export class RecipeVersion extends Model<RecipeVersion>
       })
     )
 
+    // preheats
     await Promise.all(
-      _.map(prev.preheats, preheat =>
-        RecipeVersionPreheat.create(
-          { recipe_version_id: v.id, preheat_id: preheat.id },
+      _.map(patch.preheats, async preheat => {
+        const [{ id }] = await Preheat.findOrCreate({
+          where: { id: preheat.id },
+          defaults: _.omit(preheat, 'id'),
+          transaction
+        })
+        return RecipeVersionPreheat.create(
+          { recipe_version_id: v.id, preheat_id: id },
           { transaction }
         )
-      )
+      })
     )
     return v
   }

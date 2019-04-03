@@ -24,7 +24,8 @@ import {
 import {
   RecipeVersionJSON,
   ProcedureListJSON,
-  IngredientListJSON
+  IngredientListJSON,
+  PreheatJSON
 } from '../models'
 import { RecipeVersionPatch } from '../common/request-models'
 import { Link } from '../routes'
@@ -40,6 +41,7 @@ interface State {
   errors: string[]
   procedureLists: ProcedureListJSON[]
   ingredientLists: IngredientListJSON[]
+  preheats: PreheatJSON[]
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
@@ -50,6 +52,7 @@ export default class EditRecipe extends React.Component<Props, State> {
     this.state = {
       procedureLists: [],
       ingredientLists: [],
+      preheats: [],
       errors: [],
       message: ''
     }
@@ -79,7 +82,8 @@ export default class EditRecipe extends React.Component<Props, State> {
     return {
       message: this.state.message,
       ingredientLists: this.state.ingredientLists,
-      procedureLists: this.state.procedureLists
+      procedureLists: this.state.procedureLists,
+      preheats: this.state.preheats
     }
   }
 

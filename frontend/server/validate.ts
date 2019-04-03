@@ -53,6 +53,17 @@ const procedureList = Joi.object({
     .items(procedureLine)
 })
 
+const preheat = Joi.object({
+  id: Joi.number().min(0),
+  name: Joi.string().required(),
+  temperature: Joi.number()
+    .min(0)
+    .required(),
+  unit: Joi.string()
+    .valid('C', 'F')
+    .required()
+})
+
 export const validateNewRecipe = validator({
   title: Joi.string().required(),
   subtitle: Joi.string(),
@@ -61,15 +72,7 @@ export const validateNewRecipe = validator({
   source_url: Joi.string().uri(),
   yield: Joi.string(),
   duration: Joi.number(),
-  preheats: Joi.array().items({
-    name: Joi.string().required(),
-    temperature: Joi.number()
-      .min(0)
-      .required(),
-    unit: Joi.string()
-      .valid('C', 'F')
-      .required()
-  }),
+  preheats: Joi.array().items(preheat),
   ingredient_lists: Joi.array()
     .items(ingredientList)
     .required(),
@@ -95,7 +98,8 @@ export const validateNewUser = validator({
 export const validateRecipeVersionPatch = validator({
   message: Joi.string().required(),
   ingredientLists: Joi.array().items(ingredientList),
-  procedureLists: Joi.array().items(procedureList)
+  procedureLists: Joi.array().items(procedureList),
+  preheats: Joi.array().items(preheat)
 })
 
 export const validateRecipePatch = validator({

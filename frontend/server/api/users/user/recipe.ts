@@ -62,7 +62,6 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
         { model: RecipeDuration, attributes: ['duration_seconds'] },
         {
           model: Preheat,
-          attributes: ['name', 'temperature', 'unit'],
           through: { attributes: [] }
         },
         {
