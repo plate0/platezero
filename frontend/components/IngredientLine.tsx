@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import Fraction from 'fraction.js'
 import { Col, FormGroup, Input, Label, Row } from 'reactstrap'
-import Select from 'react-select'
 import * as _ from 'lodash'
 
+import { PlainInput, PlainSelect } from './PlainInput'
 import { Units } from '../common'
 import { Amount } from './Amount'
-import { ActionLine } from './ActionLine'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { usePrevious } from '../hooks/usePrevious'
 
@@ -22,10 +21,6 @@ function ingredientAmountString(line: IngredientLineJSON): string {
   } catch {
     return ''
   }
-}
-
-function isAmountValid(f: FractionAmount): boolean {
-  return !_.isNil(f) && !_.isNil(f.n) && !_.isNil(f.d)
 }
 
 interface FractionAmount {
@@ -57,25 +52,15 @@ function fractionMatchesIngredient(
 interface Props {
   ingredient: IngredientLineJSON
   onChange?: (ingredient: IngredientLineJSON) => void
-  onRemove?: () => void
-  onRestore?: () => void
   removed?: boolean
   changed?: boolean
   added?: boolean
 }
 
 export function IngredientLine(props: Props) {
-  const onRestore = _.isFunction(props.onRestore) ? props.onRestore : _.noop
-  const onRemove = _.isFunction(props.onRemove) ? props.onRemove : _.noop
   const onChange = _.isFunction(props.onChange) ? props.onChange : _.noop
 
   const bgClass = props.changed ? 'bg-changed' : props.added ? 'bg-added' : ''
-
-  const bgColor = props.changed
-    ? '#fff2cc'
-    : props.added
-    ? '#d6f5dd'
-    : undefined
 
   const setName = (name: string) => {
     onChange({ ...props.ingredient, name })
@@ -129,120 +114,109 @@ export function IngredientLine(props: Props) {
 
   if (props.removed) {
     return (
-      <ActionLine icon="fal fa-undo" onAction={onRestore}>
-        <Row className="text-muted">
-          <Col xs="2" className="text-strike">
-            <Amount
-              numerator={props.ingredient.quantity_numerator}
-              denominator={props.ingredient.quantity_denominator}
-            />
-          </Col>
-          <Col xs="2" className="text-strike">
-            {props.ingredient.unit}
-          </Col>
-          <Col className="text-strike">{props.ingredient.name}</Col>
-          <Col xs="3" className="text-strike">
-            {props.ingredient.preparation}
-          </Col>
-          <Col xs="auto" className="text-strike">
-            {props.ingredient.optional ? 'optional' : undefined}
-          </Col>
-        </Row>
-      </ActionLine>
+      <Row className="text-muted" noGutters={true}>
+        <Col xs="auto" md="2" className="text-strike pl-3">
+          <Amount
+            numerator={props.ingredient.quantity_numerator}
+            denominator={props.ingredient.quantity_denominator}
+          />
+        </Col>
+        <Col xs="auto" md="2" className="text-strike pl-3">
+          {props.ingredient.unit}
+        </Col>
+        <Col xs="auto" md={true} className="text-strike pl-3">
+          {props.ingredient.name}
+        </Col>
+        <Col xs="auto" md="3" className="text-strike pl-3">
+          {props.ingredient.preparation}
+        </Col>
+        <Col xs="auto">
+          <FormGroup check>
+            <Label check>
+              <Input
+                type="checkbox"
+                checked={!!props.ingredient.optional}
+                disabled
+              />
+              <small>Optional</small>
+            </Label>
+          </FormGroup>
+        </Col>
+      </Row>
     )
   }
 
   return (
-    <ActionLine
-      icon={props.changed ? 'fal fa-undo' : 'fal fa-times'}
-      onAction={() => (props.changed ? onRestore() : onRemove())}
-    >
-      <Row>
-        <Col xs="2">
-          <FormGroup>
-            <Input
-              type="text"
-              placeholder="2/3…"
-              value={amount}
-              valid={isAmountValid(frac)}
-              className={bgClass}
-              onChange={e => {
-                const amount = e.currentTarget.value
-                setAmount(amount)
-              }}
-            />
-          </FormGroup>
-        </Col>
-        <Col xs="2">
-          <FormGroup>
-            <Select
-              options={Units}
-              placeholder="cup, gram…"
-              value={unit}
-              onChange={(e: any) => setUnit(e.value)}
-              className={bgClass}
-              styles={{
-                control: (base, state) => ({
-                  ...base,
-                  color: '#495057',
-                  borderColor: state.isFocused ? '#7adaef' : '#ced4da',
-                  boxShadow: state.isFocused
-                    ? '0 0 0 0.2rem rgba(25, 175, 208, 0.25)'
-                    : 'none',
-                  backgroundColor: bgColor,
-                  '&:hover': {
-                    borderColor: state.isFocused ? '#7adaef' : '#ced4da'
-                  }
-                })
-              }}
-            />
-          </FormGroup>
-        </Col>
-        <Col>
-          <FormGroup>
-            <Input
-              type="text"
-              placeholder="onion, head of lettuce, ground black pepper…"
-              value={props.ingredient.name || ''}
-              className={bgClass}
-              onChange={e => {
-                const name = e.currentTarget.value
-                setName(name)
-              }}
-            />
-          </FormGroup>
-        </Col>
-        <Col xs="3">
-          <FormGroup>
-            <Input
-              type="text"
-              placeholder="finely diced, cleaned, peeled…"
-              value={props.ingredient.preparation || ''}
-              className={bgClass}
-              onChange={e => {
-                const preparation = e.currentTarget.value
-                setPreparation(preparation)
-              }}
-            />
-          </FormGroup>
-        </Col>
-        <Col xs="auto" className="d-flex align-items-center">
-          <FormGroup check className="mb-3">
+    <Row noGutters={true}>
+      <Col xs="12" md="2">
+        <FormGroup>
+          <PlainInput
+            type="text"
+            placeholder="2/3…"
+            value={amount}
+            className={bgClass}
+            onChange={e => {
+              const amount = e.currentTarget.value
+              setAmount(amount)
+            }}
+          />
+        </FormGroup>
+      </Col>
+      <Col xs="12" md="2">
+        <FormGroup>
+          <PlainSelect
+            options={Units}
+            placeholder="cup, gram…"
+            value={unit}
+            onChange={(e: any) => setUnit(e.value)}
+            className={bgClass}
+          />
+        </FormGroup>
+      </Col>
+      <Col xs="12" md={true}>
+        <FormGroup>
+          <PlainInput
+            type="text"
+            placeholder="onion, head of lettuce, ground black pepper…"
+            value={props.ingredient.name || ''}
+            className={bgClass}
+            onChange={e => {
+              const name = e.currentTarget.value
+              setName(name)
+            }}
+          />
+        </FormGroup>
+      </Col>
+      <Col xs="12" md="3">
+        <FormGroup>
+          <PlainInput
+            type="text"
+            placeholder="finely diced, cleaned, peeled…"
+            value={props.ingredient.preparation || ''}
+            className={bgClass}
+            onChange={e => {
+              const preparation = e.currentTarget.value
+              setPreparation(preparation)
+            }}
+          />
+        </FormGroup>
+      </Col>
+      <Col xs="12" md="auto" className="d-flex align-items-center">
+        <FormGroup check className="mb-3">
+          <Label className="m-0" check>
             <Input
               type="checkbox"
-              defaultChecked={props.ingredient.optional}
+              checked={!!props.ingredient.optional}
               className={bgClass}
               onChange={e => {
                 const optional = e.currentTarget.checked
                 setOptional(optional)
               }}
             />
-            <Label className="m-0" check>
-              <small>Optional</small>
-            </Label>
-          </FormGroup>
-        </Col>
-      </Row>
-    </ActionLine>
+            <small>Optional</small>
+          </Label>
+        </FormGroup>
+      </Col>
+    </Row>
   )
 }

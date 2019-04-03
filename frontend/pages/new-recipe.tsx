@@ -8,8 +8,8 @@ import { PostRecipe } from '../common/request-models'
 import {
   Layout,
   NewRecipeTitle,
-  IngredientList,
-  ProcedureList
+  IngredientLists,
+  ProcedureLists
 } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
@@ -21,8 +21,8 @@ interface Props {
 interface State {
   errors: string[]
   title: string
-  ingredientList: IngredientListJSON
-  procedureList: ProcedureListJSON
+  ingredientLists: IngredientListJSON[]
+  procedureLists: ProcedureListJSON[]
 }
 
 export default class NewRecipe extends React.Component<Props, State> {
@@ -33,8 +33,8 @@ export default class NewRecipe extends React.Component<Props, State> {
     this.state = {
       errors: [],
       title: '',
-      ingredientList: undefined,
-      procedureList: undefined
+      ingredientLists: [],
+      procedureLists: []
     }
   }
   static async getInitialProps(ctx) {
@@ -51,24 +51,8 @@ export default class NewRecipe extends React.Component<Props, State> {
     return {
       title: this.state.title,
       preheats: [],
-      ingredient_lists: this.state.ingredientList
-        ? [
-            {
-              lines: _.map(this.state.ingredientList.lines, line =>
-                _.omit(line, 'id')
-              )
-            }
-          ]
-        : [],
-      procedure_lists: this.state.procedureList
-        ? [
-            {
-              lines: _.map(this.state.procedureList.lines, line =>
-                _.omit(line, 'id')
-              )
-            }
-          ]
-        : []
+      ingredient_lists: this.state.ingredientLists,
+      procedure_lists: this.state.procedureLists
     }
   }
 
@@ -88,6 +72,8 @@ export default class NewRecipe extends React.Component<Props, State> {
   }
 
   public render() {
+    const defaultIngredientList = { name: undefined, lines: [] }
+    const defaultProcedureList = { name: undefined, lines: [] }
     return (
       <Layout>
         <Head>
@@ -107,19 +93,15 @@ export default class NewRecipe extends React.Component<Props, State> {
               />
             </Col>
           </Row>
-          <Row>
-            <Col>
-              <h2>Ingredients</h2>
-            </Col>
-          </Row>
-          <IngredientList
-            ingredientList={this.state.ingredientList}
-            onChange={ingredientList => this.setState({ ingredientList })}
+          <h2>Ingredients</h2>
+          <IngredientLists
+            lists={[defaultIngredientList]}
+            onChange={ingredientLists => this.setState({ ingredientLists })}
           />
           <h2 className="my-3">Steps</h2>
-          <ProcedureList
-            procedureList={this.state.procedureList}
-            onChange={procedureList => this.setState({ procedureList })}
+          <ProcedureLists
+            lists={[defaultProcedureList]}
+            onChange={procedureLists => this.setState({ procedureLists })}
           />
           <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!

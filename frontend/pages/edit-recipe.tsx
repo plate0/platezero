@@ -14,7 +14,7 @@ import {
   Input
 } from 'reactstrap'
 
-import { Layout, ProcedureLists, IngredientList } from '../components'
+import { Layout, ProcedureLists, IngredientLists } from '../components'
 import {
   getRecipe,
   getRecipeVersion,
@@ -24,11 +24,9 @@ import {
 import {
   RecipeVersionJSON,
   ProcedureListJSON,
-  IngredientLineJSON,
-  ProcedureLineJSON
+  IngredientListJSON
 } from '../models'
 import { RecipeVersionPatch } from '../common/request-models'
-import { ItemPatch } from '../common/changes'
 import { Link } from '../routes'
 
 interface Props {
@@ -38,12 +36,10 @@ interface Props {
 }
 
 interface State {
-  changedIngredientLists: { [id: number]: ItemPatch<IngredientLineJSON> }
-  addedProcedureLists: ProcedureListJSON[]
-  removedProcedureListIds: number[]
-  changedProcedureLists: ItemPatch<ProcedureLineJSON>[]
   message: string
   errors: string[]
+  procedureLists: ProcedureListJSON[]
+  ingredientLists: IngredientListJSON[]
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
@@ -52,12 +48,8 @@ export default class EditRecipe extends React.Component<Props, State> {
     this.save = this.save.bind(this)
     this.getPatch = this.getPatch.bind(this)
     this.state = {
-      changedIngredientLists: {},
-
-      addedProcedureLists: [],
-      removedProcedureListIds: [],
-      changedProcedureLists: [],
-
+      procedureLists: [],
+      ingredientLists: [],
       errors: [],
       message: ''
     }
@@ -86,17 +78,8 @@ export default class EditRecipe extends React.Component<Props, State> {
   public getPatch(): RecipeVersionPatch {
     return {
       message: this.state.message,
-      changedIngredientLists: _.reject(
-        _.values(this.state.changedIngredientLists),
-        _.isUndefined
-      ),
-      procedureLists: {
-        addedItems: _.map(this.state.addedProcedureLists, pl =>
-          _.omit(pl, ['id'])
-        ),
-        changedItems: this.state.changedProcedureLists,
-        removedIds: this.state.removedProcedureListIds
-      }
+      ingredientLists: this.state.ingredientLists,
+      procedureLists: this.state.procedureLists
     }
   }
 
@@ -124,39 +107,34 @@ export default class EditRecipe extends React.Component<Props, State> {
         <Head>
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
-        <div className="d-flex justify-content-between align-items-center my-5">
-          <h1>Editing {v.recipe.title}</h1>
-          <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
-            <a className="btn btn-outline-primary">Back to Recipe</a>
-          </Link>
-        </div>
+        <Row className="mt-3">
+          <Col>
+            <h1>
+              <span className="text-muted">Editing</span> {v.recipe.title}
+            </h1>
+          </Col>
+          <Col xs="auto">
+            <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
+              <a className="btn btn-outline-primary">Back to Recipe</a>
+            </Link>
+          </Col>
+        </Row>
         {_.map(this.state.errors, (err, key) => (
           <Alert key={key} color="danger">
             {err}
           </Alert>
         ))}
         <h4>Ingredients</h4>
-        {v.ingredientLists.map(il => (
-          <IngredientList
-            key={il.id}
-            ingredientList={il}
-            onChange={(_, patch) =>
-              this.setState({ changedIngredientLists: { [il.id]: patch } })
-            }
-          />
-        ))}
+        <IngredientLists
+          lists={v.ingredientLists}
+          onChange={ingredientLists => this.setState({ ingredientLists })}
+        />
         <h4 className="mt-3">Instructions</h4>
         <ProcedureLists
           lists={v.procedureLists}
-          onChange={({ addedItems, changedItems, removedIds }) =>
-            this.setState({
-              addedProcedureLists: addedItems,
-              removedProcedureListIds: removedIds,
-              changedProcedureLists: changedItems
-            })
-          }
+          onChange={procedureLists => this.setState({ procedureLists })}
         />
-        <Card className="mt-3">
+        <Card className="my-3">
           <CardHeader>
             <strong>Save New Version</strong>
           </CardHeader>
