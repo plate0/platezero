@@ -70,9 +70,9 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
   <div className="mb-3">
     {list.name && <h3>{list.name}</h3>}
     {list.lines.map((l, key) => (
-      <div key={key} className="mb-3">
+      <div key={key}>
         {l.title && (
-          <div>
+          <div className="mb-3">
             <h4 className="border-bottom pb-2">
               <Badge color="primary" pill className="mr-2">
                 {key + 1}
@@ -84,7 +84,7 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
         <Row>
           {l.image_url && (
             <Col xs="12" lg="4">
-              <img className="w-100" src={l.image_url} />
+              <img className="w-100 mb-3" src={l.image_url} />
             </Col>
           )}
           <Col>
