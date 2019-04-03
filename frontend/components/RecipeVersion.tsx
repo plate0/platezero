@@ -125,6 +125,17 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
     <>
       <RecipeHeader recipeVersion={v} />
       <Row>
+        <Col className="mb-3">
+          <div className="list-inline">
+            {v.preheats.map(preheat => (
+              <div key={preheat.id} className="list-inline-item text-danger">
+                {preheat.name} {preheat.temperature} {preheat.unit}
+              </div>
+            ))}
+          </div>
+        </Col>
+      </Row>
+      <Row>
         <Col xs="12" md="6" lg="4">
           <h2>Ingredients</h2>
           {v.ingredientLists.map((il, key) => (
