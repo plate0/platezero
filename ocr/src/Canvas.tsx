@@ -2,9 +2,13 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { writeFileSync } from 'fs'
 
+export interface CanvasProps {
+  onSelection: (buffer: Buffer) => void
+}
+
 // https://codepen.io/techslides/pen/zowLd
-export class Canvas extends React.Component<undefined, undefined> {
-  constructor(props) {
+export class Canvas extends React.Component<CanvasProps, any> {
+  constructor(props: CanvasProps) {
     super(props)
     this.state = {
       image: undefined
@@ -21,7 +25,7 @@ export class Canvas extends React.Component<undefined, undefined> {
     this.setState({ canvas, ctx, image, rect })
     let self = this
     canvas.width = this.refs.parent.offsetWidth
-    canvas.height = 600
+    canvas.height = 1000
 
     var lastX = canvas.width / 2,
       lastY = canvas.height / 2
@@ -37,8 +41,9 @@ export class Canvas extends React.Component<undefined, undefined> {
         if (evt.ctrlKey) {
           // let { x, y } = ctx.transformedPoint(evt.pageX, evt.pageY)
           // let { x, y } = ctx.transformedPoint(100, 100)
-          let x = evt.pageX - canvas.offsetLeft
-          let y = evt.pageY - canvas.offsetTop
+          console.log(evt.pageX)
+          let x = evt.pageX - (canvas.offsetLeft - 15)
+          let y = evt.pageY - (canvas.offsetTop + 47)
           self.setState(s => ({
             ...s,
             rect: {
@@ -53,8 +58,8 @@ export class Canvas extends React.Component<undefined, undefined> {
         }
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect =
           'none'
-        lastX = evt.offsetX || evt.pageX - canvas.offsetLeft
-        lastY = evt.offsetY || evt.pageY - canvas.offsetTop
+        lastX = evt.offsetX || evt.pageX - (canvas.offsetLeft - 15)
+        lastY = evt.offsetY || evt.pageY - (canvas.offsetTop + 47)
         dragStart = ctx.transformedPoint(lastX, lastY)
         dragged = false
       },
@@ -64,12 +69,12 @@ export class Canvas extends React.Component<undefined, undefined> {
     canvas.addEventListener(
       'mousemove',
       function(evt) {
-        lastX = evt.offsetX || evt.pageX - canvas.offsetLeft
-        lastY = evt.offsetY || evt.pageY - canvas.offsetTop
+        lastX = evt.offsetX || evt.pageX - (canvas.offsetLeft - 15)
+        lastY = evt.offsetY || evt.pageY - (canvas.offsetTop + 47)
 
         if (evt.ctrlKey) {
-          let x = evt.pageX - canvas.offsetLeft
-          let y = evt.pageY - canvas.offsetTop
+          let x = evt.pageX - (canvas.offsetLeft - 15)
+          let y = evt.pageY - (canvas.offsetTop + 47)
           self.setState(s => ({
             ...s,
             rect: {
@@ -127,12 +132,25 @@ export class Canvas extends React.Component<undefined, undefined> {
 
     // Load image
     // TODO: Get from state
+    image.onload = function() {
+      // Okay, this doesn't put it in the perfect position
+      // TODO: make it better
+      console.log('image loaded', this.width)
+      let scale = canvas.width / (this.width + 200)
+      console.log('scale', scale)
+      ctx.scale(scale, scale)
+      ctx.translate(100, 50)
+      self.draw()
+    }
     image.src = 'recipe.jpg'
 
     window.addEventListener('keydown', e => {
       if (e.keyCode == 32) {
         console.log('gogo time')
         const { rect } = this.state
+        if (!rect.x || !rect.width) {
+          return
+        }
         let { x, y } = ctx.transformedPoint(rect.x, rect.y)
         let pos = ctx.transformedPoint(rect.width, rect.height)
         let width = pos.x - x
@@ -148,7 +166,10 @@ export class Canvas extends React.Component<undefined, undefined> {
         newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
         let data = newCanvas.toDataURL('image/jpeg')
         data = data.replace(/^data:image\/jpeg;base64,/, '')
+        const buf = Buffer.from(data, 'base64')
+        this.props.onSelection(buf)
         writeFileSync('test-data.jpg', data, 'base64')
+        this.setState({ rect: { x: 0, y: 0, width: 0, height: 0 } })
       }
     })
   }
@@ -261,7 +282,7 @@ export class Canvas extends React.Component<undefined, undefined> {
     }
     return (
       <div ref="parent">
-        <canvas ref="canvas" />
+        <canvas ref="canvas" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} />
       </div>
     )
   }

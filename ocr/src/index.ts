@@ -4,7 +4,7 @@ import installExtension, {
 } from 'electron-devtools-installer'
 import { enableLiveReload } from 'electron-compile'
 
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -25,6 +25,7 @@ const createWindow = async () => {
       nodeIntegration: true
     }
   })
+  mainWindow.maximize()
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
