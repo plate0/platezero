@@ -38,6 +38,29 @@ export function IngredientLists(props: Props) {
     const f = list.removed ? restoreItem : removeItem
     setLists(f(lists, list.id))
   }
+  const addBtn = (
+    <p>
+      <Button
+        color="secondary"
+        size="sm"
+        onClick={() => setLists([...lists, newIngredientList.next().value])}
+      >
+        Add Ingredient Section
+      </Button>
+    </p>
+  )
+  if (_.size(lists) === 1) {
+    const list = _.head(lists)
+    return (
+      <>
+        <IngredientList
+          ingredientList={list.json}
+          onChange={newList => setLists(replaceItem(lists, list.id, newList))}
+        />
+        {addBtn}
+      </>
+    )
+  }
 
   return (
     <>
@@ -52,6 +75,7 @@ export function IngredientLists(props: Props) {
           ) : (
             <IngredientList
               ingredientList={list.json}
+              oneOfMany={true}
               onChange={newList =>
                 setLists(replaceItem(lists, list.id, newList))
               }
@@ -59,15 +83,7 @@ export function IngredientLists(props: Props) {
           )}
         </ActionLine>
       ))}
-      <p>
-        <Button
-          color="secondary"
-          size="sm"
-          onClick={() => setLists([...lists, newIngredientList.next().value])}
-        >
-          Add Ingredient Section
-        </Button>
-      </p>
+      {addBtn}
     </>
   )
 }

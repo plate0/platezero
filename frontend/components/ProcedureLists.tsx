@@ -38,6 +38,31 @@ export function ProcedureLists(props: Props) {
     setLists(f(lists, list.id))
   }
 
+  const addBtn = (
+    <p>
+      <Button
+        color="secondary"
+        size="sm"
+        onClick={() => setLists([...lists, newProcedureList.next().value])}
+      >
+        Add Instruction Section
+      </Button>
+    </p>
+  )
+
+  if (_.size(lists) === 1) {
+    const list = _.head(lists)
+    return (
+      <>
+        <ProcedureList
+          procedureList={list.json}
+          onChange={newList => setLists(replaceItem(lists, list.id, newList))}
+        />
+        {addBtn}
+      </>
+    )
+  }
+
   return (
     <>
       {lists.map(list => (
@@ -51,6 +76,7 @@ export function ProcedureLists(props: Props) {
           ) : (
             <ProcedureList
               procedureList={list.json}
+              oneOfMany={true}
               onChange={newList =>
                 setLists(replaceItem(lists, list.id, newList))
               }
@@ -58,15 +84,7 @@ export function ProcedureLists(props: Props) {
           )}
         </ActionLine>
       ))}
-      <p>
-        <Button
-          color="secondary"
-          size="sm"
-          onClick={() => setLists([...lists, newProcedureList.next().value])}
-        >
-          Add Instruction Section
-        </Button>
-      </p>
+      {addBtn}
     </>
   )
 }

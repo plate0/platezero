@@ -4,6 +4,7 @@ import {
   Row,
   Col,
   FormGroup,
+  FormText,
   Input,
   Label,
   Card,
@@ -37,6 +38,7 @@ const newIngredient = generateUITrackable({
 
 interface Props {
   onChange?: (ingredientList: IngredientListJSON) => void
+  oneOfMany?: boolean
   ingredientList?: IngredientListJSON
 }
 
@@ -68,6 +70,12 @@ export function IngredientList(props: Props) {
           value={name || ''}
           onChange={e => setName(e.target.value)}
         />
+        {!props.oneOfMany && (
+          <FormText color="muted">
+            Tip: If you just have one section of ingredients, you can leave this
+            blank!
+          </FormText>
+        )}
       </CardHeader>
       <CardBody>
         <ActionLine icon="fal fa-times invisible" onAction={_.noop}>

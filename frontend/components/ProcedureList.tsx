@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, CardHeader, Input, CardBody, Button } from 'reactstrap'
+import { Card, CardHeader, Input, CardBody, Button, FormText } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { ProcedureListJSON } from '../models'
@@ -18,6 +18,7 @@ import {
 
 interface Props {
   procedureList: ProcedureListJSON
+  oneOfMany?: boolean
   onChange?: (list: ProcedureListJSON) => void
 }
 
@@ -51,6 +52,12 @@ export function ProcedureList(props: Props) {
           value={name || ''}
           onChange={e => setName(e.target.value)}
         />
+        {!props.oneOfMany && (
+          <FormText color="muted">
+            Tip: If you just have one set of instructions, you can leave this
+            blank!
+          </FormText>
+        )}
       </CardHeader>
       <CardBody>
         {lines.map(line => (
