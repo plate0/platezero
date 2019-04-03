@@ -14,7 +14,12 @@ import {
   Input
 } from 'reactstrap'
 
-import { Layout, ProcedureLists, IngredientLists } from '../components'
+import {
+  Layout,
+  ProcedureLists,
+  IngredientLists,
+  Preheats
+} from '../components'
 import {
   getRecipe,
   getRecipeVersion,
@@ -128,6 +133,11 @@ export default class EditRecipe extends React.Component<Props, State> {
             {err}
           </Alert>
         ))}
+        <h4>Preheats</h4>
+        <Preheats
+          preheats={v.preheats}
+          onChange={preheats => this.setState({ preheats })}
+        />
         <h4>Ingredients</h4>
         <IngredientLists
           lists={v.ingredientLists}
