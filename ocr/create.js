@@ -66,8 +66,8 @@ Thank you`
 const main = async () => {
   const { id } = argv
   const token = await login(id)
-  const recipe = readFileSync('recipe.json')
-  const res = await create(recipe, { token })
+  const recipe = JSON.parse(readFileSync('recipe.json'))
+  const res = await post(recipe, { token })
   const json = await res.json()
   console.log(json)
 }
