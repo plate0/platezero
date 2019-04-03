@@ -3,7 +3,7 @@ export const RecipeParts = [
   { name: 'Subtitle', val: 'subtitle', key: 's' },
   { name: 'Description', val: 'description', key: 'd' },
   { name: 'Ingredients', val: 'ingredients', key: 'i' },
-  { name: 'Procudure', val: 'procedure', key: 'p' },
+  { name: 'Procudure', val: 'procedure', key: 'o' },
   { name: 'Yield', val: 'yield', key: 'y' },
   { name: 'Duration', val: 'duration', key: 'u' }
 ]

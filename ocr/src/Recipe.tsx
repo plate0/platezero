@@ -1,17 +1,18 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Form, FormGroup, Input } from 'reactstrap'
+import { Row, Col, Button, Form, FormGroup, Input } from 'reactstrap'
 import { Recipe as RecipeModel } from './models'
 
 export interface RecipeProps extends RecipeModel {
   active: string
   onChange: (prop: string, val: any) => void
+  onSubmit: (recipe: RecipeModel) => void
+  onSubmitJSON: (recipe: RecipeModel) => void
 }
 
 export class Recipe extends React.Component<RecipeProps> {
   constructor(props: RecipeProps) {
     super(props)
-
     this.form = React.createRef()
     this.title = React.createRef()
     this.subtitle = React.createRef()
@@ -20,19 +21,26 @@ export class Recipe extends React.Component<RecipeProps> {
     this.procedure = React.createRef()
     this['yield'] = React.createRef()
     this.duration = React.createRef()
+
+    this.onSubmit = this.onSubmit.bind(this)
   }
+
+  public onSubmit(e) {
+    e.preventDefault()
+    this.props.onSubmit(this.props)
+  }
+
   public render() {
     setTimeout(() => {
       const form = ReactDOM.findDOMNode(this.form.current)
       const el = ReactDOM.findDOMNode(this[this.props.active].current)
-      // el.focus()
       form.parentNode.scroll({
         top: el.offsetTop - 8,
         behavior: 'smooth'
       })
     })
     return (
-      <Form className="p-2" ref={this.form}>
+      <Form className="p-2" ref={this.form} onSubmit={this.onSubmit}>
         <FormGroup>
           <Input
             className={`${this.props.active === 'title' ? 'focus' : ''}`}
@@ -122,6 +130,22 @@ export class Recipe extends React.Component<RecipeProps> {
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
           />
         </FormGroup>
+        <Row>
+          <Col xs="6">
+            <Button type="submit" color="primary">
+              Submit
+            </Button>
+          </Col>
+          <Col xs="6">
+            <Button
+              type="button"
+              color="info"
+              onClick={e => this.props.onSubmitJSON(this.props)}
+            >
+              Save To JSON
+            </Button>
+          </Col>
+        </Row>
       </Form>
     )
   }

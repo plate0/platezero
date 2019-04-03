@@ -7,6 +7,57 @@ import { Row, Col } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
 import { RecipeParts } from './models'
+import * as Mousetrap from 'mousetrap'
+import { transcribe } from './transcribe'
+import { create } from './create'
+import { writeFileSync } from 'fs'
+
+const recipeToJSON = (recipe: Recipe): string => {
+  let md = ``
+  if (recipe.duration) {
+    md += `
+<meta itemprop="cookTime" content="${recipe.duration}"></meta>
+`
+  }
+  if (recipe.yield) {
+    md += `
+<meta itemprop="recipeYield" content="${recipe.yield}"></meta>
+`
+  }
+  md += `
+# ${recipe.title}
+`
+
+  if (recipe.subtitle) {
+    md += `
+## ${recipe.subtitle}
+`
+  }
+
+  if (recipe.description) {
+    md += `
+${recipe.description}
+`
+  }
+
+  md += `
+${recipe.ingredients}
+    `
+
+  md += `
+
+${recipe.procedure}
+    `
+
+  const json = transcribe(md)
+  if (!json.subtitle) {
+    delete json['subtitle']
+  }
+  if (!json.description) {
+    delete json['description']
+  }
+  return json
+}
 
 export class App extends React.Component {
   constructor(props: any) {
@@ -15,40 +66,46 @@ export class App extends React.Component {
     this.onSelection = this.onSelection.bind(this)
     this.onRecipeChange = this.onRecipeChange.bind(this)
     this.onActiveChange = this.onActiveChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
+    this.saveToJSON = this.saveToJSON.bind(this)
+    this.next = this.next.bind(this)
+    this.previous = this.previous.bind(this)
     this.state = {
       active: 'title',
       title: '',
       subtitle: '',
-      description: ''
+      description: '',
+      ingredients: '',
+      procedure: '',
+      yield: '',
+      duration: ''
     }
   }
 
   public componentDidMount() {
-    window.addEventListener(
-      'keyup',
-      e => {
-        console.log('TEST', e)
-      },
-      true
+    Mousetrap.bind(
+      [
+        'command+t',
+        'command+s',
+        'command+d',
+        'command+i',
+        'command+o',
+        'command+y',
+        'command+u'
+      ],
+      ({ key }) => {
+        this.shortcut(key)
+      }
     )
-    window.onkeyup = e => {
-      console.log(e)
-      e.preventDefault()
-      e.stopPropagation()
-      const { ctrlKey, key } = e
-      if (!ctrlKey) {
-        return false
-      }
-      if (key === 'n') {
-        return this.next()
-      } else if (key === 'p') {
-        return this.previous()
-      }
-      const active = RecipeParts.filter(r => r.key === key)[0]
-      if (active) {
-        this.setState({ active: active.val })
-      }
-      return false
+    Mousetrap.bind('command+n', this.next)
+    Mousetrap.bind('command+p', this.previous)
+    Mousetrap.bind('esc', () => document.activeElement.blur())
+  }
+
+  public shortcut(key: string) {
+    const active = _.first(_.filter(RecipeParts, { key }))
+    if (active) {
+      this.setState({ active: active.val })
     }
   }
 
@@ -78,8 +135,16 @@ export class App extends React.Component {
     console.log('onSelection', this.state)
     const result = await ocr(buffer)
     const adapter = adapters[this.state.active]
-    const val = adapter ? adapter(result) : result
-    this.setState({ [this.state.active]: val })
+    let val = adapter ? adapter(result) : result
+    this.setState(s => {
+      if (this.state.active === 'procedure') {
+        val = this.state.procedure += ` ${val}`
+      }
+      return {
+        ...s,
+        [this.state.active]: val
+      }
+    })
     this.next()
   }
 
@@ -98,6 +163,77 @@ export class App extends React.Component {
     this.setState({ active })
   }
 
+  public async saveToJSON(recipe: Recipe) {
+    const json = recipeToJSON(recipe)
+    writeFileSync('recipe.json', JSON.stringify(json, null, 2))
+  }
+
+  public async onSubmit(recipe: Recipe) {
+    console.log('make markdown')
+    let md = ``
+    if (recipe.duration) {
+      md += `
+<meta itemprop="cookTime" content="${recipe.duration}"></meta>
+`
+    }
+    if (recipe.yield) {
+      md += `
+<meta itemprop="recipeYield" content="${recipe.yield}"></meta>
+`
+    }
+    md += `
+# ${recipe.title}
+`
+
+    if (recipe.subtitle) {
+      md += `
+## ${recipe.subtitle}
+`
+    }
+
+    if (recipe.description) {
+      md += `
+${recipe.description}
+`
+    }
+
+    md += `
+${recipe.ingredients}
+    `
+
+    md += `
+
+${recipe.procedure}
+    `
+
+    console.log(md)
+    const json = transcribe(md)
+    console.log('JSON', json)
+    if (!json.subtitle) {
+      delete json['subtitle']
+    }
+    if (!json.description) {
+      delete json['description']
+    }
+
+    try {
+      const created = await create(5, json)
+      console.log('DONE!!!!!!!!!!', created)
+      this.setState({
+        active: 'title',
+        title: '',
+        subtitle: '',
+        description: '',
+        ingredients: '',
+        procedure: '',
+        yield: '',
+        duration: ''
+      })
+    } catch (err) {
+      alert(err)
+    }
+  }
+
   public render() {
     // TODO: "login" or get recipes from S3
     return (
@@ -108,7 +244,12 @@ export class App extends React.Component {
             <Canvas onSelection={this.onSelection} />
           </Col>
           <Col xs="3" style={{ maxHeight: '960px', overflow: 'auto' }}>
-            <Recipe {...this.state} onChange={this.onRecipeChange} />
+            <Recipe
+              {...this.state}
+              onChange={this.onRecipeChange}
+              onSubmit={this.onSubmit}
+              onSubmitJSON={this.saveToJSON}
+            />
           </Col>
         </Row>
       </div>
