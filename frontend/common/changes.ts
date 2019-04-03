@@ -30,7 +30,10 @@ export function isChanged<T extends {}>(item: UITrackable<T>): boolean {
 }
 
 export const uiToJSON = <T extends {}>(items: UITrackable<T>[]): T[] =>
-  _.map(_.reject(items, { removed: true }), item => normalize(item.json))
+  _.map(_.reject(items, { removed: true }), item => {
+    const omissions = isChanged(item) ? ['id'] : []
+    return normalize(_.omit(item.json, omissions))
+  })
 
 /**
  * Restore a single UITrackable. If the item has been marked as removed, it
@@ -94,7 +97,7 @@ export function replaceItem<T extends {}>(
     prev.id === id
       ? {
           id,
-          json: _.omit(json, 'id'),
+          json,
           added: prev.added,
           removed: false,
           original: prev.original
