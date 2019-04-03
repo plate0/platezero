@@ -3,13 +3,14 @@ import Router from 'next/router'
 import Head from 'next/head'
 import { Alert, Button, Col, Form, Row } from 'reactstrap'
 import { createRecipe, PlateZeroApiError } from '../common'
-import { IngredientListJSON, ProcedureListJSON } from '../models'
+import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
 import { PostRecipe } from '../common/request-models'
 import {
   Layout,
   NewRecipeTitle,
   IngredientLists,
-  ProcedureLists
+  ProcedureLists,
+  Preheats
 } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
@@ -23,6 +24,7 @@ interface State {
   title: string
   ingredientLists: IngredientListJSON[]
   procedureLists: ProcedureListJSON[]
+  preheats: PreheatJSON[]
 }
 
 export default class NewRecipe extends React.Component<Props, State> {
@@ -34,7 +36,8 @@ export default class NewRecipe extends React.Component<Props, State> {
       errors: [],
       title: '',
       ingredientLists: [],
-      procedureLists: []
+      procedureLists: [],
+      preheats: []
     }
   }
   static async getInitialProps(ctx) {
@@ -50,7 +53,7 @@ export default class NewRecipe extends React.Component<Props, State> {
   public getRecipe(): PostRecipe {
     return {
       title: this.state.title,
-      preheats: [],
+      preheats: this.state.preheats,
       ingredient_lists: this.state.ingredientLists,
       procedure_lists: this.state.procedureLists
     }
@@ -93,6 +96,11 @@ export default class NewRecipe extends React.Component<Props, State> {
               />
             </Col>
           </Row>
+          <h2>Preheats</h2>
+          <Preheats
+            preheats={[]}
+            onChange={preheats => this.setState({ preheats })}
+          />
           <h2>Ingredients</h2>
           <IngredientLists
             lists={[defaultIngredientList]}
