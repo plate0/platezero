@@ -24,7 +24,6 @@ import {
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { getName } from '../common/model-helpers'
 import {
   PlateZeroApiError,
   getRecipe,
@@ -34,7 +33,6 @@ import {
 } from '../common/http'
 import { UserContext } from '../context/UserContext'
 import { TokenContext } from '../context/TokenContext'
-import { Link } from '../routes'
 
 interface Props {
   recipe: RecipeJSON
@@ -82,12 +80,6 @@ export default class Recipe extends React.Component<Props, State> {
           <Col>
             <h1>{recipe.title}</h1>
             {recipe.subtitle && <p className="lead">{recipe.subtitle}</p>}
-            <p className="text-muted">
-              By{' '}
-              <Link route={`/${recipe.owner.username}`}>
-                <a>{getName(recipe.owner)}</a>
-              </Link>
-            </p>
           </Col>
           <Col xs="auto">
             <IfLoggedIn username={recipe.owner.username}>
@@ -248,11 +240,6 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
           >
             Delete Recipe&hellip;
           </DropdownItem>
-          {recipe.source_url && (
-            <DropdownItem href={recipe.source_url} target="_blank">
-              Visit Source Website
-            </DropdownItem>
-          )}
         </DropdownMenu>
       </ButtonDropdown>
       <RenameModal
