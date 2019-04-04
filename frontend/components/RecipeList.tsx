@@ -96,7 +96,7 @@ const SeeMore = ({ username }: { username: string }) => (
     }}
   >
     <Link to={`/${username}/recipes`}>
-      <a className="text-secondary">See more&hellip;</a>
+      <a className="text-secondary stretched-link">See more&hellip;</a>
     </Link>
   </div>
 )
