@@ -18,7 +18,8 @@ import {
   Layout,
   ProcedureLists,
   IngredientLists,
-  Preheats
+  Preheats,
+  RecipeTitle
 } from '../components'
 import {
   getRecipe,
@@ -118,9 +119,7 @@ export default class EditRecipe extends React.Component<Props, State> {
         </Head>
         <Row className="mt-3">
           <Col>
-            <h1>
-              <span className="text-muted">Editing</span> {v.recipe.title}
-            </h1>
+            <RecipeTitle recipe={v.recipe} />
           </Col>
           <Col xs="auto">
             <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>

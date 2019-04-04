@@ -20,7 +20,8 @@ import {
   Head,
   Layout,
   IfLoggedIn,
-  RecipeVersion as RecipeVersionView
+  RecipeVersion as RecipeVersionView,
+  RecipeTitle
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
@@ -78,8 +79,7 @@ export default class Recipe extends React.Component<Props, State> {
         />
         <Row className="mt-3">
           <Col>
-            <h1>{recipe.title}</h1>
-            {recipe.subtitle && <p className="lead">{recipe.subtitle}</p>}
+            <RecipeTitle recipe={recipe} />
           </Col>
           <Col xs="auto">
             <IfLoggedIn username={recipe.owner.username}>
