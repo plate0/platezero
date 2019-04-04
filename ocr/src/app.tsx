@@ -2,8 +2,9 @@ import * as React from 'react'
 import * as _ from 'lodash'
 import { Canvas } from './Canvas'
 import { Recipe } from './Recipe'
+import { Config } from './Config'
 import { Navbar } from './Navbar'
-import { Row, Col } from 'reactstrap'
+import { Container, Row, Col } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
 import { RecipeParts, MarkdownRecipe } from './models'
@@ -11,6 +12,7 @@ import * as Mousetrap from 'mousetrap'
 import { transcribe } from './transcribe'
 import { create } from './create'
 import { writeFileSync } from 'fs'
+const app = require('electron').remote.app
 
 const recipeToJSON = (recipe: MarkdownRecipe): string => {
   let md = ``
@@ -61,6 +63,8 @@ ${recipe.procedures}
 
 interface AppState {
   recipe: MarkdownRecipe
+  active: string
+  recipePath?: string
 }
 
 export class App extends React.Component {
@@ -89,6 +93,7 @@ export class App extends React.Component {
   }
 
   public componentDidMount() {
+    // console.log('DATA PATH', app.getPath('userData'))
     Mousetrap.bind(
       [
         'command+t',
@@ -248,6 +253,13 @@ ${recipe.procedures}
 
   public render() {
     // TODO: "login" or get recipes from S3
+    if (!this.state.recipePath) {
+      return (
+        <Container>
+          <Config />
+        </Container>
+      )
+    }
     return (
       <div>
         <Navbar active={this.state.active} onClick={this.onActiveChange} />
