@@ -1,8 +1,8 @@
 {
-  "name": "ocr",
-  "productName": "ocr",
+  "name": "platezero-ocr",
+  "productName": "PlateZero",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "OCR at its fastest.",
   "main": "src/index.ts",
   "scripts": {
     "start": "electron-forge start",
@@ -12,7 +12,7 @@
     "lint": "tslint --project tsconfig.json --type-check --force"
   },
   "keywords": [],
-  "author": "ethan",
+  "author": "PlateZero",
   "license": "MIT",
   "config": {
     "forge": {
@@ -48,31 +48,31 @@
   },
   "dependencies": {
     "@types/electron-devtools-installer": "2.2.0",
-    "@types/lodash": "^4.14.123",
-    "@types/node-fetch": "^2.1.7",
-    "@types/react": "16.8.10",
+    "@types/lodash": "4.14.123",
+    "@types/node-fetch": "2.1.7",
+    "@types/react": "16.8.12",
     "@types/react-dom": "16.8.3",
     "@types/reactstrap": "7.1.3",
-    "aws-sdk": "^2.434.0",
+    "aws-sdk": "2.435.0",
     "bootstrap": "4.3.1",
-    "cheerio": "^1.0.0-rc.2",
+    "cheerio": "1.0.0-rc.2",
     "electron-compile": "6.4.4",
     "electron-devtools-installer": "2.2.4",
     "electron-squirrel-startup": "1.0.0",
-    "fraction.js": "^4.0.12",
-    "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.11",
-    "moment": "^2.24.0",
-    "mousetrap": "^1.6.3",
-    "node-fetch": "^2.3.0",
+    "fraction.js": "4.0.12",
+    "jsonwebtoken": "8.5.1",
+    "lodash": "4.17.11",
+    "moment": "2.24.0",
+    "mousetrap": "1.6.3",
+    "node-fetch": "2.3.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-hot-loader": "4.8.2",
-    "reactstrap": "7.1.0",
-    "showdown": "^1.9.0",
+    "reactstrap": "8.0.0",
+    "showdown": "1.9.0",
     "tslib": "1.9.3",
-    "turndown": "^5.0.3",
-    "yargs": "^13.2.2"
+    "turndown": "5.0.3",
+    "yargs": "13.2.2"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "6.24.1",
@@ -80,7 +80,7 @@
     "babel-preset-react": "6.24.1",
     "electron-forge": "5.2.4",
     "electron-prebuilt-compile": "4.0.0",
-    "tslint": "5.14.0",
+    "tslint": "5.15.0",
     "typescript": "3.4.1"
   }
 }
