@@ -35,9 +35,13 @@ export const PlainSelect = props => (
       }
     })}
     styles={{
-      control: (base, state) => ({
+      control: base => ({
         ...base,
-        borderColor: state.isFocused ? bsLightGray : 'transparent'
+        borderStyle: 'none none solid none',
+        borderColor: bsLightGray,
+        borderRadius: 0,
+        borderWidth: '1px',
+        backgroundColor: 'transparent'
       }),
 
       // hide the indicator separator

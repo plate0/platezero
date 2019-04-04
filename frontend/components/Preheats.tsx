@@ -70,6 +70,16 @@ export function Preheats(props: Props) {
 
   return (
     <>
+      <ActionLine icon="fal fa-times invisible" onAction={_.noop}>
+        <Row>
+          <Col xs="12" sm="6" md="4" lg="3">
+            <strong>Device</strong>
+          </Col>
+          <Col>
+            <strong>Temperature</strong>
+          </Col>
+        </Row>
+      </ActionLine>
       {preheats.map(preheat => (
         <ActionLine
           key={preheat.id}
@@ -127,7 +137,7 @@ function Preheat({
     }
   }, [name, temp])
   return (
-    <Row className="mb-3">
+    <Row className="mb-3" noGutters>
       <Col xs="12" sm="6" md="4" lg="3">
         <PlainInput
           type="text"

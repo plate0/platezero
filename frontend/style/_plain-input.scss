@@ -1,5 +1,7 @@
 .plain-input {
-  border-color: transparent;
+  border: none;
+  border-bottom: 1px solid $input-border-color;
+  border-radius: 0;
 
   &:hover {
     border-color: $input-border-color;
@@ -7,6 +9,7 @@
 
   &:focus {
     border-color: $input-border-color;
+    box-shadow: none;
   }
 }
 
