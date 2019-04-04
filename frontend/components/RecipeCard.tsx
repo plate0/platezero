@@ -10,18 +10,11 @@ export interface RecipeCardProps {
 
 export const RecipeCard = (props: RecipeCardProps) => (
   <div>
-    <div
-      className="rounded shadow-sm"
-      style={{
-        height: 180,
-        width: '100%',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundColor: props.image_url ? 'transparent' : 'var(--primary)',
-        backgroundImage: `url(${props.image_url ||
-          '/static/recipe-placeholder-md.jpg'})`,
-        backgroundBlendMode: 'luminosity'
-      }}
+    <img
+      className="rounded"
+      style={{ height: 180, width: '100%', objectFit: 'cover' }}
+      src={props.image_url || '/static/recipe-placeholder-md.jpg'}
+      alt={props.image_url ? `Picture of ${props.title}` : 'Placeholder image'}
     />
     <div className="pt-1">
       <div className="m-0">
