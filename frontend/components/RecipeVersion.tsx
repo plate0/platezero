@@ -1,70 +1,12 @@
 import React from 'react'
-import * as moment from 'moment'
 import * as ReactMarkdown from 'react-markdown'
 import { Row, Col, Badge } from 'reactstrap'
 import { Amount } from './Amount'
-import { StatBar } from './StatBar'
+import { RecipeVersionVitals } from './RecipeVersionVitals'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { IngredientLineJSON } from '../models/ingredient_line'
 import { IngredientListJSON } from '../models/ingredient_list'
 import { ProcedureListJSON } from '../models/procedure_list'
-import { get } from 'lodash'
-
-const formatDuration = (seconds: number) => {
-  const dur = moment.duration(seconds, 'seconds')
-  const [h, m] = [dur.hours(), dur.minutes()]
-  const hs = `${h}h`
-  const ms = `${m}m`
-  if (h > 0) {
-    return m !== 0 ? `${hs} ${ms}` : hs
-  }
-  return ms
-}
-
-const getStats = (v: RecipeVersionJSON) => {
-  const stats = []
-  const duration = get(v.recipeDuration, 'duration_seconds')
-  if (duration) {
-    stats.push({
-      name: 'Time',
-      icon: 'clock',
-      value: formatDuration(duration)
-    })
-  }
-  const y = get(v.recipeYield, 'text')
-  if (y) {
-    stats.push({ name: 'Yield', icon: 'utensils', value: y })
-  }
-  return stats
-}
-
-const RecipeHeader = ({
-  recipeVersion
-}: {
-  recipeVersion: RecipeVersionJSON
-}) => {
-  const stats = getStats(recipeVersion)
-  const description = get(recipeVersion, 'recipe.description')
-  const imageUrl = get(recipeVersion, 'recipe.image_url')
-  if (!stats.length && !description && !imageUrl) {
-    return null
-  }
-  return (
-    <Row>
-      <Col xs="12" lg="8" className="d-flex flex-column">
-        <StatBar stats={stats} />
-        {description && <p className="lead my-auto">{description}</p>}
-      </Col>
-      <Col xs="12" lg="4">
-        <img
-          src={imageUrl}
-          className="w-100"
-          alt={`Picture of ${recipeVersion.recipe.title}`}
-        />
-      </Col>
-    </Row>
-  )
-}
 
 const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
   <div className="mb-3">
@@ -123,20 +65,21 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
   const v = props.recipeVersion
   return (
     <>
-      <RecipeHeader recipeVersion={v} />
-      <Row>
-        <Col className="mb-3">
-          <div className="list-inline">
-            {v.preheats.map(preheat => (
-              <div key={preheat.id} className="list-inline-item text-danger">
-                {preheat.name} {preheat.temperature} {preheat.unit}
-              </div>
-            ))}
-          </div>
-        </Col>
-      </Row>
+      <RecipeVersionVitals recipeVersion={v} />
+      {v.recipe.description && (
+        <div className="bg-light text-secondary p-5 mb-3">
+          <ReactMarkdown source={v.recipe.description} />
+        </div>
+      )}
       <Row>
         <Col xs="12" md="6" lg="4">
+          {v.recipe.image_url && (
+            <img
+              className="w-100 mb-3"
+              src={v.recipe.image_url}
+              alt={`Picture of ${v.recipe.title}`}
+            />
+          )}
           <h2>Ingredients</h2>
           {v.ingredientLists.map((il, key) => (
             <IngredientList key={key} list={il} />
