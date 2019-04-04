@@ -42,7 +42,7 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
   try {
     const recipeVersion = await RecipeVersion.findOne({
       where: { id, recipe_id: req.recipe.id },
-      attributes: ['id', 'created_at', 'message'],
+      attributes: ['id', 'created_at', 'message', 'parent_recipe_version_id'],
       order: [
         l('"ingredientLists.RecipeVersionIngredientList.sort_key" ASC'),
         l('"ingredientLists.lines.IngredientListLine.sort_key" ASC'),

@@ -19,3 +19,7 @@ $changed-base: $warning;
 .text-strike {
   text-decoration: line-through;
 }
+
+summary {
+  color: $secondary;
+}

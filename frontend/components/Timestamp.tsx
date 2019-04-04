@@ -8,7 +8,7 @@ interface TimestampProps {
 const ensureMoment = (t: string | moment.Moment | Date): moment.Moment =>
   moment.isMoment(t) ? t : moment(t)
 
-const humanize = (t: moment.Moment): string =>
+export const humanize = (t: moment.Moment): string =>
   t.format('dddd MMMM Do YYYY h:mm:ss a')
 
 export const Timestamp = (props: TimestampProps) => {
