@@ -1,40 +1,46 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Row, Col, Button, Form, FormGroup, Input } from 'reactstrap'
-import { Recipe as RecipeModel } from './models'
+import { MarkdownRecipe } from './models'
 
-export interface RecipeProps extends RecipeModel {
+export interface RecipeProps {
   active: string
-  onChange: (prop: string, val: any) => void
-  onSubmit: (recipe: RecipeModel) => void
-  onSubmitJSON: (recipe: RecipeModel) => void
+  recipe: MarkdownRecipe
+  onChange: (prop: string, val: any) => any
+  onSubmit: (recipe: MarkdownRecipe) => any
+  onSubmitJSON: (recipe: MarkdownRecipe) => any
 }
 
 export class Recipe extends React.Component<RecipeProps> {
+  private form = React.createRef<any>()
+  private title = React.createRef<any>()
+  private subtitle = React.createRef<any>()
+  private description = React.createRef<any>()
+  private ingredients = React.createRef<any>()
+  private procedures = React.createRef<any>()
+  private yld = React.createRef<any>()
+  private duration = React.createRef<any>()
+
   constructor(props: RecipeProps) {
     super(props)
-    this.form = React.createRef()
-    this.title = React.createRef()
-    this.subtitle = React.createRef()
-    this.description = React.createRef()
-    this.ingredients = React.createRef()
-    this.procedure = React.createRef()
-    this['yield'] = React.createRef()
-    this.duration = React.createRef()
-
     this.onSubmit = this.onSubmit.bind(this)
   }
 
-  public onSubmit(e) {
+  public onSubmit(e: React.FormEvent<EventTarget>) {
     e.preventDefault()
-    this.props.onSubmit(this.props)
+    this.props.onSubmit(this.props.recipe)
   }
 
   public render() {
+    const { recipe } = this.props
     setTimeout(() => {
-      const form = ReactDOM.findDOMNode(this.form.current)
-      const el = ReactDOM.findDOMNode(this[this.props.active].current)
-      form.parentNode.scroll({
+      const form: HTMLElement = ReactDOM.findDOMNode(
+        this.form.current
+      ) as HTMLElement
+      const el = ReactDOM.findDOMNode(
+        this[this.props.active].current
+      ) as HTMLElement
+      ;(form.parentNode as HTMLElement).scroll({
         top: el.offsetTop - 8,
         behavior: 'smooth'
       })
@@ -51,7 +57,7 @@ export class Recipe extends React.Component<RecipeProps> {
             ref={this.title}
             required
             onFocus={e => this.props.onChange(e.target.name, e.target.value)}
-            value={this.props.title}
+            value={recipe.title}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
           />
         </FormGroup>
@@ -63,7 +69,7 @@ export class Recipe extends React.Component<RecipeProps> {
             id="subtitle"
             placeholder="Subtitle"
             ref={this.subtitle}
-            value={this.props.subtitle}
+            value={recipe.subtitle}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
           />
         </FormGroup>
@@ -75,7 +81,7 @@ export class Recipe extends React.Component<RecipeProps> {
             id="description"
             placeholder="Description..."
             ref={this.description}
-            value={this.props.description}
+            value={recipe.description}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
             style={{ height: '300px' }}
           />
@@ -88,33 +94,33 @@ export class Recipe extends React.Component<RecipeProps> {
             id="ingredients"
             placeholder="Ingredients..."
             ref={this.ingredients}
-            value={this.props.ingredients}
+            value={recipe.ingredients}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
             style={{ height: '300px' }}
           />
         </FormGroup>
         <FormGroup className="mt-2">
           <Input
-            className={`${this.props.active === 'procedure' ? 'focus' : ''}`}
+            className={`${this.props.active === 'procedures' ? 'focus' : ''}`}
             type="textarea"
-            name="procedure"
-            id="procedure"
+            name="procedures"
+            id="procedures"
             placeholder="Instructions..."
-            ref={this.procedure}
-            value={this.props.procedure}
+            ref={this.procedures}
+            value={recipe.procedures}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
             style={{ height: '300px' }}
           />
         </FormGroup>
         <FormGroup className="mt-2">
           <Input
-            className={`${this.props.active === 'yield' ? 'focus' : ''}`}
+            className={`${this.props.active === 'yld' ? 'focus' : ''}`}
             type="text"
-            name="yield"
-            id="yield"
+            name="yld"
+            id="yld"
             placeholder="Yields..."
-            ref={this['yield']}
-            value={this.props.yield}
+            ref={this.yld}
+            value={recipe.yld}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
           />
         </FormGroup>
@@ -126,7 +132,7 @@ export class Recipe extends React.Component<RecipeProps> {
             id="duration"
             placeholder="Duration ISO..."
             ref={this.duration}
-            value={this.props.duration}
+            value={recipe.duration}
             onChange={e => this.props.onChange(e.target.name, e.target.value)}
           />
         </FormGroup>
@@ -140,7 +146,7 @@ export class Recipe extends React.Component<RecipeProps> {
             <Button
               type="button"
               color="info"
-              onClick={e => this.props.onSubmitJSON(this.props)}
+              onClick={() => this.props.onSubmitJSON(this.props.recipe)}
             >
               Save To JSON
             </Button>

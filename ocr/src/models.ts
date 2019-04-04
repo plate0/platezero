@@ -16,11 +16,11 @@ export interface PreheatJSON {
 
 export interface IngredientLineJSON {
   name: string
-  quantity_numerator: number
-  quantity_denominator: number
-  preparation: string
+  quantity_numerator?: number
+  quantity_denominator?: number
+  preparation?: string
   optional: boolean
-  unit: string
+  unit?: string
 }
 
 export interface IngredientListJSON {
@@ -49,4 +49,15 @@ export interface Recipe {
   preheats?: PreheatJSON[]
   ingredient_lists: IngredientListJSON[]
   procedure_lists: ProcedureListJSON[]
+}
+
+export interface MarkdownRecipe {
+  title: string
+  subtitle?: string
+  description?: string
+  yld?: string
+  duration?: number
+  preheats?: string
+  ingredients: string
+  procedures: string
 }

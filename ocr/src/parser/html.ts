@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
 import {
   ProcedureListJSON,
-  ProcedureLineJSON,
+  ProcedureLinesJSON,
   IngredientListJSON,
   IngredientLineJSON,
   PreheatJSON
@@ -73,7 +73,7 @@ export const image_url = (sel?: string) => ($: any) => {
     .attr('src')
 }
 
-export const duration = () => ($: any): number => {
+export const duration = () => ($: any): number | undefined => {
   const node = $('[itemprop="totalTime"]')
   if (!node) {
     return undefined
@@ -85,7 +85,7 @@ export const duration = () => ($: any): number => {
   return undefined
 }
 
-export const yld = () => ($: any): string => {
+export const yld = () => ($: any): string | undefined => {
   const node = $('[itemprop="recipeYield"]')
   if (!node) {
     return undefined
@@ -130,7 +130,7 @@ const findMap = ($: any, options: FindMap) => {
     selector: '*'
   })
   return $(opts.selector)
-    .filter(function() {
+    .filter(function(this: any) {
       if (opts.css) {
         return ($(this).attr('class') || '').match(opts.css)
       }
@@ -139,7 +139,7 @@ const findMap = ($: any, options: FindMap) => {
       }
       return true
     })
-    .map(function() {
+    .map(function(this: any) {
       return opts.map.apply(this, arguments)
     })
     .get()
@@ -147,7 +147,7 @@ const findMap = ($: any, options: FindMap) => {
 
 /* Ingredient List Strategies */
 function ingredientMapper($: any) {
-  return function() {
+  return function(this: any) {
     return parse(_.trim($(this).text()))
   }
 }
@@ -180,7 +180,7 @@ export const recipeSchemaIngredientLists = ($: any) => {
 // TODO: will probably remove
 export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
   const lines = $('*')
-    .filter(function() {
+    .filter(function(this: any) {
       return /^ingredients$/gim.test(
         $(this)
           .text()
@@ -191,7 +191,7 @@ export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
     .next()
     .closest('ul')
     .find('li')
-    .map(function() {
+    .map(function(this: any) {
       return parse($(this).text())
     })
     .get()
@@ -204,7 +204,7 @@ export const ingredient_lists = (sel: string) => (
 ): IngredientListJSON[] => [
   {
     lines: $(sel)
-      .map(function() {
+      .map(function(this: any) {
         return parse(_.trim($(this).text()))
       })
       .get()
@@ -230,7 +230,7 @@ export const recipeSchemaYield = ($: any): string | undefined => {
 /* Find Procedure Lists Strategies */
 
 function procedureMapper($: any) {
-  return function() {
+  return function(this: any) {
     return { text: _.trim($(this).text()) }
   }
 }
@@ -263,9 +263,9 @@ export const recipeSchemaProcedureLists = ($: any) => {
 }
 
 // 2. PlateZero Custom
-export const plateZeroProcedureLists = ($: any): ProcedureLineJSON[] => {
+export const plateZeroProcedureLists = ($: any): ProcedureLinesJSON[] => {
   const lines = $('*')
-    .filter(function() {
+    .filter(function(this: any) {
       return /^instructions$/gim.test(
         $(this)
           .text()
@@ -276,7 +276,7 @@ export const plateZeroProcedureLists = ($: any): ProcedureLineJSON[] => {
     .next()
     .closest('ol')
     .find('li')
-    .map(function() {
+    .map(function(this: any) {
       return { text: $(this).text() }
     })
     .get()
@@ -291,7 +291,7 @@ export const procedure_lists = (sel: string) => (
   return [
     {
       lines: $(sel)
-        .map(function() {
+        .map(function(this: any) {
           return {
             text: turndown.turndown($(this).html())
           }

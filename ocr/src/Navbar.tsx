@@ -11,12 +11,12 @@ const buttons = [
   'subtitle',
   'description',
   'ingredients',
-  'procedure',
-  'yield',
+  'procedures',
+  'yld',
   'duration'
 ]
 
-export class Navbar extends React.Component<> {
+export class Navbar extends React.Component<NavbarProps> {
   public render() {
     return (
       <RsNavbar light>
@@ -29,7 +29,10 @@ export class Navbar extends React.Component<> {
                 size="sm"
                 color="primary"
                 active={this.props.active === b}
-                onClick={e => this.props.onClick(e.target.name)}
+                onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+                  const { name } = e.target as HTMLButtonElement
+                  this.props.onClick(name)
+                }}
               >
                 {b}
               </Button>

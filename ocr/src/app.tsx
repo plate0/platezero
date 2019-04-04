@@ -6,22 +6,22 @@ import { Navbar } from './Navbar'
 import { Row, Col } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
-import { RecipeParts } from './models'
+import { RecipeParts, MarkdownRecipe } from './models'
 import * as Mousetrap from 'mousetrap'
 import { transcribe } from './transcribe'
 import { create } from './create'
 import { writeFileSync } from 'fs'
 
-const recipeToJSON = (recipe: Recipe): string => {
+const recipeToJSON = (recipe: MarkdownRecipe): string => {
   let md = ``
   if (recipe.duration) {
     md += `
 <meta itemprop="cookTime" content="${recipe.duration}"></meta>
 `
   }
-  if (recipe.yield) {
+  if (recipe.yld) {
     md += `
-<meta itemprop="recipeYield" content="${recipe.yield}"></meta>
+<meta itemprop="recipeYield" content="${recipe.yld}"></meta>
 `
   }
   md += `
@@ -46,7 +46,7 @@ ${recipe.ingredients}
 
   md += `
 
-${recipe.procedure}
+${recipe.procedures}
     `
 
   const json = transcribe(md)
@@ -57,6 +57,10 @@ ${recipe.procedure}
     delete json['description']
   }
   return json
+}
+
+interface AppState {
+  recipe: MarkdownRecipe
 }
 
 export class App extends React.Component {
@@ -71,14 +75,16 @@ export class App extends React.Component {
     this.next = this.next.bind(this)
     this.previous = this.previous.bind(this)
     this.state = {
-      active: 'title',
-      title: '',
-      subtitle: '',
-      description: '',
-      ingredients: '',
-      procedure: '',
-      yield: '',
-      duration: ''
+      recipe: {
+        title: '',
+        subtitle: '',
+        description: '',
+        ingredients: '',
+        procedures: '',
+        yld: '',
+        duration: ''
+      },
+      active: 'title'
     }
   }
 
@@ -109,7 +115,7 @@ export class App extends React.Component {
     }
   }
 
-  public next() {
+  public next(): boolean {
     let i = _.findIndex(RecipeParts, r => r.val === this.state.active)
     if (i == RecipeParts.length - 1) {
       i = 0
@@ -120,7 +126,7 @@ export class App extends React.Component {
     return false
   }
 
-  public previous() {
+  public previous(): boolean {
     let i = _.findIndex(RecipeParts, r => r.val === this.state.active)
     if (i == 0) {
       i = RecipeParts.length - 1
@@ -137,12 +143,15 @@ export class App extends React.Component {
     const adapter = adapters[this.state.active]
     let val = adapter ? adapter(result) : result
     this.setState(s => {
-      if (this.state.active === 'procedure') {
-        val = this.state.procedure += ` ${val}`
+      if (this.state.active === 'procedures') {
+        val = this.state.recipe.procedures += ` ${val}`
       }
       return {
         ...s,
-        [this.state.active]: val
+        recipe: {
+          ...s.recipe,
+          [this.state.active]: val
+        }
       }
     })
     this.next()
@@ -154,7 +163,10 @@ export class App extends React.Component {
     this.setState(s => ({
       ...s,
       active: prop,
-      [prop]: val
+      recipe: {
+        ...s.recipe,
+        [prop]: val
+      }
     }))
   }
 
@@ -176,9 +188,9 @@ export class App extends React.Component {
 <meta itemprop="cookTime" content="${recipe.duration}"></meta>
 `
     }
-    if (recipe.yield) {
+    if (recipe.yld) {
       md += `
-<meta itemprop="recipeYield" content="${recipe.yield}"></meta>
+<meta itemprop="recipeYield" content="${recipe.yld}"></meta>
 `
     }
     md += `
@@ -203,7 +215,7 @@ ${recipe.ingredients}
 
     md += `
 
-${recipe.procedure}
+${recipe.procedures}
     `
 
     console.log(md)
@@ -225,8 +237,8 @@ ${recipe.procedure}
         subtitle: '',
         description: '',
         ingredients: '',
-        procedure: '',
-        yield: '',
+        procedures: '',
+        yld: '',
         duration: ''
       })
     } catch (err) {
@@ -245,7 +257,8 @@ ${recipe.procedure}
           </Col>
           <Col xs="3" style={{ maxHeight: '960px', overflow: 'auto' }}>
             <Recipe
-              {...this.state}
+              recipe={this.state.recipe}
+              active={this.state.active}
               onChange={this.onRecipeChange}
               onSubmit={this.onSubmit}
               onSubmitJSON={this.saveToJSON}

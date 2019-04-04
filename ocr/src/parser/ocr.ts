@@ -8,7 +8,7 @@ const description = html.text('p')
 
 const preheats = ($: any) => {
   return $('meta[itemprop="preheat"]')
-    .map(function() {
+    .map(function(this: any) {
       const [name, temperature, unit] = $(this)
         .attr('content')
         .split(' ')

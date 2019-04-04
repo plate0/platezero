@@ -81,4 +81,5 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'cup.':
       return 'c'
   }
+  return undefined
 }
