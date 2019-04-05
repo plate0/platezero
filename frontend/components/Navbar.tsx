@@ -11,6 +11,7 @@ import {
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { Link } from '../routes'
+import { ProfilePicture } from './ProfilePicture'
 
 export const Navbar = () => {
   const user = useContext(UserContext)
@@ -32,11 +33,38 @@ export const Navbar = () => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <NavItem>
-    <Link route={`/${user.username}/recipes`}>
-      <a className="btn btn-link text-light">Recipes</a>
-    </Link>
-  </NavItem>
+  <>
+    <NavItem>
+      <Link route={`/${user.username}/recipes`}>
+        <a className="btn btn-link text-light">Recipes</a>
+      </Link>
+    </NavItem>
+    <NavItem>
+      <Link route={`/${user.username}`}>
+        <a className="d-block py-1 px-2 rounded">
+          <div className="d-flex align-items-center">
+            <div className="text-white">
+              {user.name ? user.name : user.username}
+            </div>
+            <div className="ml-2">
+              <ProfilePicture img={user.avatar_url} size={30} />
+            </div>
+          </div>
+          <style jsx>
+            {`
+              a:hover {
+                text-decoration: none;
+                background-color: rgba(255, 255, 255, 0.2);
+              }
+              div {
+                letter-spacing: 0.01rem;
+              }
+            `}
+          </style>
+        </a>
+      </Link>
+    </NavItem>
+  </>
 )
 
 const NewRecipeDropdown = () => (
