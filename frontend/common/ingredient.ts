@@ -1,3 +1,5 @@
+import * as _ from 'lodash'
+
 import { IngredientLineJSON } from '../models'
 import { fraction } from './fraction'
 import { unitfy } from './unit'
@@ -22,8 +24,9 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
     s = rest.join(' ')
   }
   let [name, ...restPrep] = s.split(',')
-  const optional = /optional/i.test(s)
-  name = name.trim()
+  const optionalRegex = /optional/i
+  const optional = optionalRegex.test(s)
+  name = _.replace(name, optionalRegex, '').trim()
   const preparation = restPrep.join(',').trim()
   return {
     name: name.trim(),
