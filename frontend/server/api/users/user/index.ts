@@ -35,7 +35,7 @@ r.get('/recipes', async (req: UserRequest, res) => {
   return res.json(
     await Recipe.findAll({
       where: { user_id: req.user.id },
-      order: [['updated_at', 'DESC']]
+      order: [['title', 'ASC']]
     })
   )
 })
