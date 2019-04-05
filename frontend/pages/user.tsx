@@ -3,7 +3,7 @@ import { Layout, ProfileHeader } from '../components'
 import Head from 'next/head'
 import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
-import { RecipeList } from '../components'
+import { RecipePreview } from '../components'
 import { getUser } from '../common/http'
 
 interface UserProps {
@@ -29,12 +29,7 @@ export default class User extends React.Component<UserProps> {
           </title>
         </Head>
         <ProfileHeader user={user} />
-        <RecipeList
-          recipes={user.recipes}
-          user={user}
-          seeAll={true}
-          className="pb-5"
-        />
+        <RecipePreview recipes={user.recipes} user={user} />
       </Layout>
     )
   }

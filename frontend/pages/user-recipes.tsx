@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, ProfileHeader } from '../components'
+import { Layout } from '../components'
 import Head from 'next/head'
 import nextCookie from 'next-cookies'
 import { RecipeJSON, UserJSON } from '../models'
@@ -30,8 +30,7 @@ export default class User extends React.Component<UserProps> {
             {user.username} ({user.name}) - Recipes
           </title>
         </Head>
-        <ProfileHeader user={user} />
-        <RecipeList recipes={recipes} user={user} className="pb-5" />
+        <RecipeList recipes={recipes} user={user} />
       </Layout>
     )
   }

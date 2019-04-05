@@ -3,6 +3,7 @@ $font-family-sans-serif: 'Lato', sans-serif;
 $enable-responsive-font-sizes: true;
 
 @import 'bootstrap/bootstrap.scss';
+@import 'plain-input.scss';
 
 $added-base: $success;
 $changed-base: $warning;
@@ -17,4 +18,8 @@ $changed-base: $warning;
 
 .text-strike {
   text-decoration: line-through;
+}
+
+summary {
+  color: $secondary;
 }

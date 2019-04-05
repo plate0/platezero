@@ -1,9 +1,10 @@
 import React from 'react'
+import { Row, Col } from 'reactstrap'
 import Head from 'next/head'
 import {
   Layout,
   RecipeVersion as RecipeVersionView,
-  RecipeVersionHeader
+  RecipeTitle
 } from '../components'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { getRecipeVersion } from '../common/http'
@@ -30,8 +31,19 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
         <Head>
           <title>{v.recipe.title}</title>
         </Head>
-        <h1>{v.recipe.title}</h1>
-        <RecipeVersionHeader recipeVersion={v} />
+        <Row className="mt-3">
+          <Col>
+            <RecipeTitle recipe={v.recipe} />
+          </Col>
+          <Col xs="auto">
+            <a
+              className="btn btn-outline-primary"
+              href={`/${v.recipe.owner.username}/${v.recipe.slug}`}
+            >
+              Show Current Version
+            </a>
+          </Col>
+        </Row>
         <RecipeVersionView recipeVersion={v} />
       </Layout>
     )

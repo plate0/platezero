@@ -49,8 +49,8 @@ export const Dropzone = ({ onDrop }: { onDrop: Function }) => {
   return (
     <div {...getRootProps({ style })}>
       <input {...getInputProps()} className="bg-light" />
-      <p className="m-0">Drag and drop any files here.</p>
-      <p className="m-0">Or click to select a file.</p>
+      <p className="m-0 text-center">Drag and drop any files here.</p>
+      <p className="m-0 text-center">Or click to select a file.</p>
     </div>
   )
 }

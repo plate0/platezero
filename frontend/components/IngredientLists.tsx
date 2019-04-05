@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Button, Card, CardBody } from 'reactstrap'
 import * as _ from 'lodash'
 
-import { ProcedureListJSON } from '../models'
-import { ProcedureList } from './ProcedureList'
+import { IngredientListJSON } from '../models'
+import { IngredientList } from './IngredientList'
 import { ActionLine } from './ActionLine'
+import { Amount } from './Amount'
 import {
   jsonToUI,
   uiToJSON,
@@ -14,17 +15,17 @@ import {
   replaceItem
 } from '../common/changes'
 
-const newProcedureList = generateUITrackable({
+const newIngredientList = generateUITrackable({
   name: '',
   lines: []
 })
 
 interface Props {
-  lists: ProcedureListJSON[]
-  onChange?: (lists: ProcedureListJSON[]) => void
+  lists: IngredientListJSON[]
+  onChange?: (lists: IngredientListJSON[]) => void
 }
 
-export function ProcedureLists(props: Props) {
+export function IngredientLists(props: Props) {
   const [lists, setLists] = useState(jsonToUI(props.lists))
 
   useEffect(() => {
@@ -37,25 +38,23 @@ export function ProcedureLists(props: Props) {
     const f = list.removed ? restoreItem : removeItem
     setLists(f(lists, list.id))
   }
-
   const addBtn = (
     <p>
       <Button
         color="secondary"
         size="sm"
-        onClick={() => setLists([...lists, newProcedureList.next().value])}
+        onClick={() => setLists([...lists, newIngredientList.next().value])}
       >
-        Add Instruction Section
+        Add Ingredient Section
       </Button>
     </p>
   )
-
   if (_.size(lists) === 1) {
     const list = _.head(lists)
     return (
       <>
-        <ProcedureList
-          procedureList={list.json}
+        <IngredientList
+          ingredientList={list.json}
           onChange={newList => setLists(replaceItem(lists, list.id, newList))}
         />
         {addBtn}
@@ -72,10 +71,10 @@ export function ProcedureLists(props: Props) {
           key={list.id}
         >
           {list.removed ? (
-            <RemovedProcedureList list={list.json} />
+            <RemovedIngredientList list={list.json} />
           ) : (
-            <ProcedureList
-              procedureList={list.json}
+            <IngredientList
+              ingredientList={list.json}
               oneOfMany={true}
               onChange={newList =>
                 setLists(replaceItem(lists, list.id, newList))
@@ -89,13 +88,17 @@ export function ProcedureLists(props: Props) {
   )
 }
 
-function RemovedProcedureList(props: { list: ProcedureListJSON }) {
+function RemovedIngredientList(props: { list: IngredientListJSON }) {
   return (
     <Card className="mb-3">
       <CardBody>
         {props.list.lines.map((line, key) => (
           <p key={key} className="text-muted text-strike">
-            {line.text}
+            <Amount
+              numerator={line.quantity_numerator}
+              denominator={line.quantity_denominator}
+            />{' '}
+            {line.unit} {line.name}
           </p>
         ))}
       </CardBody>

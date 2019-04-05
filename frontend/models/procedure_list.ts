@@ -12,7 +12,6 @@ import * as _ from 'lodash'
 
 import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
-import { ItemPatch } from '../common/changes'
 
 export interface ProcedureListJSON {
   id?: number
@@ -63,65 +62,57 @@ export class ProcedureList extends Model<ProcedureList>
     return procedureList
   }
 
-  public static async createFromPatch(
-    patch: ItemPatch<ProcedureLineJSON>,
+  /**
+   * Given a ProcedureListJSON, return a ProcedureListJSON based on the following:
+   *
+   * If the procedure list DOES NOT have an `id`:
+   *
+   *   1. Create a new procedure list
+   *   2. For each line, check whether it has an id. If it does, simply link
+   *      the existing line in the order specified by its array position. If
+   *      it does not have an id, then a new line must be created with the
+   *      specified properties.
+   *
+   * If the procedure list DOES have an id, simply return the procedure list
+   * as queried from the database.
+   */
+  public static async findOrCreateWithLines(
+    patch: ProcedureListJSON,
     transaction?: any
   ): Promise<ProcedureList> {
-    const prev = await ProcedureList.findOne({
-      where: { id: patch.id },
-      include: [{ model: ProcedureLine }],
-      transaction
-    })
+    if (!_.isUndefined(patch.id)) {
+      return await ProcedureList.findOne({
+        where: { id: patch.id },
+        include: [{ model: ProcedureLine }],
+        transaction
+      })
+    }
     const list = await ProcedureList.create(
-      { name: prev.name },
+      { name: patch.name },
       { transaction }
     )
+    const lines = _.map(patch.lines, async line => {
+      if (!_.isUndefined(line.id)) {
+        return await ProcedureLine.findOne({
+          where: { id: line.id },
+          transaction
+        })
+      }
+      return await ProcedureLine.create(line, { transaction })
+    })
     await Promise.all(
-      _.map(prev.lines, async (line, sort_key) => {
-        const removed = !_.isUndefined(
-          _.find(patch.removedItemIds, id => id === line.id)
-        )
-        if (removed) {
-          return Promise.resolve()
-        }
-        const changed = _.find(patch.changedItems, { id: line.id })
-        if (!changed) {
-          return ProcedureListLine.create(
+      _.map(
+        lines,
+        async (line, sort_key) =>
+          await ProcedureListLine.create(
             {
               procedure_list_id: list.id,
-              procedure_line_id: line.id,
+              procedure_line_id: (await line).id,
               sort_key
             },
             { transaction }
           )
-        }
-        const newLine = await ProcedureLine.create(_.omit(changed, ['id']), {
-          transaction
-        })
-        return ProcedureListLine.create(
-          {
-            procedure_list_id: list.id,
-            procedure_line_id: newLine.id,
-            sort_key
-          },
-          { transaction }
-        )
-      })
-    )
-    await Promise.all(
-      _.map(patch.addedItems, async (line, sort_key) => {
-        const newLine = await ProcedureLine.create(_.omit(line, ['id']), {
-          transaction
-        })
-        return ProcedureListLine.create(
-          {
-            procedure_list_id: list.id,
-            procedure_line_id: newLine.id,
-            sort_key: prev.lines.length + sort_key
-          },
-          { transaction }
-        )
-      })
+      )
     )
     return list
   }

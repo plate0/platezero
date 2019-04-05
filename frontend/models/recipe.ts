@@ -33,6 +33,7 @@ import { getConfig } from '../server/config'
 const cfg = getConfig()
 
 export interface RecipeJSON {
+  id?: number
   title: string
   subtitle?: string
   description?: string

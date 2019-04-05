@@ -137,68 +137,48 @@ export class RecipeVersion extends Model<RecipeVersion>
       },
       { transaction }
     )
+
+    // procedure lists
     await Promise.all(
-      _.map(prev.procedureLists, async (pl, sort_key) => {
-        const removed = !_.isUndefined(
-          _.find(patch.procedureLists.removedIds, id => id === pl.id)
-        )
-        if (removed) {
-          return Promise.resolve()
-        }
-        const changedProcedureList = _.find(patch.procedureLists.changedItems, {
-          id: pl.id
-        })
-        const procedure_list_id = changedProcedureList
-          ? (await ProcedureList.createFromPatch(
-              changedProcedureList,
-              transaction
-            )).id
-          : pl.id
-        return RecipeVersionProcedureList.create(
-          { recipe_version_id: v.id, procedure_list_id, sort_key },
-          { transaction }
-        )
-      })
-    )
-    await Promise.all(
-      _.map(patch.procedureLists.addedItems, async (pl, sort_key) => {
-        const procedure_list_id = (await ProcedureList.createWithLines(pl, {
+      _.map(patch.procedureLists, async (item, sort_key) => {
+        const { id } = await ProcedureList.findOrCreateWithLines(
+          item,
           transaction
-        })).id
+        )
         return RecipeVersionProcedureList.create(
-          {
-            recipe_version_id: v.id,
-            procedure_list_id,
-            sort_key: prev.procedureLists.length + sort_key
-          },
+          { recipe_version_id: v.id, procedure_list_id: id, sort_key },
           { transaction }
         )
       })
     )
+
+    // ingredients
     await Promise.all(
-      _.map(prev.ingredientLists, async (il, sort_key) => {
-        const changedIngredientList = _.find(patch.changedIngredientLists, {
-          id: il.id
-        })
-        const ingredient_list_id = changedIngredientList
-          ? (await IngredientList.createFromPatch(
-              changedIngredientList,
-              transaction
-            )).id
-          : il.id
+      _.map(patch.ingredientLists, async (item, sort_key) => {
+        const { id } = await IngredientList.findOrCreateWithIngredients(
+          item,
+          transaction
+        )
         return RecipeVersionIngredientList.create(
-          { recipe_version_id: v.id, ingredient_list_id, sort_key },
+          { recipe_version_id: v.id, ingredient_list_id: id, sort_key },
           { transaction }
         )
       })
     )
+
+    // preheats
     await Promise.all(
-      _.map(prev.preheats, preheat =>
-        RecipeVersionPreheat.create(
-          { recipe_version_id: v.id, preheat_id: preheat.id },
+      _.map(patch.preheats, async preheat => {
+        const [{ id }] = await Preheat.findOrCreate({
+          where: { id: preheat.id },
+          defaults: _.omit(preheat, 'id'),
+          transaction
+        })
+        return RecipeVersionPreheat.create(
+          { recipe_version_id: v.id, preheat_id: id },
           { transaction }
         )
-      )
+      })
     )
     return v
   }

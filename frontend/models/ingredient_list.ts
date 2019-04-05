@@ -11,7 +11,6 @@ import * as _ from 'lodash'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 import { normalize } from '../common/model-helpers'
-import { ItemPatch } from '../common/changes'
 
 export interface IngredientListJSON {
   id?: number
@@ -65,65 +64,57 @@ export class IngredientList extends Model<IngredientList>
     return ingredientList
   }
 
-  public static async createFromPatch(
-    patch: ItemPatch<IngredientLineJSON>,
+  /**
+   * Given an IngredientListJSON, return an IngredientListJSON based on the following:
+   *
+   * If the ingredient list DOES NOT have an `id`:
+   *
+   *   1. Create a new ingredient list
+   *   2. For each ingredient, check whether it has an id. If it does, simply
+   *      link the existing ingredient in the order specified by its array
+   *      position. If it does not have an id, then a new line must be created
+   *      with the specified properties.
+   *
+   * If the ingredient list DOES have an id, simply return the ingredient list
+   * as queried from the database.
+   */
+  public static async findOrCreateWithIngredients(
+    patch: IngredientListJSON,
     transaction?: any
   ): Promise<IngredientList> {
-    const prev = await IngredientList.findOne({
-      where: { id: patch.id },
-      include: [{ model: IngredientLine }],
-      transaction
-    })
+    if (!_.isUndefined(patch.id)) {
+      return await IngredientList.findOne({
+        where: { id: patch.id },
+        include: [{ model: IngredientLine }],
+        transaction
+      })
+    }
     const list = await IngredientList.create(
-      { name: prev.name, image_url: prev.image_url },
+      { name: patch.name },
       { transaction }
     )
+    const lines = _.map(patch.lines, async line => {
+      if (!_.isUndefined(line.id)) {
+        return await IngredientLine.findOne({
+          where: { id: line.id },
+          transaction
+        })
+      }
+      return await IngredientLine.create(line, { transaction })
+    })
     await Promise.all(
-      _.map(prev.lines, async (line, sort_key) => {
-        const removed = !_.isUndefined(
-          _.find(patch.removedItemIds, id => id === line.id)
-        )
-        if (removed) {
-          return Promise.resolve()
-        }
-        const changed = _.find(patch.changedItems, { id: line.id })
-        if (!changed) {
-          return IngredientListLine.create(
+      _.map(
+        lines,
+        async (line, sort_key) =>
+          await IngredientListLine.create(
             {
               ingredient_list_id: list.id,
-              ingredient_line_id: line.id,
+              ingredient_line_id: (await line).id,
               sort_key
             },
             { transaction }
           )
-        }
-        const newLine = await IngredientLine.create(normalize(_.omit(changed, ['id'])), {
-          transaction
-        })
-        return IngredientListLine.create(
-          {
-            ingredient_list_id: list.id,
-            ingredient_line_id: newLine.id,
-            sort_key
-          },
-          { transaction }
-        )
-      })
-    )
-    await Promise.all(
-      _.map(patch.addedItems, async (line, sort_key) => {
-        const newLine = await IngredientLine.create(normalize(_.omit(line, ['id'])), {
-          transaction
-        })
-        return IngredientListLine.create(
-          {
-            ingredient_list_id: list.id,
-            ingredient_line_id: newLine.id,
-            sort_key: prev.lines.length + sort_key
-          },
-          { transaction }
-        )
-      })
+      )
     )
     return list
   }
