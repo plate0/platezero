@@ -111,7 +111,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
     preheats.push({
       name: m[1],
       temperature: parseInt(m[2]),
-      unit: m[4] || 'F' //TODO: Default to user preference?
+      unit: _.upperCase(m[4]) || 'F' //TODO: Default to user preference?
     })
   }
   return preheats
