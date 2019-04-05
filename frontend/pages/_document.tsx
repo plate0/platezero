@@ -100,7 +100,7 @@ export default class MyDocument extends Document {
             crossOrigin="anonymous"
           />
         </Head>
-        <body className="custom_class">
+        <body>
           <Main />
           <NextScript />
         </body>
