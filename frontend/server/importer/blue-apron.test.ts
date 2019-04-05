@@ -137,4 +137,21 @@ describe('Blue Apron', () => {
         'In a medium pot, combine the **rice**,** a pinch of salt**, and **1 cup of water**. Heat to boiling on high. Once boiling, reduce the heat to low. Cover and cook, without stirring, 12 to 14 minutes, or until the water has been absorbed and the rice is tender. Turn off the heat and fluff with a fork. Cover to keep warm.'
     })
   })
+
+  describe('stuffed-zucchini', () => {
+    let source: string
+    let importer = dom(BlueApron)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/blueapron/stuffed-zucchini-with-carrots-currants-freekeh.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('get title', async () => {
+      const { title } = await importer(source)
+      expect(title).toEqual('Stuffed Zucchini')
+    })
+  })
 })
