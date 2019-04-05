@@ -41,31 +41,20 @@ export const RecipeList = ({ recipes, user }: RecipesProps) => {
       </Row>
       {!recipes.length && <RecipeListBlankslate username={user.username} />}
       <ListGroup className="mt-3">
-        {recipes.map(recipe => {
-          const style = recipe.image_url
-            ? {
-                backgroundImage: `url(${recipe.image_url})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundBlendMode: 'overlay',
-                backgroundColor: 'rgba(255, 255, 255, 0.85)'
-              }
-            : undefined
-          return (
-            <ListGroupItem key={recipe.id} style={style}>
-              <div>
-                <Link route={`/${user.username}/${recipe.slug}`}>
-                  <a className="text-dark stretched-link">
-                    <strong>{recipe.title}</strong>
-                  </a>
-                </Link>
-              </div>
-              <div className="small text-muted text-truncate">
-                {recipe.description || 'by ' + getName(recipe.owner)}
-              </div>
-            </ListGroupItem>
-          )
-        })}
+        {recipes.map(recipe => (
+          <ListGroupItem key={recipe.id}>
+            <div>
+              <Link route={`/${user.username}/${recipe.slug}`}>
+                <a className="text-dark stretched-link">
+                  <strong>{recipe.title}</strong>
+                </a>
+              </Link>
+            </div>
+            <div className="small text-muted text-truncate">
+              {recipe.description || 'by ' + getName(recipe.owner)}
+            </div>
+          </ListGroupItem>
+        ))}
       </ListGroup>
     </section>
   )
