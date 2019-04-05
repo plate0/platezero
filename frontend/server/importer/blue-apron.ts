@@ -10,10 +10,7 @@ import { fraction } from '../../common/fraction'
 import { unitfy } from '../../common/unit'
 const TurndownService = require('turndown')
 
-const title = ($: any) =>
-  $('.ba-recipe-title h1')
-    .text()
-    .trim()
+const title = ($: any) => $('.ba-recipe-title h1')[0].children[0].data.trim()
 
 const subtitle = ($: any) =>
   $('.ba-recipe-title h2')
