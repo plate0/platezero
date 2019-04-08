@@ -67,10 +67,11 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
       x: canvas.width / 2,
       y: canvas.height / 2
     }
-    this.setState({ canvas, ctx, last })
-    if (this.props.imagePath) {
-      this.load(this.props.imagePath)
-    }
+    this.setState({ canvas, ctx, last }, () => {
+      if (this.props.imagePath) {
+        this.load(this.props.imagePath)
+      }
+    })
 
     canvas.addEventListener('DOMMouseScroll', this.scroll, false)
     canvas.addEventListener('mousewheel', this.scroll, false)
@@ -166,9 +167,10 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
 
   private mousemove(e: MouseEvent) {
     const { ctx, dragStart } = this.state
-    const last = ctx.transformedPoint(this.adjustCanvasPoint(e))
+    const last = this.adjustCanvasPoint(e)
     if (dragStart) {
-      ctx.translate(last.x - dragStart.x, last.y - dragStart.y)
+      const pt = ctx.transformedPoint(last)
+      ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y)
       this.draw()
     }
     this.setState({
@@ -178,7 +180,7 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
   }
 
   private mouseup() {
-    this.setState({ dragging: false })
+    this.setState({ dragStart: undefined })
   }
 
   private scroll(e: any /*WheelEvent*/): boolean {
