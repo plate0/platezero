@@ -1,12 +1,14 @@
-import { readFileSync } from 'fs'
 import * as jwt from 'jsonwebtoken'
 import { SES } from 'aws-sdk'
+import { Recipe } from './models'
 require('aws-sdk').config.update({ region: 'us-east-1' })
 
+/*
 const config1 = {
   secret: 'test_jwt_secret',
   url: 'http://localhost:9100/api/user/recipe'
 }
+*/
 
 const config = {
   secret: 'a9c26d0b386547839929e7f9c96af8fb1f7d2347f1e0405ebed9dcb88ec3f765',
@@ -28,16 +30,21 @@ const config = argv.dev
 
 export const login = (userId: number): Promise<string> => {
   return new Promise((resolve, reject) => {
-    jwt.sign({ userId }, config.secret, { expiresIn: '1h' }, (err, token) => {
-      if (err) {
-        return reject(err)
+    jwt.sign(
+      { userId },
+      config.secret,
+      { expiresIn: '1h' },
+      (err: Error, token: string) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve(token)
       }
-      return resolve(token)
-    })
+    )
   })
 }
 
-export const post = (recipe, { token }) => {
+export const post = (recipe: Recipe, { token }: { token: string }) => {
   return fetch(config.url, {
     method: 'POST',
     headers: {
@@ -49,7 +56,14 @@ export const post = (recipe, { token }) => {
   })
 }
 
-export const email = ({ to, name, title, url }) => {
+interface EmailParams {
+  to: string
+  name: string
+  title: string
+  url: string
+}
+
+export const email = ({ to, name, title, url }: EmailParams) => {
   const params = {
     Destination: {
       ToAddresses: [to]

@@ -10,13 +10,13 @@ const list = (): Promise<string[]> =>
       Bucket: 'com-platezero-recipes'
     })
     .promise()
-    .then(res => map(res.Contents, 'Key'))
+    .then(res => map(res.Contents, 'Key') as string[])
 
 interface ConfigState {
   objects: string[]
 }
 
-export class Config extends React.Component<> {
+export class Config extends React.Component<any, ConfigState> {
   constructor(props: any) {
     super(props)
 

@@ -49,6 +49,7 @@
   "dependencies": {
     "@types/cheerio": "0.22.11",
     "@types/electron-devtools-installer": "2.2.0",
+    "@types/jsonwebtoken": "8.3.2",
     "@types/lodash": "4.14.123",
     "@types/mousetrap": "^1.6.2",
     "@types/node-fetch": "2.1.7",

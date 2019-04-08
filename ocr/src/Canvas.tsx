@@ -1,246 +1,222 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { writeFileSync } from 'fs'
+import { TransformCanvasRenderingContext2D, decorate } from './context'
+
+// TODO: Get from DOM, I could not figure it out
+const NAVBAR_HEIGHT = 47
+const CANVAS_PADDING = 15
+const SCALE_FACTOR = 1.1
+
+const ctrlPass = (fn: Function) => (e: any) => (e.ctrlKey ? fn(e) : void 0)
 
 export interface CanvasProps {
   onSelection: (buffer: Buffer) => void
+  imagePath?: string
+}
+
+interface Point {
+  x: number
+  y: number
+}
+
+interface Rect {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+}
+
+interface CanvasState {
+  canvas: any
+  ctx: TransformCanvasRenderingContext2D
+  image: any //Image
+  rect: Rect
+  last: Point
+  dragStart?: Point
+  dragging: boolean
 }
 
 // https://codepen.io/techslides/pen/zowLd
-export class Canvas extends React.Component<CanvasProps, any> {
+export class Canvas extends React.Component<CanvasProps, CanvasState> {
   constructor(props: CanvasProps) {
     super(props)
     this.state = {
-      image: undefined
-    }
+      image: new Image(),
+      rect: { x: 0, y: 0, width: 0, height: 0 },
+      last: { x: 0, y: 0 },
+      dragging: false
+    } as any
+    this.scroll = this.scroll.bind(this)
+    this.zoom = this.zoom.bind(this)
+    this.mousedown = this.mousedown.bind(this)
+    this.ctrldown = this.ctrldown.bind(this)
+    this.mousemove = this.mousemove.bind(this)
+    this.ctrlmove = this.ctrlmove.bind(this)
+    this.mouseup = this.mouseup.bind(this)
   }
 
+  // Set canvas size and state from canvas
   public componentDidMount() {
-    const canvas = ReactDOM.findDOMNode(this.refs.canvas)
-    const ctx = canvas.getContext('2d')
-    // Decorate Context
-    this.trackTransforms(ctx)
-    const image = new Image()
-    const rect = { x: 0, y: 0, width: 0, height: 0 }
-    this.setState({ canvas, ctx, image, rect })
-    let self = this
-    canvas.width = this.refs.parent.offsetWidth
-    canvas.height = 1000
-
-    var lastX = canvas.width / 2,
-      lastY = canvas.height / 2
-
-    var dragStart, dragged
-
-    console.log('offsets,', canvas.offsetLeft, canvas.offsetTop)
-
-    canvas.addEventListener(
-      'mousedown',
-      function(evt) {
-        console.log(evt)
-        if (evt.ctrlKey) {
-          // let { x, y } = ctx.transformedPoint(evt.pageX, evt.pageY)
-          // let { x, y } = ctx.transformedPoint(100, 100)
-          console.log(evt.pageX)
-          let x = evt.pageX - (canvas.offsetLeft - 15)
-          let y = evt.pageY - (canvas.offsetTop + 47)
-          self.setState(s => ({
-            ...s,
-            rect: {
-              x,
-              y,
-              height: 0,
-              width: 0
-            }
-          }))
-          self.draw()
-          return
-        }
-        document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect =
-          'none'
-        lastX = evt.offsetX || evt.pageX - (canvas.offsetLeft - 15)
-        lastY = evt.offsetY || evt.pageY - (canvas.offsetTop + 47)
-        dragStart = ctx.transformedPoint(lastX, lastY)
-        dragged = false
-      },
-      false
+    const canvas = ReactDOM.findDOMNode(this.refs.canvas) as any
+    canvas.width = (this.refs.parent as any).offsetWidth
+    canvas.height = window.innerHeight - NAVBAR_HEIGHT
+    const ctx: TransformCanvasRenderingContext2D = decorate(
+      canvas.getContext('2d')
     )
-
-    canvas.addEventListener(
-      'mousemove',
-      function(evt) {
-        lastX = evt.offsetX || evt.pageX - (canvas.offsetLeft - 15)
-        lastY = evt.offsetY || evt.pageY - (canvas.offsetTop + 47)
-
-        if (evt.ctrlKey) {
-          let x = evt.pageX - (canvas.offsetLeft - 15)
-          let y = evt.pageY - (canvas.offsetTop + 47)
-          self.setState(s => ({
-            ...s,
-            rect: {
-              ...s.rect,
-              width: x,
-              height: y
-            }
-          }))
-          self.draw()
-          return
-        }
-
-        // old
-        dragged = true
-        if (dragStart) {
-          var pt = ctx.transformedPoint(lastX, lastY)
-          ctx.translate(pt.x - dragStart.x, pt.y - dragStart.y)
-          self.draw()
-        }
-      },
-      false
-    )
-
-    canvas.addEventListener(
-      'mouseup',
-      function(evt) {
-        dragStart = null
-      },
-      false
-    )
-
-    var scaleFactor = 1.1
-
-    var zoom = function(clicks) {
-      var pt = ctx.transformedPoint(lastX, lastY)
-      ctx.translate(pt.x, pt.y)
-      var factor = Math.pow(scaleFactor, clicks)
-      ctx.scale(factor, factor)
-      ctx.translate(-pt.x, -pt.y)
-      self.draw()
+    const last = {
+      x: canvas.width / 2,
+      y: canvas.height / 2
+    }
+    this.setState({ canvas, ctx, last })
+    if (this.props.imagePath) {
+      this.load(this.props.imagePath)
     }
 
-    var handleScroll = function(evt) {
-      var delta = evt.wheelDelta
-        ? evt.wheelDelta / 40
-        : evt.detail
-        ? -evt.detail
-        : 0
-      if (delta) zoom(delta)
-      return evt.preventDefault() && false
-    }
+    canvas.addEventListener('DOMMouseScroll', this.scroll, false)
+    canvas.addEventListener('mousewheel', this.scroll, false)
+    canvas.addEventListener('mousedown', ctrlPass(this.ctrldown), false)
+    canvas.addEventListener('mousedown', this.mousedown, false)
+    canvas.addEventListener('mousemove', this.mousemove, false)
+    canvas.addEventListener('mousemove', ctrlPass(this.ctrlmove), false)
+    canvas.addEventListener('mouseup', this.mouseup, false)
 
-    canvas.addEventListener('DOMMouseScroll', handleScroll, false)
-    canvas.addEventListener('mousewheel', handleScroll, false)
-
-    // Load image
-    // TODO: Get from state
-    image.onload = function() {
-      // Okay, this doesn't put it in the perfect position
-      // TODO: make it better
-      console.log('image loaded', this.width)
-      let scale = canvas.width / (this.width + 200)
-      console.log('scale', scale)
-      ctx.scale(scale, scale)
-      ctx.translate(100, 50)
-      self.draw()
-    }
-    image.src = 'recipe.jpg'
-
-    window.addEventListener('keydown', e => {
-      if (e.keyCode == 32) {
-        console.log('gogo time')
-        const { rect } = this.state
-        if (!rect.x || !rect.width) {
-          return
-        }
-        let { x, y } = ctx.transformedPoint(rect.x, rect.y)
-        let pos = ctx.transformedPoint(rect.width, rect.height)
-        let width = pos.x - x
-        let height = pos.y - y
-        let testW = rect.width - rect.x
-        let testH = rect.height - rect.y
-        console.log('Cropping from...', x, y, width, height)
-        var newCanvas = document.createElement('canvas')
-        newCanvas.width = width
-        newCanvas.height = height
-        console.log('test', x, y, width, height)
-        var newContext = newCanvas.getContext('2d')
-        newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
-        let data = newCanvas.toDataURL('image/jpeg')
-        data = data.replace(/^data:image\/jpeg;base64,/, '')
-        const buf = Buffer.from(data, 'base64')
-        this.props.onSelection(buf)
-        writeFileSync('test-data.jpg', data, 'base64')
-        this.setState({ rect: { x: 0, y: 0, width: 0, height: 0 } })
+    Mousetrap.bind('space', () => {
+      const buffer = this.getImageBuffer(this.state.rect)
+      if (buffer) {
+        this.props.onSelection(buffer)
       }
     })
   }
 
-  private trackTransforms(ctx: CanvasRenderingContext2D) {
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    var xform = svg.createSVGMatrix()
-    ctx.getTransform = function() {
-      return xform
+  // Crop Selection takes the selected area and selects that area from the
+  // original image
+  private getImageBuffer(rect: Rect): Buffer | undefined {
+    if (!rect.x || !rect.y || !rect.width || !rect.height) {
+      return
     }
-
-    var savedTransforms = []
-    var save = ctx.save
-    ctx.save = function() {
-      savedTransforms.push(xform.translate(0, 0))
-      return save.call(ctx)
+    const { ctx, image } = this.state
+    let { x, y } = ctx.transformedPoint(rect.x, rect.y)
+    let pos = ctx.transformedPoint(rect.width, rect.height)
+    let width = pos.x - x
+    let height = pos.y - y
+    // Create a new Canvas to hold the cut image data, and then dump it to a
+    // buffer
+    const newCanvas = document.createElement('canvas')
+    newCanvas.width = width
+    newCanvas.height = height
+    const newContext = newCanvas.getContext('2d')
+    if (!newContext) {
+      throw new Error('Error getting canvas context')
     }
+    newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
+    let data = newCanvas.toDataURL('image/jpeg')
+    data = data.replace(/^data:image\/jpeg;base64,/, '')
+    this.setState({ rect: { x: 0, y: 0, width: 0, height: 0 } })
+    return Buffer.from(data, 'base64')
+    //    this.props.onSelection(buf)
+  }
 
-    var restore = ctx.restore
-    ctx.restore = function() {
-      xform = savedTransforms.pop()
-      return restore.call(ctx)
+  private ctrldown(e: MouseEvent) {
+    const { ctx } = this.state
+    const { x, y } = ctx.transformedPoint(this.adjustCanvasPoint(e))
+    this.setState(s => ({
+      ...s,
+      rect: {
+        x,
+        y,
+        height: 0,
+        width: 0
+      }
+    }))
+    this.draw()
+  }
+
+  private mousedown(e: MouseEvent) {
+    const { ctx } = this.state
+    const last = this.adjustCanvasPoint(e)
+    const dragStart = ctx.transformedPoint(last)
+    this.setState({
+      dragging: false,
+      dragStart,
+      last
+    })
+  }
+
+  private ctrlmove(e: MouseEvent) {
+    const {
+      ctx,
+      rect: { x, y }
+    } = this.state
+    if (!x || !y) {
+      return
     }
+    const { x: x2, y: y2 } = ctx.transformedPoint(this.adjustCanvasPoint(e))
+    const width = x2 - x
+    const height = y2 - y
+    this.setState(s => ({
+      ...s,
+      rect: {
+        ...s.rect,
+        width,
+        height
+      }
+    }))
+    this.draw()
+  }
 
-    var scale = ctx.scale
-    ctx.scale = function(sx, sy) {
-      xform = xform.scaleNonUniform(sx, sy)
-      return scale.call(ctx, sx, sy)
+  private mousemove(e: MouseEvent) {
+    const { ctx, dragStart } = this.state
+    const last = ctx.transformedPoint(this.adjustCanvasPoint(e))
+    if (dragStart) {
+      ctx.translate(last.x - dragStart.x, last.y - dragStart.y)
+      this.draw()
     }
+    this.setState({
+      last,
+      dragging: true
+    })
+  }
 
-    var rotate = ctx.rotate
-    ctx.rotate = function(radians) {
-      xform = xform.rotate((radians * 180) / Math.PI)
-      return rotate.call(ctx, radians)
+  private mouseup() {
+    this.setState({ dragging: false })
+  }
+
+  private scroll(e: any /*WheelEvent*/): boolean {
+    e.preventDefault()
+    const delta = e.wheelDelta ? e.wheelDelta / 40 : e.detail ? -e.detail : 0
+    if (delta) this.zoom(delta)
+    return false
+  }
+
+  private zoom(clicks: number) {
+    const { ctx, last } = this.state
+    const { x, y } = ctx.transformedPoint(last)
+    ctx.translate(x, y)
+    // TODO: In or Out
+    const factor = Math.pow(SCALE_FACTOR, clicks)
+    ctx.scale(factor, factor)
+    ctx.translate(-x, -y)
+    this.draw()
+  }
+
+  private load(src: string) {
+    const { ctx, canvas, image } = this.state
+    const self = this
+    image.onload = function() {
+      const scale = canvas.width / (this.width + 200)
+      ctx.scale(scale, scale)
+      // Bump it in a little
+      ctx.translate(100, 50)
+      self.draw()
     }
+    image.src = src
+  }
 
-    var translate = ctx.translate
-    ctx.translate = function(dx, dy) {
-      xform = xform.translate(dx, dy)
-      return translate.call(ctx, dx, dy)
-    }
-
-    var transform = ctx.transform
-    ctx.transform = function(a, b, c, d, e, f) {
-      var m2 = svg.createSVGMatrix()
-      m2.a = a
-      m2.b = b
-      m2.c = c
-      m2.d = d
-      m2.e = e
-      m2.f = f
-      xform = xform.multiply(m2)
-      return transform.call(ctx, a, b, c, d, e, f)
-    }
-
-    var setTransform = ctx.setTransform
-    ctx.setTransform = function(a, b, c, d, e, f) {
-      xform.a = a
-      xform.b = b
-      xform.c = c
-      xform.d = d
-      xform.e = e
-      xform.f = f
-      return setTransform.call(ctx, a, b, c, d, e, f)
-    }
-
-    var pt = svg.createSVGPoint()
-    ctx.transformedPoint = function(x, y) {
-      pt.x = x
-      pt.y = y
-      return pt.matrixTransform(xform.inverse())
+  private adjustCanvasPoint(e: MouseEvent): Point {
+    const { canvas } = this.state
+    return {
+      x: e.pageX - (canvas.offsetLeft - CANVAS_PADDING),
+      y: e.pageY - (canvas.offsetTop + NAVBAR_HEIGHT)
     }
   }
 
@@ -255,31 +231,15 @@ export class Canvas extends React.Component<CanvasProps, any> {
     ctx.restore()
     ctx.drawImage(image, 0, 0)
 
-    if (rect.x && rect.width) {
+    if (rect.x && rect.y && rect.width && rect.height) {
+      const { x, y, width, height } = rect
       ctx.beginPath()
-      let { x, y } = ctx.transformedPoint(rect.x, rect.y)
-      let pos = ctx.transformedPoint(rect.width, rect.height)
-      let width = pos.x - x
-      let height = pos.y - y
-      // let imatrix = ctx.getTransform()
-      // var x = rect.x * imatrix.a + rect.y * imatrix.c + imatrix.e
-      // var y = rect.x * imatrix.b + rect.y * imatrix.d + imatrix.f
-      //  let { x, y } = invMat.applyToPoint(rect.x, rect.y)
-      // ctx.arc(x, y, 10, 0, Math.PI * 2)
       ctx.strokeRect(x, y, width, height)
       ctx.stroke()
     }
   }
 
-  // GOogo
-  public gogo() {
-    console.log('gogo')
-  }
-
   public render() {
-    if (this.state.ctx) {
-      this.draw()
-    }
     return (
       <div ref="parent">
         <canvas ref="canvas" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} />

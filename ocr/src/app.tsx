@@ -2,8 +2,8 @@ import * as React from 'react'
 import * as _ from 'lodash'
 import { Canvas } from './Canvas'
 import { Recipe } from './Recipe'
-import { Config } from './Config'
 import { Navbar } from './Navbar'
+import { Config } from './Config'
 import { Container, Row, Col } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
@@ -67,7 +67,7 @@ interface AppState {
   recipePath?: string
 }
 
-export class App extends React.Component {
+export class App extends React.Component<any, AppState> {
   constructor(props: any) {
     super(props)
 
@@ -86,14 +86,14 @@ export class App extends React.Component {
         ingredients: '',
         procedures: '',
         yld: '',
-        duration: ''
+        duration: 0
       },
       active: 'title'
     }
   }
 
   public componentDidMount() {
-    // console.log('DATA PATH', app.getPath('userData'))
+    console.log('DATA PATH', app.getPath('userData'))
     Mousetrap.bind(
       [
         'command+t',
@@ -110,7 +110,6 @@ export class App extends React.Component {
     )
     Mousetrap.bind('command+n', this.next)
     Mousetrap.bind('command+p', this.previous)
-    Mousetrap.bind('esc', () => document.activeElement.blur())
   }
 
   public shortcut(key: string) {
@@ -180,12 +179,12 @@ export class App extends React.Component {
     this.setState({ active })
   }
 
-  public async saveToJSON(recipe: Recipe) {
+  public async saveToJSON(recipe: MarkdownRecipe) {
     const json = recipeToJSON(recipe)
     writeFileSync('recipe.json', JSON.stringify(json, null, 2))
   }
 
-  public async onSubmit(recipe: Recipe) {
+  public async onSubmit(recipe: MarkdownRecipe) {
     console.log('make markdown')
     let md = ``
     if (recipe.duration) {
@@ -238,13 +237,15 @@ ${recipe.procedures}
       console.log('DONE!!!!!!!!!!', created)
       this.setState({
         active: 'title',
-        title: '',
-        subtitle: '',
-        description: '',
-        ingredients: '',
-        procedures: '',
-        yld: '',
-        duration: ''
+        recipe: {
+          title: '',
+          subtitle: '',
+          description: '',
+          ingredients: '',
+          procedures: '',
+          yld: '',
+          duration: 0
+        }
       })
     } catch (err) {
       alert(err)
@@ -252,8 +253,7 @@ ${recipe.procedures}
   }
 
   public render() {
-    // TODO: "login" or get recipes from S3
-    if (!this.state.recipePath) {
+    if (false) {
       return (
         <Container>
           <Config />
@@ -265,7 +265,7 @@ ${recipe.procedures}
         <Navbar active={this.state.active} onClick={this.onActiveChange} />
         <Row>
           <Col xs="9">
-            <Canvas onSelection={this.onSelection} />
+            <Canvas onSelection={this.onSelection} imagePath="recipe.jpg" />
           </Col>
           <Col xs="3" style={{ maxHeight: '960px', overflow: 'auto' }}>
             <Recipe
