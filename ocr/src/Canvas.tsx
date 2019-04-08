@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { TransformCanvasRenderingContext2D, decorate } from './context'
+import { writeFileSync } from 'fs'
 
 // TODO: Get from DOM, I could not figure it out
 const NAVBAR_HEIGHT = 47
@@ -8,6 +9,7 @@ const CANVAS_PADDING = 15
 const SCALE_FACTOR = 1.1
 
 const ctrlPass = (fn: Function) => (e: any) => (e.ctrlKey ? fn(e) : void 0)
+const notCtrlPass = (fn: Function) => (e: any) => (e.ctrlKey ? void 0 : fn(e))
 
 export interface CanvasProps {
   onSelection: (buffer: Buffer) => void
@@ -76,8 +78,8 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     canvas.addEventListener('DOMMouseScroll', this.scroll, false)
     canvas.addEventListener('mousewheel', this.scroll, false)
     canvas.addEventListener('mousedown', ctrlPass(this.ctrldown), false)
-    canvas.addEventListener('mousedown', this.mousedown, false)
-    canvas.addEventListener('mousemove', this.mousemove, false)
+    canvas.addEventListener('mousedown', notCtrlPass(this.mousedown), false)
+    canvas.addEventListener('mousemove', notCtrlPass(this.mousemove), false)
     canvas.addEventListener('mousemove', ctrlPass(this.ctrlmove), false)
     canvas.addEventListener('mouseup', this.mouseup, false)
 
@@ -95,13 +97,8 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     if (!rect.x || !rect.y || !rect.width || !rect.height) {
       return
     }
-    const { ctx, image } = this.state
-    let { x, y } = ctx.transformedPoint(rect.x, rect.y)
-    let pos = ctx.transformedPoint(rect.width, rect.height)
-    let width = pos.x - x
-    let height = pos.y - y
-    // Create a new Canvas to hold the cut image data, and then dump it to a
-    // buffer
+    const { image } = this.state
+    const { x, y, width, height } = rect
     const newCanvas = document.createElement('canvas')
     newCanvas.width = width
     newCanvas.height = height
@@ -112,9 +109,9 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
     let data = newCanvas.toDataURL('image/jpeg')
     data = data.replace(/^data:image\/jpeg;base64,/, '')
+    writeFileSync('test-data.jpg', data, 'base64')
     this.setState({ rect: { x: 0, y: 0, width: 0, height: 0 } })
     return Buffer.from(data, 'base64')
-    //    this.props.onSelection(buf)
   }
 
   private ctrldown(e: MouseEvent) {
