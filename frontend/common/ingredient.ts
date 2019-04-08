@@ -1,6 +1,29 @@
+import * as _ from 'lodash'
 import { IngredientLineJSON } from '../models'
 import { fraction } from './fraction'
 import { unitfy } from './unit'
+
+// matchNumber returns a pair consisting of
+// - a quantity, or { n: undefined, d: undefined } if not found, and
+// - the remainder of the string to be parsed by subsequent logic
+const matchNumber = (
+  s: string
+): [{ n: number | undefined; d: number | undefined }, string] => {
+  // matches three general parts:
+  // 1. the numerator or whole number or decimal
+  // 2. a unicode fraction
+  // 3. a fraction using / or just the denominator from (1)
+  const p = /^(\s*\d*(\.\d+)?\s*([½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒]?)((\d*\s*)?\/\s*\d*)?)/gm
+  const match = p.exec(s)
+  if (match) {
+    try {
+      return [fraction(match[1]), s.substring(match[1].length)]
+    } catch {
+      // fall through to default
+    }
+  }
+  return [{ n: undefined, d: undefined }, s]
+}
 
 // get the number
 // get the unit, if known
@@ -11,11 +34,9 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
   if (!s) {
     return undefined
   }
-  const numMatch = /(^[½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒\d\/\d\s.]*)/gm.exec(s)
-  const num = fraction(numMatch && numMatch[1] ? numMatch[1].trim() : '1')
-  if (numMatch) {
-    s = s.substring(numMatch[1].length)
-  }
+  //s = _.join(_.split(s, /\s+/), ' ')
+  const [num, numRest] = matchNumber(s)
+  s = _.trim(numRest)
   const [maybeUnit, ...rest] = s.split(/\s/)
   const unit = unitfy(maybeUnit)
   if (unit) {

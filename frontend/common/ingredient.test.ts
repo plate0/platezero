@@ -60,8 +60,8 @@ test('parse 5', () => {
 test('parse 6', () => {
   expect(parse('Kosher salt and freshly ground black pepper')).toEqual({
     name: 'Kosher salt and freshly ground black pepper',
-    quantity_numerator: 1,
-    quantity_denominator: 1,
+    quantity_numerator: undefined,
+    quantity_denominator: undefined,
     preparation: undefined,
     optional: false,
     unit: undefined
@@ -81,6 +81,17 @@ test('parse 7', () => {
       'skinless chicken thighs, trimmed of excess fat (6 to 8 thighs)',
     optional: false,
     unit: 'lb'
+  })
+})
+
+test('parse 1 15-ounce', () => {
+  expect(parse('1 15-ounce can diced tomatoes')).toEqual({
+    name: '15-ounce can diced tomatoes',
+    quantity_numerator: 1,
+    quantity_denominator: 1,
+    preparation: undefined,
+    optional: false,
+    unit: undefined
   })
 })
 
