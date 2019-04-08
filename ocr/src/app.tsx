@@ -12,54 +12,8 @@ import * as Mousetrap from 'mousetrap'
 import { transcribe } from './transcribe'
 import { create } from './create'
 import { writeFileSync } from 'fs'
+import { toMarkdown } from './markdown'
 const app = require('electron').remote.app
-
-const recipeToJSON = (recipe: MarkdownRecipe): string => {
-  let md = ``
-  if (recipe.duration) {
-    md += `
-<meta itemprop="cookTime" content="${recipe.duration}"></meta>
-`
-  }
-  if (recipe.yld) {
-    md += `
-<meta itemprop="recipeYield" content="${recipe.yld}"></meta>
-`
-  }
-  md += `
-# ${recipe.title}
-`
-
-  if (recipe.subtitle) {
-    md += `
-## ${recipe.subtitle}
-`
-  }
-
-  if (recipe.description) {
-    md += `
-${recipe.description}
-`
-  }
-
-  md += `
-${recipe.ingredients}
-    `
-
-  md += `
-
-${recipe.procedures}
-    `
-
-  const json = transcribe(md)
-  if (!json.subtitle) {
-    delete json['subtitle']
-  }
-  if (!json.description) {
-    delete json['description']
-  }
-  return json
-}
 
 interface AppState {
   recipe: MarkdownRecipe
@@ -179,59 +133,27 @@ export class App extends React.Component<any, AppState> {
     this.setState({ active })
   }
 
-  public async saveToJSON(recipe: MarkdownRecipe) {
-    const json = recipeToJSON(recipe)
-    writeFileSync('recipe.json', JSON.stringify(json, null, 2))
-  }
-
-  public async onSubmit(recipe: MarkdownRecipe) {
-    console.log('make markdown')
-    let md = ``
-    if (recipe.duration) {
-      md += `
-<meta itemprop="cookTime" content="${recipe.duration}"></meta>
-`
-    }
-    if (recipe.yld) {
-      md += `
-<meta itemprop="recipeYield" content="${recipe.yld}"></meta>
-`
-    }
-    md += `
-# ${recipe.title}
-`
-
-    if (recipe.subtitle) {
-      md += `
-## ${recipe.subtitle}
-`
-    }
-
-    if (recipe.description) {
-      md += `
-${recipe.description}
-`
-    }
-
-    md += `
-${recipe.ingredients}
-    `
-
-    md += `
-
-${recipe.procedures}
-    `
-
-    console.log(md)
+  private transcribe(recipe: MarkdownRecipe): Recipe {
+    const md = toMarkdown(recipe)
     const json = transcribe(md)
-    console.log('JSON', json)
     if (!json.subtitle) {
       delete json['subtitle']
     }
     if (!json.description) {
       delete json['description']
     }
+    return json
+  }
 
+  public async saveToJSON(recipe: MarkdownRecipe) {
+    writeFileSync(
+      'recipe.json',
+      JSON.stringify(this.transcribe(recipe), null, 2)
+    )
+  }
+
+  public async onSubmit(recipe: MarkdownRecipe) {
+    const json = this.transcribe(recipe)
     try {
       const created = await create(5, json)
       console.log('DONE!!!!!!!!!!', created)
