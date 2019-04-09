@@ -11,7 +11,9 @@ import {
   Col,
   Button,
   Alert,
-  Input
+  Input,
+  FormGroup,
+  FormText
 } from 'reactstrap'
 
 import {
@@ -154,21 +156,37 @@ export default class EditRecipe extends React.Component<Props, State> {
           <CardBody>
             <Row>
               <Col>
-                <Input
-                  type="textarea"
-                  value={this.state.message}
-                  placeholder="Briefly describe your changes here"
-                  onChange={e => this.setState({ message: e.target.value })}
-                />
+                <FormGroup>
+                  <Input
+                    type="textarea"
+                    value={this.state.message}
+                    placeholder="e.g. Remove crushed red pepper to make it less spicy"
+                    onChange={e => this.setState({ message: e.target.value })}
+                  />
+                  <FormText>
+                    In the future, your message will help remind you what you
+                    changed and why you changed it.
+                  </FormText>
+                </FormGroup>
               </Col>
-              <Col xs="auto">
-                <Button
-                  color="primary"
-                  onClick={this.save}
-                  disabled={this.state.message === ''}
-                >
-                  Save Changes
-                </Button>
+              <Col xs="12" sm="4" lg="2">
+                <p>
+                  <Button
+                    color="primary"
+                    block
+                    onClick={this.save}
+                    disabled={this.state.message === ''}
+                  >
+                    Save Changes
+                  </Button>
+                </p>
+                {this.state.message === '' ? (
+                  <p className="small text-secondary">
+                    Add a message in order to save your changes
+                  </p>
+                ) : (
+                  <p className="small text-success">Nice work!</p>
+                )}
               </Col>
             </Row>
           </CardBody>
