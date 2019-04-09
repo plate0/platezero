@@ -1,10 +1,10 @@
 import React from 'react'
-import * as moment from 'moment'
 import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
 
 import { RecipeVersionJSON } from '../models'
 import { getName } from '../common/model-helpers'
+import { toHoursAndMinutes } from '../common/time'
 
 interface Props {
   recipeVersion: RecipeVersionJSON
@@ -37,8 +37,7 @@ const preheats = (rv: RecipeVersionJSON) =>
   ))
 
 const formatDuration = (seconds: number) => {
-  const dur = moment.duration(seconds, 'seconds')
-  const [h, m] = [dur.hours(), dur.minutes()]
+  const { h, m } = toHoursAndMinutes(seconds)
   const hs = `${h}h`
   const ms = `${m}m`
   if (h > 0) {

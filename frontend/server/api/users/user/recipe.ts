@@ -58,8 +58,8 @@ r.get('/versions/:id', async (req: RecipeRequest, res) => {
           ]
         },
         { model: User },
-        { model: RecipeYield, attributes: ['text'] },
-        { model: RecipeDuration, attributes: ['duration_seconds'] },
+        { model: RecipeYield },
+        { model: RecipeDuration },
         {
           model: Preheat,
           through: { attributes: [] }

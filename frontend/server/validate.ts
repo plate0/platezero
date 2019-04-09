@@ -99,7 +99,17 @@ export const validateRecipeVersionPatch = validator({
   message: Joi.string().required(),
   ingredientLists: Joi.array().items(ingredientList),
   procedureLists: Joi.array().items(procedureList),
-  preheats: Joi.array().items(preheat)
+  preheats: Joi.array().items(preheat),
+  recipeYield: Joi.object({
+    id: Joi.number().min(0),
+    text: Joi.string().required()
+  }),
+  recipeDuration: Joi.object({
+    id: Joi.number().min(0),
+    duration_seconds: Joi.number()
+      .min(0)
+      .required()
+  })
 })
 
 export const validateRecipePatch = validator({

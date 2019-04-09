@@ -126,14 +126,31 @@ export class RecipeVersion extends Model<RecipeVersion>
       ],
       transaction
     })
+
+    const recipe_yield_id = patch.recipeYield
+      ? (await RecipeYield.findOrCreate({
+          where: { id: patch.recipeYield.id },
+          defaults: { text: patch.recipeYield.text },
+          transaction
+        }))[0].id
+      : undefined
+
+    const recipe_duration_id = patch.recipeDuration
+      ? (await RecipeDuration.findOrCreate({
+          where: { id: patch.recipeDuration.id },
+          defaults: { duration_seconds: patch.recipeDuration.duration_seconds },
+          transaction
+        }))[0].id
+      : undefined
+
     const v = await RecipeVersion.create(
       {
         recipe_id: prev.recipe_id,
         user_id: userId,
         message: patch.message,
         parent_recipe_version_id: prev.id,
-        recipe_yield_id: prev.recipe_yield_id,
-        recipe_duration_id: prev.recipe_duration_id
+        recipe_yield_id,
+        recipe_duration_id
       },
       { transaction }
     )

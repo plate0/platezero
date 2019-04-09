@@ -21,7 +21,9 @@ import {
   ProcedureLists,
   IngredientLists,
   Preheats,
-  RecipeTitle
+  RecipeTitle,
+  RecipeDuration,
+  RecipeYield
 } from '../components'
 import {
   getRecipe,
@@ -33,7 +35,9 @@ import {
   RecipeVersionJSON,
   ProcedureListJSON,
   IngredientListJSON,
-  PreheatJSON
+  PreheatJSON,
+  RecipeDurationJSON,
+  RecipeYieldJSON
 } from '../models'
 import { RecipeVersionPatch } from '../common/request-models'
 import { Link } from '../routes'
@@ -50,6 +54,8 @@ interface State {
   procedureLists: ProcedureListJSON[]
   ingredientLists: IngredientListJSON[]
   preheats: PreheatJSON[]
+  recipeYield: RecipeYieldJSON | undefined
+  recipeDuration: RecipeDurationJSON | undefined
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
@@ -62,7 +68,9 @@ export default class EditRecipe extends React.Component<Props, State> {
       ingredientLists: [],
       preheats: [],
       errors: [],
-      message: ''
+      message: '',
+      recipeYield: undefined,
+      recipeDuration: undefined
     }
   }
 
@@ -91,7 +99,9 @@ export default class EditRecipe extends React.Component<Props, State> {
       message: this.state.message,
       ingredientLists: this.state.ingredientLists,
       procedureLists: this.state.procedureLists,
-      preheats: this.state.preheats
+      preheats: this.state.preheats,
+      recipeYield: this.state.recipeYield,
+      recipeDuration: this.state.recipeDuration
     }
   }
 
@@ -134,6 +144,14 @@ export default class EditRecipe extends React.Component<Props, State> {
             {err}
           </Alert>
         ))}
+        <RecipeYield
+          yield={v.recipeYield}
+          onChange={recipeYield => this.setState({ recipeYield })}
+        />
+        <RecipeDuration
+          duration={v.recipeDuration}
+          onChange={recipeDuration => this.setState({ recipeDuration })}
+        />
         <h4>Preheats</h4>
         <Preheats
           preheats={v.preheats}
