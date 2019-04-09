@@ -3,7 +3,6 @@ import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
 
 import { RecipeVersionJSON } from '../models'
-import { getName } from '../common/model-helpers'
 import { toHoursAndMinutes } from '../common/time'
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
 }
 export const RecipeVersionVitals = (props: Props) => {
   const vitals = _.flatten(
-    _.map([author, duration, recipeYield, source, preheats], visit =>
+    _.map([duration, recipeYield, source, preheats], visit =>
       visit(props.recipeVersion)
     )
   )
@@ -61,12 +60,6 @@ const recipeYield = (rv: RecipeVersionJSON) => {
   }
   return <>Yields {y}</>
 }
-
-const author = (rv: RecipeVersionJSON) => (
-  <>
-    By <a href={`/${rv.recipe.owner.username}`}>{getName(rv.recipe.owner)}</a>
-  </>
-)
 
 const source = (rv: RecipeVersionJSON) => {
   const url = rv.recipe.source_url

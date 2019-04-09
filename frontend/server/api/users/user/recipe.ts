@@ -36,6 +36,20 @@ r.get('/', async (req: RecipeRequest, res) => {
   )
 })
 
+r.get('/versions', async (req: RecipeRequest, res) => {
+  try {
+    return res.json(
+      await RecipeVersion.findAll({
+        where: { recipe_id: req.recipe.id },
+        order: [['created_at', 'DESC']],
+        include: [{ model: User }]
+      })
+    )
+  } catch (error) {
+    return internalServerError(res, error)
+  }
+})
+
 r.get('/versions/:id', async (req: RecipeRequest, res) => {
   const id = parseInt(req.params.id, 10)
   const l = RecipeVersion.sequelize.literal

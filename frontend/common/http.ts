@@ -112,6 +112,15 @@ export const getRecipe = (
     headers: authHeaders(opts ? opts.token : '')
   })
 
+export const getRecipeVersions = (
+  username: string,
+  slug: string,
+  opts?: PlateZeroRequestInfo
+): Promise<RecipeVersionJSON[]> =>
+  _fetch<RecipeVersionJSON[]>(`/users/${username}/recipes/${slug}/versions`, {
+    headers: authHeaders(opts ? opts.token : '')
+  })
+
 export const getRecipeVersion = (
   username: string,
   slug: string,
