@@ -3,28 +3,33 @@ import * as _ from 'lodash'
 import { Canvas } from './Canvas'
 import { Recipe } from './Recipe'
 import { Navbar } from './Navbar'
-import { Config } from './Config'
+import { Config, RecipePath } from './Config'
 import { Container, Row, Col } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
 import { RecipeParts, MarkdownRecipe } from './models'
 import * as Mousetrap from 'mousetrap'
 import { transcribe } from './transcribe'
+import { parse } from 'path'
 import { create } from './create'
 import { writeFileSync } from 'fs'
 import { toMarkdown } from './markdown'
+import { download, convert } from './utils'
+import log from 'electron-log'
 const app = require('electron').remote.app
 
 interface AppState {
   recipe: MarkdownRecipe
   active: string
   recipePath?: string
+  userId?: number
 }
 
 export class App extends React.Component<any, AppState> {
   constructor(props: any) {
     super(props)
 
+    this.onSelectRecipe = this.onSelectRecipe.bind(this)
     this.onSelection = this.onSelection.bind(this)
     this.onRecipeChange = this.onRecipeChange.bind(this)
     this.onActiveChange = this.onActiveChange.bind(this)
@@ -47,7 +52,6 @@ export class App extends React.Component<any, AppState> {
   }
 
   public componentDidMount() {
-    console.log('DATA PATH', app.getPath('userData'))
     Mousetrap.bind(
       [
         'command+t',
@@ -93,6 +97,19 @@ export class App extends React.Component<any, AppState> {
     }
     this.setState({ active: RecipeParts[i].val })
     return false
+  }
+
+  public async onSelectRecipe(r: RecipePath) {
+    log.info(r)
+    const folder = app.getPath('userData')
+    const path = await download(r.key, folder)
+    const { base } = parse(path)
+    const recipePath = await convert(folder, base)
+    log.info('converted', recipePath)
+    this.setState({
+      recipePath,
+      userId: r.userId
+    })
   }
 
   public async onSelection(buffer: Buffer) {
@@ -175,19 +192,21 @@ export class App extends React.Component<any, AppState> {
   }
 
   public render() {
-    if (false) {
+    const { recipePath } = this.state
+    if (!recipePath) {
       return (
         <Container>
-          <Config />
+          <Config onSelect={this.onSelectRecipe} />
         </Container>
       )
     }
+
     return (
       <div>
         <Navbar active={this.state.active} onClick={this.onActiveChange} />
         <Row>
           <Col xs="9">
-            <Canvas onSelection={this.onSelection} imagePath="recipe.jpg" />
+            <Canvas onSelection={this.onSelection} imagePath={recipePath} />
           </Col>
           <Col xs="3" style={{ maxHeight: '960px', overflow: 'auto' }}>
             <Recipe

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { TransformCanvasRenderingContext2D, decorate } from './context'
-import { writeFileSync } from 'fs'
 
 // TODO: Get from DOM, I could not figure it out
 const NAVBAR_HEIGHT = 47
@@ -109,7 +108,6 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
     let data = newCanvas.toDataURL('image/jpeg')
     data = data.replace(/^data:image\/jpeg;base64,/, '')
-    writeFileSync('test-data.jpg', data, 'base64')
     this.setState({ rect: { x: 0, y: 0, width: 0, height: 0 } })
     return Buffer.from(data, 'base64')
   }
