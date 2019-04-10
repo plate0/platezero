@@ -1,7 +1,17 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
-import { Alert, Button, Col, Form, Row } from 'reactstrap'
+import {
+  Alert,
+  Button,
+  Col,
+  Form,
+  Row,
+  FormGroup,
+  Input,
+  Label,
+  FormText
+} from 'reactstrap'
 import { createRecipe, PlateZeroApiError } from '../common'
 import {
   IngredientListJSON,
@@ -22,6 +32,8 @@ import {
 } from '../components'
 import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
+import { normalize } from '../common/model-helpers'
+import { Link } from '../routes'
 
 interface Props {
   token: string
@@ -30,6 +42,10 @@ interface Props {
 interface State {
   errors: string[]
   title: string
+  source_url: string
+  source_title: string
+  source_author: string
+  source_isbn: string
   ingredientLists: IngredientListJSON[]
   procedureLists: ProcedureListJSON[]
   preheats: PreheatJSON[]
@@ -45,6 +61,10 @@ export default class NewRecipe extends React.Component<Props, State> {
     this.state = {
       errors: [],
       title: '',
+      source_url: '',
+      source_title: '',
+      source_author: '',
+      source_isbn: '',
       ingredientLists: [],
       procedureLists: [],
       preheats: [],
@@ -65,6 +85,10 @@ export default class NewRecipe extends React.Component<Props, State> {
   public getRecipe(): PostRecipe {
     return {
       title: this.state.title,
+      source_url: normalize(this.state.source_url),
+      source_author: normalize(this.state.source_author),
+      source_title: normalize(this.state.source_title),
+      source_isbn: normalize(this.state.source_isbn),
       preheats: this.state.preheats,
       ingredient_lists: this.state.ingredientLists,
       procedure_lists: this.state.procedureLists,
@@ -110,6 +134,54 @@ export default class NewRecipe extends React.Component<Props, State> {
               />
             </Col>
           </Row>
+
+          <FormGroup>
+            <Label>Source URL</Label>
+            <Input
+              type="text"
+              value={this.state.source_url}
+              placeholder="e.g. https://example.com/recipe.html"
+              onChange={e => this.setState({ source_url: e.target.value })}
+            />
+            <FormText>
+              Pro tip: Try our{' '}
+              <Link route="/recipes/import">
+                <a>importer</a>
+              </Link>{' '}
+              instead!
+            </FormText>
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Source Author</Label>
+            <Input
+              type="text"
+              value={this.state.source_author}
+              placeholder="e.g. Firstname Lastname"
+              onChange={e => this.setState({ source_author: e.target.value })}
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Source ISBN</Label>
+            <Input
+              type="text"
+              value={this.state.source_isbn}
+              placeholder="e.g. 9780000000000"
+              onChange={e => this.setState({ source_isbn: e.target.value })}
+            />
+          </FormGroup>
+
+          <FormGroup>
+            <Label>Source Title</Label>
+            <Input
+              type="text"
+              value={this.state.source_title}
+              placeholder="e.g. Cookbook"
+              onChange={e => this.setState({ source_title: e.target.value })}
+            />
+          </FormGroup>
+
           <RecipeYield
             yield={this.state.recipeYield}
             onChange={recipeYield => this.setState({ recipeYield })}

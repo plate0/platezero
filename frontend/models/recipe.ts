@@ -39,6 +39,9 @@ export interface RecipeJSON {
   description?: string
   image_url?: string
   source_url?: string
+  source_author?: string
+  source_title?: string
+  source_isbn?: string
   slug?: string
   html_url?: string
   owner: UserJSON
@@ -89,6 +92,15 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
 
   @Column public source_url: string
 
+  @Column
+  public source_author: string
+
+  @Column
+  public source_isbn: string
+
+  @Column
+  public source_title: string
+
   @AllowNull(false)
   @Column
   @CreatedAt
@@ -132,6 +144,9 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
           slug,
           image_url: body.image_url,
           source_url: body.source_url,
+          source_author: body.source_author,
+          source_title: body.source_title,
+          source_isbn: body.source_isbn,
           user_id
         },
         { transaction }
