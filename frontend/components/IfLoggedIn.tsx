@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const IfLoggedIn = (props: Props) => {
-  const user = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const guarded = props.children
   const fallback = props.else || null
 

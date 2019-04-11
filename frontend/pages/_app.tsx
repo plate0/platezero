@@ -1,60 +1,67 @@
 import React from 'react'
-import nextCookie from 'next-cookies'
 import App, { Container } from 'next/app'
 import '../style/index.scss'
 import { UserJSON } from '../models/user'
 import { UserContext } from '../context/UserContext'
-import { TokenContext } from '../context/TokenContext'
-import { getCurrentUser } from '../common/http'
+import { api } from '../common/http'
 
-const currentUser = async (token: string): Promise<UserJSON | undefined> => {
+const currentUser = async (): Promise<UserJSON | undefined> => {
   try {
-    return await getCurrentUser({ token })
+    return await api.getCurrentUser()
   } catch (e) {
-    console.error(e)
     return undefined
   }
 }
 
-interface MyAppProps {
-  pageProps: any
+interface AppProps {
   user?: UserJSON
-  token?: string
+  pageProps: any
 }
 
-interface MyAppState {
-  user: UserJSON | undefined
+interface AppState {
+  updateUser: any
+  user?: UserJSON
 }
 
-export default class MyApp extends App<MyAppProps, MyAppState> {
+export default class PlateZeroApp extends App<AppProps, AppState> {
   static async getInitialProps({ Component, ctx }) {
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
       : {}
-    const { token } = nextCookie(ctx)
+
+    api.loadAuth(ctx)
     return {
-      token,
-      pageProps,
-      user: await currentUser(token)
+      user: ctx.req ? await currentUser() : undefined,
+      pageProps
     }
   }
 
-  constructor(props) {
+  constructor(props: any) {
     super(props)
-    this.state = {
-      user: this.props.user
+    this.updateUser = this.updateUser.bind(this)
+    this.state = { user: props.user, updateUser: this.updateUser }
+  }
+
+  public async componentDidMount() {
+    api.loadAuth()
+    // This is really only used in dev, when the pages soft-refreshes
+    // and we lose the current state.
+    if (!this.state.user) {
+      this.setState({
+        user: await currentUser()
+      })
     }
   }
 
-  render() {
+  public updateUser = (user: UserJSON) => this.setState({ user })
+
+  public render() {
     const { Component, pageProps } = this.props
     return (
-      <UserContext.Provider value={this.state.user}>
-        <TokenContext.Provider value={this.props.token}>
-          <Container>
-            <Component {...pageProps} />
-          </Container>
-        </TokenContext.Provider>
+      <UserContext.Provider value={this.state as any}>
+        <Container>
+          <Component {...pageProps} />
+        </Container>
       </UserContext.Provider>
     )
   }

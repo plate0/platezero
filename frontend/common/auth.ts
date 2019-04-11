@@ -1,23 +1,22 @@
-import Router from 'next/router'
 import cookie from 'js-cookie'
+import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
 
-export const authenticated = async (user: UserJSON, token: string) => {
-  cookie.set('token', token, { expires: 1 })
-  Router.push(`/${user.username}`)
+export interface Authentication {
+  token?: string
+  refresh?: string
+  user?: UserJSON
 }
 
-export const extractToken = (cookies?: string) => {
-  const regex = /token=(.*);/gm
-  let m
-  while ((m = regex.exec(cookies)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (m.index === regex.lastIndex) {
-      regex.lastIndex++
-    }
-    // The result can be accessed through the `m`-variable.
-    m.forEach((match, groupIndex) => {
-      console.log(`Found match, group ${groupIndex}: ${match}`)
-    })
+export const authenticated = async (token: string, refresh: string) => {
+  cookie.set('auth', JSON.stringify({ token, refresh }))
+}
+
+export const getAuth = (ctx: any = undefined): Authentication => {
+  try {
+    const { auth } = ctx ? nextCookie(ctx) : cookie.get()
+    return JSON.parse(auth)
+  } catch {
+    return {}
   }
 }

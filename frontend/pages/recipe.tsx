@@ -25,15 +25,8 @@ import {
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import {
-  PlateZeroApiError,
-  getRecipe,
-  getRecipeVersion,
-  deleteRecipe,
-  patchRecipe
-} from '../common/http'
+import { api, PlateZeroApiError } from '../common/http'
 import { UserContext } from '../context/UserContext'
-import { TokenContext } from '../context/TokenContext'
 
 interface Props {
   recipe: RecipeJSON
@@ -46,13 +39,13 @@ interface State {
 
 export default class Recipe extends React.Component<Props, State> {
   static async getInitialProps({ query }): Promise<Props> {
-    const recipe = await getRecipe(query.username, query.slug)
+    const recipe = await api.getRecipe(query.username, query.slug)
     const masterBranch = _.head(
       _.filter(recipe.branches, r => r.name === 'master')
     )
     const versionId = _.get(masterBranch, 'recipe_version_id')
     const recipeVersion = versionId
-      ? await getRecipeVersion(query.username, query.slug, versionId)
+      ? await api.getRecipeVersion(query.username, query.slug, versionId)
       : undefined
     return { recipe, recipeVersion }
   }
@@ -104,11 +97,10 @@ const DeleteModal = ({
   toggle: () => void
   close: () => void
 }) => {
-  const user = useContext(UserContext)
-  const token = useContext(TokenContext)
+  const { user } = useContext(UserContext)
   const handleDelete = async () => {
     try {
-      await deleteRecipe(recipe.slug, { token })
+      await api.deleteRecipe(recipe.slug)
     } catch {}
     Router.push(`/${user.username}`)
   }
@@ -152,12 +144,11 @@ const RenameModal = ({
   const [subtitle, setSubtitle] = useState(recipe.subtitle || '')
   const [description, setDescription] = useState(recipe.description || '')
   const [errors, setErrors] = useState([])
-  const token = useContext(TokenContext)
   const handleSave = async () => {
     const patch = { title, subtitle, description }
     setErrors([])
     try {
-      await patchRecipe(recipe.slug, patch, { token })
+      await api.patchRecipe(recipe.slug, patch)
       Router.push(`/${recipe.owner.username}/${recipe.slug}`)
     } catch (e) {
       if (e instanceof PlateZeroApiError) {

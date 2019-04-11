@@ -2,7 +2,7 @@ import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
 import { Alert, Button, Col, Form, Row } from 'reactstrap'
-import { createRecipe, PlateZeroApiError } from '../common'
+import { api, PlateZeroApiError } from '../common'
 import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
 import { PostRecipe } from '../common/request-models'
 import {
@@ -12,12 +12,7 @@ import {
   ProcedureLists,
   Preheats
 } from '../components'
-import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
-
-interface Props {
-  token: string
-}
 
 interface State {
   errors: string[]
@@ -27,8 +22,8 @@ interface State {
   preheats: PreheatJSON[]
 }
 
-export default class NewRecipe extends React.Component<Props, State> {
-  constructor(props: Props) {
+export default class NewRecipe extends React.Component<any, State> {
+  constructor(props: any) {
     super(props)
     this.create = this.create.bind(this)
     this.getRecipe = this.getRecipe.bind(this)
@@ -39,10 +34,6 @@ export default class NewRecipe extends React.Component<Props, State> {
       procedureLists: [],
       preheats: []
     }
-  }
-  static async getInitialProps(ctx) {
-    const { token } = nextCookie(ctx)
-    return { token }
   }
 
   public titleOnChange = (e: React.FormEvent<HTMLInputElement>) =>
@@ -62,10 +53,9 @@ export default class NewRecipe extends React.Component<Props, State> {
   public async create(event: React.FormEvent<EventTarget>) {
     event.preventDefault()
     this.setState({ errors: [] })
-    const { token } = this.props
     const recipe = this.getRecipe()
     try {
-      const res = await createRecipe(recipe, { token })
+      const res = await api.createRecipe(recipe)
       Router.push(res.html_url)
     } catch (err) {
       if (err instanceof PlateZeroApiError) {
