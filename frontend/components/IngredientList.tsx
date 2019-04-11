@@ -1,16 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import {
-  Button,
-  Row,
-  Col,
-  FormGroup,
-  FormText,
-  Input,
-  Label,
-  Card,
-  CardHeader,
-  CardBody
-} from 'reactstrap'
+import { Button, FormText, Input, Card, CardHeader, CardBody } from 'reactstrap'
 import * as _ from 'lodash'
 
 import { IngredientLine } from './IngredientLine'
@@ -56,8 +45,8 @@ export function IngredientList(props: Props) {
     }
   }, [name, lines])
 
-  const act = line => () => {
-    const f = line.removed ? restoreItem : removeItem
+  const act = line => {
+    const f = line.removed || isChanged(line) ? restoreItem : removeItem
     setLines(f(lines, line.id))
   }
 
@@ -78,47 +67,27 @@ export function IngredientList(props: Props) {
         )}
       </CardHeader>
       <CardBody>
-        <ActionLine icon="fal fa-times invisible" onAction={_.noop}>
-          <Row className="font-weight-bold" noGutters={true}>
-            <Col xs="auto" md="2" className="pl-3">
-              Amount
-            </Col>
-            <Col xs="auto" md="2" className="pl-3">
-              Unit
-            </Col>
-            <Col xs="auto" md={true} className="pl-3">
-              Ingredient
-            </Col>
-            <Col xs="auto" md="3" className="pl-3">
-              Preparation
-            </Col>
-            <Col xs="auto" className="invisible">
-              <FormGroup check>
-                <Label check>
-                  <Input type="checkbox" />
-                  <small>Optional</small>
-                </Label>
-              </FormGroup>
-            </Col>
-          </Row>
-        </ActionLine>
-        {lines.map(line => (
-          <ActionLine
-            icon={`fal fa-${line.removed ? 'undo' : 'times'}`}
-            key={line.id}
-            onAction={act(line)}
-          >
-            <IngredientLine
-              ingredient={line.json}
-              onChange={newLine =>
-                setLines(replaceItem(lines, line.id, newLine))
-              }
-              removed={line.removed}
-              added={line.added}
-              changed={isChanged(line)}
-            />
-          </ActionLine>
-        ))}
+        {lines.map(line => {
+          const changed = isChanged(line)
+          const icon = line.removed || changed ? 'undo' : 'times'
+          return (
+            <ActionLine
+              icon={`fal fa-${icon}`}
+              key={line.id}
+              onAction={() => act(line)}
+            >
+              <IngredientLine
+                ingredient={line.json}
+                onChange={newLine =>
+                  setLines(replaceItem(lines, line.id, newLine))
+                }
+                removed={line.removed}
+                added={line.added}
+                changed={changed}
+              />
+            </ActionLine>
+          )
+        })}
         <div>
           <Button
             color="secondary"

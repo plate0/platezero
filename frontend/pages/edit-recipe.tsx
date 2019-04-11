@@ -1,6 +1,5 @@
 import React from 'react'
 import Router from 'next/router'
-import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
 import {
@@ -11,7 +10,9 @@ import {
   Col,
   Button,
   Alert,
-  Input
+  Input,
+  FormGroup,
+  FormText
 } from 'reactstrap'
 
 import {
@@ -19,25 +20,23 @@ import {
   ProcedureLists,
   IngredientLists,
   Preheats,
-  RecipeTitle
+  RecipeTitle,
+  RecipeDuration,
+  RecipeYield
 } from '../components'
-import {
-  getRecipe,
-  getRecipeVersion,
-  patchBranch,
-  PlateZeroApiError
-} from '../common/http'
+import { api, PlateZeroApiError } from '../common/http'
 import {
   RecipeVersionJSON,
   ProcedureListJSON,
   IngredientListJSON,
-  PreheatJSON
+  PreheatJSON,
+  RecipeDurationJSON,
+  RecipeYieldJSON
 } from '../models'
 import { RecipeVersionPatch } from '../common/request-models'
 import { Link } from '../routes'
 
 interface Props {
-  token: string
   branch: string
   recipeVersion: RecipeVersionJSON
 }
@@ -48,6 +47,8 @@ interface State {
   procedureLists: ProcedureListJSON[]
   ingredientLists: IngredientListJSON[]
   preheats: PreheatJSON[]
+  recipeYield: RecipeYieldJSON | undefined
+  recipeDuration: RecipeDurationJSON | undefined
 }
 
 export default class EditRecipe extends React.Component<Props, State> {
@@ -60,23 +61,22 @@ export default class EditRecipe extends React.Component<Props, State> {
       ingredientLists: [],
       preheats: [],
       errors: [],
-      message: ''
+      message: '',
+      recipeYield: undefined,
+      recipeDuration: undefined
     }
   }
 
-  static async getInitialProps(ctx): Promise<Props> {
-    const { query } = ctx
-    const { token } = nextCookie(ctx)
-    const branch = query.branch
-    const recipe = await getRecipe(query.username, query.slug, { token })
+  static async getInitialProps({ query }): Promise<Props> {
+    const { branch, username, slug } = query
+    const recipe = await api.getRecipe(username, slug)
     const recipeVersionId = _.get(
       _.head(_.filter(recipe.branches, { name: branch })),
       'recipe_version_id'
     )
     return {
-      token,
       branch,
-      recipeVersion: await getRecipeVersion(
+      recipeVersion: await api.getRecipeVersion(
         query.username,
         query.slug,
         recipeVersionId
@@ -89,7 +89,9 @@ export default class EditRecipe extends React.Component<Props, State> {
       message: this.state.message,
       ingredientLists: this.state.ingredientLists,
       procedureLists: this.state.procedureLists,
-      preheats: this.state.preheats
+      preheats: this.state.preheats,
+      recipeYield: this.state.recipeYield,
+      recipeDuration: this.state.recipeDuration
     }
   }
 
@@ -98,8 +100,8 @@ export default class EditRecipe extends React.Component<Props, State> {
     const patch = this.getPatch()
     try {
       const slug = this.props.recipeVersion.recipe.slug
-      const { branch, token } = this.props
-      await patchBranch(slug, branch, patch, { token })
+      const { branch } = this.props
+      await api.patchBranch(slug, branch, patch)
       Router.push(`/${this.props.recipeVersion.recipe.owner.username}/${slug}`)
     } catch (e) {
       if (e instanceof PlateZeroApiError) {
@@ -132,6 +134,14 @@ export default class EditRecipe extends React.Component<Props, State> {
             {err}
           </Alert>
         ))}
+        <RecipeYield
+          yield={v.recipeYield}
+          onChange={recipeYield => this.setState({ recipeYield })}
+        />
+        <RecipeDuration
+          duration={v.recipeDuration}
+          onChange={recipeDuration => this.setState({ recipeDuration })}
+        />
         <h4>Preheats</h4>
         <Preheats
           preheats={v.preheats}
@@ -154,21 +164,37 @@ export default class EditRecipe extends React.Component<Props, State> {
           <CardBody>
             <Row>
               <Col>
-                <Input
-                  type="textarea"
-                  value={this.state.message}
-                  placeholder="Briefly describe your changes here"
-                  onChange={e => this.setState({ message: e.target.value })}
-                />
+                <FormGroup>
+                  <Input
+                    type="textarea"
+                    value={this.state.message}
+                    placeholder="e.g. Remove crushed red pepper to make it less spicy"
+                    onChange={e => this.setState({ message: e.target.value })}
+                  />
+                  <FormText>
+                    In the future, your message will help remind you what you
+                    changed and why you changed it.
+                  </FormText>
+                </FormGroup>
               </Col>
-              <Col xs="auto">
-                <Button
-                  color="primary"
-                  onClick={this.save}
-                  disabled={this.state.message === ''}
-                >
-                  Save Changes
-                </Button>
+              <Col xs="12" sm="4" lg="2">
+                <p>
+                  <Button
+                    color="primary"
+                    block
+                    onClick={this.save}
+                    disabled={this.state.message === ''}
+                  >
+                    Save Changes
+                  </Button>
+                </p>
+                {this.state.message === '' ? (
+                  <p className="small text-secondary">
+                    Add a message in order to save your changes
+                  </p>
+                ) : (
+                  <p className="small text-success">Nice work!</p>
+                )}
               </Col>
             </Row>
           </CardBody>

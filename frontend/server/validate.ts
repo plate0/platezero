@@ -70,6 +70,9 @@ export const validateNewRecipe = validator({
   description: Joi.string(),
   image_url: Joi.string().uri(),
   source_url: Joi.string().uri(),
+  source_author: Joi.string(),
+  source_isbn: Joi.string(),
+  source_title: Joi.string(),
   yield: Joi.string(),
   duration: Joi.number(),
   preheats: Joi.array().items(preheat),
@@ -83,7 +86,7 @@ export const validateNewRecipe = validator({
 
 export const validateNewUser = validator({
   username: Joi.string()
-    .regex(/[a-zA-Z][a-zA-Z0-9\-_]+/)
+    .regex(/^[a-zA-Z][a-zA-Z0-9\-_]+$/)
     .min(2)
     .max(25)
     .required(),
@@ -99,7 +102,17 @@ export const validateRecipeVersionPatch = validator({
   message: Joi.string().required(),
   ingredientLists: Joi.array().items(ingredientList),
   procedureLists: Joi.array().items(procedureList),
-  preheats: Joi.array().items(preheat)
+  preheats: Joi.array().items(preheat),
+  recipeYield: Joi.object({
+    id: Joi.number().min(0),
+    text: Joi.string().required()
+  }),
+  recipeDuration: Joi.object({
+    id: Joi.number().min(0),
+    duration_seconds: Joi.number()
+      .min(0)
+      .required()
+  })
 })
 
 export const validateRecipePatch = validator({

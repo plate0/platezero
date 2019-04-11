@@ -32,10 +32,10 @@ export const unauthorized = (res: Response, error?: any) => {
 }
 
 // HTTP 401 Unauthorized
-export const invalidAuthentication = (res: Response) =>
-  res
-    .status(HttpStatus.Unauthorized)
-    .json({ errors: ['invalid username and/or password'] })
+export const invalidAuthentication = (
+  res: Response,
+  message = 'invalid username and/or password'
+) => res.status(HttpStatus.Unauthorized).json({ errors: [message] })
 
 // HTTP 404 Not Found
 export const notFound = (res: Response) =>

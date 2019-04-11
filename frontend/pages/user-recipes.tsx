@@ -1,10 +1,10 @@
 import React from 'react'
 import { Layout } from '../components'
 import Head from 'next/head'
-import nextCookie from 'next-cookies'
 import { RecipeJSON, UserJSON } from '../models'
 import { RecipeList } from '../components'
-import { getUser, getUserRecipes } from '../common/http'
+import { api } from '../common/http'
+import { getName } from '../common/model-helpers'
 
 interface UserProps {
   user: UserJSON
@@ -12,12 +12,11 @@ interface UserProps {
 }
 
 export default class User extends React.Component<UserProps> {
-  static async getInitialProps(ctx) {
-    const { username } = ctx.query
-    const { token } = nextCookie(ctx)
+  static async getInitialProps({ query }) {
+    const { username } = query
     return {
-      user: await getUser(username, { token }),
-      recipes: await getUserRecipes(username, { token })
+      user: await api.getUser(username),
+      recipes: await api.getUserRecipes(username)
     }
   }
 
@@ -26,9 +25,7 @@ export default class User extends React.Component<UserProps> {
     return (
       <Layout>
         <Head>
-          <title>
-            {user.username} ({user.name}) - Recipes
-          </title>
+          <title>{getName(user)} - Recipes</title>
         </Head>
         <RecipeList recipes={recipes} user={user} />
       </Layout>

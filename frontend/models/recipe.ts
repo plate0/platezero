@@ -14,7 +14,6 @@ import {
   PrimaryKey,
   Table
 } from 'sequelize-typescript'
-import slugify from 'slugify'
 import * as _ from 'lodash'
 import { PostRecipe } from '../common/request-models'
 import { User, UserJSON } from './user'
@@ -29,6 +28,7 @@ import { ProcedureList } from './procedure_list'
 import { IngredientList } from './ingredient_list'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { getConfig } from '../server/config'
+import { toSlug } from '../common/slug'
 
 const cfg = getConfig()
 
@@ -39,6 +39,9 @@ export interface RecipeJSON {
   description?: string
   image_url?: string
   source_url?: string
+  source_author?: string
+  source_title?: string
+  source_isbn?: string
   slug?: string
   html_url?: string
   owner: UserJSON
@@ -89,6 +92,15 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
 
   @Column public source_url: string
 
+  @Column
+  public source_author: string
+
+  @Column
+  public source_isbn: string
+
+  @Column
+  public source_title: string
+
   @AllowNull(false)
   @Column
   @CreatedAt
@@ -132,6 +144,9 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
           slug,
           image_url: body.image_url,
           source_url: body.source_url,
+          source_author: body.source_author,
+          source_title: body.source_title,
+          source_isbn: body.source_isbn,
           user_id
         },
         { transaction }
@@ -231,8 +246,8 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
     user_id: number,
     body: PostRecipe
   ): Promise<Recipe> {
-    const sluggd = slugify(body.title, { lower: true })
     // place an upper bound on retries to prevent DoS
+    const sluggd = toSlug(body.title)
     for (let counter = 0; counter < 100; counter++) {
       try {
         const slug = counter > 0 ? `${sluggd}-${counter}` : sluggd

@@ -112,6 +112,9 @@ CREATE TABLE recipes (
   description character varying,
   image_url character varying,
   source_url character varying,
+  source_author character varying,
+  source_title character varying,
+  source_isbn character varying,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone,
@@ -126,6 +129,16 @@ CREATE TABLE users (
   avatar_url character varying,
   name character varying,
   confirmed_at timestamp without time zone DEFAULT now(),
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  deleted_at timestamp without time zone
+);
+
+CREATE TABLE refresh_tokens (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  token VARCHAR UNIQUE NOT NULL,
+  last_used timestamp without time zone,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone
@@ -152,3 +165,4 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (parent_recipe_version_id) REFERENCE
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_duration_id) REFERENCES recipe_durations (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);

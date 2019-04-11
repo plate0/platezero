@@ -1,5 +1,4 @@
 import React from 'react'
-import nextCookie from 'next-cookies'
 import {
   Row,
   Alert,
@@ -16,7 +15,7 @@ import {
 import Head from 'next/head'
 import { Dropzone, Layout } from '../components'
 import * as _ from 'lodash'
-import { importUrl, importFiles, PlateZeroApiError } from '../common'
+import { api, PlateZeroApiError } from '../common'
 import { RecipeJSON } from '../models'
 import { Link } from '../routes'
 import uuid from 'uuid/v4'
@@ -95,15 +94,11 @@ interface ImportRecipeState {
   }
 }
 
-interface ImportRecipeProps {
-  token: string
-}
-
 export default class ImportRecipe extends React.Component<
-  ImportRecipeProps,
+  any,
   ImportRecipeState
 > {
-  constructor(props: ImportRecipeProps) {
+  constructor(props: any) {
     super(props)
     this.state = {
       uploads: {},
@@ -113,13 +108,7 @@ export default class ImportRecipe extends React.Component<
     this.onSubmit = this.onSubmit.bind(this)
   }
 
-  static async getInitialProps(ctx) {
-    const { token } = nextCookie(ctx)
-    return { token }
-  }
-
   public async onDrop(files: File[]) {
-    const { token } = this.props
     const formData = new FormData()
     files.forEach(f => formData.append('file', f, f.name))
     const uploads = _.keyBy(
@@ -138,7 +127,7 @@ export default class ImportRecipe extends React.Component<
     }))
 
     try {
-      await importFiles(formData, { token })
+      await api.importFiles(formData)
       this.setState(s => ({
         ...s,
         uploads: {
@@ -165,7 +154,6 @@ export default class ImportRecipe extends React.Component<
 
   public async onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const { token } = this.props
     const { url } = this.state
     const upload = { body: url, id: uuid() }
     this.setState(s => ({
@@ -176,7 +164,7 @@ export default class ImportRecipe extends React.Component<
       }
     }))
     try {
-      const recipe = await importUrl(url, { token })
+      const recipe = await api.importUrl(url)
       this.setState(s => ({
         ...s,
         uploads: {

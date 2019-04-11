@@ -38,8 +38,9 @@ export function ProcedureList(props: Props) {
     }
   }, [name, lines])
 
-  const act = line => () => {
-    const f = line.removed ? restoreItem : removeItem
+  const act = line => {
+    const changed = isChanged(line)
+    const f = line.removed || changed ? restoreItem : removeItem
     setLines(f(lines, line.id))
   }
 
@@ -60,34 +61,41 @@ export function ProcedureList(props: Props) {
         )}
       </CardHeader>
       <CardBody>
-        {lines.map(line => (
-          <ActionLine
-            icon={`fal fa-${line.removed ? 'undo' : 'times'}`}
-            key={line.id}
-            onAction={act(line)}
-          >
-            {line.removed ? (
-              <div className="text-muted text-strike">{line.json.text}</div>
-            ) : (
-              <PlainInput
-                type="textarea"
-                placeholder="Step by step instructions..."
-                className={`mb-3 ${isChanged(line) ? 'bg-changed' : ''} ${
-                  line.added ? 'bg-added' : ''
-                }`}
-                value={line.json.text}
-                onChange={e =>
-                  setLines(
-                    replaceItem(lines, line.id, {
-                      id: line.json.id,
-                      text: e.target.value
-                    })
-                  )
-                }
-              />
-            )}
-          </ActionLine>
-        ))}
+        {lines.map(line => {
+          const changed = isChanged(line)
+          const icon = line.removed || changed ? 'undo' : 'times'
+          return (
+            <ActionLine
+              icon={`fal fa-${icon}`}
+              key={line.id}
+              onAction={() => act(line)}
+            >
+              {line.removed ? (
+                <div className="text-muted text-strike">{line.json.text}</div>
+              ) : (
+                <div
+                  className={`mb-3 ${isChanged(line) ? 'bg-changed' : ''} ${
+                    line.added ? 'bg-added' : ''
+                  }`}
+                >
+                  <PlainInput
+                    type="textarea"
+                    placeholder="Step by step instructions..."
+                    value={line.json.text}
+                    onChange={e =>
+                      setLines(
+                        replaceItem(lines, line.id, {
+                          id: line.json.id,
+                          text: e.target.value
+                        })
+                      )
+                    }
+                  />
+                </div>
+              )}
+            </ActionLine>
+          )
+        })}
         <div>
           <Button
             type="button"

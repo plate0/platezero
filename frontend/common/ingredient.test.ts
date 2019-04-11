@@ -84,29 +84,38 @@ test('parse 7', () => {
   })
 })
 
-test('parse 8', () => {
-  // The default regex reads in `4 6`, which is not a valid number.
-  // We've expanded the amount parsing to also check for dashes (can be
-  // expanded further in the future), and then not use the second number
-  // if a dash is present.
-  expect(parse('4 6-inch whole-wheat or corn tortillas (optional)')).toEqual({
-    name: '6-inch whole-wheat or corn tortillas (optional)',
-    quantity_numerator: 4,
-    quantity_denominator: 1,
-    preparation: undefined,
-    optional: true,
-    unit: undefined
-  })
-})
-
-// This is a little broken, but expected
-test('parse 9', () => {
-  expect(parse('2-3 tsp olive oil')).toEqual({
-    name: '-3 tsp olive oil',
-    quantity_numerator: 2,
+test('parse 1 15-ounce', () => {
+  expect(parse('1 15-ounce can diced tomatoes')).toEqual({
+    name: '15-ounce can diced tomatoes',
+    quantity_numerator: 1,
     quantity_denominator: 1,
     preparation: undefined,
     optional: false,
     unit: undefined
   })
 })
+
+// to be continued...
+/*
+1 tablespoon vegetable or canola oil
+For the rice:
+2 tablespoons unsalted butter
+1/2 teaspoon turmeric
+1/4 teaspoon ground cumin
+1 1/2 cups long-grain or Basmati rice
+2 1/2 cups chicken broth
+Kosher salt and freshly ground black pepper
+For the sauce:
+1/2 cup mayonnaise
+1/2 cup Greek yogurt
+1 tablespoon sugar
+2 tablespoons white vinegar
+1 teaspoon lemon juice
+1/4 cup chopped fresh parsley
+Kosher salt and freshly ground black pepper
+To serve:
+1 head iceberg lettuce, shredded
+1 large tomato, cut into wedges
+Fluffy pocketless pita bread, brushed in butter, lightly toasted, and cut into 1 × 3-inch strips
+Harissa-style hot sauce, for serving
+   */

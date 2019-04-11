@@ -7,7 +7,7 @@ import {
   RecipeTitle
 } from '../components'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { getRecipeVersion } from '../common/http'
+import { api } from '../common/http'
 
 interface RecipeVersionProps {
   recipeVersion: RecipeVersionJSON
@@ -16,7 +16,7 @@ interface RecipeVersionProps {
 export default class RecipeVersion extends React.Component<RecipeVersionProps> {
   static async getInitialProps({ query }) {
     return {
-      recipeVersion: await getRecipeVersion(
+      recipeVersion: await api.getRecipeVersion(
         query.username,
         query.slug,
         parseInt(query.versionId, 10)
