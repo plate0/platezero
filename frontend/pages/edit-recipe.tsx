@@ -1,6 +1,5 @@
 import React from 'react'
 import Router from 'next/router'
-import nextCookie from 'next-cookies'
 import Head from 'next/head'
 import * as _ from 'lodash'
 import {
@@ -25,12 +24,7 @@ import {
   RecipeDuration,
   RecipeYield
 } from '../components'
-import {
-  getRecipe,
-  getRecipeVersion,
-  patchBranch,
-  PlateZeroApiError
-} from '../common/http'
+import { api, PlateZeroApiError } from '../common/http'
 import {
   RecipeVersionJSON,
   ProcedureListJSON,
@@ -43,7 +37,6 @@ import { RecipeVersionPatch } from '../common/request-models'
 import { Link } from '../routes'
 
 interface Props {
-  token: string
   branch: string
   recipeVersion: RecipeVersionJSON
 }
@@ -74,19 +67,16 @@ export default class EditRecipe extends React.Component<Props, State> {
     }
   }
 
-  static async getInitialProps(ctx): Promise<Props> {
-    const { query } = ctx
-    const { token } = nextCookie(ctx)
-    const branch = query.branch
-    const recipe = await getRecipe(query.username, query.slug, { token })
+  static async getInitialProps({ query }): Promise<Props> {
+    const { branch, username, slug } = query
+    const recipe = await api.getRecipe(username, slug)
     const recipeVersionId = _.get(
       _.head(_.filter(recipe.branches, { name: branch })),
       'recipe_version_id'
     )
     return {
-      token,
       branch,
-      recipeVersion: await getRecipeVersion(
+      recipeVersion: await api.getRecipeVersion(
         query.username,
         query.slug,
         recipeVersionId
@@ -110,8 +100,8 @@ export default class EditRecipe extends React.Component<Props, State> {
     const patch = this.getPatch()
     try {
       const slug = this.props.recipeVersion.recipe.slug
-      const { branch, token } = this.props
-      await patchBranch(slug, branch, patch, { token })
+      const { branch } = this.props
+      await api.patchBranch(slug, branch, patch)
       Router.push(`/${this.props.recipeVersion.recipe.owner.username}/${slug}`)
     } catch (e) {
       if (e instanceof PlateZeroApiError) {

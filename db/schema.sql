@@ -134,6 +134,16 @@ CREATE TABLE users (
   deleted_at timestamp without time zone
 );
 
+CREATE TABLE refresh_tokens (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  token VARCHAR UNIQUE NOT NULL,
+  last_used timestamp without time zone,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  deleted_at timestamp without time zone
+);
+
 -- foreign keys
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_list_id) REFERENCES ingredient_lists (id);
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_line_id) REFERENCES ingredient_lines (id);
@@ -155,3 +165,4 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (parent_recipe_version_id) REFERENCE
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_duration_id) REFERENCES recipe_durations (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);

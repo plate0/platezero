@@ -5,6 +5,8 @@ import { UserJSON, RecipeJSON, RecipeVersionJSON } from '../models'
 import { PostRecipe, RecipeVersionPatch } from './request-models'
 import { HttpStatus } from './http-status'
 import { get } from 'lodash'
+import { getAuth } from './auth'
+import cookie from 'js-cookie'
 const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
 const headers = {
@@ -19,16 +21,13 @@ const authHeaders = (token?: string) =>
       }
     : {}
 
-const _fetch = async <T>(uri: string, opts: RequestInit = {}): Promise<T> => {
-  const options = {
-    method: opts.method || 'GET',
-    headers: {
-      ...headers,
-      ...(opts.headers || {})
-    },
-    body: opts.body
-  }
-  return await fetch(`${API_URL}${uri}`, options).then(handleError)
+const refreshToken = async (token: string) => {
+  const res = await fetch(`${API_URL}/login/refresh`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ token })
+  })
+  return res.json()
 }
 
 const handleError = async (res: Response): Promise<any> => {
@@ -51,138 +50,167 @@ export class PlateZeroApiError extends Error {
   }
 }
 
-export interface PlateZeroRequestInfo extends RequestInit {
-  token?: string
-}
-
-export const createUser = (body: {
-  username: string
-  password: string
-  email: string
-}): Promise<UserJSON> =>
-  _fetch<UserJSON>(`/users`, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers
-  })
-
 export interface LoginResponse {
   user: UserJSON
   token: string
+  refreshToken: string
 }
 
-export const login = ({
-  username,
-  password
-}: {
-  username: string
-  password: string
-}) =>
-  _fetch<LoginResponse>('/login', {
-    method: 'POST',
-    body: JSON.stringify({ username, password })
-  })
+class Api {
+  private token?: string
+  private refresh?: string
 
-export const getCurrentUser = (opts?: PlateZeroRequestInfo) =>
-  _fetch<UserJSON>(`/user`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const getUsers = (opts?: PlateZeroRequestInfo) =>
-  _fetch<UserJSON[]>(`/users`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const getUser = (username: string, opts?: PlateZeroRequestInfo) =>
-  _fetch<UserJSON>(`/users/${username}`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const getUserRecipes = (username: string, opts?: PlateZeroRequestInfo) =>
-  _fetch(`/users/${username}/recipes`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const getRecipe = (
-  username: string,
-  slug: string,
-  opts?: PlateZeroRequestInfo
-): Promise<RecipeJSON> =>
-  _fetch<RecipeJSON>(`/users/${username}/recipes/${slug}`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const getRecipeVersions = (
-  username: string,
-  slug: string,
-  opts?: PlateZeroRequestInfo
-): Promise<RecipeVersionJSON[]> =>
-  _fetch<RecipeVersionJSON[]>(`/users/${username}/recipes/${slug}/versions`, {
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const getRecipeVersion = (
-  username: string,
-  slug: string,
-  versionId: number,
-  opts?: PlateZeroRequestInfo
-) =>
-  _fetch<RecipeVersionJSON>(
-    `/users/${username}/recipes/${slug}/versions/${versionId}`,
-    {
-      headers: authHeaders(opts ? opts.token : '')
+  private async _fetch<T>(
+    uri: string,
+    opts: RequestInit = {},
+    retry = true
+  ): Promise<T> {
+    const options = {
+      method: opts.method || 'GET',
+      headers: {
+        ...headers,
+        ...(opts.headers || {}),
+        ...authHeaders(this.token)
+      },
+      body: opts.body
     }
-  )
-
-export const createRecipe = (recipe: PostRecipe, opts?: PlateZeroRequestInfo) =>
-  _fetch<RecipeJSON>(`/user/recipe`, {
-    body: JSON.stringify(recipe),
-    method: 'POST',
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const importUrl = (url: string, opts?: PlateZeroRequestInfo) =>
-  _fetch<RecipeJSON>(`/user/import/url`, {
-    body: JSON.stringify({ url }),
-    method: 'POST',
-    headers: authHeaders(opts ? opts.token : '')
-  })
-
-export const importFiles = (body: any, opts?: PlateZeroRequestInfo) =>
-  fetch(`${API_URL}/user/import/file`, {
-    body,
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      ...authHeaders(opts ? opts.token : '')
+    const res = await fetch(`${API_URL}${uri}`, options)
+    if (
+      retry &&
+      res.status === HttpStatus.Unauthorized &&
+      this.token &&
+      this.refresh
+    ) {
+      const { token } = await refreshToken(this.refresh)
+      this.updateAuth(token)
+      // retry
+      return this._fetch(uri, opts, false)
     }
-  }).then(handleError)
+    return handleError(res)
+  }
 
-export const patchBranch = (
-  slug: string,
-  branch: string,
-  patch: RecipeVersionPatch,
-  opts?: PlateZeroRequestInfo
-) =>
-  _fetch<RecipeVersionJSON>(`/user/recipes/${slug}/branches/${branch}`, {
-    body: JSON.stringify(patch),
-    method: 'PATCH',
-    headers: authHeaders(opts ? opts.token : '')
-  })
+  // Load tokens from cookie
+  public loadAuth(ctx = undefined) {
+    const { token, refresh } = getAuth(ctx)
+    this.token = token
+    this.refresh = refresh
+  }
 
-export const deleteRecipe = (slug: string, opts?: PlateZeroRequestInfo) =>
-  _fetch(`/user/recipes/${slug}`, {
-    method: 'DELETE',
-    headers: authHeaders(opts ? opts.token : '')
-  })
+  public setAuth(token: string, refresh: string) {
+    this.token = token
+    this.refresh = refresh
+  }
 
-export const patchRecipe = (
-  slug: string,
-  body: object,
-  opts?: PlateZeroRequestInfo
-) =>
-  _fetch(`/user/recipes/${slug}`, {
-    method: 'PATCH',
-    body: JSON.stringify(body),
-    headers: authHeaders(opts ? opts.token : '')
-  })
+  private updateAuth(token: string) {
+    this.token = token
+    cookie.set('auth', JSON.stringify({ token, refresh: this.refresh }))
+  }
+
+  createUser = (body: {
+    username: string
+    password: string
+    email: string
+  }): Promise<UserJSON> =>
+    this._fetch<UserJSON>(`/users`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers
+    })
+
+  login = ({ username, password }: { username: string; password: string }) =>
+    this._fetch<LoginResponse>('/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    })
+
+  getCurrentUser = (opts: RequestInit = {}) =>
+    this._fetch<UserJSON>(`/user`, opts)
+
+  getUsers = (opts: RequestInit = {}) => this._fetch<UserJSON[]>(`/users`, opts)
+
+  getUser = (username: string, opts: RequestInit = {}) =>
+    this._fetch<UserJSON>(`/users/${username}`, opts)
+
+  getUserRecipes = (username: string, opts: RequestInit = {}) =>
+    this._fetch(`/users/${username}/recipes`, opts)
+
+  getRecipe = (
+    username: string,
+    slug: string,
+    opts: RequestInit = {}
+  ): Promise<RecipeJSON> =>
+    this._fetch<RecipeJSON>(`/users/${username}/recipes/${slug}`, opts)
+
+  getRecipeVersions = (
+    username: string,
+    slug: string,
+    opts: RequestInit = {}
+  ): Promise<RecipeVersionJSON[]> =>
+    this._fetch<RecipeVersionJSON[]>(
+      `/users/${username}/recipes/${slug}/versions`,
+      opts
+    )
+
+  getRecipeVersion = (
+    username: string,
+    slug: string,
+    versionId: number,
+    opts: RequestInit = {}
+  ) =>
+    this._fetch<RecipeVersionJSON>(
+      `/users/${username}/recipes/${slug}/versions/${versionId}`,
+      opts
+    )
+
+  createRecipe = (recipe: PostRecipe, opts: RequestInit = {}) =>
+    this._fetch<RecipeJSON>(`/user/recipe`, {
+      ...opts,
+      body: JSON.stringify(recipe),
+      method: 'POST'
+    })
+
+  importUrl = (url: string, opts: RequestInit = {}) =>
+    this._fetch<RecipeJSON>(`/user/import/url`, {
+      ...opts,
+      body: JSON.stringify({ url }),
+      method: 'POST'
+    })
+
+  importFiles = (body: any, opts: RequestInit = {}) =>
+    fetch(`${API_URL}/user/import/file`, {
+      ...opts,
+      body,
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...authHeaders(this.token)
+      }
+    }).then(handleError)
+
+  patchBranch = (
+    slug: string,
+    branch: string,
+    patch: RecipeVersionPatch,
+    opts: RequestInit = {}
+  ) =>
+    this._fetch<RecipeVersionJSON>(`/user/recipes/${slug}/branches/${branch}`, {
+      ...opts,
+      body: JSON.stringify(patch),
+      method: 'PATCH'
+    })
+
+  deleteRecipe = (slug: string, opts: RequestInit = {}) =>
+    this._fetch(`/user/recipes/${slug}`, {
+      ...opts,
+      method: 'DELETE'
+    })
+
+  patchRecipe = (slug: string, body: object, opts: RequestInit = {}) =>
+    this._fetch(`/user/recipes/${slug}`, {
+      ...opts,
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    })
+}
+
+export const api = new Api()

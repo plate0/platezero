@@ -6,6 +6,7 @@ import { Preheat } from './preheat'
 import { ProcedureLine } from './procedure_line'
 import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureList } from './procedure_list'
+import { RefreshToken } from './refresh_token'
 import { RecipeBranch } from './recipe_branch'
 import { RecipeCollaborator } from './recipe_collaborator'
 import { RecipeDuration } from './recipe_duration'
@@ -36,6 +37,7 @@ sequelize.addModels([
   ProcedureLine,
   ProcedureListLine,
   ProcedureList,
+  RefreshToken,
   RecipeBranch,
   RecipeCollaborator,
   RecipeDuration,
@@ -55,6 +57,7 @@ export * from './preheat'
 export * from './procedure_line'
 export * from './procedure_list_line'
 export * from './procedure_list'
+export * from './refresh_token'
 export * from './recipe_branch'
 export * from './recipe_collaborator'
 export * from './recipe_duration'

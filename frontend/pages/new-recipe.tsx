@@ -1,6 +1,7 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
+import { api, PlateZeroApiError } from '../common'
 import {
   Alert,
   Button,
@@ -12,7 +13,6 @@ import {
   Label,
   FormText
 } from 'reactstrap'
-import { createRecipe, PlateZeroApiError } from '../common'
 import {
   IngredientListJSON,
   ProcedureListJSON,
@@ -30,14 +30,9 @@ import {
   RecipeYield,
   RecipeDuration
 } from '../components'
-import nextCookie from 'next-cookies'
 import * as _ from 'lodash'
 import { normalize } from '../common/model-helpers'
 import { Link } from '../routes'
-
-interface Props {
-  token: string
-}
 
 interface State {
   errors: string[]
@@ -53,8 +48,8 @@ interface State {
   recipeDuration: RecipeDurationJSON | undefined
 }
 
-export default class NewRecipe extends React.Component<Props, State> {
-  constructor(props: Props) {
+export default class NewRecipe extends React.Component<any, State> {
+  constructor(props: any) {
     super(props)
     this.create = this.create.bind(this)
     this.getRecipe = this.getRecipe.bind(this)
@@ -71,10 +66,6 @@ export default class NewRecipe extends React.Component<Props, State> {
       recipeYield: undefined,
       recipeDuration: undefined
     }
-  }
-  static async getInitialProps(ctx) {
-    const { token } = nextCookie(ctx)
-    return { token }
   }
 
   public titleOnChange = (e: React.FormEvent<HTMLInputElement>) =>
@@ -100,10 +91,9 @@ export default class NewRecipe extends React.Component<Props, State> {
   public async create(event: React.FormEvent<EventTarget>) {
     event.preventDefault()
     this.setState({ errors: [] })
-    const { token } = this.props
     const recipe = this.getRecipe()
     try {
-      const res = await createRecipe(recipe, { token })
+      const res = await api.createRecipe(recipe)
       Router.push(res.html_url)
     } catch (err) {
       if (err instanceof PlateZeroApiError) {

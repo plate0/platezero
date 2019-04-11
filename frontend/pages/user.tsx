@@ -1,10 +1,9 @@
 import React from 'react'
 import { Layout, ProfileHeader } from '../components'
 import Head from 'next/head'
-import nextCookie from 'next-cookies'
 import { UserJSON } from '../models/user'
 import { RecipePreview } from '../components'
-import { getUser } from '../common/http'
+import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
 
 interface UserProps {
@@ -12,11 +11,10 @@ interface UserProps {
 }
 
 export default class User extends React.Component<UserProps> {
-  static async getInitialProps(ctx) {
-    const { username } = ctx.query
-    const { token } = nextCookie(ctx)
+  static async getInitialProps({ query }) {
+    const { username } = query
     return {
-      user: await getUser(username, { token })
+      user: await api.getUser(username)
     }
   }
 

@@ -14,7 +14,7 @@ import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
 
 export const Navbar = () => {
-  const user = useContext(UserContext)
+  const { user } = useContext(UserContext)
   return (
     <RsNavbar expand={true} color="primary" dark={true} className="shadow-sm">
       <Container>

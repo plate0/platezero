@@ -3,6 +3,7 @@ import * as jwtMiddleware from 'express-jwt'
 import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
+import { RefreshToken } from '../../models'
 import { getConfig } from '../config'
 import {
   unauthorized,
@@ -33,6 +34,13 @@ r.use(
     }
   })
 )
+
+r.use((err, _req, res, next) => {
+  if (err && err.name === 'UnauthorizedError') {
+    return invalidAuthentication(res, err.message)
+  }
+  next()
+})
 
 r.use('/users', users)
 
@@ -76,9 +84,49 @@ r.post('/login', async (req, res) => {
     if (!validPassword) {
       return invalidAuthentication(res)
     }
+    const refresh = await RefreshToken.create({ user_id: user.id })
     return res.json({
       user,
-      token: await user.generateToken()
+      token: await user.generateToken(),
+      refreshToken: refresh.token
+    })
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+// refresh JWT
+r.post('/login/refresh', async (req, res) => {
+  const { token } = req.body
+  if (!token) {
+    return badRequest(res, '`token` is required')
+  }
+  try {
+    const user = await User.findOne({
+      include: [
+        {
+          model: RefreshToken,
+          where: {
+            deleted_at: null,
+            token
+          }
+        }
+      ]
+    })
+    if (!user) {
+      return invalidAuthentication(res)
+    }
+    const [refresh] = user.refresh_tokens
+    if (!refresh) {
+      return invalidAuthentication(res)
+    }
+    await refresh.update({
+      last_used: new Date()
+    })
+    const jwtToken = await user.generateToken()
+    return res.json({
+      user,
+      token: jwtToken
     })
   } catch (err) {
     return internalServerError(res, err)

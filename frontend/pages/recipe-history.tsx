@@ -12,7 +12,7 @@ import {
   ProfilePicture
 } from '../components'
 import { RecipeJSON, RecipeVersionJSON } from '../models'
-import { getRecipe, getRecipeVersions } from '../common/http'
+import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
 
@@ -24,8 +24,8 @@ interface Props {
 
 export default class RecipeHistory extends React.Component<Props> {
   static async getInitialProps({ pathname, query }): Promise<Props> {
-    const recipe = await getRecipe(query.username, query.slug)
-    const versions = await getRecipeVersions(query.username, query.slug)
+    const recipe = await api.getRecipe(query.username, query.slug)
+    const versions = await api.getRecipeVersions(query.username, query.slug)
     return { recipe, versions, pathname }
   }
 

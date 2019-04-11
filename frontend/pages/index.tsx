@@ -3,14 +3,18 @@ import { Jumbotron, Button, Card, CardBody, CardColumns } from 'reactstrap'
 import Head from 'next/head'
 import '../style/index.scss'
 import { Layout, UserCard } from '../components'
-import { getUsers } from '../common/http'
+import { api } from '../common/http'
 import { UserJSON } from '../models/user'
 import { Link } from '../routes'
 
 export default class Index extends Component<{ users: UserJSON[] }> {
   public static async getInitialProps() {
-    return {
-      users: await getUsers()
+    try {
+      return {
+        users: await api.getUsers()
+      }
+    } catch {
+      return { users: [] }
     }
   }
 

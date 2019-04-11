@@ -1,6 +1,5 @@
 import React from 'react'
 import * as _ from 'lodash'
-
 import {
   Head,
   Layout,
@@ -10,7 +9,7 @@ import {
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { getRecipe, getRecipeVersion } from '../common/http'
+import { api } from '../common/http'
 
 interface Props {
   recipe: RecipeJSON
@@ -24,13 +23,13 @@ interface State {
 
 export default class Recipe extends React.Component<Props, State> {
   static async getInitialProps({ pathname, query }): Promise<Props> {
-    const recipe = await getRecipe(query.username, query.slug)
+    const recipe = await api.getRecipe(query.username, query.slug)
     const masterBranch = _.head(
       _.filter(recipe.branches, r => r.name === 'master')
     )
     const versionId = _.get(masterBranch, 'recipe_version_id')
     const recipeVersion = versionId
-      ? await getRecipeVersion(query.username, query.slug, versionId)
+      ? await api.getRecipeVersion(query.username, query.slug, versionId)
       : undefined
     return { recipe, recipeVersion, pathname }
   }

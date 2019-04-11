@@ -15,7 +15,7 @@ import * as bcrypt from 'bcrypt'
 import * as crypto from 'crypto'
 import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
-
+import { RefreshToken } from './refresh_token'
 import { Recipe, RecipeJSON } from './recipe'
 import { getConfig } from '../server/config'
 
@@ -93,6 +93,9 @@ export class User extends Model<User> implements UserJSON {
   @HasMany(() => Recipe)
   public recipes: Recipe[]
 
+  @HasMany(() => RefreshToken)
+  public refresh_tokens: RefreshToken[]
+
   @Column(DataType.VIRTUAL)
   public get url(): string {
     return `${cfg.apiUrl}/users/${this.username}`
@@ -145,7 +148,7 @@ export class User extends Model<User> implements UserJSON {
       jwt.sign(
         { userId: this.id, username: this.username },
         cfg.jwtSecret,
-        { expiresIn: '7d' },
+        { expiresIn: '1d' },
         (err, token) => {
           if (err) {
             return reject(err)

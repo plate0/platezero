@@ -19,8 +19,7 @@ import {
 
 import { RecipeJSON } from '../models/recipe'
 import { UserContext } from '../context/UserContext'
-import { TokenContext } from '../context/TokenContext'
-import { PlateZeroApiError, deleteRecipe, patchRecipe } from '../common/http'
+import { PlateZeroApiError, api } from '../common/http'
 import { IfLoggedIn } from './IfLoggedIn'
 import { Link } from '../routes'
 
@@ -112,11 +111,10 @@ const DeleteModal = ({
   toggle: () => void
   close: () => void
 }) => {
-  const user = useContext(UserContext)
-  const token = useContext(TokenContext)
+  const { user } = useContext(UserContext)
   const handleDelete = async () => {
     try {
-      await deleteRecipe(recipe.slug, { token })
+      await api.deleteRecipe(recipe.slug)
     } catch {}
     Router.push(`/${user.username}`)
   }
@@ -160,12 +158,11 @@ const RenameModal = ({
   const [subtitle, setSubtitle] = useState(recipe.subtitle || '')
   const [description, setDescription] = useState(recipe.description || '')
   const [errors, setErrors] = useState([])
-  const token = useContext(TokenContext)
   const handleSave = async () => {
     const patch = { title, subtitle, description }
     setErrors([])
     try {
-      await patchRecipe(recipe.slug, patch, { token })
+      await api.patchRecipe(recipe.slug, patch)
       Router.push(`/${recipe.owner.username}/${recipe.slug}`)
     } catch (e) {
       if (e instanceof PlateZeroApiError) {
