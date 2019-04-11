@@ -12,6 +12,9 @@ export interface PostRecipe {
   description?: string
   image_url?: string
   source_url?: string
+  source_author?: string
+  source_title?: string
+  source_isbn?: string
   html_url?: string
   yield?: string
   duration?: number
