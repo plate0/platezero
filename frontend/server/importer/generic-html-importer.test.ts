@@ -138,8 +138,8 @@ describe('Generic HTML import', () => {
             },
             {
               name: 'pinch of cayenne pepper (optional)',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: true,
               unit: undefined
@@ -644,16 +644,16 @@ describe('Generic HTML import', () => {
             },
             {
               name: 'For garnish:',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
               name: 'handful chopped parsley',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: false,
               unit: undefined
@@ -771,24 +771,24 @@ describe('Generic HTML import', () => {
             },
             {
               name: 'toppings: avocado',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: 'tomato, vegenaise, burger buns, greens',
               optional: false,
               unit: undefined
             },
             {
               name: 'skillet: 1 Tbsp oil ( extra virgin olive oil',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: 'coconut oil, or other)',
               optional: false,
               unit: undefined
             },
             {
               name: 'optional: Panko bread crumbs for crispy coating',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: true,
               unit: undefined
@@ -884,24 +884,24 @@ describe('Generic HTML import', () => {
             },
             {
               name: 'toppings: avocado',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: 'tomato, vegenaise, burger buns, greens',
               optional: false,
               unit: undefined
             },
             {
               name: 'skillet: 1 Tbsp oil ( extra virgin olive oil',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: 'coconut oil, or other)',
               optional: false,
               unit: undefined
             },
             {
               name: 'optional: Panko bread crumbs for crispy coating',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: true,
               unit: undefined
@@ -1463,16 +1463,16 @@ describe('Generic HTML import', () => {
             },
             {
               name: 'Maple syrup; (optional)',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: true,
               unit: undefined
             },
             {
               name: 'Fresh fruits; (optional)',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: true,
               unit: undefined
@@ -1721,16 +1721,16 @@ describe('Generic HTML import', () => {
             },
             {
               name: 'Ranch for dipping (Homemade Ranch or Whole30 Compliant)',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
               name: 'Parsley or green onions',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
+              quantity_numerator: undefined,
+              quantity_denominator: undefined,
               preparation: 'chopped (optional)',
               optional: true,
               unit: undefined

@@ -22,7 +22,7 @@ export const RecipePreview = ({
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
   return (
     <section>
-      <Row className="align-items-center border-bottom pb-1">
+      <Row className="align-items-center border-bottom pb-1 mb-3">
         <Col>
           <IfLoggedIn username={user.username} else={not}>
             {me}
@@ -98,23 +98,25 @@ const RecipeCol = ({
   className?: string
   children: any
 }) => (
-  <Col xs="12" md="4" xl="3" className={`mt-3 ${className || ''}`}>
+  <Col xs="12" md="4" xl="3" className={`mb-3 ${className || ''}`}>
     {children}
   </Col>
 )
 
 const SeeMore = ({ username }: { username: string }) => (
-  <div
-    style={{
-      backgroundColor: 'var(--light)',
-      height: 180,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}
-  >
-    <Link to={`/${username}/recipes`}>
-      <a className="text-secondary stretched-link">See more&hellip;</a>
-    </Link>
-  </div>
+  <>
+    <div className="d-md-none">
+      <Link to={`/${username}/recipes`}>
+        <a className="btn btn-block btn-secondary">See more&hellip;</a>
+      </Link>
+    </div>
+    <div
+      className="d-none d-md-flex align-items-center justify-content-center bg-light"
+      style={{ height: 180 }}
+    >
+      <Link to={`/${username}/recipes`}>
+        <a className="text-secondary stretched-link">See more&hellip;</a>
+      </Link>
+    </div>
+  </>
 )

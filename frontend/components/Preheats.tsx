@@ -70,34 +70,28 @@ export function Preheats(props: Props) {
 
   return (
     <>
-      <ActionLine icon="fal fa-times invisible" onAction={_.noop}>
-        <Row>
-          <Col xs="12" sm="6" md="4" lg="3">
-            <strong>Device</strong>
-          </Col>
-          <Col>
-            <strong>Temperature</strong>
-          </Col>
-        </Row>
-      </ActionLine>
-      {preheats.map(preheat => (
-        <ActionLine
-          key={preheat.id}
-          icon={`fal fa-${preheat.removed ? 'undo' : 'times'}`}
-          onAction={act(preheat)}
-        >
-          {preheat.removed ? (
-            <RemovedPreheat preheat={preheat.json} />
-          ) : (
-            <Preheat
-              preheat={preheat.json}
-              onChange={json =>
-                setPreheats(replaceItem(preheats, preheat.id, json))
-              }
-            />
-          )}
-        </ActionLine>
-      ))}
+      {preheats.map(preheat => {
+        const icon = preheat.removed ? 'undo' : 'times'
+        return (
+          <ActionLine
+            key={preheat.id}
+            icon={`fal fa-${icon}`}
+            onAction={act(preheat)}
+          >
+            {preheat.removed ? (
+              <RemovedPreheat preheat={preheat.json} />
+            ) : (
+              <Preheat
+                preheat={preheat.json}
+                added={preheat.added}
+                onChange={json =>
+                  setPreheats(replaceItem(preheats, preheat.id, json))
+                }
+              />
+            )}
+          </ActionLine>
+        )
+      })}
       {addBtn}
     </>
   )
@@ -119,25 +113,32 @@ function temperatureString(preheat: PreheatJSON): string {
 
 function Preheat({
   preheat,
+  added,
   onChange
 }: {
   preheat: PreheatJSON
+  added: boolean
   onChange: (preheat: PreheatJSON) => void
 }) {
   const orig = useRef(preheat)
   const [name, setName] = useState(preheat.name || '')
   const [temp, setTemp] = useState(temperatureString(preheat))
+
+  const old = _.omit(orig.current, 'id')
+  const curr = normalize({ name, ...parseTemperature(temp) })
+  const changed = !_.isEqual(old, curr)
+
+  const bg = added ? 'bg-added' : changed ? 'bg-changed' : ''
+
   useEffect(() => {
     if (_.isFunction(onChange)) {
-      const old = _.omit(orig.current, 'id')
-      const curr = normalize({ name, ...parseTemperature(temp) })
-      const changed = !_.isEqual(old, curr)
       const id = changed ? undefined : orig.current.id
       onChange({ id, ...curr })
     }
   }, [name, temp])
+
   return (
-    <Row className="mb-3" noGutters>
+    <Row className={`mb-3 ${bg}`} noGutters>
       <Col xs="12" sm="6" md="4" lg="3">
         <PlainInput
           type="text"

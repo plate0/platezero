@@ -9,11 +9,11 @@ $added-base: $success;
 $changed-base: $warning;
 
 .bg-added {
-  background-color: hsl(hue($added-base), saturation($added-base), 90);
+  background-color: hsl(hue($added-base), saturation($added-base), 90) !important;
 }
 
 .bg-changed {
-  background-color: hsl(hue($changed-base), saturation($changed-base), 90);
+  background-color: hsl(hue($changed-base), saturation($changed-base), 90) !important;
 }
 
 .text-strike {

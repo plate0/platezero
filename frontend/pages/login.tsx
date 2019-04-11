@@ -1,13 +1,5 @@
 import * as React from 'react'
-import {
-  Alert,
-  Button,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  Label
-} from 'reactstrap'
+import { Alert, Button, Container, Form, FormGroup, Label } from 'reactstrap'
 import { authenticated, api } from '../common'
 import Router from 'next/router'
 import { Layout } from '../components'
@@ -16,8 +8,6 @@ import Head from 'next/head'
 
 interface LoginState {
   error: string
-  password: string
-  username: string
 }
 
 const ErrorMessage = ({ err }: { err: string }) => (
@@ -25,21 +15,21 @@ const ErrorMessage = ({ err }: { err: string }) => (
 )
 
 export default class Login extends React.Component<any, LoginState> {
+  private usernameInput
+  private passwordInput
+
   constructor(props: any) {
     super(props)
-    this.state = {
-      error: '',
-      password: '',
-      username: ''
-    }
+    this.state = { error: '' }
     this.login = this.login.bind(this)
-    this.usernameChange = this.usernameChange.bind(this)
-    this.passwordChange = this.passwordChange.bind(this)
+    this.usernameInput = React.createRef()
+    this.passwordInput = React.createRef()
   }
 
   public async login(event: React.FormEvent<EventTarget>, update: any) {
     event.preventDefault()
-    const { username, password } = this.state
+    const username = this.usernameInput.current.value
+    const password = this.passwordInput.current.value
     try {
       const { user, token, refreshToken } = await api.login({
         username,
@@ -52,16 +42,6 @@ export default class Login extends React.Component<any, LoginState> {
     } catch (err) {
       this.setState({ error: 'Incorrect username or password' })
     }
-  }
-
-  public usernameChange(event: React.FormEvent<HTMLInputElement>): void {
-    const username = event.currentTarget.value
-    this.setState({ username })
-  }
-
-  public passwordChange(event: React.FormEvent<HTMLInputElement>): void {
-    const password = event.currentTarget.value
-    this.setState({ password })
   }
 
   public render() {
@@ -88,36 +68,33 @@ export default class Login extends React.Component<any, LoginState> {
                         <Label for="username">
                           <strong>Username</strong>
                         </Label>
-                        <Input
+                        <input
                           type="text"
                           name="username"
-                          id="username"
+                          className="form-control"
+                          ref={this.usernameInput}
                           required
                           autoFocus={true}
                           tabIndex={1}
-                          value={this.state.username}
-                          onChange={this.usernameChange}
                         />
                       </FormGroup>
                       <FormGroup>
                         <Label for="password">
                           <strong>Password</strong>
                         </Label>
-                        <Input
+                        <input
                           type="password"
                           name="password"
-                          id="password"
+                          className="form-control"
+                          ref={this.passwordInput}
                           required
                           tabIndex={2}
-                          value={this.state.password}
-                          onChange={this.passwordChange}
                         />
                       </FormGroup>
                       <Button
                         type="submit"
                         color="primary"
                         className="btn-block"
-                        disabled={!this.state.username || !this.state.password}
                       >
                         Sign In
                       </Button>

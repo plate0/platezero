@@ -45,13 +45,7 @@ export const PlainSelect = props => (
       }),
 
       // hide the indicator separator
-      indicatorSeparator: () => ({}),
-
-      // only show placeholder when focused
-      placeholder: (base, state) => ({
-        ...base,
-        opacity: state.isFocused ? 1 : 0
-      })
+      indicatorSeparator: () => ({})
     }}
   />
 )

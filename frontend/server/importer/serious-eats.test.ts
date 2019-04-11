@@ -110,8 +110,8 @@ describe('Serious Eats import', () => {
           },
           {
             name: 'Kosher salt and freshly ground black pepper',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
@@ -180,8 +180,8 @@ describe('Serious Eats import', () => {
           },
           {
             name: 'Kosher salt and freshly ground black pepper',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
@@ -241,8 +241,8 @@ describe('Serious Eats import', () => {
           },
           {
             name: 'Kosher salt and freshly ground black pepper',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
@@ -270,8 +270,8 @@ describe('Serious Eats import', () => {
           },
           {
             name: 'Fluffy pocketless pita bread',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation:
               'brushed in butter, lightly toasted, and cut into 1 × 3-inch strips',
             optional: false,
@@ -279,8 +279,8 @@ describe('Serious Eats import', () => {
           },
           {
             name: 'Harissa-style hot sauce',
-            quantity_numerator: 1,
-            quantity_denominator: 1,
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
             preparation: 'for serving',
             optional: false,
             unit: undefined

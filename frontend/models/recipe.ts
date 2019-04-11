@@ -14,7 +14,6 @@ import {
   PrimaryKey,
   Table
 } from 'sequelize-typescript'
-import slugify from 'slugify'
 import * as _ from 'lodash'
 import { PostRecipe } from '../common/request-models'
 import { User, UserJSON } from './user'
@@ -29,6 +28,7 @@ import { ProcedureList } from './procedure_list'
 import { IngredientList } from './ingredient_list'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { getConfig } from '../server/config'
+import { toSlug } from '../common/slug'
 
 const cfg = getConfig()
 
@@ -231,8 +231,8 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
     user_id: number,
     body: PostRecipe
   ): Promise<Recipe> {
-    const sluggd = slugify(body.title, { lower: true })
     // place an upper bound on retries to prevent DoS
+    const sluggd = toSlug(body.title)
     for (let counter = 0; counter < 100; counter++) {
       try {
         const slug = counter > 0 ? `${sluggd}-${counter}` : sluggd

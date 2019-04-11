@@ -73,29 +73,24 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
     : undefined
   return (
     <>
-      <RecipeVersionVitals recipeVersion={v} />
-      {v.recipe.description && (
-        <div className="bg-light text-secondary p-5 mb-3">
-          <ReactMarkdown source={v.recipe.description} />
-        </div>
-      )}
       <details className="mb-3">
         <summary>
           Authored by <a href={`/${v.author.username}`}>{getName(v.author)}</a>{' '}
           <Timestamp t={moment(v.created_at)} />{' '}
-          {prevUrl && (
-            <a href={prevUrl} className="ml-3">
-              Previous Version
-            </a>
-          )}
         </summary>
         <div className="bg-light p-3">
           <ReactMarkdown source={v.message} />
           <div className="small text-muted pt-1 border-top">
             {humanize(moment(v.created_at))}
+            {prevUrl && (
+              <a href={prevUrl} className="ml-2">
+                Previous Version
+              </a>
+            )}
           </div>
         </div>
       </details>
+      <RecipeVersionVitals recipeVersion={v} />
       <Row>
         <Col xs="12" md="6" lg="4">
           {v.recipe.image_url && (

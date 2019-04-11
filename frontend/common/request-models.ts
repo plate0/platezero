@@ -1,4 +1,10 @@
-import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
+import {
+  IngredientListJSON,
+  ProcedureListJSON,
+  PreheatJSON,
+  RecipeDurationJSON,
+  RecipeYieldJSON
+} from '../models'
 
 export interface PostRecipe {
   title: string
@@ -19,4 +25,6 @@ export interface RecipeVersionPatch {
   ingredientLists: IngredientListJSON[]
   procedureLists: ProcedureListJSON[]
   preheats: PreheatJSON[]
+  recipeDuration: RecipeDurationJSON
+  recipeYield: RecipeYieldJSON
 }

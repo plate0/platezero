@@ -75,8 +75,8 @@ describe('NYT Cooking import', () => {
             name: 'Juice of 1 lemon',
             optional: false,
             preparation: undefined,
-            quantity_denominator: 1,
-            quantity_numerator: 1,
+            quantity_denominator: undefined,
+            quantity_numerator: undefined,
             unit: undefined
           },
           {

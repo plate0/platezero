@@ -3,14 +3,22 @@ import Router from 'next/router'
 import Head from 'next/head'
 import { Alert, Button, Col, Form, Row } from 'reactstrap'
 import { api, PlateZeroApiError } from '../common'
-import { IngredientListJSON, ProcedureListJSON, PreheatJSON } from '../models'
+import {
+  IngredientListJSON,
+  ProcedureListJSON,
+  PreheatJSON,
+  RecipeYieldJSON,
+  RecipeDurationJSON
+} from '../models'
 import { PostRecipe } from '../common/request-models'
 import {
   Layout,
   NewRecipeTitle,
   IngredientLists,
   ProcedureLists,
-  Preheats
+  Preheats,
+  RecipeYield,
+  RecipeDuration
 } from '../components'
 import * as _ from 'lodash'
 
@@ -20,6 +28,8 @@ interface State {
   ingredientLists: IngredientListJSON[]
   procedureLists: ProcedureListJSON[]
   preheats: PreheatJSON[]
+  recipeYield: RecipeYieldJSON | undefined
+  recipeDuration: RecipeDurationJSON | undefined
 }
 
 export default class NewRecipe extends React.Component<any, State> {
@@ -32,7 +42,9 @@ export default class NewRecipe extends React.Component<any, State> {
       title: '',
       ingredientLists: [],
       procedureLists: [],
-      preheats: []
+      preheats: [],
+      recipeYield: undefined,
+      recipeDuration: undefined
     }
   }
 
@@ -46,7 +58,9 @@ export default class NewRecipe extends React.Component<any, State> {
       title: this.state.title,
       preheats: this.state.preheats,
       ingredient_lists: this.state.ingredientLists,
-      procedure_lists: this.state.procedureLists
+      procedure_lists: this.state.procedureLists,
+      yield: _.get(this.state.recipeYield, 'text'),
+      duration: _.get(this.state.recipeDuration, 'duration_seconds')
     }
   }
 
@@ -86,6 +100,14 @@ export default class NewRecipe extends React.Component<any, State> {
               />
             </Col>
           </Row>
+          <RecipeYield
+            yield={this.state.recipeYield}
+            onChange={recipeYield => this.setState({ recipeYield })}
+          />
+          <RecipeDuration
+            duration={this.state.recipeDuration}
+            onChange={recipeDuration => this.setState({ recipeDuration })}
+          />
           <h2>Preheats</h2>
           <Preheats
             preheats={[]}

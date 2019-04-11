@@ -1,0 +1,19 @@
+{
+  "name": "kitchen.benburwell.com",
+  "version": "1.0.0",
+  "description": "",
+  "main": "import.js",
+  "dependencies": {
+    "fraction.js": "^4.0.12",
+    "front-matter": "^3.0.1",
+    "lodash": "^4.17.11",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { UserJSON } from '../models/user'
 import { RecipePreview } from '../components'
 import { api } from '../common/http'
+import { getName } from '../common/model-helpers'
 
 interface UserProps {
   user: UserJSON
@@ -22,9 +23,7 @@ export default class User extends React.Component<UserProps> {
     return (
       <Layout>
         <Head>
-          <title>
-            {user.username} ({user.name})
-          </title>
+          <title>{getName(user)} on PlateZero</title>
         </Head>
         <ProfileHeader user={user} />
         <RecipePreview recipes={user.recipes} user={user} />

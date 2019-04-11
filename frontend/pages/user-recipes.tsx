@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { RecipeJSON, UserJSON } from '../models'
 import { RecipeList } from '../components'
 import { api } from '../common/http'
+import { getName } from '../common/model-helpers'
 
 interface UserProps {
   user: UserJSON
@@ -24,9 +25,7 @@ export default class User extends React.Component<UserProps> {
     return (
       <Layout>
         <Head>
-          <title>
-            {user.username} ({user.name}) - Recipes
-          </title>
+          <title>{getName(user)} - Recipes</title>
         </Head>
         <RecipeList recipes={recipes} user={user} />
       </Layout>
