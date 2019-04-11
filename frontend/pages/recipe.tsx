@@ -9,8 +9,7 @@ import {
 } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { api, PlateZeroApiError } from '../common/http'
-import { UserContext } from '../context/UserContext'
+import { api } from '../common/http'
 
 interface Props {
   recipe: RecipeJSON

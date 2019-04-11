@@ -137,9 +137,19 @@ class Api {
   getRecipe = (
     username: string,
     slug: string,
-    opts?: RequestInit
+    opts: RequestInit = {}
   ): Promise<RecipeJSON> =>
     this._fetch<RecipeJSON>(`/users/${username}/recipes/${slug}`, opts)
+
+  getRecipeVersions = (
+    username: string,
+    slug: string,
+    opts: RequestInit = {}
+  ): Promise<RecipeVersionJSON[]> =>
+    this._fetch<RecipeVersionJSON[]>(
+      `/users/${username}/recipes/${slug}/versions`,
+      opts
+    )
 
   getRecipeVersion = (
     username: string,
