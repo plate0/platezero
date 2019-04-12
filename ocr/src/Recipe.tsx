@@ -24,6 +24,11 @@ export class Recipe extends React.Component<RecipeProps> {
   constructor(props: RecipeProps) {
     super(props)
     this.onSubmit = this.onSubmit.bind(this)
+    this.onChange = this.onChange.bind(this)
+  }
+
+  public onChange(e) {
+    this.props.onChange(e.target.name, e.target.value)
   }
 
   public onSubmit(e: React.FormEvent<EventTarget>) {
@@ -56,9 +61,8 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Title"
             ref={this.title}
             required
-            onFocus={e => this.props.onChange(e.target.name, e.target.value)}
             value={recipe.title}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
           />
         </FormGroup>
         <FormGroup className="mt-2">
@@ -70,7 +74,7 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Subtitle"
             ref={this.subtitle}
             value={recipe.subtitle}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
           />
         </FormGroup>
         <FormGroup className="mt-2">
@@ -82,7 +86,7 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Description..."
             ref={this.description}
             value={recipe.description}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
             style={{ height: '300px' }}
           />
         </FormGroup>
@@ -95,7 +99,7 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Ingredients..."
             ref={this.ingredients}
             value={recipe.ingredients}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
             style={{ height: '300px' }}
           />
         </FormGroup>
@@ -108,7 +112,7 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Instructions..."
             ref={this.procedures}
             value={recipe.procedures}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
             style={{ height: '300px' }}
           />
         </FormGroup>
@@ -121,7 +125,7 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Yields..."
             ref={this.yld}
             value={recipe.yld}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
           />
         </FormGroup>
         <FormGroup className="mt-2">
@@ -133,7 +137,7 @@ export class Recipe extends React.Component<RecipeProps> {
             placeholder="Duration ISO..."
             ref={this.duration}
             value={recipe.duration}
-            onChange={e => this.props.onChange(e.target.name, e.target.value)}
+            onChange={this.onChange}
           />
         </FormGroup>
         <Row>

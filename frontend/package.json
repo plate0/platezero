@@ -5,11 +5,7 @@
     "build": "next build && tsc --project tsconfig.server.json && cp -R static dist",
     "prestart": "npm run build",
     "start": "node dist/server/index.js",
-    "test": "jest",
-    "ocr-compile": "tsc --outDir ./ocr/dist --project tsconfig.server.json",
-    "ocr": "node ocr/dist/ocr/ocr.js",
-    "transcribe": "node ocr/dist/ocr/transcribe.js",
-    "post": "node ocr/dist/ocr/create.js"
+    "test": "jest"
   },
   "dependencies": {
     "@babel/plugin-proposal-decorators": "7.4.0",
