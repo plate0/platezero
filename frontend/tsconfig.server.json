@@ -8,5 +8,5 @@
       "es2017"
     ]
   },
-  "include": ["server/**/*.ts", "models/**/*.ts", "routes.ts"]
+  "include": ["server/**/*.ts", "models/**/*.ts", "ocr/**/*.ts", "routes.ts"]
 }

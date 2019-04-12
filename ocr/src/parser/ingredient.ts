@@ -34,6 +34,7 @@ export const parse = (s?: string): IngredientLineJSON | undefined => {
   if (!s) {
     return undefined
   }
+  //s = _.join(_.split(s, /\s+/), ' ')
   const [num, numRest] = matchNumber(s)
   s = _.trim(numRest)
   const [maybeUnit, ...rest] = s.split(/\s/)
