@@ -23,7 +23,7 @@ const cfg = getConfig()
 
 export interface UserJSON {
   avatar_url: string
-  email: string
+  email?: string
   id: number
   name: string
   recipes?: RecipeJSON[]
@@ -53,7 +53,13 @@ export class User extends Model<User> implements UserJSON {
   @Unique
   @IsEmail
   @Column
-  public email: string
+  public set email(value: string) {
+    this.setDataValue('email', value)
+  }
+
+  public get email() {
+    return undefined
+  }
 
   @Column
   public set password_hash(value: string) {
@@ -69,7 +75,7 @@ export class User extends Model<User> implements UserJSON {
     const dv = this.getDataValue('avatar_url')
     if (!dv) {
       const emailHash = crypto.createHash('md5')
-      emailHash.update(this.email.toLowerCase())
+      emailHash.update(this.getDataValue('email').toLowerCase())
       const hex = emailHash.digest('hex')
       return `https://www.gravatar.com/avatar/${hex}`
     }
