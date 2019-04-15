@@ -2,7 +2,7 @@ import React from 'react'
 import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
 
-import { RecipeVersionJSON } from '../models'
+import { RecipeVersionJSON, RecipeJSON } from '../models'
 import { toHoursAndMinutes } from '../common/time'
 
 interface Props {
