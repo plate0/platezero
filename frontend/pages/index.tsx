@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Jumbotron, Button, Card, CardBody, CardColumns } from 'reactstrap'
+import { Jumbotron, Button, Row, Col, Card, CardBody } from 'reactstrap'
 import Head from 'next/head'
 import '../style/index.scss'
-import { Layout, UserCard } from '../components'
+import { Layout, ProfilePicture } from '../components'
 import { api } from '../common/http'
 import { UserJSON } from '../models/user'
 import { Link } from '../routes'
+import { getName } from '../common/model-helpers'
 
 export default class Index extends Component<{ users: UserJSON[] }> {
   public static async getInitialProps() {
@@ -37,15 +38,34 @@ export default class Index extends Component<{ users: UserJSON[] }> {
             <Button color="primary">Get started</Button>
           </Link>
         </Jumbotron>
-        <CardColumns className="pb-5">
-          {this.props.users.map(user => (
-            <Card key={user.id}>
-              <CardBody>
-                <UserCard user={user} />
-              </CardBody>
-            </Card>
-          ))}
-        </CardColumns>
+        <Row>
+          {this.props.users
+            // TODO this is extremely hacky
+            .filter(u => u.id < 5)
+            .map(user => (
+              <Col xs="12" md="6" key={user.id}>
+                <Card className="mb-3">
+                  <CardBody>
+                    <Link route={`/${user.username}`}>
+                      <a className="d-block">
+                        <div className="d-flex align-items-center">
+                          <div className="mr-3">
+                            <ProfilePicture img={user.avatar_url} size={50} />
+                          </div>
+                          <div>
+                            {getName(user)}
+                            {user.name && (
+                              <div className="text-muted">@{user.username}</div>
+                            )}
+                          </div>
+                        </div>
+                      </a>
+                    </Link>
+                  </CardBody>
+                </Card>
+              </Col>
+            ))}
+        </Row>
       </Layout>
     )
   }
