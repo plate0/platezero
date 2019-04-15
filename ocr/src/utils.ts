@@ -8,14 +8,14 @@ const s3 = new S3()
 
 export const download = async (Key: string, dir: string): Promise<string> => {
   log.info('downloading', Key)
+  const { base } = parse(Key)
   const res = await s3
     .getObject({
       Bucket: 'com-platezero-recipes',
       Key
     })
     .promise()
-  const ext = extname(Key)
-  const path = join(dir, `recipe${ext}`)
+  const path = join(dir, base)
   log.info('writing to', path)
   writeFileSync(path, res.Body)
   return path

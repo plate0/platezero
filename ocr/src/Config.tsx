@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { S3 } from 'aws-sdk'
 import { toNumber, map } from 'lodash'
-import { ListGroup, ListGroupItem } from 'reactstrap'
+import { Row, Col, Button, ListGroup, ListGroupItem } from 'reactstrap'
+import { archive } from './utils'
 const s3 = new S3()
 
 export interface RecipePath {
@@ -24,6 +25,26 @@ const parse = (key: string): RecipePath => {
     userId: toNumber(id || -1)
   }
 }
+
+const ConfigItem = ({ r, onSelect }: { r: RecipePath; onSelect: any }) => (
+  <ListGroupItem href="#" tag="a" action onClick={e => onSelect(r)}>
+    <Row>
+      <Col xs="11">{r.key}</Col>
+      <Col xs="1">
+        <Button
+          color="danger"
+          onClick={e => {
+            e.preventDefault()
+            e.stopPropagation()
+            archive(r.key)
+          }}
+        >
+          Archive
+        </Button>
+      </Col>
+    </Row>
+  </ListGroupItem>
+)
 
 interface ConfigState {
   objects: RecipePath[]
@@ -48,7 +69,6 @@ export class Config extends React.Component<ConfigProps, ConfigState> {
   }
 
   public render() {
-    console.log(this.state.objects)
     const { objects } = this.state
     return (
       <div>
@@ -57,14 +77,7 @@ export class Config extends React.Component<ConfigProps, ConfigState> {
         </h1>
         <ListGroup flush>
           {objects.map(o => (
-            <ListGroupItem
-              key={o.key}
-              tag="button"
-              action
-              onClick={() => this.props.onSelect(o)}
-            >
-              {o.key}
-            </ListGroupItem>
+            <ConfigItem r={o} key={o.key} onSelect={this.props.onSelect} />
           ))}
         </ListGroup>
       </div>

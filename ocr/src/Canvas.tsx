@@ -56,6 +56,29 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     this.mouseup = this.mouseup.bind(this)
   }
 
+  public componentWillReceiveProps(next: CanvasProps) {
+    console.log('Will receive props', next)
+    if (next.imagePath !== this.props.imagePath) {
+      this.setState(
+        s => ({
+          image: new Image(),
+          rect: { x: 0, y: 0, width: 0, height: 0 },
+          last: { x: 0, y: 0 },
+          dragging: false,
+          last: {
+            x: s.canvas.width / 2,
+            y: s.canvas.height / 2
+          }
+        }),
+        () => {
+          if (next.imagePath) {
+            this.load(next.imagePath)
+          }
+        }
+      )
+    }
+  }
+
   // Set canvas size and state from canvas
   public componentDidMount() {
     const canvas = ReactDOM.findDOMNode(this.refs.canvas) as any

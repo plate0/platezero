@@ -4,7 +4,7 @@ import { Canvas } from './Canvas'
 import { Recipe } from './Recipe'
 import { Navbar } from './Navbar'
 import { Config, RecipePath } from './Config'
-import { Container, Row, Col } from 'reactstrap'
+import { Container, Row, Col, Modal } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
 import { RecipeParts, MarkdownRecipe } from './models'
@@ -16,6 +16,7 @@ import { writeFileSync } from 'fs'
 import { toMarkdown } from './markdown'
 import { download, convert } from './utils'
 import log from 'electron-log'
+import { ipcRenderer } from 'electron'
 const app = require('electron').remote.app
 
 interface AppState {
@@ -23,6 +24,7 @@ interface AppState {
   active: string
   recipePath?: string
   userId?: number
+  modal: boolean
 }
 
 export class App extends React.Component<any, AppState> {
@@ -37,6 +39,8 @@ export class App extends React.Component<any, AppState> {
     this.saveToJSON = this.saveToJSON.bind(this)
     this.next = this.next.bind(this)
     this.previous = this.previous.bind(this)
+    this.loadImage = this.loadImage.bind(this)
+    this.finished = this.finished.bind(this)
     this.state = {
       recipe: {
         title: '',
@@ -47,8 +51,12 @@ export class App extends React.Component<any, AppState> {
         yld: '',
         duration: 0
       },
-      active: 'title'
+      active: 'title',
+      modal: false
     }
+
+    ipcRenderer.on('load-image', this.loadImage)
+    ipcRenderer.on('finished', this.finished)
   }
 
   public componentDidMount() {
@@ -68,6 +76,31 @@ export class App extends React.Component<any, AppState> {
     )
     Mousetrap.bind('command+n', this.next)
     Mousetrap.bind('command+p', this.previous)
+  }
+
+  public loadImage() {
+    this.setState({
+      modal: true
+    })
+  }
+
+  public finished() {
+    this.setState({
+      recipe: {
+        title: '',
+        subtitle: '',
+        description: '',
+        ingredients: '',
+        procedures: '',
+        yld: '',
+        duration: 0
+      },
+      active: 'title',
+      modal: false,
+      recipePath: undefined,
+      userId: undefined,
+      modal: undefined
+    })
   }
 
   public shortcut(key: string) {
@@ -108,7 +141,8 @@ export class App extends React.Component<any, AppState> {
     log.info('converted', recipePath)
     this.setState({
       recipePath,
-      userId: r.userId
+      userId: r.userId,
+      modal: false
     })
   }
 
@@ -172,7 +206,7 @@ export class App extends React.Component<any, AppState> {
   public async onSubmit(recipe: MarkdownRecipe) {
     const json = this.transcribe(recipe)
     try {
-      const created = await create(5, json)
+      const created = await create(this.state.userId, json)
       console.log('DONE!!!!!!!!!!', created)
       this.setState({
         active: 'title',
@@ -218,6 +252,16 @@ export class App extends React.Component<any, AppState> {
             />
           </Col>
         </Row>
+        <Modal
+          isOpen={this.state.modal}
+          toggle={e => {
+            this.setState(s => ({
+              modal: !s.modal
+            }))
+          }}
+        >
+          <Config onSelect={this.onSelectRecipe} />
+        </Modal>
       </div>
     )
   }

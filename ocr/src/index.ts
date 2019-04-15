@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
 import installExtension, {
   REACT_DEVELOPER_TOOLS
 } from 'electron-devtools-installer'
@@ -69,3 +69,105 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+const template = [
+  {
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      { role: 'pasteandmatchstyle' },
+      { role: 'delete' },
+      { role: 'selectall' }
+    ]
+  },
+  {
+    label: 'View',
+    submenu: [
+      { role: 'reload' },
+      { role: 'forcereload' },
+      { role: 'toggledevtools' },
+      { type: 'separator' },
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  },
+  {
+    role: 'window',
+    submenu: [{ role: 'minimize' }, { role: 'close' }]
+  },
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click() {
+          require('electron').shell.openExternal('https://electronjs.org')
+        }
+      }
+    ]
+  }
+]
+
+if (process.platform === 'darwin') {
+  template.unshift({
+    label: app.getName(),
+    submenu: [
+      { role: 'about' },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideothers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  })
+
+  template.unshift({
+    label: 'File',
+    submenu: [
+      {
+        label: 'Load Image',
+        click() {
+          mainWindow.webContents.send('load-image')
+        }
+      },
+      {
+        label: 'Done. Back To Selection',
+        click() {
+          mainWindow.webContents.send('finished')
+        }
+      }
+    ]
+  })
+
+  // Edit menu
+  template[1].submenu.push(
+    { type: 'separator' },
+    {
+      label: 'Speech',
+      submenu: [{ role: 'startspeaking' }, { role: 'stopspeaking' }]
+    }
+  )
+
+  // Window menu
+  template[3].submenu = [
+    { role: 'close' },
+    { role: 'minimize' },
+    { role: 'zoom' },
+    { type: 'separator' },
+    { role: 'front' }
+  ]
+}
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)

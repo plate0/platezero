@@ -4,11 +4,11 @@ import { Recipe } from './models'
 require('aws-sdk').config.update({ region: 'us-east-1' })
 
 /*
-const config1 = {
+const config = {
   secret: 'test_jwt_secret',
   url: 'http://localhost:9100/api/user/recipe'
 }
-*/
+   */
 
 const config = {
   secret: 'a9c26d0b386547839929e7f9c96af8fb1f7d2347f1e0405ebed9dcb88ec3f765',
