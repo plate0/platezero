@@ -50,7 +50,11 @@ const duration = (rv: RecipeVersionJSON) => {
   if (!d) {
     return []
   }
-  return <>Takes {formatDuration(d)}</>
+  return (
+    <time itemProp="cookTime" dateTime={`PT${d}S`}>
+      Takes {formatDuration(d)}
+    </time>
+  )
 }
 
 const recipeYield = (rv: RecipeVersionJSON) => {
@@ -58,7 +62,11 @@ const recipeYield = (rv: RecipeVersionJSON) => {
   if (!y) {
     return []
   }
-  return <>Yields {y}</>
+  return (
+    <>
+      Yields <span itemProp="recipeYield">{y}</span>
+    </>
+  )
 }
 
 const source = (rv: RecipeVersionJSON) => {
@@ -68,12 +76,11 @@ const source = (rv: RecipeVersionJSON) => {
   }
   const link = getLink(rv.recipe)
   const src = link ? (
-    <a href={link} target="_blank">
-      {' '}
-      {work}{' '}
+    <a href={link} target="_blank" itemProp="isBasedOn">
+      {work}
     </a>
   ) : (
-    work
+    <span itemProp="isBasedOn">{work}</span>
   )
   return <>Adapted from {src}</>
 }

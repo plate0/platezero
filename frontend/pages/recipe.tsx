@@ -54,11 +54,13 @@ export default class Recipe extends React.Component<Props, State> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <div className="mt-3">
-          <RecipeTitle recipe={recipe} />
+        <div itemScope={true} itemType="http://schema.org/Recipe">
+          <div className="mt-3">
+            <RecipeTitle recipe={recipe} />
+          </div>
+          <RecipeNav recipe={recipe} route={this.props.pathname} />
+          {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
         </div>
-        <RecipeNav recipe={recipe} route={this.props.pathname} />
-        {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
       </Layout>
     )
   }
