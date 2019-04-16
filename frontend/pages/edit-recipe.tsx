@@ -1,6 +1,7 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
+import ErrorPage from './_error'
 import * as _ from 'lodash'
 import {
   Card,
@@ -37,8 +38,9 @@ import { RecipeVersionPatch } from '../common/request-models'
 import { Link } from '../routes'
 
 interface Props {
-  branch: string
-  recipeVersion: RecipeVersionJSON
+  branch?: string
+  recipeVersion?: RecipeVersionJSON
+  statusCode?: number
 }
 
 interface State {
@@ -67,20 +69,28 @@ export default class EditRecipe extends React.Component<Props, State> {
     }
   }
 
-  static async getInitialProps({ query }): Promise<Props> {
-    const { branch, username, slug } = query
-    const recipe = await api.getRecipe(username, slug)
-    const recipeVersionId = _.get(
-      _.head(_.filter(recipe.branches, { name: branch })),
-      'recipe_version_id'
-    )
-    return {
-      branch,
-      recipeVersion: await api.getRecipeVersion(
-        query.username,
-        query.slug,
-        recipeVersionId
+  static async getInitialProps({ query, res }): Promise<Props> {
+    try {
+      const { branch, username, slug } = query
+      const recipe = await api.getRecipe(username, slug)
+      const recipeVersionId = _.get(
+        _.head(_.filter(recipe.branches, { name: branch })),
+        'recipe_version_id'
       )
+      return {
+        branch,
+        recipeVersion: await api.getRecipeVersion(
+          query.username,
+          query.slug,
+          recipeVersionId
+        )
+      }
+    } catch (err) {
+      const statusCode = err.statusCode || 500
+      if (res) {
+        res.statusCode = statusCode
+      }
+      return { statusCode }
     }
   }
 
@@ -113,6 +123,9 @@ export default class EditRecipe extends React.Component<Props, State> {
   }
 
   public render() {
+    if (this.props.statusCode) {
+      return <ErrorPage statusCode={this.props.statusCode} />
+    }
     const v = this.props.recipeVersion
     return (
       <Layout>

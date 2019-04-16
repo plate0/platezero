@@ -38,15 +38,12 @@ const handleError = async (res: Response): Promise<any> => {
     return res.json()
   }
   const messages = (await res.json()).errors
-  throw new PlateZeroApiError(messages)
+  throw new PlateZeroApiError(messages, res.status)
 }
 
 export class PlateZeroApiError extends Error {
-  public messages: string[] = []
-
-  constructor(messages: string[]) {
+  constructor(readonly messages: string[], readonly statusCode: number) {
     super('API error')
-    this.messages = messages
   }
 }
 
