@@ -9,11 +9,8 @@ export interface Authentication {
 }
 
 export const authenticated = async (token: string, refresh: string) => {
-  cookie.set('auth', JSON.stringify({ token, refresh }), {
-    expires: 365,
-    secure: true,
-    samesite: 'strict'
-  } as any)
+  cookie.set('auth', JSON.stringify({ token, refresh }), process.env
+    .cookie as any)
 }
 
 export const getAuth = (ctx: any = undefined): Authentication => {
