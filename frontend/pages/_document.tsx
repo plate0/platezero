@@ -19,6 +19,7 @@ export default class MyDocument extends Document {
             name="viewport"
             content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
           />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
           <link
             rel="apple-touch-icon"
             sizes="57x57"
