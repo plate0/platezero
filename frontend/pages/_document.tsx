@@ -17,7 +17,7 @@ export default class MyDocument extends Document {
           <meta charSet="utf-8" />
           <meta
             name="viewport"
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+            content="minimal-ui, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
           />
           <link
             rel="apple-touch-icon"
