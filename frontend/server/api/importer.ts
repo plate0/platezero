@@ -6,11 +6,11 @@ import { internalServerError } from '../errors'
 import { S3 } from 'aws-sdk'
 import fetch from 'node-fetch'
 import { HttpStatus } from '../../common/http-status'
-import { getConfig } from '../config'
+import { config } from '../config'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const s3 = new S3()
-const { slackHook } = getConfig()
+const { slackHook } = config
 
 const r = express.Router()
 

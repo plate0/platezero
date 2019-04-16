@@ -17,9 +17,7 @@ import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 import { RefreshToken } from './refresh_token'
 import { Recipe, RecipeJSON } from './recipe'
-import { getConfig } from '../server/config'
-
-const cfg = getConfig()
+import { config } from '../server/config'
 
 export interface UserJSON {
   avatar_url: string
@@ -104,27 +102,27 @@ export class User extends Model<User> implements UserJSON {
 
   @Column(DataType.VIRTUAL)
   public get url(): string {
-    return `${cfg.apiUrl}/users/${this.username}`
+    return `${config.apiUrl}/users/${this.username}`
   }
 
   @Column(DataType.VIRTUAL)
   public get html_url(): string {
-    return `${cfg.siteUrl}/${this.username}`
+    return `${config.siteUrl}/${this.username}`
   }
 
   @Column(DataType.VIRTUAL)
   public get recipes_url(): string {
-    return `${cfg.apiUrl}/users/${this.username}/recipes`
+    return `${config.apiUrl}/users/${this.username}/recipes`
   }
 
   @Column(DataType.VIRTUAL)
   public get recipes_html_url(): string {
-    return `${cfg.siteUrl}/${this.username}/recipes`
+    return `${config.siteUrl}/${this.username}/recipes`
   }
 
   public async setPassword(newPassword: string) {
     return new Promise((resolve, reject) => {
-      bcrypt.hash(newPassword, cfg.bcryptRounds, (err, hash) => {
+      bcrypt.hash(newPassword, config.bcryptRounds, (err, hash) => {
         if (err) {
           return reject(err)
         }
@@ -153,7 +151,7 @@ export class User extends Model<User> implements UserJSON {
     return new Promise((resolve, reject) => {
       jwt.sign(
         { userId: this.id, username: this.username },
-        cfg.jwtSecret,
+        config.jwtSecret,
         { expiresIn: '1d' },
         (err, token) => {
           if (err) {

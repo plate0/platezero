@@ -4,7 +4,7 @@ import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
 import { RefreshToken } from '../../models'
-import { getConfig } from '../config'
+import { config } from '../config'
 import {
   unauthorized,
   invalidAuthentication,
@@ -12,7 +12,6 @@ import {
   badRequest
 } from '../errors'
 
-const cfg = getConfig()
 const r = express.Router()
 
 // parse JSON bodies
@@ -21,7 +20,7 @@ r.use(express.json())
 // check each request for authentication, but don't deny requests without it
 r.use(
   jwtMiddleware({
-    secret: cfg.jwtSecret,
+    secret: config.jwtSecret,
     credentialsRequired: false,
     getToken: req => {
       if (
@@ -62,8 +61,8 @@ r.use(
 // the index route. provide some useful URLs
 r.get('/', (_, res) => {
   return res.json({
-    users_url: `${cfg.apiUrl}/users`,
-    current_user_url: `${cfg.apiUrl}/user`
+    users_url: `${config.apiUrl}/users`,
+    current_user_url: `${config.apiUrl}/user`
   })
 })
 

@@ -4,10 +4,9 @@ import { join } from 'path'
 const { routes } = require('../routes')
 const { sequelize } = require('../models')
 import { api } from './api'
-import { getConfig } from './config'
+import { config } from './config'
 
-const cfg = getConfig()
-const app = next({ dev: cfg.dev })
+const app = next({ dev: config.dev })
 const handler = routes.getRequestHandler(app)
 
 app.prepare().then(() => {
@@ -20,9 +19,9 @@ app.prepare().then(() => {
   sequelize
     .authenticate()
     .then(() => {
-      server.listen(cfg.port, err => {
+      server.listen(config.port, err => {
         if (err) throw err
-        console.log(`> Ready on ${cfg.siteUrl}`)
+        console.log(`> Ready on ${config.siteUrl}`)
       })
     })
     .catch(err => {

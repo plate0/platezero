@@ -17,16 +17,14 @@ import { RecipeYield } from './recipe_yield'
 import { Recipe } from './recipe'
 import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { User } from './user'
-import { getConfig } from '../server/config'
-
-const cfg = getConfig()
+import { config } from '../server/config'
 
 export const sequelize = new Sequelize({
-  database: cfg.dbName,
+  database: config.dbName,
   dialect: 'postgres',
-  username: cfg.dbUser,
-  password: cfg.dbPassword,
-  host: cfg.dbHost
+  username: config.dbUser,
+  password: config.dbPassword,
+  host: config.dbHost
 })
 
 sequelize.addModels([
