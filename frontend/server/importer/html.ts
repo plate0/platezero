@@ -243,6 +243,9 @@ export const recipeSchemaProcedureLists = ($: any) => {
     {
       selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
     },
+    {
+      selector: '[itemprop="recipeInstructions"] [itemprop="text"]'
+    },
     { selector: 'ol li', css: /instruction/i },
     // Seriously, people?
     { selector: 'ul li', css: /instruction/i },

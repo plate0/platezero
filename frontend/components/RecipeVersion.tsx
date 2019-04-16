@@ -15,24 +15,33 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
   <div className="mb-3">
     {list.name && <h3>{list.name}</h3>}
     {list.lines.map((l, key) => (
-      <div key={key}>
+      <div
+        key={key}
+        itemProp="recipeInstructions"
+        itemScope={true}
+        itemType="http://schema.org/HowToStep"
+      >
         {l.title && (
           <div className="mb-3">
             <h4 className="border-bottom pb-2">
-              <Badge color="primary" pill className="mr-2">
+              <Badge color="primary" pill className="mr-2" itemProp="position">
                 {key + 1}
               </Badge>
-              {l.title}
+              <span itemProp="headline">{l.title}</span>
             </h4>
           </div>
         )}
         <Row>
           {l.image_url && (
             <Col xs="12" lg="4">
-              <img className="w-100 mb-3" src={l.image_url} />
+              <img
+                className="w-100 mb-3"
+                src={l.image_url}
+                itemProp="exampleOfWork"
+              />
             </Col>
           )}
-          <Col>
+          <Col itemProp="text">
             <ReactMarkdown source={l.text} />
           </Col>
         </Row>
@@ -42,7 +51,7 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
 )
 
 const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => (
-  <li className="mb-2">
+  <li className="mb-2" itemProp="recipeIngredient">
     <Amount
       numerator={line.quantity_numerator}
       denominator={line.quantity_denominator}
@@ -75,8 +84,11 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
     <>
       <details className="mb-3">
         <summary>
-          Authored by <a href={`/${v.author.username}`}>{getName(v.author)}</a>{' '}
-          <Timestamp t={moment(v.created_at)} />{' '}
+          Authored by{' '}
+          <a href={`/${v.author.username}`} itemProp="author">
+            {getName(v.author)}
+          </a>{' '}
+          <Timestamp itemProp="dateModified" t={moment(v.created_at)} />{' '}
         </summary>
         <div className="bg-light p-3">
           <ReactMarkdown source={v.message} />
@@ -98,6 +110,7 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
               className="w-100 mb-3"
               src={v.recipe.image_url}
               alt={`Picture of ${v.recipe.title}`}
+              itemProp="image"
             />
           )}
           <h2>Ingredients</h2>

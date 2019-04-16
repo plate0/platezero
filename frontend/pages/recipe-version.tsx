@@ -31,20 +31,22 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
         <Head>
           <title>{v.recipe.title}</title>
         </Head>
-        <Row className="mt-3">
-          <Col>
-            <RecipeTitle recipe={v.recipe} />
-          </Col>
-          <Col xs="auto">
-            <a
-              className="btn btn-outline-primary"
-              href={`/${v.recipe.owner.username}/${v.recipe.slug}`}
-            >
-              Show Current Version
-            </a>
-          </Col>
-        </Row>
-        <RecipeVersionView recipeVersion={v} />
+        <div itemScope={true} itemType="http://schema.org/Recipe">
+          <Row className="mt-3">
+            <Col>
+              <RecipeTitle recipe={v.recipe} />
+            </Col>
+            <Col xs="auto">
+              <a
+                className="btn btn-outline-primary"
+                href={`/${v.recipe.owner.username}/${v.recipe.slug}`}
+              >
+                Show Current Version
+              </a>
+            </Col>
+          </Row>
+          <RecipeVersionView recipeVersion={v} />
+        </div>
       </Layout>
     )
   }

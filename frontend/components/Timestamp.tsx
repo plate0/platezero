@@ -3,6 +3,7 @@ import * as moment from 'moment'
 
 interface TimestampProps {
   t: string | moment.Moment | Date
+  itemProp?: string
 }
 
 const ensureMoment = (t: string | moment.Moment | Date): moment.Moment =>
@@ -13,5 +14,9 @@ export const humanize = (t: moment.Moment): string =>
 
 export const Timestamp = (props: TimestampProps) => {
   const t = ensureMoment(props.t)
-  return <span title={humanize(t)}>{t.fromNow()}</span>
+  return (
+    <time itemProp={props.itemProp} title={humanize(t)} dateTime={t.format()}>
+      {t.fromNow()}
+    </time>
+  )
 }
