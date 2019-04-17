@@ -3,6 +3,7 @@ import * as jwtMiddleware from 'express-jwt'
 import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
+import { search } from './search'
 import { RefreshToken } from '../../models'
 import { config } from '../config'
 import {
@@ -42,6 +43,7 @@ r.use((err, _req, res, next) => {
 })
 
 r.use('/users', users)
+r.use('/search', search)
 
 // the /user path represents the _currently authenticated_ user. this is where
 // things like changing passwords, creating recipes, etc happen. so in this
