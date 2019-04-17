@@ -14,6 +14,10 @@ app.prepare().then(() => {
 
   server.use(express.static(join(__dirname, '..', 'static')))
   server.use('/api', api)
+  server.use(
+    '/announcements',
+    express.static(join(__dirname, '..', 'announcements'))
+  )
   server.use(handler)
 
   sequelize
