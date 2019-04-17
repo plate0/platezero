@@ -18,9 +18,9 @@ import {
 
 import {
   Layout,
-  ProcedureLists,
-  IngredientLists,
-  Preheats,
+  ProcedureListsEditor,
+  IngredientListsEditor,
+  PreheatsEditor,
   RecipeTitle,
   RecipeDuration,
   RecipeYield
@@ -156,17 +156,17 @@ export default class EditRecipe extends React.Component<Props, State> {
           onChange={recipeDuration => this.setState({ recipeDuration })}
         />
         <h4>Preheats</h4>
-        <Preheats
+        <PreheatsEditor
           preheats={v.preheats}
           onChange={preheats => this.setState({ preheats })}
         />
-        <h4>Ingredients</h4>
-        <IngredientLists
+        <h4 className="mt-3">Ingredients</h4>
+        <IngredientListsEditor
           lists={v.ingredientLists}
           onChange={ingredientLists => this.setState({ ingredientLists })}
         />
         <h4 className="mt-3">Instructions</h4>
-        <ProcedureLists
+        <ProcedureListsEditor
           lists={v.procedureLists}
           onChange={procedureLists => this.setState({ procedureLists })}
         />

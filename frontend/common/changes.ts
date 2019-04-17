@@ -1,124 +1,47 @@
 import * as _ from 'lodash'
 import { normalize } from './model-helpers'
-import shortid from 'shortid'
 
-export interface UITrackable<T extends {}> {
-  id: string
-  json: T
-  added: boolean
-  removed: boolean
-  original?: T
-}
-
-export const jsonToUI = <T extends {}>(items: T[]): UITrackable<T>[] =>
-  _.map(items, json => ({
-    id: shortid.generate(),
-    json,
-    added: false,
-    removed: false,
-    original: json
-  }))
-
-export function isChanged<T extends {}>(item: UITrackable<T>): boolean {
-  if (item.added) {
-    return false
-  }
-  const [a, b] = _.map([item.json, item.original], x =>
-    normalize(_.omit(x, 'id'))
-  )
-  return !_.isEqual(a, b)
-}
-
-export const uiToJSON = <T extends {}>(items: UITrackable<T>[]): T[] =>
-  _.map(_.reject(items, { removed: true }), item => {
-    const omissions = isChanged(item) ? ['id'] : []
-    return normalize(_.omit(item.json, omissions))
-  })
-
-/**
- * Restore a single UITrackable. If the item has been marked as removed, it
- * will be marked as not removed. If the item has been changed, its `json`
- * property will be restored to the original value of `json`
- */
-export function restore<T extends {}>(item: UITrackable<T>): UITrackable<T> {
-  if (item.removed) {
-    return { ...item, removed: false }
-  }
-  return {
-    id: item.id,
-    added: item.added,
-    removed: false,
-    json: item.original,
-    original: item.original
-  }
-}
-
-/**
- * Given a list of UITrackable items, restore a single specified item.
- */
-export function restoreItem<T extends {}>(
-  prevs: UITrackable<T>[],
-  id: string
-): UITrackable<T>[] {
-  return _.map(prevs, prev => (prev.id === id ? restore(prev) : prev))
-}
-
-/**
- * Given an list of UITrackable items, remove a single item. If the item has
- * been added, it will be omitted entirely. If it originally existed, it will
- * be marked for removal.
- */
-export function removeItem<T extends {}>(
-  prevs: UITrackable<T>[],
-  id: string
-): UITrackable<T>[] {
-  return _.compact(
-    _.map(prevs, prev => {
-      if (prev.id !== id) {
-        return prev
-      }
-      if (prev.added) {
-        return undefined
-      }
-      return { ...prev, removed: true }
-    })
-  )
-}
-
-/**
- * Given a list of UITrackable items, update a single item.
- */
-export function replaceItem<T extends {}>(
-  prevs: UITrackable<T>[],
-  id: string,
-  json: T
-): UITrackable<T>[] {
-  return _.map(prevs, prev =>
-    prev.id === id
-      ? {
-          id,
-          json,
-          added: prev.added,
-          removed: false,
-          original: prev.original
+export function changesBetween<
+  T extends { id?: number; name?: string; lines: any[] }
+>(orig: T[], curr: T[]): T[] {
+  const usedSectionIds = {}
+  const allLines = _.flatten(_.map(orig, section => section.lines))
+  const usedLineIds = {}
+  return normalize(
+    _.map(curr, currSection => {
+      const lines = _.map(currSection.lines, currLine => {
+        const origLine = _.find(allLines, l => {
+          if (_.has(usedLineIds, _.toString(l.id))) {
+            return false
+          }
+          const [a, b] = [l, currLine].map(x => normalize(_.omit(x, 'id')))
+          return _.isEqual(a, b)
+        })
+        if (origLine) {
+          usedLineIds[_.toString(origLine.id)] = true
         }
-      : prev
-  )
-}
-
-export function* generateUITrackable<T extends {}>(
-  json: T
-): IterableIterator<UITrackable<T>> {
-  while (true) {
-    const id = shortid.generate()
-    yield { added: true, removed: false, json, id }
-  }
-}
-
-export function hasModifiedItems<T>(items: UITrackable<T>[]): boolean {
-  return _.reduce(
-    items,
-    (acc, item) => acc || isChanged(item) || item.added || item.removed,
-    false
+        return {
+          ...currLine,
+          id: origLine ? origLine.id : undefined
+        }
+      })
+      const origSection = _.find(
+        orig,
+        s =>
+          !_.has(usedSectionIds, _.toString(s.id)) &&
+          s.name === currSection.name
+      )
+      const currentIds = _.keys(_.keyBy(lines, 'id'))
+      const origIds = _.keys(_.keyBy(_.get(origSection, 'lines'), 'id'))
+      const hasUpdatedLines = !_.isEqual(currentIds, origIds)
+      if (origSection && !hasUpdatedLines) {
+        usedSectionIds[_.toString(origSection.id)] = true
+        return origSection
+      }
+      return {
+        ...currSection,
+        lines
+      }
+    })
   )
 }

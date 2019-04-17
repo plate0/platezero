@@ -4,6 +4,7 @@ import * as parseUrl from 'url-parse'
 
 import { RecipeVersionJSON, RecipeJSON } from '../models'
 import { toHoursAndMinutes } from '../common/time'
+import { Preheat } from './Preheats'
 
 interface Props {
   recipeVersion: RecipeVersionJSON
@@ -29,11 +30,7 @@ export const RecipeVersionVitals = (props: Props) => {
 }
 
 const preheats = (rv: RecipeVersionJSON) =>
-  _.map(rv.preheats, ph => (
-    <span className="text-danger">
-      {ph.name} {ph.temperature} {ph.unit}
-    </span>
-  ))
+  _.map(rv.preheats, preheat => <Preheat preheat={preheat} />)
 
 const formatDuration = (seconds: number) => {
   const { h, m } = toHoursAndMinutes(seconds)

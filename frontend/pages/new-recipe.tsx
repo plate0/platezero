@@ -24,9 +24,9 @@ import { PostRecipe } from '../common/request-models'
 import {
   Layout,
   NewRecipeTitle,
-  IngredientLists,
-  ProcedureLists,
-  Preheats,
+  IngredientListsEditor,
+  ProcedureListsEditor,
+  PreheatsEditor,
   RecipeYield,
   RecipeDuration
 } from '../components'
@@ -181,17 +181,17 @@ export default class NewRecipe extends React.Component<any, State> {
             onChange={recipeDuration => this.setState({ recipeDuration })}
           />
           <h2>Preheats</h2>
-          <Preheats
+          <PreheatsEditor
             preheats={[]}
             onChange={preheats => this.setState({ preheats })}
           />
           <h2>Ingredients</h2>
-          <IngredientLists
+          <IngredientListsEditor
             lists={[defaultIngredientList]}
             onChange={ingredientLists => this.setState({ ingredientLists })}
           />
           <h2 className="my-3">Steps</h2>
-          <ProcedureLists
+          <ProcedureListsEditor
             lists={[defaultProcedureList]}
             onChange={procedureLists => this.setState({ procedureLists })}
           />
