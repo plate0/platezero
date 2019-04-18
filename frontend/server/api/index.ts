@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as _ from 'lodash'
 import * as jwtMiddleware from 'express-jwt'
 import { users } from './users'
 import { user } from './user'
@@ -75,7 +76,10 @@ r.post('/login', async (req, res) => {
     return badRequest(res, 'username and password are required')
   }
   try {
-    const user = await User.findOne({ where: { username } })
+    const { where, fn, col } = User.sequelize
+    const user = await User.findOne({
+      where: where(fn('lower', col('username')), username.toLowerCase())
+    })
     if (!user) {
       return invalidAuthentication(res)
     }

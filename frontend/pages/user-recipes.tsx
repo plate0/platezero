@@ -3,8 +3,9 @@ import { Row, Col, Button } from 'reactstrap'
 import * as _ from 'lodash'
 import { withRouter, WithRouterProps } from 'next/router'
 import { Router } from '../routes'
-import Head from 'next/head'
+import ErrorPage from './_error'
 import { Layout } from '../components'
+import Head from 'next/head'
 import { RecipeJSON, UserJSON } from '../models'
 import {
   RecipeList,
@@ -19,8 +20,9 @@ import * as parse from 'url-parse'
 
 interface UserRecipesProps {
   query?: string
-  user: UserJSON
-  recipes: RecipeJSON[]
+  user?: UserJSON
+  recipes?: RecipeJSON[]
+  statusCode?: number
 }
 
 interface UserRecipesState {
@@ -54,12 +56,20 @@ class UserRecipes extends React.Component<
     }
   }
 
-  static async getInitialProps({ query }) {
+  static async getInitialProps({ query, res }) {
     const { username, q } = query
-    return {
-      query: q,
-      user: await api.getUser(username),
-      recipes: await api.getUserRecipes(username, q)
+    try {
+      return {
+        query: q,
+        user: await api.getUser(username),
+        recipes: await api.getUserRecipes(username, q)
+      }
+    } catch (err) {
+      const statusCode = err.statusCode || 500
+      if (res) {
+        res.statusCode = statusCode
+      }
+      return { statusCode }
     }
   }
 
@@ -100,8 +110,11 @@ class UserRecipes extends React.Component<
   }, 200)
 
   public render() {
-    const { user } = this.props
+    const { user, statusCode } = this.props
     const { recipes, query } = this.state
+    if (statusCode) {
+      return <ErrorPage statusCode={statusCode} />
+    }
     return (
       <Layout>
         <Head>

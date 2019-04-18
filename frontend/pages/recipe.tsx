@@ -1,5 +1,6 @@
 import React from 'react'
 import * as _ from 'lodash'
+import ErrorPage from './_error'
 import {
   Head,
   Layout,
@@ -12,40 +13,42 @@ import { RecipeVersionJSON } from '../models/recipe_version'
 import { api } from '../common/http'
 
 interface Props {
-  recipe: RecipeJSON
+  recipe?: RecipeJSON
   recipeVersion?: RecipeVersionJSON
   pathname: string
+  statusCode?: number
 }
 
-interface State {
-  showEditModal: boolean
-}
-
-export default class Recipe extends React.Component<Props, State> {
-  static async getInitialProps({ pathname, query }): Promise<Props> {
-    const recipe = await api.getRecipe(query.username, query.slug)
-    const masterBranch = _.head(
-      _.filter(recipe.branches, r => r.name === 'master')
-    )
-    const versionId = _.get(masterBranch, 'recipe_version_id')
-    const recipeVersion = versionId
-      ? await api.getRecipeVersion(query.username, query.slug, versionId)
-      : undefined
-    return { recipe, recipeVersion, pathname }
+export default class Recipe extends React.Component<Props> {
+  static async getInitialProps({ pathname, query, res }): Promise<Props> {
+    try {
+      const recipe = await api.getRecipe(query.username, query.slug)
+      const masterBranch = _.head(
+        _.filter(recipe.branches, r => r.name === 'master')
+      )
+      const versionId = _.get(masterBranch, 'recipe_version_id')
+      const recipeVersion = versionId
+        ? await api.getRecipeVersion(query.username, query.slug, versionId)
+        : undefined
+      return { recipe, recipeVersion, pathname }
+    } catch (err) {
+      const statusCode = err.statusCode || 500
+      if (res) {
+        res.statusCode = statusCode
+      }
+      return { pathname, statusCode }
+    }
   }
 
   constructor(props) {
     super(props)
-    this.showEditModal = this.showEditModal.bind(this)
-    this.state = { showEditModal: false }
-  }
-
-  public showEditModal(showEditModal: boolean): void {
-    this.setState({ showEditModal })
   }
 
   public render() {
-    const { recipe, recipeVersion } = this.props
+    const { recipe, recipeVersion, statusCode } = this.props
+    if (statusCode) {
+      return <ErrorPage statusCode={statusCode} />
+    }
     return (
       <Layout>
         <Head
@@ -54,13 +57,11 @@ export default class Recipe extends React.Component<Props, State> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <div itemScope={true} itemType="http://schema.org/Recipe">
-          <div className="mt-3">
-            <RecipeTitle recipe={recipe} />
-          </div>
-          <RecipeNav recipe={recipe} route={this.props.pathname} />
-          {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
+        <div className="mt-3">
+          <RecipeTitle recipe={recipe} />
         </div>
+        <RecipeNav recipe={recipe} route={this.props.pathname} />
+        {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
       </Layout>
     )
   }

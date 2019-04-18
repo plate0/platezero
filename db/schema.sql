@@ -50,9 +50,9 @@ CREATE TABLE procedure_lists (
 CREATE TABLE recipe_branches (
   recipe_id integer NOT NULL,
   name character varying NOT NULL,
-  recipe_version_id integer NOT NULL,
-  UNIQUE (recipe_id, name)
+  recipe_version_id integer NOT NULL
 );
+CREATE UNIQUE INDEX ON recipe_branches (recipe_id, lower(name));
 
 CREATE TABLE recipe_collaborators (
   id SERIAL PRIMARY KEY,
@@ -117,9 +117,9 @@ CREATE TABLE recipes (
   source_isbn character varying,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
-  deleted_at timestamp without time zone,
-  UNIQUE (user_id, slug)
+  deleted_at timestamp without time zone
 );
+CREATE UNIQUE INDEX ON recipes (user_id, lower(slug));
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
@@ -133,6 +133,7 @@ CREATE TABLE users (
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone
 );
+CREATE UNIQUE INDEX ON users (lower(username));
 
 CREATE TABLE refresh_tokens (
   id SERIAL PRIMARY KEY,

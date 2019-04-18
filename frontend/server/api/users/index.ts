@@ -11,7 +11,7 @@ const r = express.Router()
 
 const isUniqueUsernameError = (err: any) =>
   'unique violation' === _.get(err, 'errors[0].type', '') &&
-  'username' === _.get(err, 'errors[0].path', '')
+  'lower(username::text)' === _.get(err, 'errors[0].path', '')
 
 const isUniqueEmailError = (err: any) =>
   'unique violation' === _.get(err, 'errors[0].type', '') &&
