@@ -55,7 +55,6 @@ class UserRecipes extends React.Component<
   }
 
   static async getInitialProps({ query }) {
-    console.log('Initial Props still called...', query)
     const { username, q } = query
     return {
       query: q,
