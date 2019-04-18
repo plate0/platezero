@@ -28,19 +28,7 @@ export const searchQuery = (q?: string, user_id?: number) => {
 r.get('/', async (req, res) => {
   const { q, user_id } = req.query
   try {
-    const results = await Recipe.findAll({
-      where: {
-        $or: {
-          title: {
-            $ilike: `%${q}%`
-          },
-          description: {
-            $ilike: `%${q}%`
-          }
-        },
-        ...(user_id ? { user_id } : {})
-      }
-    })
+    const results = await Recipe.findAll(searchQuery(q, user_id))
     return res.json(results)
   } catch (err) {
     return internalServerError(res, err)
