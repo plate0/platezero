@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { IfLoggedIn } from './IfLoggedIn'
 import { Link } from '../routes'
 
@@ -11,5 +10,15 @@ export const RecipeListBlankslate = (props: { username: string }) => (
         <a className="btn btn-primary">Create your first!</a>
       </Link>
     </IfLoggedIn>
+  </div>
+)
+
+export const RecipeListNoSearchResults = ({
+  username
+}: {
+  username: string
+}) => (
+  <div className="bg-light text-center rounded p-5 mt-3">
+    <h4 className="m-0">{username} doesn't have any recipes that match.</h4>
   </div>
 )

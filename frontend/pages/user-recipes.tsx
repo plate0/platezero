@@ -10,7 +10,8 @@ import {
   RecipeList,
   RecipeListHeader,
   Search,
-  RecipeListBlankslate
+  RecipeListBlankslate,
+  RecipeListNoSearchResults
 } from '../components'
 import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
@@ -124,7 +125,9 @@ class UserRecipes extends React.Component<
                 onClear={this.onClear}
               />
             )}
-            {!recipes.length && query && <div>Oop, nothing here</div>}
+            {!recipes.length && query && (
+              <RecipeListNoSearchResults username={user.username} />
+            )}
             {!recipes.length && !query && (
               <RecipeListBlankslate username={user.username} />
             )}
