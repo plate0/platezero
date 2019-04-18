@@ -76,7 +76,7 @@ r.post('/login', async (req, res) => {
   try {
     const { where, fn, col } = User.sequelize
     const user = await User.findOne({
-      where: where(fn('lower', col('username')), _.lowerCase(username))
+      where: where(fn('lower', col('username')), username.toLowerCase())
     })
     if (!user) {
       return invalidAuthentication(res)
