@@ -32,10 +32,10 @@ interface UserRecipesState {
 
 const SearchResultsHeader = ({ n, q, className, onClear }) => (
   <Row className={`py-2 align-items-center ${className || ''}`}>
-    <Col xs="10">
+    <Col xs="6" md="10">
       <strong>{n}</strong> results for recipes matching <strong>{q}</strong>
     </Col>
-    <Col xs="2" className="d-flex justify-content-end">
+    <Col xs="6" md="2" className="d-flex justify-content-end">
       <Button outline onClick={onClear}>
         Clear Search
       </Button>

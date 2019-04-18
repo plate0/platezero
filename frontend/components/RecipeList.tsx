@@ -6,12 +6,6 @@ import { Link } from '../routes'
 import { getName } from '../common/model-helpers'
 import { IfLoggedIn } from './IfLoggedIn'
 
-export interface RecipesProps {
-  children: any
-  user: UserJSON
-  recipes: RecipeJSON[]
-}
-
 export const RecipeListHeader = ({ user }: { user: UserJSON }) => {
   const me = <h2 className="m-0">Your Recipes</h2>
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
@@ -38,6 +32,12 @@ export const RecipeListHeader = ({ user }: { user: UserJSON }) => {
       </IfLoggedIn>
     </Row>
   )
+}
+
+export interface RecipesProps {
+  children: any
+  user: UserJSON
+  recipes: RecipeJSON[]
 }
 
 export const RecipeList = ({ children, recipes, user }: RecipesProps) => {

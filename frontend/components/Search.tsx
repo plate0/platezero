@@ -15,28 +15,14 @@ export const Search = ({
   placeholder,
   onChange
 }: SearchProps) => {
-  let val = ''
-  let setValue = undefined
-  if (!_.isString(value)) {
-    ;[val, setValue] = useState('')
-  } else {
-    val = value
-  }
-  const change = e => {
-    const v = e.target.value
-    if (setValue) {
-      setValue(v)
-    }
-    onChange(v)
-  }
   return (
     <Input
       className={className || ''}
       type="text"
       name="search"
       placeholder={placeholder}
-      value={val}
-      onChange={change}
+      value={value}
+      onChange={e => onChange(e.target.value)}
     />
   )
 }
