@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 import { PreheatJSON } from '../models'
 import { ActionLine } from './ActionLine'
 import { PlainInput } from './PlainInput'
+import { Blankslate } from './Blankslate'
 import { normalize } from '../common/model-helpers'
 import {
   jsonToUI,
@@ -54,17 +55,15 @@ export function Preheats(props: Props) {
 
   if (_.size(preheats) === 0) {
     return (
-      <>
-        <div className="bg-light rounded pt-3 py-3 mb-3 text-secondary text-center">
-          <p>
-            <small>
-              Specifying your preheats here lets you immediately see them at the
-              top of your recipes. Never forget to turn on the oven again!
-            </small>
-          </p>
-          {addBtn}
-        </div>
-      </>
+      <Blankslate className="mb-3">
+        <p>
+          <small>
+            Specifying your preheats here lets you immediately see them at the
+            top of your recipes. Never forget to turn on the oven again!
+          </small>
+        </p>
+        {addBtn}
+      </Blankslate>
     )
   }
 
