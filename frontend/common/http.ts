@@ -131,8 +131,14 @@ class Api {
   getUser = (username: string, opts: RequestInit = {}) =>
     this._fetch<UserJSON>(`/users/${username}`, opts)
 
-  getUserRecipes = (username: string, opts: RequestInit = {}) =>
-    this._fetch(`/users/${username}/recipes`, opts)
+  getUserRecipes = (
+    username: string,
+    query?: string,
+    opts: RequestInit = {}
+  ) => {
+    const q = query ? `?q=${query}` : ''
+    return this._fetch(`/users/${username}/recipes${q}`, opts)
+  }
 
   getRecipe = (
     username: string,
