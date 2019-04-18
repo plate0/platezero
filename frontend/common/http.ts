@@ -134,7 +134,7 @@ class Api {
     opts: RequestInit = {}
   ) => {
     const q = query ? `?q=${query}` : ''
-    return this._fetch(`/users/${username}/recipes${q}`, opts)
+    return this._fetch<RecipeJSON[]>(`/users/${username}/recipes${q}`, opts)
   }
 
   getRecipe = (

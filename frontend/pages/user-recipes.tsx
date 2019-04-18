@@ -26,6 +26,7 @@ interface UserRecipesProps {
 }
 
 interface UserRecipesState {
+  query: string
   recipes: RecipeJSON[]
 }
 
@@ -74,14 +75,15 @@ class UserRecipes extends React.Component<
   }
 
   public async componentDidUpdate(prevProps) {
-    const {
-      pathname,
+    let {
       query: { q, username }
     } = this.props.router
+    q = _.isArray(q) ? _.first(q) : q
+    username = _.isArray(username) ? _.first(username) : username
     if (q !== prevProps.router.query.q) {
       this.setState(
         {
-          query: q || '',
+          query: (q as string) || '',
           ...(q ? {} : { recipes: await api.getUserRecipes(username, q) })
         },
         q ? this.refresh : undefined
@@ -92,7 +94,6 @@ class UserRecipes extends React.Component<
   public onSearch(q: string) {
     const { pathname } = parse(this.props.router.asPath)
     const href = `${pathname}?q=${encodeURIComponent(q)}`
-    const as = href
     Router.replaceRoute(href, { shallow: true })
   }
 
