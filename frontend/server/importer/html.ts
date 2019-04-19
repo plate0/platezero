@@ -15,7 +15,10 @@ export const text = (sel: string) => ($: any) => _.trim($(sel).text())
 
 export const title = () => {
   return ($: any): string => {
-    let title = _.trim($('meta[name="twitter:title"]').attr('content'))
+    let title = _.trim(
+      $('meta[name="twitter:title"]').attr('content') ||
+        $('meta[property="twitter:title"]').attr('content')
+    )
     if (title) {
       return title
     }
@@ -33,7 +36,8 @@ export const description = (sel?: string) => {
   }
   return ($: any) => {
     let description = _.trim(
-      $('meta[property="twitter:description"]').attr('content')
+      $('meta[property="twitter:description"]').attr('content') ||
+        $('meta[name="twitter:description"]').attr('content')
     )
     if (description) {
       return description
@@ -54,7 +58,9 @@ export const image_url = (sel?: string) => ($: any) => {
   if (sel) {
     return $(sel).attr('src')
   }
-  let image = $('meta[property="twitter:image"]').attr('content')
+  let image =
+    $('meta[property="twitter:image"]').attr('content') ||
+    $('meta[name="twitter:image"]').attr('content')
   if (image) {
     return image
   }
