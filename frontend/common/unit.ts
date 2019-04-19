@@ -4,6 +4,7 @@ export type Unit =
   | 'kg'
   | 'oz'
   | 'lb'
+  | 'qt'
   | 'c'
   | 'tbsp'
   | 'tsp'
@@ -21,6 +22,7 @@ export const Units = [
   { label: 'milligram', value: 'mg' },
   { label: 'kilogram', value: 'kg' },
   { label: 'pound', value: 'lb' },
+  { label: 'quart', value: 'qt' },
   { label: 'cup', value: 'c' },
   { label: 'tablespoon', value: 'tbsp' },
   { label: 'teaspoon', value: 'tsp' },
@@ -49,6 +51,7 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'kg':
     case 'lb':
     case 'c':
+    case 'qt':
     case 'tbsp':
     case 'tsp':
     case 'l':
@@ -80,5 +83,10 @@ export const unitfy = (s?: string): Unit | undefined => {
     case 'cups.':
     case 'cup.':
       return 'c'
+    case 'qts.':
+    case 'qt.':
+    case 'quart':
+    case 'quarts':
+      return 'qt'
   }
 }

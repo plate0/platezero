@@ -52,6 +52,7 @@ export class IngredientLine extends Model<IngredientLine>
 
       // volume
       'c',
+      'qt',
       'tbsp',
       'tsp',
       'l',
