@@ -14,7 +14,7 @@ import { parse } from 'path'
 import { create } from './create'
 import { writeFileSync } from 'fs'
 import { toMarkdown } from './markdown'
-import { download, convert } from './utils'
+import { archive, download, convert } from './utils'
 import log from 'electron-log'
 import { ipcRenderer } from 'electron'
 const app = require('electron').remote.app
@@ -23,6 +23,7 @@ interface AppState {
   recipe: MarkdownRecipe
   active: string
   recipePath?: string
+  recipeKey?: string
   userId?: number
   modal: boolean
 }
@@ -98,6 +99,7 @@ export class App extends React.Component<any, AppState> {
       active: 'title',
       modal: false,
       recipePath: undefined,
+      recipeKey: undefined,
       userId: undefined,
       modal: undefined
     })
@@ -140,6 +142,7 @@ export class App extends React.Component<any, AppState> {
     const recipePath = await convert(folder, base)
     log.info('converted', recipePath)
     this.setState({
+      recipeKey: r.key,
       recipePath,
       userId: r.userId,
       modal: false
@@ -207,7 +210,7 @@ export class App extends React.Component<any, AppState> {
     const json = this.transcribe(recipe)
     try {
       const created = await create(this.state.userId, json)
-      console.log('DONE!!!!!!!!!!', created)
+      await archive(this.state.recipeKey)
       this.setState({
         active: 'title',
         recipe: {
@@ -218,7 +221,9 @@ export class App extends React.Component<any, AppState> {
           procedures: '',
           yld: '',
           duration: 0
-        }
+        },
+        recipePath: undefined,
+        recipeKey: undefined
       })
     } catch (err) {
       alert(err)

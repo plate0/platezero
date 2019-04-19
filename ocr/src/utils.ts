@@ -30,7 +30,7 @@ export const convert = (dir: string, base: string): Promise<string> => {
   const density = extname(name) === '.pdf' ? `-density 600` : ''
   return new Promise((resolve, reject) => {
     log.info('running convert: ', `convert ${density} "${from}" "${to}"`)
-    exec(`convert ${density} "${from}" "${to}"`, err =>
+    exec(`convert -append ${density} "${from}" "${to}"`, err =>
       err ? reject(err) : resolve(to)
     )
   })
