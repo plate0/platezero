@@ -51,7 +51,7 @@ export const Dropzone = ({ onDrop }: { onDrop: Function }) => {
     <div {...getRootProps({ style })}>
       <input {...getInputProps()} className="bg-light" />
       <div className="text-center font-weight-bold">
-        Drag and drop any files here.
+        Drag and drop any files here
       </div>
       <div style={{ lineHeight: '3rem' }}>OR</div>
       <Button color="primary">Browse to find files</Button>
