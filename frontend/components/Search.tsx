@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import * as _ from 'lodash'
+import React from 'react'
 import { Input } from 'reactstrap'
 
 export interface SearchProps {
