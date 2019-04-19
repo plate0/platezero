@@ -7,6 +7,7 @@ import { SeriousEats } from './serious-eats'
 import { NYTCooking } from './nyt-cooking'
 import { GenericHTML } from './generic-html-importer'
 import { FoodNetwork } from './food-network'
+import { Popsugar } from './popsugar'
 
 const importers = mapValues(
   {
@@ -14,7 +15,8 @@ const importers = mapValues(
     'www.blueapron.com': BlueApron,
     'dlink.blueapron.com': BlueApron,
     'www.seriouseats.com': SeriousEats,
-    'www.foodnetwork.com': FoodNetwork
+    'www.foodnetwork.com': FoodNetwork,
+    'www.popsugar.com': Popsugar
   },
   importer => fetch(toHTML(dom(importer)))
 )
