@@ -1,8 +1,8 @@
 import React from 'react'
 import { Row, Col, Badge } from 'reactstrap'
-import * as ReactMarkdown from 'react-markdown'
 
 import { ProcedureListJSON } from '../models'
+import { Markdown } from './Markdown'
 
 export const ProcedureLists = ({ lists }: { lists: ProcedureListJSON[] }) => (
   <>
@@ -43,7 +43,7 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
             </Col>
           )}
           <Col itemProp="text">
-            <ReactMarkdown source={l.text} />
+            <Markdown source={l.text} />
           </Col>
         </Row>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react'
-import * as ReactMarkdown from 'react-markdown'
 
 import { RecipeJSON } from '../models'
+import { Markdown } from './Markdown'
 
 export const RecipeTitle = ({ recipe }: { recipe: RecipeJSON }) => (
   <>
@@ -11,7 +11,7 @@ export const RecipeTitle = ({ recipe }: { recipe: RecipeJSON }) => (
     </div>
     {recipe.description && (
       <div className="text-secondary mb-3" itemProp="description">
-        <ReactMarkdown source={recipe.description} />
+        <Markdown source={recipe.description} />
       </div>
     )}
   </>

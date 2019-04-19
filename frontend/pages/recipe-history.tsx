@@ -2,7 +2,6 @@ import React from 'react'
 import ErrorPage from './_error'
 import { Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
-import * as ReactMarkdown from 'react-markdown'
 
 import {
   Head,
@@ -10,7 +9,8 @@ import {
   RecipeTitle,
   RecipeNav,
   Timestamp,
-  ProfilePicture
+  ProfilePicture,
+  Markdown
 } from '../components'
 import { RecipeJSON, RecipeVersionJSON } from '../models'
 import { api } from '../common/http'
@@ -84,7 +84,7 @@ export default class RecipeHistory extends React.Component<Props> {
                     </div>
                     {rest && (
                       <div className="text-secondary small">
-                        <ReactMarkdown source={rest} />
+                        <Markdown source={rest} />
                       </div>
                     )}
                   </Col>

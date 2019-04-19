@@ -1,11 +1,11 @@
 import React from 'react'
 import * as moment from 'moment'
-import * as ReactMarkdown from 'react-markdown'
 import { Row, Col } from 'reactstrap'
 import { Timestamp, humanize } from './Timestamp'
 import { IngredientLists } from './IngredientLists'
 import { ProcedureLists } from './ProcedureLists'
 import { RecipeVersionVitals } from './RecipeVersionVitals'
+import { Markdown } from './Markdown'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { getName } from '../common/model-helpers'
 
@@ -27,7 +27,7 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
           <Timestamp itemProp="dateModified" t={moment(v.created_at)} />{' '}
         </summary>
         <div className="bg-light p-3">
-          <ReactMarkdown source={v.message} />
+          <Markdown source={v.message} />
           <div className="small text-muted pt-1 border-top">
             {humanize(moment(v.created_at))}
             {prevUrl && (
