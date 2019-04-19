@@ -1,7 +1,7 @@
 import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
-
+import { searchQuery } from '../../search'
 import { User } from '../../../../models/user'
 import { Recipe } from '../../../../models/recipe'
 import { RecipeRequest, recipe } from './recipe'
@@ -32,9 +32,10 @@ r.get('/', async (req: UserRequest, res) => {
 })
 
 r.get('/recipes', async (req: UserRequest, res) => {
+  const { q } = req.query
   return res.json(
     await Recipe.findAll({
-      where: { user_id: req.user.id },
+      ...searchQuery(q, req.user.id),
       order: [['title', 'ASC']]
     })
   )

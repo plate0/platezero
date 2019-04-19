@@ -13,6 +13,7 @@ const importers = mapValues(
   {
     'cooking.nytimes.com': NYTCooking,
     'www.blueapron.com': BlueApron,
+    'dlink.blueapron.com': BlueApron,
     'www.seriouseats.com': SeriousEats,
     'www.foodnetwork.com': FoodNetwork,
     'www.popsugar.com': Popsugar

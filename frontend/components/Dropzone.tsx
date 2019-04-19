@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { Button } from 'reactstrap'
 
 const baseStyle = {
   width: '100%',
@@ -49,8 +50,11 @@ export const Dropzone = ({ onDrop }: { onDrop: Function }) => {
   return (
     <div {...getRootProps({ style })}>
       <input {...getInputProps()} className="bg-light" />
-      <p className="m-0 text-center">Drag and drop any files here.</p>
-      <p className="m-0 text-center">Or click to select a file.</p>
+      <div className="text-center font-weight-bold">
+        Drag and drop any files here
+      </div>
+      <div style={{ lineHeight: '3rem' }}>OR</div>
+      <Button color="primary">Browse to find files</Button>
     </div>
   )
 }
