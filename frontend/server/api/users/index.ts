@@ -56,7 +56,7 @@ r.use(
   async (req, res, next) => {
     const { username } = req.params
     try {
-      const user = await User.findOne({ where: { username } })
+      const user = await User.findByUsername(username)
       if (!user) {
         return notFound(res)
       }

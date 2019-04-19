@@ -162,4 +162,14 @@ export class User extends Model<User> implements UserJSON {
       )
     })
   }
+
+  public static async findByUsername(username: string): Promise<User> {
+    if (_.isUndefined(username)) {
+      throw new Error('username is undefined')
+    }
+    const { where, fn, col } = User.sequelize
+    return User.findOne({
+      where: where(fn('lower', col('username')), username.toLowerCase())
+    })
+  }
 }

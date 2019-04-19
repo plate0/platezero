@@ -76,10 +76,7 @@ r.post('/login', async (req, res) => {
     return badRequest(res, 'username and password are required')
   }
   try {
-    const { where, fn, col } = User.sequelize
-    const user = await User.findOne({
-      where: where(fn('lower', col('username')), username.toLowerCase())
-    })
+    const user = await User.findByUsername(username)
     if (!user) {
       return invalidAuthentication(res)
     }
