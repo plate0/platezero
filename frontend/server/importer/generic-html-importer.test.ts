@@ -1898,4 +1898,23 @@ describe('Generic HTML import', () => {
       ])
     })
   })
+
+  describe('blog.nuts.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/blog.nuts.com/gluten-free-almond-cake-recipe.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('image_url', async () => {
+      const { image_url } = await importer(source)
+      expect(image_url).toEqual(
+        'https://blog.nuts.com/wp-content/uploads/2015/02/gluten-free-almond-cake-slice-feature.jpg'
+      )
+    })
+  })
 })
