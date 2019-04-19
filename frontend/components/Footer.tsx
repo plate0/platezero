@@ -9,7 +9,7 @@ export const Footer = () => (
           <ul className="mb-0 list-unstyled">
             <li>
               <a href="mailto:bugs@platezero.com">
-                <i className="fal fa-bug mr-2" />
+                <i className="fal fa-bug fa-fw mr-2" />
                 Report a bug
               </a>
             </li>
@@ -19,7 +19,7 @@ export const Footer = () => (
           <ul className="mb-0 list-unstyled">
             <li>
               <a href="mailto:hello@platezero.com">
-                <i className="fal fa-envelope mr-2" />
+                <i className="fal fa-envelope fa-fw mr-2" />
                 Contact us
               </a>
             </li>
