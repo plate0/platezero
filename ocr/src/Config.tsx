@@ -26,7 +26,15 @@ const parse = (key: string): RecipePath => {
   }
 }
 
-const ConfigItem = ({ r, onSelect }: { r: RecipePath; onSelect: any }) => (
+const ConfigItem = ({
+  r,
+  onArchive,
+  onSelect
+}: {
+  r: RecipePath
+  onArchive: any
+  onSelect: any
+}) => (
   <ListGroupItem href="#" tag="a" action onClick={e => onSelect(r)}>
     <Row>
       <Col xs="11">{r.key}</Col>
@@ -36,7 +44,7 @@ const ConfigItem = ({ r, onSelect }: { r: RecipePath; onSelect: any }) => (
           onClick={e => {
             e.preventDefault()
             e.stopPropagation()
-            archive(r.key)
+            onArchive(r.key)
           }}
         >
           Archive
@@ -60,9 +68,19 @@ export class Config extends React.Component<ConfigProps, ConfigState> {
     this.state = {
       objects: []
     }
+    this.onArchive = this.onArchive.bind(this)
   }
 
   public async componentDidMount() {
+    this.refresh()
+  }
+
+  public async onArchive(key: string) {
+    await archive(key)
+    this.refresh()
+  }
+
+  public async refresh() {
     this.setState({
       objects: (await list()).map(parse)
     })
@@ -75,9 +93,14 @@ export class Config extends React.Component<ConfigProps, ConfigState> {
         <h1 className="my-3 font-weight-light">
           {objects.length} Recipes to OCR
         </h1>
-        <ListGroup flush>
+        <ListGroup flush style={{ maxHeight: 1000, overflow: 'scroll' }}>
           {objects.map(o => (
-            <ConfigItem r={o} key={o.key} onSelect={this.props.onSelect} />
+            <ConfigItem
+              r={o}
+              key={o.key}
+              onSelect={this.props.onSelect}
+              onArchive={this.onArchive}
+            />
           ))}
         </ListGroup>
       </div>

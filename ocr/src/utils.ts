@@ -41,7 +41,7 @@ export const archive = (Key: string) => {
   const id = uuid()
   return new Promise((resolve, reject) => {
     exec(
-      `s3cmd mv s3://com-platezero-recipes/${Key} s3://com-platezero-recipe-archive/${id}`,
+      `s3cmd mv 's3://com-platezero-recipes/${Key}' 's3://com-platezero-recipe-archive/${id}'`,
       (err, stdout) => (err ? reject(err) : resolve(stdout))
     )
   })
