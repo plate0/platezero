@@ -1,5 +1,5 @@
 import { S3 } from 'aws-sdk'
-import { parse, join, extname } from 'path'
+import { parse, join } from 'path'
 import { writeFileSync } from 'fs'
 import { exec } from 'child_process'
 import * as uuid from 'uuid/v4'
@@ -24,13 +24,16 @@ export const download = async (Key: string, dir: string): Promise<string> => {
 // convert to JPG
 export const convert = (dir: string, base: string): Promise<string> => {
   log.info('converting', base, 'in dir:', dir)
-  const { name } = parse(base)
+  const { ext, name } = parse(base)
   const from = join(dir, base)
   const to = join(dir, `${name}.jpg`)
-  const density = extname(name) === '.pdf' ? `-density 600` : ''
+  const density = ext === '.pdf' ? `-density 600` : ''
   return new Promise((resolve, reject) => {
-    log.info('running convert: ', `convert ${density} "${from}" "${to}"`)
-    exec(`convert -append ${density} "${from}" "${to}"`, err =>
+    log.info(
+      'running convert:',
+      `convert -auto-orient -append ${density} "${from}" "${to}"`
+    )
+    exec(`convert -auto-orient -append ${density} "${from}" "${to}"`, err =>
       err ? reject(err) : resolve(to)
     )
   })

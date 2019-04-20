@@ -25,7 +25,7 @@ export const description = (s: string): string =>
 
 export const ingredients = (s: string): string => s.replace(/^/gm, '* ')
 
-export const procedure = (s: string): string => description(s)
+export const procedures = (s: string): string => description(s)
 
 export const yld = (s: string): string => title(s)
 export { yld as yield }

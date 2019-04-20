@@ -93,7 +93,7 @@ export class Config extends React.Component<ConfigProps, ConfigState> {
         <h1 className="my-3 font-weight-light">
           {objects.length} Recipes to OCR
         </h1>
-        <ListGroup flush style={{ maxHeight: 1000, overflow: 'scroll' }}>
+        <ListGroup flush style={{ maxHeight: 900, overflow: 'scroll' }}>
           {objects.map(o => (
             <ConfigItem
               r={o}
