@@ -45,7 +45,11 @@ const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
     <Alert color="danger">{upload.errors.join('\n')}</Alert>
   )
   const spinnerOrDone = upload.done ? (
-    <i className="ml-2 far fa-check text-success" />
+    upload.errors ? (
+      <i className="ml-2 far fa-exclamation-triangle text-danger" />
+    ) : (
+      <i className="ml-2 far fa-check text-success" />
+    )
   ) : (
     <Spinner color="info" className="ml-2" size="sm" />
   )
