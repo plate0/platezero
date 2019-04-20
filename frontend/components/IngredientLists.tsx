@@ -9,28 +9,37 @@ const IngredientListLine = ({
 }: {
   line: IngredientLineJSON
   highlight: boolean
-}) => (
-  <li className="mb-2" itemProp="recipeIngredient">
-    {line.quantity_numerator && line.quantity_denominator && (
-      <span className={highlight ? 'text-success mr-1' : 'mr-1'}>
-        <Amount
-          numerator={line.quantity_numerator}
-          denominator={line.quantity_denominator}
-        />
-      </span>
-    )}
-    {line.unit && (
-      <span className={highlight ? 'text-success mr-1' : 'mr-1'}>
-        {line.unit}
-      </span>
-    )}
-    <span className="mr-1">{line.name}</span>
-    {line.preparation && (
-      <span className="text-secondary mr-1">{line.preparation}</span>
-    )}
-    {line.optional && <span className="badge badge-info ml-1">Optional</span>}
-  </li>
-)
+}) => {
+  const parts = []
+  if (line.quantity_numerator && line.quantity_denominator) {
+    parts.push(
+      <Amount
+        className={highlight ? 'text-success' : ''}
+        numerator={line.quantity_numerator}
+        denominator={line.quantity_denominator}
+      />
+    )
+  }
+  if (line.unit) {
+    parts.push(
+      <span className={highlight ? 'text-success' : ''}>{line.unit}</span>
+    )
+  }
+  parts.push(<>{line.name}</>)
+  if (line.preparation) {
+    parts.push(<span className="text-secondary">{line.preparation}</span>)
+  }
+  if (line.optional) {
+    parts.push(<span className="badge badge-info">Optional</span>)
+  }
+  return (
+    <li className="mb-2" itemProp="recipeIngredient">
+      {parts.map((part, key) => (
+        <span key={key}>{part} </span>
+      ))}
+    </li>
+  )
+}
 
 const IngredientList = ({
   list,
