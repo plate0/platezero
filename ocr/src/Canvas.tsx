@@ -63,7 +63,6 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
         s => ({
           image: new Image(),
           rect: { x: 0, y: 0, width: 0, height: 0 },
-          last: { x: 0, y: 0 },
           dragging: false,
           last: {
             x: s.canvas.width / 2,

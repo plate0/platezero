@@ -27,7 +27,7 @@ export class Recipe extends React.Component<RecipeProps> {
     this.onChange = this.onChange.bind(this)
   }
 
-  public onChange(e) {
+  public onChange(e: any) {
     this.props.onChange(e.target.name, e.target.value)
   }
 

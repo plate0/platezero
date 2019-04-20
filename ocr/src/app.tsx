@@ -50,7 +50,7 @@ export class App extends React.Component<any, AppState> {
         ingredients: '',
         procedures: '',
         yld: '',
-        duration: 0
+        duration: ''
       },
       active: 'title',
       modal: false
@@ -94,14 +94,13 @@ export class App extends React.Component<any, AppState> {
         ingredients: '',
         procedures: '',
         yld: '',
-        duration: 0
+        duration: ''
       },
       active: 'title',
       modal: false,
       recipePath: undefined,
       recipeKey: undefined,
-      userId: undefined,
-      modal: undefined
+      userId: undefined
     })
   }
 
@@ -209,8 +208,15 @@ export class App extends React.Component<any, AppState> {
   public async onSubmit(recipe: MarkdownRecipe) {
     const json = this.transcribe(recipe)
     try {
-      const created = await create(this.state.userId, json)
-      await archive(this.state.recipeKey)
+      const { userId } = this.state
+      if (!userId) {
+        throw new Error('No UserID Found to create recipe!')
+      }
+      const created = await create(userId, json)
+      log.info('Saved Recipe', created)
+      if (this.state.recipeKey) {
+        await archive(this.state.recipeKey)
+      }
       this.setState({
         active: 'title',
         recipe: {
@@ -220,7 +226,7 @@ export class App extends React.Component<any, AppState> {
           ingredients: '',
           procedures: '',
           yld: '',
-          duration: 0
+          duration: ''
         },
         recipePath: undefined,
         recipeKey: undefined
@@ -259,7 +265,7 @@ export class App extends React.Component<any, AppState> {
         </Row>
         <Modal
           isOpen={this.state.modal}
-          toggle={e => {
+          toggle={() => {
             this.setState(s => ({
               modal: !s.modal
             }))

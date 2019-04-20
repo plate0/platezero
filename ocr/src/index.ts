@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 import installExtension, {
   REACT_DEVELOPER_TOOLS
 } from 'electron-devtools-installer'
@@ -133,25 +133,27 @@ if (process.platform === 'darwin') {
   })
 
   template.unshift({
-    label: 'File',
+    role: 'file',
     submenu: [
       {
         label: 'Load Image',
         click() {
-          mainWindow.webContents.send('load-image')
+          if (mainWindow) {
+            mainWindow.webContents.send('load-image')
+          }
         }
       },
       {
         label: 'Done. Back To Selection',
         click() {
-          mainWindow.webContents.send('finished')
+          if (mainWindow) {
+            mainWindow.webContents.send('finished')
+          }
         }
       }
     ]
-  })
-
-  // Edit menu
-  template[1].submenu.push(
+  }) // Edit menu
+  ;(template[1].submenu as any).push(
     { type: 'separator' },
     {
       label: 'Speech',
@@ -169,5 +171,5 @@ if (process.platform === 'darwin') {
   ]
 }
 
-const menu = Menu.buildFromTemplate(template)
+const menu = Menu.buildFromTemplate(template as any)
 Menu.setApplicationMenu(menu)

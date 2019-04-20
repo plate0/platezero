@@ -35,13 +35,13 @@ const ConfigItem = ({
   onArchive: any
   onSelect: any
 }) => (
-  <ListGroupItem href="#" tag="a" action onClick={e => onSelect(r)}>
+  <ListGroupItem href="#" tag="a" action onClick={() => onSelect(r)}>
     <Row>
       <Col xs="11">{r.key}</Col>
       <Col xs="1">
         <Button
           color="danger"
-          onClick={e => {
+          onClick={(e: any) => {
             e.preventDefault()
             e.stopPropagation()
             onArchive(r.key)

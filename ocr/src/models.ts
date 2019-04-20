@@ -56,7 +56,7 @@ export interface MarkdownRecipe {
   subtitle?: string
   description?: string
   yld?: string
-  duration?: number
+  duration?: string
   preheats?: string
   ingredients: string
   procedures: string
