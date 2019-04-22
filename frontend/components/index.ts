@@ -1,3 +1,4 @@
+export * from './AlertErrors'
 export * from './Amount'
 export * from './Dropzone'
 export * from './Footer'

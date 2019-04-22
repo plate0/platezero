@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react'
 import Router from 'next/router'
 import {
-  Alert,
   FormGroup,
   Label,
   Input,
@@ -19,8 +18,9 @@ import {
 
 import { RecipeJSON } from '../models/recipe'
 import { UserContext } from '../context/UserContext'
-import { PlateZeroApiError, api } from '../common/http'
+import { getErrorMessages, api } from '../common/http'
 import { IfLoggedIn } from './IfLoggedIn'
+import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
 
 export const RecipeNav = ({
@@ -165,11 +165,7 @@ const RenameModal = ({
       await api.patchRecipe(recipe.slug, patch)
       Router.push(`/${recipe.owner.username}/${recipe.slug}`)
     } catch (e) {
-      if (e instanceof PlateZeroApiError) {
-        setErrors(e.messages)
-      } else {
-        setErrors([e])
-      }
+      setErrors(getErrorMessages(e))
     }
   }
   return (
@@ -191,11 +187,7 @@ const RenameModal = ({
             onChange={e => setDescription(e.target.value)}
           />
         </FormGroup>
-        {errors.map((e, key) => (
-          <Alert color="danger" key={key}>
-            {e}
-          </Alert>
-        ))}
+        <AlertErrors errors={errors} className="mt-3 mb-0 small" />
         <Button color="success" block onClick={handleSave}>
           Save
         </Button>

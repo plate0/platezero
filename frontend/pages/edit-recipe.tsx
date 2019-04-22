@@ -10,13 +10,13 @@ import {
   Row,
   Col,
   Button,
-  Alert,
   Input,
   FormGroup,
   FormText
 } from 'reactstrap'
 
 import {
+  AlertErrors,
   Layout,
   ProcedureListsEditor,
   IngredientListsEditor,
@@ -25,7 +25,7 @@ import {
   RecipeDuration,
   RecipeYield
 } from '../components'
-import { api, PlateZeroApiError } from '../common/http'
+import { api, getErrorMessages } from '../common/http'
 import {
   RecipeVersionJSON,
   ProcedureListJSON,
@@ -114,11 +114,7 @@ export default class EditRecipe extends React.Component<Props, State> {
       await api.patchBranch(slug, branch, patch)
       Router.push(`/${this.props.recipeVersion.recipe.owner.username}/${slug}`)
     } catch (e) {
-      if (e instanceof PlateZeroApiError) {
-        this.setState({ errors: e.messages })
-      } else {
-        this.setState({ errors: ['unexpected error, please try again later'] })
-      }
+      this.setState({ errors: getErrorMessages(e) })
     }
   }
 
@@ -142,11 +138,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             </Link>
           </Col>
         </Row>
-        {_.map(this.state.errors, (err, key) => (
-          <Alert key={key} color="danger">
-            {err}
-          </Alert>
-        ))}
+        <AlertErrors errors={this.state.errors} />
         <RecipeYield
           yield={v.recipeYield}
           onChange={recipeYield => this.setState({ recipeYield })}

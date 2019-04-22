@@ -47,6 +47,13 @@ export class PlateZeroApiError extends Error {
   }
 }
 
+export const getErrorMessages = (err: Error): string[] => {
+  if (err instanceof PlateZeroApiError) {
+    return err.messages
+  }
+  return [err.message]
+}
+
 export interface LoginResponse {
   user: UserJSON
   token: string
