@@ -198,7 +198,13 @@ export default class ImportRecipe extends React.Component<
         <Form onSubmit={this.onSubmit}>
           <Row>
             <Col xs="12">
-              <Dropzone onDrop={this.onDrop} />
+              <Dropzone onDrop={this.onDrop}>
+                <div className="text-center font-weight-bold">
+                  Drag and drop any files here
+                </div>
+                <div style={{ lineHeight: '3rem' }}>OR</div>
+                <Button color="primary">Browse to find files</Button>
+              </Dropzone>
             </Col>
           </Row>
           <p className="my-2">Or a URL to a recipe</p>

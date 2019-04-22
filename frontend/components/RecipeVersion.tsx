@@ -4,6 +4,7 @@ import { Row, Col } from 'reactstrap'
 import { Timestamp, humanize } from './Timestamp'
 import { IngredientLists } from './IngredientLists'
 import { ProcedureLists } from './ProcedureLists'
+import { EditableImage } from './EditableImage'
 import { RecipeVersionVitals } from './RecipeVersionVitals'
 import { Markdown } from './Markdown'
 import { RecipeVersionJSON } from '../models/recipe_version'
@@ -42,8 +43,7 @@ export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
       <Row>
         <Col xs="12" md="6" lg="4">
           {v.recipe.image_url && (
-            <img
-              className="w-100 mb-3"
+            <EditableImage
               src={v.recipe.image_url}
               alt={`Picture of ${v.recipe.title}`}
               itemProp="image"

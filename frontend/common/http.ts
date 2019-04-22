@@ -221,6 +221,20 @@ class Api {
       method: 'PATCH',
       body: JSON.stringify(body)
     })
+
+  uploadPublicImage = (
+    body: any,
+    opts: RequestInit = {}
+  ): Promise<{ url: string }> =>
+    fetch(`${API_URL}/user/images`, {
+      ...opts,
+      body,
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...authHeaders(this.token)
+      }
+    }).then(handleError)
 }
 
 export const api = new Api()
