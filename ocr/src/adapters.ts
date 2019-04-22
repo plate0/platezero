@@ -23,7 +23,7 @@ export const description = (s: string): string =>
     .replace(/\r?\n|\r/g, ' ')
     .replace(/\s\s+/g, ' ')
 
-export const ingredients = (s: string): string => s.replace(/^/gm, '* ')
+export const ingredients = (s: string): string => _.trim(s).replace(/^/gm, '* ')
 
 export const procedures = (s: string): string => description(s)
 
