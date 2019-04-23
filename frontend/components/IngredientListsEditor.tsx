@@ -22,7 +22,7 @@ export function IngredientListsEditor(props: Props) {
       initialData={props.lists}
       dataToText={ingredientListsToText}
       textToData={parseIngredientLists}
-      placeholder={`1 clove of garlic -- minced\n1 1/2 c water\nmayonaise (optional)\nsalt and pepper to taste`}
+      placeholder={`1 clove of garlic; minced\n1 1/2 c water\nmayonaise (optional)\nsalt and pepper to taste`}
       preview={lists => <IngredientLists lists={lists} highlight={true} />}
       onChange={props.onChange}
       differ={changesBetween}
@@ -50,8 +50,8 @@ export function IngredientListsEditor(props: Props) {
           </li>
           <li>
             To specify a note or preparation for an ingredient, such as “diced,”
-            separate it from the ingredient name with <code>--</code>. For
-            example: <code>1 clove of garlic -- minced</code>
+            separate it from the ingredient name with <code>;</code>. For
+            example: <code>1 clove of garlic; minced</code>
           </li>
           <li>
             To mark an ingredient as Optional, write <code>(optional)</code> at
@@ -104,8 +104,7 @@ function ingredientLineToText(line: IngredientLineJSON): string {
       [
         amount(line),
         line.unit,
-        line.name,
-        line.preparation ? `-- ${line.preparation}` : undefined,
+        `${line.name}${line.preparation ? '; ' + line.preparation : ''}`,
         line.optional ? OPTIONAL : undefined
       ],
       _.isUndefined
@@ -187,7 +186,7 @@ function parseUnit(text: string): [string, string] {
 }
 
 function parseName(text: string): [string, string] {
-  const [name, ...rest] = _.split(text, '--')
+  const [name, ...rest] = _.split(text, ';')
   if (_.endsWith(name, OPTIONAL)) {
     return [
       _.trim(_.replace(name, OPTIONAL, '')),
