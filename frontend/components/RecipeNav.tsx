@@ -32,7 +32,7 @@ export const RecipeNav = ({
 }) => {
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
   return (
-    <Nav tabs className="mb-3">
+    <Nav tabs className="mb-3 d-print-none">
       <NavItem>
         <Link route={baseURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
