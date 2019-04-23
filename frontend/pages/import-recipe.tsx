@@ -20,83 +20,45 @@ import { RecipeJSON } from '../models'
 import { Link } from '../routes'
 import uuid from 'uuid/v4'
 
-interface ImportRequest {
-  id: string
-  body: File | string
-  done?: boolean
-  success?: boolean
-  recipe?: RecipeJSON
-  errors?: string[]
-}
-
-const errMessages = (err: PlateZeroApiError | Error) => {
-  let messages = []
-  if (err instanceof PlateZeroApiError) {
-    messages = err.messages
-  } else {
-    messages = [err.message]
-  }
-  return messages
-}
-
-const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
-  const name = _.isString(upload.body) ? upload.body : upload.body.name
-  const errors = upload.errors && (
-    <Alert color="danger">{upload.errors.join('\n')}</Alert>
-  )
-  const spinnerOrDone = upload.done ? (
-    upload.errors ? (
-      <i className="ml-2 far fa-exclamation-triangle text-danger" />
-    ) : (
-      <i className="ml-2 far fa-check text-success" />
-    )
-  ) : (
-    <Spinner color="info" className="ml-2" size="sm" />
-  )
-  const file = !_.isString(upload.body) && (
-    <Alert color="success" className="col-12">
-      Upload Success! We will send you an email when your import has finished.
-      This may take a few days.
-    </Alert>
-  )
-  return (
-    <Row className="align-items-center">
-      <Col xs={true} className="text-truncate text-monospace small text-muted">
-        {name}
-      </Col>
-      <Col xs="auto">{spinnerOrDone}</Col>
-      <Col xs="12" md="2">
-        {upload.recipe && upload.recipe.html_url && (
-          <Link route={upload.recipe.html_url}>
-            <a className="btn btn-success btn-block">View</a>
-          </Link>
-        )}
-      </Col>
-      {errors}
-      {upload.success && file}
-    </Row>
-  )
-}
-
-const ImportsStatus = ({ uploads }: { uploads: ImportRequest[] }) => (
-  <>
-    <h3 className="my-3">Import Status</h3>
-    <ListGroup flush>
-      {uploads.map((u, key) => (
-        <ListGroupItem key={key}>
-          <ImportStatus upload={u} />
-        </ListGroupItem>
-      ))}
-    </ListGroup>
-  </>
-)
-
 interface ImportRecipeState {
   url: string
   uploads: {
     [key: string]: ImportRequest
   }
 }
+
+const Source = [
+  {
+    text: 'Write it out',
+    icon: 'pen',
+    color: 'rgb(119, 192, 168)',
+    link: '/recipes/new'
+  },
+  {
+    text: 'From a website',
+    icon: 'globe',
+    color: 'rgb(58, 154, 217)',
+    link: '/recipes/import/url'
+  },
+  {
+    text: 'From a picture',
+    icon: 'images',
+    color: 'rgb(235, 113, 96)',
+    link: '/recipes/import/file'
+  },
+  {
+    text: 'From a PDF/Doc',
+    icon: 'file-pdf',
+    color: 'rgb(222, 77, 78)',
+    link: '/recipes/import/file'
+  },
+  {
+    text: 'Email it',
+    icon: 'envelope',
+    color: 'rgb(110, 158, 207)',
+    link: 'mailto:importer@platezer.com'
+  }
+]
 
 export default class ImportRecipe extends React.Component<
   any,
@@ -110,6 +72,25 @@ export default class ImportRecipe extends React.Component<
     }
     this.onDrop = this.onDrop.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
+  }
+
+  onPaste = () => {
+    navigator.clipboard.readText().then(alert)
+  }
+
+  public onPaste2 = (e: any) => {
+    var clipboardData, pastedData
+
+    // Stop data actually being pasted into div
+    e.stopPropagation()
+    e.preventDefault()
+
+    // Get pasted data via clipboard API
+    clipboardData = e.clipboardData || window.clipboardData
+    pastedData = clipboardData.getData('Text')
+
+    // Do whatever with pasteddata
+    alert(pastedData)
   }
 
   public async onDrop(files: File[]) {
@@ -198,60 +179,61 @@ export default class ImportRecipe extends React.Component<
     return (
       <Layout>
         <Head>
-          <title>Import Recipe</title>
+          <title>Add a new Recipe</title>
         </Head>
         <Row className="mt-5 mb-3">
           <Col xs="12">
-            <h2 className="mb-0">Import a new recipe</h2>
+            <h2 className="mb-0">Add a new Recipe</h2>
             <p className="text-muted">
-              You can upload any type of file or a url.
+              You can easily add a recipe in several ways.
             </p>
           </Col>
         </Row>
-        <Form onSubmit={this.onSubmit}>
-          <Row>
-            <Col xs="12">
-              <Dropzone onDrop={this.onDrop} />
+        <Row>
+          {Source.map(s => (
+            <Col xs="6" md="2" className="my-3">
+              <Link to={s.link}>
+                <a>
+                  <div
+                    className="p-3 text-center d-flex align-items-center flex-column border rounded"
+                    style={{
+                      boxShadow: '0 0 5px rgba(0, 0, 0, 0.1) inset'
+                    }}
+                  >
+                    <i
+                      className={`write fal fa-${s.icon} fa-4x rounded
+          `}
+                      style={{ color: s.color }}
+                    />
+                    <div className="mt-2">{s.text}</div>
+                  </div>
+                </a>
+              </Link>
             </Col>
-          </Row>
-          <p className="my-2">Or a URL to a recipe</p>
-          <div className="d-none d-md-block">
-            <InputGroup>
-              <Input
-                placeholder="Recipe URL to import..."
-                type="text"
-                name="url"
-                id="url"
-                required
-                value={this.state.url}
-                onChange={e => this.setState({ url: e.target.value })}
-              />
-              <InputGroupAddon addonType="append">
-                <Button color="primary" type="submit">
-                  Import recipe
-                </Button>
-              </InputGroupAddon>
-            </InputGroup>
-          </div>
-          <div className="d-md-none">
-            <p>
-              <Input
-                placeholder="Recipe URL to import..."
-                type="text"
-                name="url"
-                id="url"
-                required
-                value={this.state.url}
-                onChange={e => this.setState({ url: e.target.value })}
-              />
-            </p>
-            <Button color="primary" block type="submit">
-              Import recipe
-            </Button>
-          </div>
-        </Form>
-        {uploads.length > 0 && <ImportsStatus uploads={uploads} />}
-        <div className="mb-5" />
+          ))}
+        </Row>
+        <style jsx>
+          {`
+            .import {
+              height: 200px;
+              background-color: rgb(248, 249, 250);
+              border: 1px solid rgb(222, 226, 230);
+              border-radius: 0.25rem;
+              align-items: center;
+              justify-content: center;
+              display: flex;
+              flex-direction: column;
+            }
+
+            a {
+              color: #212529;
+            }
+
+            a:hover {
+              text-decoration: none;
+            }
+          `}
+        </style>
       </Layout>
     )
   }
