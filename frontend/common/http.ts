@@ -37,12 +37,16 @@ const handleError = async (res: Response): Promise<any> => {
   if (res.status >= 200 && res.status < 400) {
     return res.json()
   }
-  const messages = (await res.json()).errors
-  throw new PlateZeroApiError(messages, res.status)
+  const messages = (await res.clone().json()).errors
+  throw new PlateZeroApiError(res.clone(), messages, res.status)
 }
 
 export class PlateZeroApiError extends Error {
-  constructor(readonly messages: string[], readonly statusCode: number) {
+  constructor(
+    readonly res: Response,
+    readonly messages: string[],
+    readonly statusCode: number
+  ) {
     super('API error')
   }
 }

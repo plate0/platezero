@@ -1,31 +1,9 @@
 import React from 'react'
-import {
-  Row,
-  Alert,
-  Col,
-  Spinner,
-  ListGroup,
-  ListGroupItem,
-  Button,
-  Form,
-  Input,
-  InputGroup,
-  InputGroupAddon
-} from 'reactstrap'
+import { Row, Col } from 'reactstrap'
 import Head from 'next/head'
-import { Dropzone, Layout } from '../components'
+import { Layout } from '../components'
 import * as _ from 'lodash'
-import { api, PlateZeroApiError } from '../common'
-import { RecipeJSON } from '../models'
 import { Link } from '../routes'
-import uuid from 'uuid/v4'
-
-interface ImportRecipeState {
-  url: string
-  uploads: {
-    [key: string]: ImportRequest
-  }
-}
 
 const Source = [
   {
@@ -60,122 +38,8 @@ const Source = [
   }
 ]
 
-export default class ImportRecipe extends React.Component<
-  any,
-  ImportRecipeState
-> {
-  constructor(props: any) {
-    super(props)
-    this.state = {
-      uploads: {},
-      url: ''
-    }
-    this.onDrop = this.onDrop.bind(this)
-    this.onSubmit = this.onSubmit.bind(this)
-  }
-
-  onPaste = () => {
-    navigator.clipboard.readText().then(alert)
-  }
-
-  public onPaste2 = (e: any) => {
-    var clipboardData, pastedData
-
-    // Stop data actually being pasted into div
-    e.stopPropagation()
-    e.preventDefault()
-
-    // Get pasted data via clipboard API
-    clipboardData = e.clipboardData || window.clipboardData
-    pastedData = clipboardData.getData('Text')
-
-    // Do whatever with pasteddata
-    alert(pastedData)
-  }
-
-  public async onDrop(files: File[]) {
-    const formData = new FormData()
-    files.forEach(f => formData.append('file', f, f.name))
-    const uploads = _.keyBy(
-      _.map(files, body => ({
-        id: uuid(),
-        body
-      })),
-      'id'
-    )
-    this.setState(s => ({
-      ...s,
-      uploads: {
-        ...s.uploads,
-        ...uploads
-      }
-    }))
-
-    try {
-      await api.importFiles(formData)
-      this.setState(s => ({
-        ...s,
-        uploads: {
-          ...s.uploads,
-          ..._.mapValues(uploads, u => ({
-            ...u,
-            ...{ success: true, done: true }
-          }))
-        }
-      }))
-    } catch (err) {
-      this.setState(s => ({
-        ...s,
-        uploads: {
-          ...s.uploads,
-          ..._.mapValues(uploads, u => ({
-            ...u,
-            ...{ success: false, done: true, errors: errMessages(err) }
-          }))
-        }
-      }))
-    }
-  }
-
-  public async onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const { url } = this.state
-    const upload = { body: url, id: uuid() }
-    this.setState(s => ({
-      url: '',
-      uploads: {
-        ...s.uploads,
-        [upload.id]: upload
-      }
-    }))
-    try {
-      const recipe = await api.importUrl(url)
-      this.setState(s => ({
-        ...s,
-        uploads: {
-          ...s.uploads,
-          [upload.id]: {
-            ...s.uploads[upload.id],
-            ...{ success: true, done: true, recipe }
-          }
-        }
-      }))
-    } catch (err) {
-      this.setState(s => ({
-        ...s,
-        uploads: {
-          ...s.uploads,
-          [upload.id]: {
-            ...s.uploads[upload.id],
-            ...{ success: false, done: true, errors: errMessages(err) }
-          }
-        }
-      }))
-    }
-  }
-
+export default class ImportRecipe extends React.Component {
   public render() {
-    const uploads = _.values(this.state.uploads)
     return (
       <Layout>
         <Head>
@@ -190,8 +54,8 @@ export default class ImportRecipe extends React.Component<
           </Col>
         </Row>
         <Row>
-          {Source.map(s => (
-            <Col xs="6" md="2" className="my-3">
+          {Source.map((s, key) => (
+            <Col xs="6" md="2" className="my-3" key={key}>
               <Link to={s.link}>
                 <a>
                   <div

@@ -12,6 +12,7 @@ import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
+import { Tooltip } from './Tooltip'
 
 export const Navbar = () => {
   const { user } = useContext(UserContext)
@@ -51,9 +52,16 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
 
 const NewRecipeDropdown = () => (
   <UncontrolledDropdown>
-    <DropdownToggle caret className="add-recipe text-white" color="link">
-      <i className="fal fa-plus" />
-    </DropdownToggle>
+    <Tooltip text="Add a new recipe" id="add-recipe">
+      <DropdownToggle
+        caret
+        className="add-recipe text-white"
+        color="link"
+        id="add-recipe"
+      >
+        <i className="fal fa-plus" />
+      </DropdownToggle>
+    </Tooltip>
     <DropdownMenu right>
       <Link route="/recipes/new">
         <a className="dropdown-item text-dark" role="menuitem">
