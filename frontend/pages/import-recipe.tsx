@@ -10,31 +10,31 @@ const Source = [
     text: 'Write it out',
     icon: 'pen',
     color: 'rgb(119, 192, 168)',
-    link: '/recipes/new'
+    link: '/recipes/new/text'
   },
   {
     text: 'From a website',
     icon: 'globe',
     color: 'rgb(58, 154, 217)',
-    link: '/recipes/import/url'
+    link: '/recipes/new/url'
   },
   {
     text: 'From a picture',
     icon: 'images',
     color: 'rgb(235, 113, 96)',
-    link: '/recipes/import/file'
+    link: '/recipes/new/file?type=image'
   },
   {
     text: 'From a PDF/Doc',
     icon: 'file-pdf',
     color: 'rgb(222, 77, 78)',
-    link: '/recipes/import/file'
+    link: '/recipes/new/file?type=doc'
   },
   {
     text: 'Email it',
     icon: 'envelope',
     color: 'rgb(110, 158, 207)',
-    link: 'mailto:importer@platezer.com'
+    link: 'mailto:importer@platezero.com'
   }
 ]
 

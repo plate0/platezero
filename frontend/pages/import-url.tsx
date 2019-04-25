@@ -12,6 +12,7 @@ import {
   Spinner
 } from 'reactstrap'
 import Head from 'next/head'
+import { Link } from '../routes'
 import {
   Layout,
   IngredientListsEditor,
@@ -62,7 +63,12 @@ const LoadIngredients = ({ disabled, src, onChange, onSubmit }) => {
         <Alert color="danger">
           Sorry, the importer could not find the ingredients.
         </Alert>
-        <iframe src={src} className="w-100" style={{ height: '50vh' }} />
+        <iframe
+          src={src}
+          className="w-100"
+          style={{ height: '50vh' }}
+          onLoad={() => console.log('on load')}
+        />
       </Col>
       <Col xs="12">
         <h2>Oops, that didn&rsquo;t quite work.</h2>
@@ -191,7 +197,17 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
   public render() {
     let inner = <Loading />
     if (!this.state.url) {
-      inner = <UrlForm onSubmit={this.onUrl} />
+      inner = (
+        <>
+          <UrlForm onSubmit={this.onUrl} />
+          <Link to="/recipes/new">
+            <a className="btn btn-link text-dark mt-3">
+              <i className="far fa-chevron-double-left mr-2" />
+              Cancel and go back
+            </a>
+          </Link>
+        </>
+      )
     }
     if (this.state.recipe && size(this.state.recipe.ingredient_lists) == 0) {
       inner = (

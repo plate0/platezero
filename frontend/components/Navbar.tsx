@@ -1,13 +1,5 @@
 import React, { useContext } from 'react'
-import {
-  Nav,
-  NavItem,
-  Container,
-  Navbar as RsNavbar,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu
-} from 'reactstrap'
+import { Nav, NavItem, Container, Navbar as RsNavbar } from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { Link } from '../routes'
@@ -51,30 +43,13 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
 )
 
 const NewRecipeDropdown = () => (
-  <UncontrolledDropdown>
-    <Tooltip text="Add a new recipe" id="add-recipe">
-      <DropdownToggle
-        caret
-        className="add-recipe text-white"
-        color="link"
-        id="add-recipe"
-      >
+  <Tooltip text="Add a new recipe" id="add-recipe">
+    <Link to="/recipes/new">
+      <a className="add-recipe text-white btn btn-link" id="add-recipe">
         <i className="fal fa-plus" />
-      </DropdownToggle>
-    </Tooltip>
-    <DropdownMenu right>
-      <Link route="/recipes/new">
-        <a className="dropdown-item text-dark" role="menuitem">
-          New recipe
-        </a>
-      </Link>
-      <Link route="/recipes/import">
-        <a className="dropdown-item text-dark" role="menuitem">
-          Import recipe
-        </a>
-      </Link>
-    </DropdownMenu>
-  </UncontrolledDropdown>
+      </a>
+    </Link>
+  </Tooltip>
 )
 
 const AnonNav = () => (
