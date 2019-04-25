@@ -1,12 +1,13 @@
 import * as express from 'express'
 import * as Importers from '../importer'
 import { AuthenticatedRequest } from './user'
-import { Recipe } from '../../models/recipe'
 import { internalServerError } from '../errors'
+import { Recipe } from '../../models/recipe'
 import { S3 } from 'aws-sdk'
 import fetch from 'node-fetch'
 import { HttpStatus } from '../../common/http-status'
 import { config } from '../config'
+import { size } from 'lodash'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const s3 = new S3()
@@ -19,9 +20,18 @@ r.post('/url', async (req: AuthenticatedRequest, res) => {
     const importer = Importers.url(req.body.url)
     const recipe = await importer(req.body.url)
     recipe.source_url = req.body.url
+    // TODO: if any issues, make github issue/slack
+    const status =
+      size(recipe.ingredient_lists) == 0 || size(recipe.procedure_lists) == 0
+        ? HttpStatus.UnprocessableEntity
+        : HttpStatus.Created
     return res
-      .status(HttpStatus.Created)
-      .json(await Recipe.createNewRecipe(req.user.userId, recipe))
+      .status(status)
+      .json(
+        status === HttpStatus.Created
+          ? await Recipe.createNewRecipe(req.user.userId, recipe)
+          : recipe
+      )
   } catch (err) {
     return internalServerError(res, err)
   }
