@@ -15,3 +15,4 @@ export const routes: any = nextroutes()
 // Easy Access, usage:
 // import { Link } from '../routes'
 export const Link = routes.Link
+export const Router = routes.Router

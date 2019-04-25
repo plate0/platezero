@@ -1,107 +1,73 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Card, CardBody } from 'reactstrap'
-import * as _ from 'lodash'
+import React from 'react'
 
-import { IngredientListJSON } from '../models'
-import { IngredientList } from './IngredientList'
-import { ActionLine } from './ActionLine'
+import { IngredientListJSON, IngredientLineJSON } from '../models'
 import { Amount } from './Amount'
-import {
-  jsonToUI,
-  uiToJSON,
-  generateUITrackable,
-  removeItem,
-  restoreItem,
-  replaceItem
-} from '../common/changes'
 
-const newIngredientList = generateUITrackable({
-  name: '',
-  lines: []
-})
-
-interface Props {
-  lists: IngredientListJSON[]
-  onChange?: (lists: IngredientListJSON[]) => void
-}
-
-export function IngredientLists(props: Props) {
-  const [lists, setLists] = useState(jsonToUI(props.lists))
-
-  useEffect(() => {
-    if (_.isFunction(props.onChange)) {
-      props.onChange(uiToJSON(lists))
-    }
-  }, [lists])
-
-  const act = list => () => {
-    const f = list.removed ? restoreItem : removeItem
-    setLists(f(lists, list.id))
-  }
-  const addBtn = (
-    <p>
-      <Button
-        color="secondary"
-        size="sm"
-        onClick={() => setLists([...lists, newIngredientList.next().value])}
-      >
-        Add Ingredient Section
-      </Button>
-    </p>
-  )
-  if (_.size(lists) === 1) {
-    const list = _.head(lists)
-    return (
-      <>
-        <IngredientList
-          ingredientList={list.json}
-          onChange={newList => setLists(replaceItem(lists, list.id, newList))}
-        />
-        {addBtn}
-      </>
+const IngredientListLine = ({
+  line,
+  highlight
+}: {
+  line: IngredientLineJSON
+  highlight: boolean
+}) => {
+  const parts = []
+  if (line.quantity_numerator && line.quantity_denominator) {
+    parts.push(
+      <Amount
+        className={highlight ? 'text-success' : ''}
+        numerator={line.quantity_numerator}
+        denominator={line.quantity_denominator}
+      />
     )
   }
-
+  if (line.unit) {
+    parts.push(
+      <span className={highlight ? 'text-success' : ''}>{line.unit}</span>
+    )
+  }
+  parts.push(<>{line.name}</>)
+  if (line.preparation) {
+    parts.push(<span className="text-secondary">{line.preparation}</span>)
+  }
+  if (line.optional) {
+    parts.push(<span className="badge badge-info">Optional</span>)
+  }
   return (
-    <>
-      {lists.map(list => (
-        <ActionLine
-          icon={`fal fa-${list.removed ? 'undo' : 'times'}`}
-          onAction={act(list)}
-          key={list.id}
-        >
-          {list.removed ? (
-            <RemovedIngredientList list={list.json} />
-          ) : (
-            <IngredientList
-              ingredientList={list.json}
-              oneOfMany={true}
-              onChange={newList =>
-                setLists(replaceItem(lists, list.id, newList))
-              }
-            />
-          )}
-        </ActionLine>
+    <li className="mb-2" itemProp="recipeIngredient">
+      {parts.map((part, key) => (
+        <span key={key}>{part} </span>
       ))}
-      {addBtn}
-    </>
+    </li>
   )
 }
 
-function RemovedIngredientList(props: { list: IngredientListJSON }) {
-  return (
-    <Card className="mb-3">
-      <CardBody>
-        {props.list.lines.map((line, key) => (
-          <p key={key} className="text-muted text-strike">
-            <Amount
-              numerator={line.quantity_numerator}
-              denominator={line.quantity_denominator}
-            />{' '}
-            {line.unit} {line.name}
-          </p>
-        ))}
-      </CardBody>
-    </Card>
-  )
-}
+const IngredientList = ({
+  list,
+  highlight
+}: {
+  list: IngredientListJSON
+  highlight: boolean
+}) => (
+  <>
+    {list.name && <p className="font-weight-bold border-bottom">{list.name}</p>}
+    <ul className="list-unstyled">
+      {list.lines.map((line, key) => (
+        <IngredientListLine key={key} line={line} highlight={highlight} />
+      ))}
+    </ul>
+  </>
+)
+
+export const IngredientLists = ({
+  lists,
+  highlight
+}: {
+  lists: IngredientListJSON[]
+  highlight?: boolean
+}) => (
+  <>
+    {lists.map((list, key) => (
+      <IngredientList list={list} key={key} highlight={!!highlight} />
+    ))}
+  </>
+)

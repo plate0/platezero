@@ -17,13 +17,11 @@ import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 import { RefreshToken } from './refresh_token'
 import { Recipe, RecipeJSON } from './recipe'
-import { getConfig } from '../server/config'
-
-const cfg = getConfig()
+import { config } from '../server/config'
 
 export interface UserJSON {
   avatar_url: string
-  email: string
+  email?: string
   id: number
   name: string
   recipes?: RecipeJSON[]
@@ -53,7 +51,13 @@ export class User extends Model<User> implements UserJSON {
   @Unique
   @IsEmail
   @Column
-  public email: string
+  public set email(value: string) {
+    this.setDataValue('email', value)
+  }
+
+  public get email() {
+    return undefined
+  }
 
   @Column
   public set password_hash(value: string) {
@@ -69,7 +73,7 @@ export class User extends Model<User> implements UserJSON {
     const dv = this.getDataValue('avatar_url')
     if (!dv) {
       const emailHash = crypto.createHash('md5')
-      emailHash.update(this.email.toLowerCase())
+      emailHash.update(this.getDataValue('email').toLowerCase())
       const hex = emailHash.digest('hex')
       return `https://www.gravatar.com/avatar/${hex}`
     }
@@ -98,27 +102,27 @@ export class User extends Model<User> implements UserJSON {
 
   @Column(DataType.VIRTUAL)
   public get url(): string {
-    return `${cfg.apiUrl}/users/${this.username}`
+    return `${config.apiUrl}/users/${this.username}`
   }
 
   @Column(DataType.VIRTUAL)
   public get html_url(): string {
-    return `${cfg.siteUrl}/${this.username}`
+    return `${config.siteUrl}/${this.username}`
   }
 
   @Column(DataType.VIRTUAL)
   public get recipes_url(): string {
-    return `${cfg.apiUrl}/users/${this.username}/recipes`
+    return `${config.apiUrl}/users/${this.username}/recipes`
   }
 
   @Column(DataType.VIRTUAL)
   public get recipes_html_url(): string {
-    return `${cfg.siteUrl}/${this.username}/recipes`
+    return `${config.siteUrl}/${this.username}/recipes`
   }
 
   public async setPassword(newPassword: string) {
     return new Promise((resolve, reject) => {
-      bcrypt.hash(newPassword, cfg.bcryptRounds, (err, hash) => {
+      bcrypt.hash(newPassword, config.bcryptRounds, (err, hash) => {
         if (err) {
           return reject(err)
         }
@@ -147,7 +151,7 @@ export class User extends Model<User> implements UserJSON {
     return new Promise((resolve, reject) => {
       jwt.sign(
         { userId: this.id, username: this.username },
-        cfg.jwtSecret,
+        config.jwtSecret,
         { expiresIn: '1d' },
         (err, token) => {
           if (err) {
@@ -156,6 +160,16 @@ export class User extends Model<User> implements UserJSON {
           return resolve(token)
         }
       )
+    })
+  }
+
+  public static async findByUsername(username: string): Promise<User> {
+    if (_.isUndefined(username)) {
+      throw new Error('username is undefined')
+    }
+    const { where, fn, col } = User.sequelize
+    return User.findOne({
+      where: where(fn('lower', col('username')), username.toLowerCase())
     })
   }
 }

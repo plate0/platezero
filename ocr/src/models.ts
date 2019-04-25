@@ -3,8 +3,8 @@ export const RecipeParts = [
   { name: 'Subtitle', val: 'subtitle', key: 's' },
   { name: 'Description', val: 'description', key: 'd' },
   { name: 'Ingredients', val: 'ingredients', key: 'i' },
-  { name: 'Procudure', val: 'procedure', key: 'o' },
-  { name: 'Yield', val: 'yield', key: 'y' },
+  { name: 'Procudure', val: 'procedures', key: 'o' },
+  { name: 'Yield', val: 'yld', key: 'y' },
   { name: 'Duration', val: 'duration', key: 'u' }
 ]
 
@@ -56,7 +56,7 @@ export interface MarkdownRecipe {
   subtitle?: string
   description?: string
   yld?: string
-  duration?: number
+  duration?: string
   preheats?: string
   ingredients: string
   procedures: string

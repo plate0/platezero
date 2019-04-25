@@ -26,7 +26,13 @@ const acceptStyle = {
   borderColor: '#00e676'
 }
 
-export const Dropzone = ({ onDrop }: { onDrop: Function }) => {
+export const Dropzone = ({
+  onDrop,
+  children
+}: {
+  onDrop: Function
+  children: any
+}) => {
   const cb = useCallback(files => {
     onDrop(files)
   }, [])
@@ -49,8 +55,7 @@ export const Dropzone = ({ onDrop }: { onDrop: Function }) => {
   return (
     <div {...getRootProps({ style })}>
       <input {...getInputProps()} className="bg-light" />
-      <p className="m-0 text-center">Drag and drop any files here.</p>
-      <p className="m-0 text-center">Or click to select a file.</p>
+      {children}
     </div>
   )
 }

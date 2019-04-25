@@ -4,7 +4,7 @@ import { Canvas } from './Canvas'
 import { Recipe } from './Recipe'
 import { Navbar } from './Navbar'
 import { Config, RecipePath } from './Config'
-import { Container, Row, Col } from 'reactstrap'
+import { Container, Row, Col, Modal } from 'reactstrap'
 import { ocr } from './google'
 import * as adapters from './adapters'
 import { RecipeParts, MarkdownRecipe } from './models'
@@ -14,15 +14,18 @@ import { parse } from 'path'
 import { create } from './create'
 import { writeFileSync } from 'fs'
 import { toMarkdown } from './markdown'
-import { download, convert } from './utils'
+import { archive, download, convert } from './utils'
 import log from 'electron-log'
+import { ipcRenderer } from 'electron'
 const app = require('electron').remote.app
 
 interface AppState {
   recipe: MarkdownRecipe
   active: string
   recipePath?: string
+  recipeKey?: string
   userId?: number
+  modal: boolean
 }
 
 export class App extends React.Component<any, AppState> {
@@ -37,6 +40,8 @@ export class App extends React.Component<any, AppState> {
     this.saveToJSON = this.saveToJSON.bind(this)
     this.next = this.next.bind(this)
     this.previous = this.previous.bind(this)
+    this.loadImage = this.loadImage.bind(this)
+    this.finished = this.finished.bind(this)
     this.state = {
       recipe: {
         title: '',
@@ -45,10 +50,14 @@ export class App extends React.Component<any, AppState> {
         ingredients: '',
         procedures: '',
         yld: '',
-        duration: 0
+        duration: ''
       },
-      active: 'title'
+      active: 'title',
+      modal: false
     }
+
+    ipcRenderer.on('load-image', this.loadImage)
+    ipcRenderer.on('finished', this.finished)
   }
 
   public componentDidMount() {
@@ -68,6 +77,31 @@ export class App extends React.Component<any, AppState> {
     )
     Mousetrap.bind('command+n', this.next)
     Mousetrap.bind('command+p', this.previous)
+  }
+
+  public loadImage() {
+    this.setState({
+      modal: true
+    })
+  }
+
+  public finished() {
+    this.setState({
+      recipe: {
+        title: '',
+        subtitle: '',
+        description: '',
+        ingredients: '',
+        procedures: '',
+        yld: '',
+        duration: ''
+      },
+      active: 'title',
+      modal: false,
+      recipePath: undefined,
+      recipeKey: undefined,
+      userId: undefined
+    })
   }
 
   public shortcut(key: string) {
@@ -107,8 +141,10 @@ export class App extends React.Component<any, AppState> {
     const recipePath = await convert(folder, base)
     log.info('converted', recipePath)
     this.setState({
+      recipeKey: r.key,
       recipePath,
-      userId: r.userId
+      userId: r.userId,
+      modal: false
     })
   }
 
@@ -172,8 +208,15 @@ export class App extends React.Component<any, AppState> {
   public async onSubmit(recipe: MarkdownRecipe) {
     const json = this.transcribe(recipe)
     try {
-      const created = await create(5, json)
-      console.log('DONE!!!!!!!!!!', created)
+      const { userId } = this.state
+      if (!userId) {
+        throw new Error('No UserID Found to create recipe!')
+      }
+      const created = await create(userId, json)
+      log.info('Saved Recipe', created)
+      if (this.state.recipeKey) {
+        await archive(this.state.recipeKey)
+      }
       this.setState({
         active: 'title',
         recipe: {
@@ -183,8 +226,10 @@ export class App extends React.Component<any, AppState> {
           ingredients: '',
           procedures: '',
           yld: '',
-          duration: 0
-        }
+          duration: ''
+        },
+        recipePath: undefined,
+        recipeKey: undefined
       })
     } catch (err) {
       alert(err)
@@ -218,6 +263,16 @@ export class App extends React.Component<any, AppState> {
             />
           </Col>
         </Row>
+        <Modal
+          isOpen={this.state.modal}
+          toggle={() => {
+            this.setState(s => ({
+              modal: !s.modal
+            }))
+          }}
+        >
+          <Config onSelect={this.onSelectRecipe} />
+        </Modal>
       </div>
     )
   }

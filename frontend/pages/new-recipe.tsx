@@ -1,9 +1,8 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
-import { api, PlateZeroApiError } from '../common'
+import { api, getErrorMessages } from '../common'
 import {
-  Alert,
   Button,
   Col,
   Form,
@@ -22,11 +21,12 @@ import {
 } from '../models'
 import { PostRecipe } from '../common/request-models'
 import {
+  AlertErrors,
   Layout,
   NewRecipeTitle,
-  IngredientLists,
-  ProcedureLists,
-  Preheats,
+  IngredientListsEditor,
+  ProcedureListsEditor,
+  PreheatsEditor,
   RecipeYield,
   RecipeDuration
 } from '../components'
@@ -96,9 +96,7 @@ export default class NewRecipe extends React.Component<any, State> {
       const res = await api.createRecipe(recipe)
       Router.push(res.html_url)
     } catch (err) {
-      if (err instanceof PlateZeroApiError) {
-        this.setState({ errors: err.messages })
-      }
+      this.setState({ errors: getErrorMessages(err) })
     }
   }
 
@@ -111,11 +109,7 @@ export default class NewRecipe extends React.Component<any, State> {
           <title>Create New Recipe on PlateZero</title>
         </Head>
         <Form onSubmit={this.create} className="mt-3 pb-5">
-          {this.state.errors.map((err, key) => (
-            <Alert key={key} color="danger">
-              {err}
-            </Alert>
-          ))}
+          <AlertErrors errors={this.state.errors} />
           <Row>
             <Col xs="12">
               <NewRecipeTitle
@@ -181,17 +175,17 @@ export default class NewRecipe extends React.Component<any, State> {
             onChange={recipeDuration => this.setState({ recipeDuration })}
           />
           <h2>Preheats</h2>
-          <Preheats
+          <PreheatsEditor
             preheats={[]}
             onChange={preheats => this.setState({ preheats })}
           />
           <h2>Ingredients</h2>
-          <IngredientLists
+          <IngredientListsEditor
             lists={[defaultIngredientList]}
             onChange={ingredientLists => this.setState({ ingredientLists })}
           />
           <h2 className="my-3">Steps</h2>
-          <ProcedureLists
+          <ProcedureListsEditor
             lists={[defaultProcedureList]}
             onChange={procedureLists => this.setState({ procedureLists })}
           />

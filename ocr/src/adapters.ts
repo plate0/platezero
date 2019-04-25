@@ -23,9 +23,9 @@ export const description = (s: string): string =>
     .replace(/\r?\n|\r/g, ' ')
     .replace(/\s\s+/g, ' ')
 
-export const ingredients = (s: string): string => s.replace(/^/gm, '* ')
+export const ingredients = (s: string): string => _.trim(s).replace(/^/gm, '* ')
 
-export const procedure = (s: string): string => description(s)
+export const procedures = (s: string): string => description(s)
 
 export const yld = (s: string): string => title(s)
 export { yld as yield }

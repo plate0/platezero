@@ -11,7 +11,7 @@ const r = express.Router()
 
 const isUniqueUsernameError = (err: any) =>
   'unique violation' === _.get(err, 'errors[0].type', '') &&
-  'username' === _.get(err, 'errors[0].path', '')
+  'lower(username::text)' === _.get(err, 'errors[0].path', '')
 
 const isUniqueEmailError = (err: any) =>
   'unique violation' === _.get(err, 'errors[0].type', '') &&
@@ -56,7 +56,7 @@ r.use(
   async (req, res, next) => {
     const { username } = req.params
     try {
-      const user = await User.findOne({ where: { username } })
+      const user = await User.findByUsername(username)
       if (!user) {
         return notFound(res)
       }

@@ -1,7 +1,7 @@
 import React from 'react'
+import ErrorPage from './_error'
 import { Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
-import * as ReactMarkdown from 'react-markdown'
 
 import {
   Head,
@@ -9,7 +9,8 @@ import {
   RecipeTitle,
   RecipeNav,
   Timestamp,
-  ProfilePicture
+  ProfilePicture,
+  Markdown
 } from '../components'
 import { RecipeJSON, RecipeVersionJSON } from '../models'
 import { api } from '../common/http'
@@ -17,20 +18,32 @@ import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
 
 interface Props {
-  recipe: RecipeJSON
-  versions: RecipeVersionJSON[]
+  recipe?: RecipeJSON
+  versions?: RecipeVersionJSON[]
   pathname: string
+  statusCode?: number
 }
 
 export default class RecipeHistory extends React.Component<Props> {
-  static async getInitialProps({ pathname, query }): Promise<Props> {
-    const recipe = await api.getRecipe(query.username, query.slug)
-    const versions = await api.getRecipeVersions(query.username, query.slug)
-    return { recipe, versions, pathname }
+  static async getInitialProps({ pathname, query, res }): Promise<Props> {
+    try {
+      const recipe = await api.getRecipe(query.username, query.slug)
+      const versions = await api.getRecipeVersions(query.username, query.slug)
+      return { recipe, versions, pathname }
+    } catch (err) {
+      const statusCode = err.statusCode || 500
+      if (res) {
+        res.statusCode = statusCode
+      }
+      return { pathname, statusCode }
+    }
   }
 
   public render() {
-    const { recipe } = this.props
+    const { recipe, statusCode } = this.props
+    if (statusCode) {
+      return <ErrorPage statusCode={statusCode} />
+    }
     return (
       <Layout>
         <Head
@@ -71,7 +84,7 @@ export default class RecipeHistory extends React.Component<Props> {
                     </div>
                     {rest && (
                       <div className="text-secondary small">
-                        <ReactMarkdown source={rest} />
+                        <Markdown source={rest} />
                       </div>
                     )}
                   </Col>

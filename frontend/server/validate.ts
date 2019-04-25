@@ -118,5 +118,8 @@ export const validateRecipeVersionPatch = validator({
 export const validateRecipePatch = validator({
   title: Joi.string(),
   subtitle: Joi.string().allow(''),
-  description: Joi.string().allow('')
+  description: Joi.string().allow(''),
+  image_url: Joi.string()
+    .uri()
+    .allow(null)
 })

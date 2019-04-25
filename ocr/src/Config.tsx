@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { S3 } from 'aws-sdk'
 import { toNumber, map } from 'lodash'
-import { ListGroup, ListGroupItem } from 'reactstrap'
+import { Row, Col, Button, ListGroup, ListGroupItem } from 'reactstrap'
+import { archive } from './utils'
 const s3 = new S3()
 
 export interface RecipePath {
@@ -25,6 +26,34 @@ const parse = (key: string): RecipePath => {
   }
 }
 
+const ConfigItem = ({
+  r,
+  onArchive,
+  onSelect
+}: {
+  r: RecipePath
+  onArchive: any
+  onSelect: any
+}) => (
+  <ListGroupItem href="#" tag="a" action onClick={() => onSelect(r)}>
+    <Row>
+      <Col xs="11">{r.key}</Col>
+      <Col xs="1">
+        <Button
+          color="danger"
+          onClick={(e: any) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onArchive(r.key)
+          }}
+        >
+          Archive
+        </Button>
+      </Col>
+    </Row>
+  </ListGroupItem>
+)
+
 interface ConfigState {
   objects: RecipePath[]
 }
@@ -39,32 +68,39 @@ export class Config extends React.Component<ConfigProps, ConfigState> {
     this.state = {
       objects: []
     }
+    this.onArchive = this.onArchive.bind(this)
   }
 
   public async componentDidMount() {
+    this.refresh()
+  }
+
+  public async onArchive(key: string) {
+    await archive(key)
+    this.refresh()
+  }
+
+  public async refresh() {
     this.setState({
       objects: (await list()).map(parse)
     })
   }
 
   public render() {
-    console.log(this.state.objects)
     const { objects } = this.state
     return (
       <div>
         <h1 className="my-3 font-weight-light">
           {objects.length} Recipes to OCR
         </h1>
-        <ListGroup flush>
+        <ListGroup flush style={{ maxHeight: 900, overflow: 'scroll' }}>
           {objects.map(o => (
-            <ListGroupItem
+            <ConfigItem
+              r={o}
               key={o.key}
-              tag="button"
-              action
-              onClick={() => this.props.onSelect(o)}
-            >
-              {o.key}
-            </ListGroupItem>
+              onSelect={this.props.onSelect}
+              onArchive={this.onArchive}
+            />
           ))}
         </ListGroup>
       </div>

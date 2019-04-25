@@ -27,10 +27,8 @@ import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { ProcedureList } from './procedure_list'
 import { IngredientList } from './ingredient_list'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
-import { getConfig } from '../server/config'
+import { config } from '../server/config'
 import { toSlug } from '../common/slug'
-
-const cfg = getConfig()
 
 export interface RecipeJSON {
   id?: number
@@ -122,12 +120,12 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
 
   @Column(DataType.VIRTUAL)
   public get url(): string {
-    return `${cfg.apiUrl}/users/${this.owner.username}/recipes/${this.slug}`
+    return `${config.apiUrl}/users/${this.owner.username}/recipes/${this.slug}`
   }
 
   @Column(DataType.VIRTUAL)
   public get html_url(): string {
-    return `${cfg.siteUrl}/${this.owner.username}/${this.slug}`
+    return `${config.siteUrl}/${this.owner.username}/${this.slug}`
   }
 
   private static async createWithSlug(

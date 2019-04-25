@@ -4,6 +4,7 @@ import * as parseUrl from 'url-parse'
 
 import { RecipeVersionJSON, RecipeJSON } from '../models'
 import { toHoursAndMinutes } from '../common/time'
+import { Preheat } from './Preheats'
 
 interface Props {
   recipeVersion: RecipeVersionJSON
@@ -29,11 +30,7 @@ export const RecipeVersionVitals = (props: Props) => {
 }
 
 const preheats = (rv: RecipeVersionJSON) =>
-  _.map(rv.preheats, ph => (
-    <span className="text-danger">
-      {ph.name} {ph.temperature} {ph.unit}
-    </span>
-  ))
+  _.map(rv.preheats, preheat => <Preheat preheat={preheat} />)
 
 const formatDuration = (seconds: number) => {
   const { h, m } = toHoursAndMinutes(seconds)
@@ -50,7 +47,11 @@ const duration = (rv: RecipeVersionJSON) => {
   if (!d) {
     return []
   }
-  return <>Takes {formatDuration(d)}</>
+  return (
+    <time itemProp="cookTime" dateTime={`PT${d}S`}>
+      Takes {formatDuration(d)}
+    </time>
+  )
 }
 
 const recipeYield = (rv: RecipeVersionJSON) => {
@@ -58,7 +59,11 @@ const recipeYield = (rv: RecipeVersionJSON) => {
   if (!y) {
     return []
   }
-  return <>Yields {y}</>
+  return (
+    <>
+      Yields <span itemProp="recipeYield">{y}</span>
+    </>
+  )
 }
 
 const source = (rv: RecipeVersionJSON) => {
@@ -68,12 +73,11 @@ const source = (rv: RecipeVersionJSON) => {
   }
   const link = getLink(rv.recipe)
   const src = link ? (
-    <a href={link} target="_blank">
-      {' '}
-      {work}{' '}
+    <a href={link} target="_blank" itemProp="isBasedOn">
+      {work}
     </a>
   ) : (
-    work
+    <span itemProp="isBasedOn">{work}</span>
   )
   return <>Adapted from {src}</>
 }

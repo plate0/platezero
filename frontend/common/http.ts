@@ -38,16 +38,20 @@ const handleError = async (res: Response): Promise<any> => {
     return res.json()
   }
   const messages = (await res.json()).errors
-  throw new PlateZeroApiError(messages)
+  throw new PlateZeroApiError(messages, res.status)
 }
 
 export class PlateZeroApiError extends Error {
-  public messages: string[] = []
-
-  constructor(messages: string[]) {
+  constructor(readonly messages: string[], readonly statusCode: number) {
     super('API error')
-    this.messages = messages
   }
+}
+
+export const getErrorMessages = (err: Error): string[] => {
+  if (err instanceof PlateZeroApiError) {
+    return err.messages
+  }
+  return [err.message]
 }
 
 export interface LoginResponse {
@@ -131,8 +135,14 @@ class Api {
   getUser = (username: string, opts: RequestInit = {}) =>
     this._fetch<UserJSON>(`/users/${username}`, opts)
 
-  getUserRecipes = (username: string, opts: RequestInit = {}) =>
-    this._fetch(`/users/${username}/recipes`, opts)
+  getUserRecipes = (
+    username: string,
+    query?: string,
+    opts: RequestInit = {}
+  ) => {
+    const q = query ? `?q=${query}` : ''
+    return this._fetch<RecipeJSON[]>(`/users/${username}/recipes${q}`, opts)
+  }
 
   getRecipe = (
     username: string,
@@ -211,6 +221,20 @@ class Api {
       method: 'PATCH',
       body: JSON.stringify(body)
     })
+
+  uploadPublicImage = (
+    body: any,
+    opts: RequestInit = {}
+  ): Promise<{ url: string }> =>
+    fetch(`${API_URL}/user/images`, {
+      ...opts,
+      body,
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...authHeaders(this.token)
+      }
+    }).then(handleError)
 }
 
 export const api = new Api()

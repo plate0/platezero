@@ -13,9 +13,9 @@ import {
   InputGroupAddon
 } from 'reactstrap'
 import Head from 'next/head'
-import { Dropzone, Layout } from '../components'
+import { AlertErrors, Dropzone, Layout } from '../components'
 import * as _ from 'lodash'
-import { api, PlateZeroApiError } from '../common'
+import { api, getErrorMessages } from '../common'
 import { RecipeJSON } from '../models'
 import { Link } from '../routes'
 import uuid from 'uuid/v4'
@@ -29,23 +29,14 @@ interface ImportRequest {
   errors?: string[]
 }
 
-const errMessages = (err: PlateZeroApiError | Error) => {
-  let messages = []
-  if (err instanceof PlateZeroApiError) {
-    messages = err.messages
-  } else {
-    messages = [err.message]
-  }
-  return messages
-}
-
 const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
   const name = _.isString(upload.body) ? upload.body : upload.body.name
-  const errors = upload.errors && (
-    <Alert color="danger">{upload.errors.join('\n')}</Alert>
-  )
   const spinnerOrDone = upload.done ? (
-    <i className="ml-2 far fa-check text-success" />
+    upload.errors ? (
+      <i className="ml-2 far fa-exclamation-triangle text-danger" />
+    ) : (
+      <i className="ml-2 far fa-check text-success" />
+    )
   ) : (
     <Spinner color="info" className="ml-2" size="sm" />
   )
@@ -68,7 +59,7 @@ const ImportStatus = ({ upload }: { upload: ImportRequest }) => {
           </Link>
         )}
       </Col>
-      {errors}
+      <AlertErrors errors={upload.errors} />
       {upload.success && file}
     </Row>
   )
@@ -145,7 +136,7 @@ export default class ImportRecipe extends React.Component<
           ...s.uploads,
           ..._.mapValues(uploads, u => ({
             ...u,
-            ...{ success: false, done: true, errors: errMessages(err) }
+            ...{ success: false, done: true, errors: getErrorMessages(err) }
           }))
         }
       }))
@@ -182,7 +173,7 @@ export default class ImportRecipe extends React.Component<
           ...s.uploads,
           [upload.id]: {
             ...s.uploads[upload.id],
-            ...{ success: false, done: true, errors: errMessages(err) }
+            ...{ success: false, done: true, errors: getErrorMessages(err) }
           }
         }
       }))
@@ -207,7 +198,13 @@ export default class ImportRecipe extends React.Component<
         <Form onSubmit={this.onSubmit}>
           <Row>
             <Col xs="12">
-              <Dropzone onDrop={this.onDrop} />
+              <Dropzone onDrop={this.onDrop}>
+                <div className="text-center font-weight-bold">
+                  Drag and drop any files here
+                </div>
+                <div style={{ lineHeight: '3rem' }}>OR</div>
+                <Button color="primary">Browse to find files</Button>
+              </Dropzone>
             </Col>
           </Row>
           <p className="my-2">Or a URL to a recipe</p>

@@ -1,6 +1,7 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
+import ErrorPage from './_error'
 import * as _ from 'lodash'
 import {
   Card,
@@ -9,22 +10,22 @@ import {
   Row,
   Col,
   Button,
-  Alert,
   Input,
   FormGroup,
   FormText
 } from 'reactstrap'
 
 import {
+  AlertErrors,
   Layout,
-  ProcedureLists,
-  IngredientLists,
-  Preheats,
+  ProcedureListsEditor,
+  IngredientListsEditor,
+  PreheatsEditor,
   RecipeTitle,
   RecipeDuration,
   RecipeYield
 } from '../components'
-import { api, PlateZeroApiError } from '../common/http'
+import { api, getErrorMessages } from '../common/http'
 import {
   RecipeVersionJSON,
   ProcedureListJSON,
@@ -37,8 +38,9 @@ import { RecipeVersionPatch } from '../common/request-models'
 import { Link } from '../routes'
 
 interface Props {
-  branch: string
-  recipeVersion: RecipeVersionJSON
+  branch?: string
+  recipeVersion?: RecipeVersionJSON
+  statusCode?: number
 }
 
 interface State {
@@ -67,20 +69,28 @@ export default class EditRecipe extends React.Component<Props, State> {
     }
   }
 
-  static async getInitialProps({ query }): Promise<Props> {
-    const { branch, username, slug } = query
-    const recipe = await api.getRecipe(username, slug)
-    const recipeVersionId = _.get(
-      _.head(_.filter(recipe.branches, { name: branch })),
-      'recipe_version_id'
-    )
-    return {
-      branch,
-      recipeVersion: await api.getRecipeVersion(
-        query.username,
-        query.slug,
-        recipeVersionId
+  static async getInitialProps({ query, res }): Promise<Props> {
+    try {
+      const { branch, username, slug } = query
+      const recipe = await api.getRecipe(username, slug)
+      const recipeVersionId = _.get(
+        _.head(_.filter(recipe.branches, { name: branch })),
+        'recipe_version_id'
       )
+      return {
+        branch,
+        recipeVersion: await api.getRecipeVersion(
+          query.username,
+          query.slug,
+          recipeVersionId
+        )
+      }
+    } catch (err) {
+      const statusCode = err.statusCode || 500
+      if (res) {
+        res.statusCode = statusCode
+      }
+      return { statusCode }
     }
   }
 
@@ -104,15 +114,14 @@ export default class EditRecipe extends React.Component<Props, State> {
       await api.patchBranch(slug, branch, patch)
       Router.push(`/${this.props.recipeVersion.recipe.owner.username}/${slug}`)
     } catch (e) {
-      if (e instanceof PlateZeroApiError) {
-        this.setState({ errors: e.messages })
-      } else {
-        this.setState({ errors: ['unexpected error, please try again later'] })
-      }
+      this.setState({ errors: getErrorMessages(e) })
     }
   }
 
   public render() {
+    if (this.props.statusCode) {
+      return <ErrorPage statusCode={this.props.statusCode} />
+    }
     const v = this.props.recipeVersion
     return (
       <Layout>
@@ -129,11 +138,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             </Link>
           </Col>
         </Row>
-        {_.map(this.state.errors, (err, key) => (
-          <Alert key={key} color="danger">
-            {err}
-          </Alert>
-        ))}
+        <AlertErrors errors={this.state.errors} />
         <RecipeYield
           yield={v.recipeYield}
           onChange={recipeYield => this.setState({ recipeYield })}
@@ -143,17 +148,17 @@ export default class EditRecipe extends React.Component<Props, State> {
           onChange={recipeDuration => this.setState({ recipeDuration })}
         />
         <h4>Preheats</h4>
-        <Preheats
+        <PreheatsEditor
           preheats={v.preheats}
           onChange={preheats => this.setState({ preheats })}
         />
-        <h4>Ingredients</h4>
-        <IngredientLists
+        <h4 className="mt-3">Ingredients</h4>
+        <IngredientListsEditor
           lists={v.ingredientLists}
           onChange={ingredientLists => this.setState({ ingredientLists })}
         />
         <h4 className="mt-3">Instructions</h4>
-        <ProcedureLists
+        <ProcedureListsEditor
           lists={v.procedureLists}
           onChange={procedureLists => this.setState({ procedureLists })}
         />
