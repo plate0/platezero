@@ -108,6 +108,7 @@ export default class NewRecipe extends React.Component<any, State> {
               type="text"
               name="title"
               id="title"
+              placeholder="e.g. Banana Bread"
               required
               autoFocus={true}
               tabIndex={1}
