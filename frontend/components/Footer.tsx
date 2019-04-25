@@ -2,7 +2,7 @@ import React from 'react'
 import { Container, Row, Col } from 'reactstrap'
 
 export const Footer = () => (
-  <footer className="text-muted bg-light d-flex mt-auto">
+  <footer className="text-muted bg-light d-flex mt-auto d-print-none">
     <Container className="align-items-center d-flex">
       <Row className="w-100">
         <Col xs="12" md="6">

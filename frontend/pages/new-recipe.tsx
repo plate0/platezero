@@ -1,9 +1,8 @@
 import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
-import { api, PlateZeroApiError } from '../common'
+import { api, getErrorMessages } from '../common'
 import {
-  Alert,
   Button,
   Col,
   Form,
@@ -22,6 +21,7 @@ import {
 } from '../models'
 import { PostRecipe } from '../common/request-models'
 import {
+  AlertErrors,
   Layout,
   NewRecipeTitle,
   IngredientListsEditor,
@@ -96,9 +96,7 @@ export default class NewRecipe extends React.Component<any, State> {
       const res = await api.createRecipe(recipe)
       Router.push(res.html_url)
     } catch (err) {
-      if (err instanceof PlateZeroApiError) {
-        this.setState({ errors: err.messages })
-      }
+      this.setState({ errors: getErrorMessages(err) })
     }
   }
 
@@ -111,11 +109,7 @@ export default class NewRecipe extends React.Component<any, State> {
           <title>Create New Recipe on PlateZero</title>
         </Head>
         <Form onSubmit={this.create} className="mt-3 pb-5">
-          {this.state.errors.map((err, key) => (
-            <Alert key={key} color="danger">
-              {err}
-            </Alert>
-          ))}
+          <AlertErrors errors={this.state.errors} />
           <Row>
             <Col xs="12">
               <NewRecipeTitle

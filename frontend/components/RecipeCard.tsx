@@ -19,7 +19,7 @@ export const RecipeCard = (props: RecipeCardProps) => (
     <div className="pt-1">
       <div className="m-0">
         <Link route={`/${props.username}/${props.slug}`}>
-          <a className="text-dark stretched-link font-weight-bold">
+          <a className="text-dark stretched-link font-weight-bold overflow-hidden d-block">
             {props.title}
           </a>
         </Link>

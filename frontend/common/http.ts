@@ -51,6 +51,13 @@ export class PlateZeroApiError extends Error {
   }
 }
 
+export const getErrorMessages = (err: Error): string[] => {
+  if (err instanceof PlateZeroApiError) {
+    return err.messages
+  }
+  return [err.message]
+}
+
 export interface LoginResponse {
   user: UserJSON
   token: string
@@ -218,6 +225,20 @@ class Api {
       method: 'PATCH',
       body: JSON.stringify(body)
     })
+
+  uploadPublicImage = (
+    body: any,
+    opts: RequestInit = {}
+  ): Promise<{ url: string }> =>
+    fetch(`${API_URL}/user/images`, {
+      ...opts,
+      body,
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...authHeaders(this.token)
+      }
+    }).then(handleError)
 }
 
 export const api = new Api()

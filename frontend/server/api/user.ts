@@ -1,6 +1,10 @@
 import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
+import { generate as shortid } from 'shortid'
+import { S3 } from 'aws-sdk'
+const multer = require('multer')
+const multerS3 = require('multer-s3')
 import { importers } from './importer'
 import {
   validateNewRecipe,
@@ -10,6 +14,8 @@ import {
 import { User, Recipe, RecipeBranch } from '../../models'
 import { notFound, internalServerError } from '../errors'
 import { HttpStatus } from '../../common/http-status'
+
+const s3 = new S3()
 
 interface UserDetail {
   userId: number
@@ -105,5 +111,39 @@ r.delete('/recipes/:slug', async (req: AuthenticatedRequest, res) => {
 })
 
 r.use('/import', importers)
+
+const IMAGE_EXTENSIONS_BY_TYPE = new Map([
+  ['image/gif', 'gif'],
+  ['image/jpeg', 'jpg'],
+  ['image/pjpeg', 'jpg'],
+  ['image/png', 'png'],
+  ['image/tiff', 'tiff'],
+  ['image/x-tiff', 'tiff']
+])
+const upload = multer({
+  fileFilter: (__, file, cb) => {
+    const acceptable = IMAGE_EXTENSIONS_BY_TYPE.has(file.mimetype)
+    return cb(null, acceptable)
+  },
+  storage: multerS3({
+    s3,
+    bucket: 'com-platezero-static',
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    acl: 'public-read',
+    key: (req, file, cb) => {
+      const key = `u/${shortid()}.${IMAGE_EXTENSIONS_BY_TYPE.get(
+        file.mimetype
+      )}`
+      req.pzUploadKey = key
+      return cb(null, key)
+    }
+  })
+})
+
+r.post('/images', upload.single('file'), async (req: any, res) => {
+  res.status(HttpStatus.Created).json({
+    url: `https://static.platezero.com/${req.pzUploadKey}`
+  })
+})
 
 export const user = r

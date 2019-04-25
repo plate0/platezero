@@ -37,7 +37,7 @@ export function PreheatsEditor(props: Props) {
         <ul className="small">
           <li>Write one preheat on each line</li>
           <li>
-            Use the format <code>[appliance]: [temperature] [F or C]</code>.
+            Use the format <code>appliance: temperature F/C</code>.
           </li>
           <li>
             Example: <code>Oven: 350 F</code>
