@@ -2,16 +2,7 @@ import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
 import { api, getErrorMessages } from '../common'
-import {
-  Button,
-  Col,
-  Form,
-  Row,
-  FormGroup,
-  Input,
-  Label,
-  FormText
-} from 'reactstrap'
+import { Button, Form, FormGroup, Input, Label, FormText } from 'reactstrap'
 import {
   IngredientListJSON,
   ProcedureListJSON,
@@ -23,7 +14,6 @@ import { PostRecipe } from '../common/request-models'
 import {
   AlertErrors,
   Layout,
-  NewRecipeTitle,
   IngredientListsEditor,
   ProcedureListsEditor,
   PreheatsEditor,
@@ -110,14 +100,21 @@ export default class NewRecipe extends React.Component<any, State> {
         </Head>
         <Form onSubmit={this.create} className="mt-3 pb-5">
           <AlertErrors errors={this.state.errors} />
-          <Row>
-            <Col xs="12">
-              <NewRecipeTitle
-                value={this.state.title}
-                onChange={this.titleOnChange}
-              />
-            </Col>
-          </Row>
+          <FormGroup>
+            <Label for="title" className="m-0">
+              Title
+            </Label>
+            <Input
+              type="text"
+              name="title"
+              id="title"
+              required
+              autoFocus={true}
+              tabIndex={1}
+              value={this.state.title}
+              onChange={this.titleOnChange}
+            />
+          </FormGroup>
 
           <FormGroup>
             <Label>Source URL</Label>
