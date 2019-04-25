@@ -101,8 +101,8 @@ export default class NewRecipe extends React.Component<any, State> {
         <Form onSubmit={this.create} className="mt-3 pb-5">
           <AlertErrors errors={this.state.errors} />
           <FormGroup>
-            <Label for="title" className="m-0">
-              Title
+            <Label for="title">
+              <h5>Title</h5>
             </Label>
             <Input
               type="text"
@@ -123,17 +123,17 @@ export default class NewRecipe extends React.Component<any, State> {
             duration={this.state.recipeDuration}
             onChange={recipeDuration => this.setState({ recipeDuration })}
           />
-          <h2>Preheats</h2>
+          <h5>Preheats</h5>
           <PreheatsEditor
             preheats={[]}
             onChange={preheats => this.setState({ preheats })}
           />
-          <h2>Ingredients</h2>
+          <h5>Ingredients</h5>
           <IngredientListsEditor
             lists={[defaultIngredientList]}
             onChange={ingredientLists => this.setState({ ingredientLists })}
           />
-          <h2 className="my-3">Steps</h2>
+          <h5 className="my-3">Steps</h5>
           <ProcedureListsEditor
             lists={[defaultProcedureList]}
             onChange={procedureLists => this.setState({ procedureLists })}
