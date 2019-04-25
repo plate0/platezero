@@ -178,10 +178,15 @@ function parseAmount(text: string): [number, number, string] {
 }
 
 function parseUnit(text: string): [string, string] {
+  const leadingComma = /^\s*,\s*/
+  const comma = /,/
   const words = _.split(_.trim(text), /\s+/)
   const maybeUnit = unitfy(_.head(words))
   if (maybeUnit) {
     return [maybeUnit, _.join(_.tail(words), ' ')]
+  } else if (text.match(leadingComma)) {
+      const txt = _.replace(text, leadingComma, '')
+      return [ undefined, _.replace(txt, comma, '')]
   }
   return [undefined, text]
 }
