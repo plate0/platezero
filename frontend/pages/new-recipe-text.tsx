@@ -2,7 +2,7 @@ import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
 import { api, getErrorMessages } from '../common'
-import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import { Row, Col, Button, Form, FormGroup, Input, Label } from 'reactstrap'
 import {
   IngredientListJSON,
   ProcedureListJSON,
@@ -116,14 +116,20 @@ export default class NewRecipe extends React.Component<any, State> {
               onChange={this.titleOnChange}
             />
           </FormGroup>
-          <RecipeYield
-            yield={this.state.recipeYield}
-            onChange={recipeYield => this.setState({ recipeYield })}
-          />
-          <RecipeDuration
-            duration={this.state.recipeDuration}
-            onChange={recipeDuration => this.setState({ recipeDuration })}
-          />
+          <Row>
+            <Col xs={12} md={6}>
+              <RecipeYield
+                yield={this.state.recipeYield}
+                onChange={recipeYield => this.setState({ recipeYield })}
+              />
+            </Col>
+            <Col xs={12} md={6}>
+              <RecipeDuration
+                duration={this.state.recipeDuration}
+                onChange={recipeDuration => this.setState({ recipeDuration })}
+              />
+            </Col>
+          </Row>
           <h5>Preheats</h5>
           <PreheatsEditor
             preheats={[]}

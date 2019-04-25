@@ -139,14 +139,20 @@ export default class EditRecipe extends React.Component<Props, State> {
           </Col>
         </Row>
         <AlertErrors errors={this.state.errors} />
-        <RecipeYield
-          yield={v.recipeYield}
-          onChange={recipeYield => this.setState({ recipeYield })}
-        />
-        <RecipeDuration
-          duration={v.recipeDuration}
-          onChange={recipeDuration => this.setState({ recipeDuration })}
-        />
+        <Row>
+          <Col xs={12} md={6}>
+            <RecipeYield
+              yield={v.recipeYield}
+              onChange={recipeYield => this.setState({ recipeYield })}
+            />
+          </Col>
+          <Col xs={12} md={6}>
+            <RecipeDuration
+              duration={v.recipeDuration}
+              onChange={recipeDuration => this.setState({ recipeDuration })}
+            />
+          </Col>
+        </Row>
         <h4>Preheats</h4>
         <PreheatsEditor
           preheats={v.preheats}
