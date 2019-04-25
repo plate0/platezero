@@ -8,6 +8,7 @@ import fetch from 'node-fetch'
 import { HttpStatus } from '../../common/http-status'
 import { config } from '../config'
 import { size } from 'lodash'
+import { generate } from 'shortid'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const s3 = new S3()
@@ -42,7 +43,8 @@ const upload = multer({
     s3,
     bucket: 'com-platezero-recipes',
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    key: (req, file, cb) => cb(null, `${req.user.userId}/${file.originalname}`)
+    key: (req, file, cb) =>
+      cb(null, `${req.user.userId}/${generate()}-${file.originalname}`)
   })
 })
 
