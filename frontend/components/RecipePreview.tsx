@@ -34,11 +34,6 @@ export const RecipePreview = ({
               <a role="button" className="btn btn-link">
                 Add Recipe
               </a>
-            </Link>{' '}
-            <Link route="import-recipe">
-              <a role="button" className="btn btn-link">
-                Import Recipe
-              </a>
             </Link>
           </Col>
         </IfLoggedIn>

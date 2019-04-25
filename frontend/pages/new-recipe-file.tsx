@@ -6,6 +6,7 @@ import { Spinner, Button, Row, Col } from 'reactstrap'
 import * as _ from 'lodash'
 import { api, PlateZeroApiError } from '../common'
 import { Link } from '../routes'
+import { UserJSON } from '../models'
 
 enum UploadStatus {
   None,
@@ -46,7 +47,8 @@ export default class NewRecipeFile extends React.Component<
   NewRecipeFileState
 > {
   static async getInitialProps({ query, res }) {
-    const { type, username } = query
+    console.log(query)
+    const { type } = query
     const wording = wordings[type] || wordings['file']
     try {
       return {
@@ -119,7 +121,7 @@ export default class NewRecipeFile extends React.Component<
         <Row className="mt-3">
           <Col xs="12">
             {status == UploadStatus.None && (
-              <Link to="/recipes/new">
+              <Link route="new-recipe">
                 <a className="btn btn-link text-dark">
                   <i className="far fa-chevron-double-left mr-2" />
                   Cancel and go back

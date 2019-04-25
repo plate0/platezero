@@ -44,7 +44,7 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
 
 const NewRecipeDropdown = () => (
   <Tooltip text="Add a new recipe" id="add-recipe">
-    <Link to="/recipes/new">
+    <Link route="new-recipe">
       <a className="add-recipe text-white btn btn-link" id="add-recipe">
         <i className="fal fa-plus" />
       </a>

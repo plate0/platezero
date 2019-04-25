@@ -200,7 +200,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
       inner = (
         <>
           <UrlForm onSubmit={this.onUrl} />
-          <Link to="/recipes/new">
+          <Link route="new-recipe">
             <a className="btn btn-link text-dark mt-3">
               <i className="far fa-chevron-double-left mr-2" />
               Cancel and go back
