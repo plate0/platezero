@@ -3,12 +3,14 @@
     "development": {
       "presets": [
         "next/babel",
-        "@zeit/next-typescript/babel"
+        "@zeit/next-typescript/babel",
+        "@babel/preset-typescript"
       ],
       "plugins": [
         "dynamic-import-node",
+        "@babel/plugin-proposal-export-default-from",
         [
-          "@babel/plugin-proposal-decorators",
+           "@babel/plugin-proposal-decorators",
           {
             "legacy": true
           },
@@ -22,7 +24,8 @@
       ],
       "plugins": [
         "dynamic-import-node",
-        [
+         "@babel/plugin-proposal-export-default-from",
+       [
           "@babel/plugin-proposal-decorators",
           {
             "legacy": true

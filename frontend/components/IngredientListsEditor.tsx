@@ -156,7 +156,7 @@ function parseIngredientLine(text: string): IngredientLineJSON {
   }
 }
 
-function parseAmount(text: string): [number, number, string] {
+export function parseAmount(text: string): [number, number, string] {
   try {
     // first try to match a decimal
     const decResults = text.match(/^(\d*\.\d+?)/)
