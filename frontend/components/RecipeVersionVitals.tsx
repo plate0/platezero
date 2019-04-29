@@ -15,6 +15,8 @@ const RecipeVersionHeaderNoImage = ({
   const title = version.recipe.title
   const subtitle = version.recipe.subtitle
   const author = version.author
+  const yld = <Yield version={version} />
+  const time = <Duration version={version} />
   return (
     <Col xs="12" className="my-3">
       <h1 className="mb-0">{title}</h1>
@@ -23,15 +25,12 @@ const RecipeVersionHeaderNoImage = ({
         <a itemProp="author">{getName(version.author)} </a>
       </Link>
       <Source version={version} />
-      <ul className="mb-0 mt-3 list-unstyled">
-        <li>
-          <span className="font-weight-bold">Yield</span> {recipeYield(version)}
-        </li>
-        <li>
-          <span className="font-weight-bold">Time</span>{' '}
-          <Duration version={version} />
-        </li>
-      </ul>
+      {(yld || time) && (
+        <ul className="mb-0 mt-3 list-unstyled">
+          {yld && <li>{yld}</li>}
+          {time && <li>{time}</li>}
+        </ul>
+      )}
     </Col>
   )
 }
@@ -46,7 +45,7 @@ const RecipeVersionHeaderImage = ({
   const author = version.author
   const imageUrl = version.recipe.image_url
   return (
-    <Col xs="12" className="px-0 px-sm-3">
+    <Col xs="12" className="px-0 px-sm-3 d-print-none">
       <div className="position-relative">
         <img
           className="w-100 d-print-none"
@@ -77,12 +76,12 @@ const RecipeVersionHeaderImage = ({
               xs="6"
               className="align-items-center d-flex justify-content-center text-center"
             >
-              {recipeYield(version)}
+              <Yield version={version} />
             </Col>
             <Col
               xs="6"
               className="align-items-center d-flex justify-content-center text-center"
-              style={{ borderLeft: '1px solid #ccc;' }}
+              style={{ borderLeft: '1px solid #ccc' }}
             >
               <Duration version={version} />
             </Col>
@@ -113,7 +112,12 @@ export const RecipeVersionHeader = ({
 }) => {
   const imageUrl = version.recipe.image_url
   return imageUrl ? (
-    <RecipeVersionHeaderImage version={version} />
+    <>
+      <div className="d-none d-print-block">
+        <RecipeVersionHeaderNoImage version={version} />
+      </div>
+      <RecipeVersionHeaderImage version={version} />
+    </>
   ) : (
     <RecipeVersionHeaderNoImage version={version} />
   )
@@ -131,8 +135,8 @@ export const Duration = ({ version }: { version: RecipeVersionJSON }) => {
   )
 }
 
-const recipeYield = (rv: RecipeVersionJSON) => {
-  let y = _.get(rv, 'recipeYield.text')
+const Yield = ({ version }: { version: RecipeVersionJSON }) => {
+  let y = _.get(version, 'recipeYield.text')
   if (!y) {
     return null
   }

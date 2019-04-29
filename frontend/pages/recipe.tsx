@@ -43,7 +43,7 @@ export default class Recipe extends React.Component<Props> {
   }
 
   public render() {
-    const { recipe, recipeVersion, statusCode } = this.props
+    const { recipe, recipeVersion, statusCode, pathname } = this.props
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
@@ -56,7 +56,9 @@ export default class Recipe extends React.Component<Props> {
             image={recipe.image_url}
             url={`/${recipe.owner.username}/${recipe.slug}`}
           />
-          {recipeVersion && <RecipeVersionView version={recipeVersion} />}
+          {recipeVersion && (
+            <RecipeVersionView version={recipeVersion} pathname={pathname} />
+          )}
         </Layout>
       </>
     )

@@ -1,12 +1,8 @@
 import React from 'react'
-import { Row, Col } from 'reactstrap'
+import { Alert, Row, Col } from 'reactstrap'
 import Head from 'next/head'
 import ErrorPage from './_error'
-import {
-  Layout,
-  RecipeVersion as RecipeVersionView,
-  RecipeTitle
-} from '../components'
+import { Layout, RecipeVersion as RecipeVersionView } from '../components'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { api } from '../common/http'
 
@@ -46,19 +42,22 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
         </Head>
         <div itemScope={true} itemType="http://schema.org/Recipe">
           <Row className="mt-3">
-            <Col>
-              <RecipeTitle recipe={v.recipe} />
-            </Col>
-            <Col xs="auto">
-              <a
-                className="btn btn-outline-primary"
-                href={`/${v.recipe.owner.username}/${v.recipe.slug}`}
+            <Col xs="12">
+              <Alert
+                color="warning"
+                className="d-print-none d-flex justify-content-between align-items-center"
               >
-                Show Current Version
-              </a>
+                <span>Viewing an older version of this recipe.</span>
+                <a
+                  className="btn btn-outline-primary"
+                  href={`/${v.recipe.owner.username}/${v.recipe.slug}`}
+                >
+                  Show Current Version
+                </a>
+              </Alert>
             </Col>
           </Row>
-          <RecipeVersionView version={v} />
+          <RecipeVersionView version={v} pathname="/recipe" />
         </div>
       </Layout>
     )

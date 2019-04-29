@@ -32,23 +32,33 @@ export const RecipeNav = ({
 }) => {
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
   return (
-    <Nav className="mb-3 d-print-none">
-      <NavItem style={{ borderBottom: '3px #19afd0 solid' }}>
+    <Nav className="mb-3 d-print-none recipe-nav">
+      <NavItem className={`${route === '/recipe' ? 'active' : ''}`}>
         <Link route={baseURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
         </Link>
       </NavItem>
-      <NavItem className="border-bottom">
+      <NavItem className={`${route === '/recipe-history' ? 'active' : ''}`}>
         <Link route={`${baseURL}/history`} passHref>
           <NavLink active={route === '/recipe-history'}>History</NavLink>
         </Link>
       </NavItem>
       <NavItem className="border-bottom flex-fill" />
-      <NavItem className="border-bottom">
+      <div className="border-bottom">
         <IfLoggedIn username={recipe.owner.username}>
           <ActionMenu recipe={recipe} />
         </IfLoggedIn>
-      </NavItem>
+      </div>
+      <style jsx global>
+        {`
+          .recipe-nav .nav-item:not(.active) {
+            border-bottom: 1px solid #dee2e6;
+          }
+          .recipe-nav .nav-link.active {
+            border-bottom: 3px #19afd0 solid;
+          }
+        `}
+      </style>
     </Nav>
   )
 }
@@ -63,7 +73,7 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
         nav
         isOpen={isOpen}
         toggle={() => setOpen(!isOpen)}
-        className="ml-auto"
+        className="border-0"
       >
         <DropdownToggle nav caret onClick={() => setOpen(true)}>
           Actions

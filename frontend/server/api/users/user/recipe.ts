@@ -42,7 +42,7 @@ r.get('/versions', async (req: RecipeRequest, res) => {
       await RecipeVersion.findAll({
         where: { recipe_id: req.recipe.id },
         order: [['created_at', 'DESC']],
-        include: [{ model: User }]
+        include: [{ model: User }, { model: Recipe }]
       })
     )
   } catch (error) {

@@ -21,7 +21,6 @@ import {
   ProcedureListsEditor,
   IngredientListsEditor,
   PreheatsEditor,
-  RecipeTitle,
   RecipeDuration,
   RecipeYield
 } from '../components'
@@ -130,7 +129,7 @@ export default class EditRecipe extends React.Component<Props, State> {
         </Head>
         <Row className="mt-3">
           <Col>
-            <RecipeTitle recipe={v.recipe} />
+            <h1>{v.recipe.title}</h1>
           </Col>
           <Col xs="auto">
             <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
