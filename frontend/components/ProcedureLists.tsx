@@ -22,27 +22,34 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
         itemScope={true}
         itemType="http://schema.org/HowToStep"
       >
-        {l.title && (
-          <div className="mb-3">
-            <h4 className="border-bottom pb-2">
-              <Badge color="primary" pill className="mr-2" itemProp="position">
-                {key + 1}
-              </Badge>
-              <span itemProp="headline">{l.title}</span>
-            </h4>
-          </div>
-        )}
         <Row>
           {l.image_url && (
-            <Col xs="12" lg="4">
+            <Col xs="12" className="px-0 px-sm-3">
               <img
-                className="w-100 mb-3"
+                className="w-100 mb-3 p-0 d-print-none"
                 src={l.image_url}
                 itemProp="exampleOfWork"
               />
             </Col>
           )}
-          <Col itemProp="text">
+          {l.title && (
+            <Col xs="12">
+              <div className="mb-3">
+                <h5 className="border-bottom pb-2 d-flex align-items-center">
+                  <Badge
+                    color="primary"
+                    pill
+                    className="mr-2"
+                    itemProp="position"
+                  >
+                    {key + 1}
+                  </Badge>
+                  <span itemProp="headline">{l.title}</span>
+                </h5>
+              </div>
+            </Col>
+          )}
+          <Col xs="12" itemProp="text">
             <Markdown source={l.text} />
           </Col>
         </Row>

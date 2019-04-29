@@ -32,20 +32,23 @@ export const RecipeNav = ({
 }) => {
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
   return (
-    <Nav tabs className="mb-3 d-print-none">
-      <NavItem>
+    <Nav className="mb-3 d-print-none">
+      <NavItem style={{ borderBottom: '3px #19afd0 solid' }}>
         <Link route={baseURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
         </Link>
       </NavItem>
-      <NavItem>
+      <NavItem className="border-bottom">
         <Link route={`${baseURL}/history`} passHref>
           <NavLink active={route === '/recipe-history'}>History</NavLink>
         </Link>
       </NavItem>
-      <IfLoggedIn username={recipe.owner.username}>
-        <ActionMenu recipe={recipe} />
-      </IfLoggedIn>
+      <NavItem className="border-bottom flex-fill" />
+      <NavItem className="border-bottom">
+        <IfLoggedIn username={recipe.owner.username}>
+          <ActionMenu recipe={recipe} />
+        </IfLoggedIn>
+      </NavItem>
     </Nav>
   )
 }

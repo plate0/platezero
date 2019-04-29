@@ -11,6 +11,7 @@ import {
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { api } from '../common/http'
+import '../style/recipe.scss'
 
 interface Props {
   recipe?: RecipeJSON
@@ -44,25 +45,27 @@ export default class Recipe extends React.Component<Props> {
     super(props)
   }
 
+  public componentDidMount() {
+    setTimeout(() => (document.body.scrollTop = 56))
+  }
+
   public render() {
     const { recipe, recipeVersion, statusCode } = this.props
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
     return (
-      <Layout>
-        <Head
-          title={`${recipe.title} - PlateZero`}
-          description={recipe.description}
-          image={recipe.image_url}
-          url={`/${recipe.owner.username}/${recipe.slug}`}
-        />
-        <div className="mt-3">
-          <RecipeTitle recipe={recipe} />
-        </div>
-        <RecipeNav recipe={recipe} route={this.props.pathname} />
-        {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
-      </Layout>
+      <>
+        <Layout>
+          <Head
+            title={`${recipe.title} - PlateZero`}
+            description={recipe.description}
+            image={recipe.image_url}
+            url={`/${recipe.owner.username}/${recipe.slug}`}
+          />
+          {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
+        </Layout>
+      </>
     )
   }
 }
