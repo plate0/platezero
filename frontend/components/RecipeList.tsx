@@ -56,7 +56,7 @@ export const RecipeList = ({ children, recipes, user }: RecipesProps) => {
                 <Col
                   xs={recipe.image_url ? '10' : '12'}
                   md={recipe.image_url ? '11' : '12'}
-                  className="pr-0"
+                  className={recipe.image_url ? 'pr-0' : 'px-0'}
                 >
                   <div>
                     <strong>{recipe.title}</strong>
