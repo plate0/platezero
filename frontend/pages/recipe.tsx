@@ -11,7 +11,6 @@ import {
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { api } from '../common/http'
-import '../style/recipe.scss'
 
 interface Props {
   recipe?: RecipeJSON

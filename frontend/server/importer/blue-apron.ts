@@ -24,7 +24,7 @@ const description = ($: any) =>
 
 const image_url = ($: any) => $('.ba-hero-image img').prop('src')
 
-const getYield = ($: any) => $('[itemprop="recipeYield"]').text()
+const getYield = ($: any) => $('[itemprop="recipeYield"]').text() + ' servings'
 
 const duration = ($: any) =>
   moment.duration($('[itemprop="totalTime"]').attr('content')).asSeconds()
