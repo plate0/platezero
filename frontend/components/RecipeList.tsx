@@ -41,9 +41,9 @@ export const RecipeList = ({ children, recipes, user }: RecipesProps) => {
       {children}
       <ListGroup className="mt-3" flush>
         {recipes.map(recipe => (
-          <ListGroupItem key={recipe.id}>
+          <ListGroupItem key={recipe.id} className="px-0">
             <Link route={`/${user.username}/${recipe.slug}`}>
-              <a className="text-dark d-flex px-0 align-items-center">
+              <a className="text-dark d-flex align-items-center">
                 {recipe.image_url && (
                   <Col xs="2" md="1" className="px-0">
                     <img
