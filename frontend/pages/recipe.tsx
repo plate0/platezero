@@ -1,13 +1,7 @@
 import React from 'react'
 import * as _ from 'lodash'
 import ErrorPage from './_error'
-import {
-  Head,
-  Layout,
-  RecipeVersion as RecipeVersionView,
-  RecipeTitle,
-  RecipeNav
-} from '../components'
+import { Head, Layout, RecipeVersion as RecipeVersionView } from '../components'
 import { RecipeJSON } from '../models/recipe'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { api } from '../common/http'
@@ -62,7 +56,7 @@ export default class Recipe extends React.Component<Props> {
             image={recipe.image_url}
             url={`/${recipe.owner.username}/${recipe.slug}`}
           />
-          {recipeVersion && <RecipeVersionView recipeVersion={recipeVersion} />}
+          {recipeVersion && <RecipeVersionView version={recipeVersion} />}
         </Layout>
       </>
     )

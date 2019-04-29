@@ -1,10 +1,9 @@
 import React from 'react'
 import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
-import { Row, Col } from 'reactstrap'
+import { Col } from 'reactstrap'
 import { RecipeVersionJSON, RecipeJSON } from '../models'
 import { toHoursAndMinutes } from '../common/time'
-import { Preheat } from './Preheats'
 import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
 
@@ -29,7 +28,8 @@ const RecipeVersionHeaderNoImage = ({
           <span className="font-weight-bold">Yield</span> {recipeYield(version)}
         </li>
         <li>
-          <span className="font-weight-bold">Time</span> {duration(version)}
+          <span className="font-weight-bold">Time</span>{' '}
+          <Duration version={version} />
         </li>
       </ul>
     </Col>
@@ -84,7 +84,7 @@ const RecipeVersionHeaderImage = ({
               className="align-items-center d-flex justify-content-center text-center"
               style={{ borderLeft: '1px solid #ccc;' }}
             >
-              {duration(version)}
+              <Duration version={version} />
             </Col>
           </div>
         </div>
@@ -119,36 +119,10 @@ export const RecipeVersionHeader = ({
   )
 }
 
-interface Props {
-  recipeVersion: RecipeVersionJSON
-}
-export const RecipeVersionVitals = (props: Props) => {
-  const vitals = _.flatten(
-    _.map([duration, recipeYield, source, preheats], visit =>
-      visit(props.recipeVersion)
-    )
-  )
-  if (!vitals.length) {
-    return null
-  }
-  return (
-    <ul className="list-inline">
-      {vitals.map((vital, idx) => (
-        <li className="list-inline-item text-muted" key={idx}>
-          {vital}
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-const Preheats = (rv: RecipeVersionJSON) =>
-  _.map(rv.preheats, preheat => <Preheat preheat={preheat} />)
-
-const duration = (rv: RecipeVersionJSON) => {
-  const d = _.get(rv, 'recipeDuration.duration_seconds')
+export const Duration = ({ version }: { version: RecipeVersionJSON }) => {
+  const d = _.get(version, 'recipeDuration.duration_seconds')
   if (!d) {
-    return []
+    return null
   }
   return (
     <time itemProp="cookTime" dateTime={`PT${d}S`}>
@@ -174,7 +148,7 @@ const Source = ({
 }) => {
   const work = getWorkTitle(version.recipe)
   if (!work) {
-    return []
+    return null
   }
   const link = getLink(version.recipe)
   const src = link ? (

@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import { PreheatJSON } from '../models'
 
 export const Preheats = ({ preheats }: { preheats: PreheatJSON[] }) => (
-  <ul>
+  <ul className="list-unstyled">
     {_.map(preheats, (preheat, key) => (
       <li key={key}>
         <Preheat preheat={preheat} />
@@ -13,7 +13,7 @@ export const Preheats = ({ preheats }: { preheats: PreheatJSON[] }) => (
 )
 
 export const Preheat = ({ preheat }: { preheat: PreheatJSON }) => (
-  <span className="text-danger">
+  <span className="badge badge-pill badge-danger">
     {preheat.name} {preheat.temperature} {preheat.unit}
   </span>
 )

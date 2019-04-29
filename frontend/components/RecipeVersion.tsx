@@ -1,69 +1,40 @@
-import React, { useState, useContext } from 'react'
-import * as moment from 'moment'
+import React from 'react'
 import * as _ from 'lodash'
-import { Button, Row, Col } from 'reactstrap'
-import { Timestamp, humanize } from './Timestamp'
+import { Row, Col } from 'reactstrap'
 import { IngredientLists } from './IngredientLists'
 import { ProcedureLists } from './ProcedureLists'
-import { AlertErrors } from './AlertErrors'
-import { EditableImage } from './EditableImage'
-import { RecipeVersionVitals } from './RecipeVersionVitals'
 import { RecipeVersionHeader } from './RecipeVersionVitals'
-import { Markdown } from './Markdown'
 import { RecipeVersionJSON } from '../models/recipe_version'
-import { getName } from '../common/model-helpers'
-import { api, getErrorMessages } from '../common/http'
-import { UserContext } from '../context/UserContext'
 import { RecipeNav } from './RecipeNav'
+import { Preheats } from './Preheats'
 
-export const RecipeVersion = (props: { recipeVersion: RecipeVersionJSON }) => {
-  const [imageUrl, setImageUrl] = useState(props.recipeVersion.recipe.image_url)
-  const [updateImageErrors, setUpdateImageErrors] = useState(null)
-  const userContext = useContext(UserContext)
-
-  const v = props.recipeVersion
-  const d = _.get(v, 'recipeDuration.duration_seconds')
-  const src = 'www.blueapron.com'
-  const prevUrl = v.parent_recipe_version_id
-    ? `/${v.recipe.owner.username}/${v.recipe.slug}/versions/${
-        v.parent_recipe_version_id
-      }`
-    : undefined
-
-  const onRecipeImageEdit = async (image_url: string) => {
-    try {
-      await api.patchRecipe(v.recipe.slug, { image_url })
-      setImageUrl(image_url)
-    } catch (err) {
-      setUpdateImageErrors(getErrorMessages(err))
-    }
-  }
-
+export const RecipeVersion = ({ version }: { version: RecipeVersionJSON }) => {
   return (
     <>
       <Row className="position-relative">
-        <RecipeVersionHeader version={v} />
+        <RecipeVersionHeader version={version} />
       </Row>
       <Row>
         <Col xs="12" className="px-0 px-sm-3">
-          <RecipeNav recipe={v.recipe} route={''} />
+          <RecipeNav recipe={version.recipe} route={''} />
         </Col>
       </Row>
-      {v.recipe.description && (
+      {version.recipe.description && (
         <Row className="mt-3">
           <Col>
-            <p style={{ lineHeight: '2rem' }}>{v.recipe.description}</p>
+            <p style={{ lineHeight: '2rem' }}>{version.recipe.description}</p>
           </Col>
         </Row>
       )}
       <Row className="mt-3">
         <Col xs="12" md="6" lg="4">
           <h2 className="border-bottom">Ingredients</h2>
-          <IngredientLists lists={v.ingredientLists} />
+          <IngredientLists lists={version.ingredientLists} />
         </Col>
         <Col xs="12" md="6" lg="8">
           <h2 className="border-bottom">Instructions</h2>
-          <ProcedureLists lists={v.procedureLists} />
+          <Preheats preheats={version.preheats} />
+          <ProcedureLists lists={version.procedureLists} />
         </Col>
       </Row>
     </>

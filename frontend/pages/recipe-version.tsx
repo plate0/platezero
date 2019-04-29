@@ -58,7 +58,7 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
               </a>
             </Col>
           </Row>
-          <RecipeVersionView recipeVersion={v} />
+          <RecipeVersionView version={v} />
         </div>
       </Layout>
     )
