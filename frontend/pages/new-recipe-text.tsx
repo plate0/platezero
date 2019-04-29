@@ -2,16 +2,7 @@ import React from 'react'
 import Router from 'next/router'
 import Head from 'next/head'
 import { api, getErrorMessages } from '../common'
-import {
-  Button,
-  Col,
-  Form,
-  Row,
-  FormGroup,
-  Input,
-  Label,
-  FormText
-} from 'reactstrap'
+import { Row, Col, Button, Form, FormGroup, Input, Label } from 'reactstrap'
 import {
   IngredientListJSON,
   ProcedureListJSON,
@@ -23,16 +14,15 @@ import { PostRecipe } from '../common/request-models'
 import {
   AlertErrors,
   Layout,
-  NewRecipeTitle,
   IngredientListsEditor,
   ProcedureListsEditor,
   PreheatsEditor,
   RecipeYield,
-  RecipeDuration
+  RecipeDuration,
+  RecipeAttributionEditor
 } from '../components'
 import * as _ from 'lodash'
 import { normalize } from '../common/model-helpers'
-import { Link } from '../routes'
 
 interface State {
   errors: string[]
@@ -110,84 +100,58 @@ export default class NewRecipe extends React.Component<any, State> {
         </Head>
         <Form onSubmit={this.create} className="mt-3 pb-5">
           <AlertErrors errors={this.state.errors} />
+          <FormGroup>
+            <Label for="title">
+              <h5>Title</h5>
+            </Label>
+            <Input
+              type="text"
+              name="title"
+              id="title"
+              placeholder="e.g. Banana Bread"
+              required
+              autoFocus={true}
+              tabIndex={1}
+              value={this.state.title}
+              onChange={this.titleOnChange}
+            />
+          </FormGroup>
           <Row>
-            <Col xs="12">
-              <NewRecipeTitle
-                value={this.state.title}
-                onChange={this.titleOnChange}
+            <Col xs={12} md={6}>
+              <RecipeYield
+                yield={this.state.recipeYield}
+                onChange={recipeYield => this.setState({ recipeYield })}
+              />
+            </Col>
+            <Col xs={12} md={6}>
+              <RecipeDuration
+                duration={this.state.recipeDuration}
+                onChange={recipeDuration => this.setState({ recipeDuration })}
               />
             </Col>
           </Row>
-
-          <FormGroup>
-            <Label>Source URL</Label>
-            <Input
-              type="text"
-              value={this.state.source_url}
-              placeholder="e.g. https://example.com/recipe.html"
-              onChange={e => this.setState({ source_url: e.target.value })}
-            />
-            <FormText>
-              Pro tip: Try our{' '}
-              <Link route="/recipes/import">
-                <a>importer</a>
-              </Link>{' '}
-              instead!
-            </FormText>
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Source Author</Label>
-            <Input
-              type="text"
-              value={this.state.source_author}
-              placeholder="e.g. Firstname Lastname"
-              onChange={e => this.setState({ source_author: e.target.value })}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Source ISBN</Label>
-            <Input
-              type="text"
-              value={this.state.source_isbn}
-              placeholder="e.g. 9780000000000"
-              onChange={e => this.setState({ source_isbn: e.target.value })}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Source Title</Label>
-            <Input
-              type="text"
-              value={this.state.source_title}
-              placeholder="e.g. Cookbook"
-              onChange={e => this.setState({ source_title: e.target.value })}
-            />
-          </FormGroup>
-
-          <RecipeYield
-            yield={this.state.recipeYield}
-            onChange={recipeYield => this.setState({ recipeYield })}
-          />
-          <RecipeDuration
-            duration={this.state.recipeDuration}
-            onChange={recipeDuration => this.setState({ recipeDuration })}
-          />
-          <h2>Preheats</h2>
+          <h5>Preheats</h5>
           <PreheatsEditor
             preheats={[]}
             onChange={preheats => this.setState({ preheats })}
           />
-          <h2>Ingredients</h2>
+          <h5>Ingredients</h5>
           <IngredientListsEditor
             lists={[defaultIngredientList]}
             onChange={ingredientLists => this.setState({ ingredientLists })}
           />
-          <h2 className="my-3">Steps</h2>
+          <h5 className="my-3">Steps</h5>
           <ProcedureListsEditor
             lists={[defaultProcedureList]}
             onChange={procedureLists => this.setState({ procedureLists })}
+          />
+          <h5 className="my-3">Attribution</h5>
+          <RecipeAttributionEditor
+            source_url=""
+            source_title=""
+            source_author=""
+            source_isbn=""
+            onChange={delta => this.setState(delta)}
           />
           <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!

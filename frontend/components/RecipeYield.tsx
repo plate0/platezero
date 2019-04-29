@@ -36,7 +36,9 @@ export function RecipeYield(props: Props) {
   const changed = model ? !model.id : false
   return (
     <FormGroup>
-      <Label>Yield</Label>
+      <Label>
+        <h5>Yield</h5>
+      </Label>
       <Input
         type="text"
         value={text}
