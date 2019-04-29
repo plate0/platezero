@@ -1,10 +1,11 @@
 import React from 'react'
 import * as _ from 'lodash'
-import Fraction from 'fraction.js'
 
 import { IngredientListJSON, IngredientLineJSON } from '../models'
 import { IngredientLists } from './IngredientLists'
 import { unitfy } from '../common/unit'
+import { parseAmount } from '../common/amount'
+import { printAmount } from '../common/amount'
 import { changesBetween } from '../common/changes'
 import { LivePreviewEditor } from './LivePreviewEditor'
 import { Blankslate } from './Blankslate'
@@ -84,25 +85,11 @@ function ingredientListToText(list: IngredientListJSON): string {
   return text
 }
 
-function amount({
-  quantity_numerator,
-  quantity_denominator
-}): string | undefined {
-  if (!quantity_numerator || !quantity_denominator) {
-    return undefined
-  }
-  try {
-    const amt = new Fraction(quantity_numerator, quantity_denominator)
-    return amt.toFraction(true)
-  } catch {}
-  return undefined
-}
-
 function ingredientLineToText(line: IngredientLineJSON): string {
   return _.join(
     _.reject(
       [
-        amount(line),
+        printAmount(line),
         line.unit,
         line.name,
         line.preparation ? `-- ${line.preparation}` : undefined,
@@ -154,27 +141,6 @@ function parseIngredientLine(text: string): IngredientLineJSON {
     preparation,
     optional
   }
-}
-
-export function parseAmount(text: string): [number, number, string] {
-  try {
-    // first try to match a decimal
-    const decResults = text.match(/^(\d*\.\d+?)/)
-    if (decResults) {
-      const f = new Fraction(decResults[0])
-      const rest = text.substring(_.size(decResults[0]))
-      return [f.n, f.d, rest]
-    }
-    // next, if no decimal was found, try to match a whole number or whole
-    // number + fraction
-    const results = text.match(/^((\d+\s+)?\d+(\/\d+)?)/)
-    if (results) {
-      const f = new Fraction(results[0])
-      const rest = text.substring(_.size(results[0]))
-      return [f.n, f.d, rest]
-    }
-  } catch {}
-  return [undefined, undefined, text]
 }
 
 function parseUnit(text: string): [string, string] {
