@@ -245,6 +245,7 @@ function procedureMapper($: any) {
 export const recipeSchemaProcedureLists = ($: any) => {
   const search = [
     { selector: 'ol[itemprop="recipeInstructions"] li' },
+    { selector: 'ol li', css: /instruction/i },
     { selector: ':not([itemscope])[itemprop="recipeInstructions"]' },
     {
       selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
@@ -252,7 +253,6 @@ export const recipeSchemaProcedureLists = ($: any) => {
     {
       selector: '[itemprop="recipeInstructions"] [itemprop="text"]'
     },
-    { selector: 'ol li', css: /instruction/i },
     // Seriously, people?
     { selector: 'ul li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes
