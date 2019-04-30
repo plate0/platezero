@@ -120,7 +120,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
       unit: _.upperCase(m[4]) || 'F' //TODO: Default to user preference?
     })
   }
-  preheats = _.uniqBy(preheats, JSON.stringify)
+  preheats = _.uniqBy(preheats, 'name')
   return preheats
 }
 
