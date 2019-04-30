@@ -29,7 +29,9 @@ export function DurationInput(props: Props) {
 
   return (
     <FormGroup>
-      <Label>Duration</Label>
+      <Label>
+        <h5>Duration</h5>
+      </Label>
       <Row>
         <Col>
           <Input
