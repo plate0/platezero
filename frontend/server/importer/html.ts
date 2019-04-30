@@ -106,7 +106,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
     `(${utilities.join('|')})\\s[a-z]*\\s?(\\d+)\\s?(degrees|º|°)?\\s?(C|F)?`,
     'gim'
   )
-  const preheats: PreheatJSON[] = []
+  let preheats: PreheatJSON[] = []
   let m
   const text = _.trim(sel ? $(sel).text() : $.text())
   while ((m = regex.exec(text)) !== null) {
@@ -120,6 +120,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
       unit: _.upperCase(m[4]) || 'F' //TODO: Default to user preference?
     })
   }
+  preheats = _.uniqBy(preheats, 'name')
   return preheats
 }
 
