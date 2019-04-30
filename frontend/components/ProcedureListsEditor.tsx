@@ -85,12 +85,13 @@ function parseProcedureLists(text: string): ProcedureListJSON[] {
   return _.reduce(
     lines,
     (acc, line) => {
+      line = _.trim(line)
       if (_.size(acc) === 0) {
         acc.push({ name: undefined, lines: [] })
       }
       const section = _.last(acc)
-      if (_.startsWith(line, '# ')) {
-        const name = line.substring(2)
+      if (_.startsWith(line, '#')) {
+        const name = line.substring(1)
         if (section.name) {
           acc.push({ name, lines: [] })
         } else {

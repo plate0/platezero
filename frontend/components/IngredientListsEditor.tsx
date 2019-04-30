@@ -119,13 +119,14 @@ function parseIngredientLists(text: string): IngredientListJSON[] {
   return _.reduce(
     lines,
     (acc, line) => {
+      line = _.trim(line)
       if (_.size(acc) === 0) {
         acc.push({ name: undefined, lines: [] })
       }
       const section = _.last(acc)
-      if (_.startsWith(line, '# ')) {
+      if (_.startsWith(line, '#')) {
         // it's a name
-        section.name = line.substring(2)
+        section.name = line.substring(1)
       } else if (_.trim(line) === '' && _.size(section.lines) > 0) {
         // it's a blank line and we've already filled lines in this section, we
         // should start a new section
