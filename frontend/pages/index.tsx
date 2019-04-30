@@ -1,5 +1,13 @@
 import React, { Component } from 'react'
-import { Jumbotron, Button, Row, Col, Card, CardBody } from 'reactstrap'
+import {
+  Jumbotron,
+  Container,
+  Button,
+  Row,
+  Col,
+  Card,
+  CardBody
+} from 'reactstrap'
 import Head from 'next/head'
 import '../style/index.scss'
 import { Layout, ProfilePicture } from '../components'
@@ -21,51 +29,72 @@ export default class Index extends Component<{ users: UserJSON[] }> {
 
   public render() {
     return (
-      <Layout>
+      <Layout fluid className="px-0">
         <Head>
-          <title>
-            PlateZero - Save, organize, and iterate on your favorite meals
-          </title>
+          <title>PlateZero - Save, Remix & Share your Favorite Recipes</title>
         </Head>
-        <Jumbotron className="my-5">
-          <h1 className="display-4">Welcome to PlateZero!</h1>
-          <p className="lead">The best way to own the food you cook.</p>
-          <p className="lead">
-            Other sites show you recipes developed by others. PlateZero gives
-            you the tools to save, organize, and remix your favorite meals.
-          </p>
-          <Link route="/register">
-            <Button color="primary">Get started</Button>
-          </Link>
-        </Jumbotron>
-        <Row>
-          {this.props.users
-            // TODO this is extremely hacky
-            .filter(u => u.id < 5)
-            .map(user => (
-              <Col xs="12" md="6" key={user.id}>
-                <Card className="mb-3">
-                  <CardBody>
-                    <Link route={`/${user.username}`}>
-                      <a className="d-block">
-                        <div className="d-flex align-items-center">
-                          <div className="mr-3">
-                            <ProfilePicture img={user.avatar_url} size={50} />
-                          </div>
-                          <div>
-                            {getName(user)}
-                            {user.name && (
-                              <div className="text-muted">@{user.username}</div>
-                            )}
-                          </div>
-                        </div>
-                      </a>
-                    </Link>
-                  </CardBody>
-                </Card>
-              </Col>
-            ))}
-        </Row>
+        <div
+          className="w-100 d-flex align-items-center justify-content-center flex-column"
+          style={{
+            height: 500,
+            objectFit: 'cover',
+            backgroundImage:
+              'url(https://static.platezero.com/assets/clean-white-table-ingredients.jpg)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover'
+          }}
+        >
+          <h1
+            style={{
+              textShadow: '0 1px 0 black',
+              color: 'white',
+              fontSize: '4rem'
+            }}
+          >
+            PlateZero
+          </h1>
+          <h2
+            style={{
+              textShadow: '0 1px 0 black',
+              color: 'white'
+            }}
+          >
+            Save, Remix & Share your favorite recipes
+          </h2>
+        </div>
+        <Container>
+          <Row className="my-3">
+            <Col xs="12">
+              Finally all of your recipes in one place and easily searchable
+            </Col>
+          </Row>
+          <Row>
+            <Col xs="12" md="6">
+              <img
+                className="w-100"
+                src="https://static.platezero.com/assets/record-player.jpg"
+              />
+            </Col>
+            <Col xs="12" md="6">
+              <div>Remix recipes to perfect them as you go.</div>
+              <div>Always know where you started with your history tab</div>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs="12" md={{ size: 6, order: 12 }}>
+              <img
+                className="w-100"
+                src="https://static.platezero.com/assets/cutting-board-food-prep.jpg"
+              />
+            </Col>
+            <Col xs="12" md="6">
+              <div>
+                Share recipes easily with friends and family, so they can try
+                out their favorites on their own
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </Layout>
     )
   }
