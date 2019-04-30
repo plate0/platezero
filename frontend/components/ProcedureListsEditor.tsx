@@ -77,7 +77,7 @@ function procedureLineToText(line: ProcedureLineJSON): string {
 }
 
 function parseProcedureLists(text: string): ProcedureListJSON[] {
-  const lines = _.split(text, '\n\n')
+  const lines = _.split(text, '\n')
   return _.reduce(
     lines,
     (acc, line) => {
