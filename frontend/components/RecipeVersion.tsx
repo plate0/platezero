@@ -18,7 +18,7 @@ export const RecipeVersion = ({
   return (
     <>
       <Row className="position-relative">
-        <RecipeVersionHeader version={version} />
+        <RecipeVersionHeader version={version} recipe={version.recipe} />
       </Row>
       <Row>
         <Col xs="12" className="px-0 px-sm-3">

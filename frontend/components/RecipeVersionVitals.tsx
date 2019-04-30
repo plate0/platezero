@@ -8,12 +8,14 @@ import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
 
 const RecipeVersionHeaderNoImage = ({
-  version
+  version,
+  recipe
 }: {
   version: RecipeVersionJSON
+  recipe: RecipeJSON
 }) => {
-  const title = version.recipe.title
-  const subtitle = version.recipe.subtitle
+  const title = recipe.title
+  const subtitle = recipe.subtitle
   const author = version.author
   const yld = <Yield version={version} />
   const time = <Duration version={version} />
@@ -24,7 +26,7 @@ const RecipeVersionHeaderNoImage = ({
       <Link to="user" params={{ username: author.username }}>
         <a itemProp="author">{getName(version.author)} </a>
       </Link>
-      <Source version={version} />
+      <Source recipe={recipe} />
       {(yld || time) && (
         <ul className="mb-0 mt-3 list-unstyled">
           {yld && <li>{yld}</li>}
@@ -36,14 +38,16 @@ const RecipeVersionHeaderNoImage = ({
 }
 
 const RecipeVersionHeaderImage = ({
-  version
+  version,
+  recipe
 }: {
   version: RecipeVersionJSON
+  recipe: RecipeJSON
 }) => {
-  const title = version.recipe.title
-  const subtitle = version.recipe.subtitle
+  const title = recipe.title
+  const subtitle = recipe.subtitle
   const author = version.author
-  const imageUrl = version.recipe.image_url
+  const imageUrl = recipe.image_url
   return (
     <Col xs="12" className="px-0 px-sm-3 d-print-none">
       <div className="position-relative">
@@ -70,7 +74,7 @@ const RecipeVersionHeaderImage = ({
           >
             {getName(author)}
           </a>{' '}
-          <Source version={version} className="text-white text-underline" />
+          <Source recipe={recipe} className="text-white text-underline" />
           <div className="mt-3 stats d-flex">
             <Col
               xs="6"
@@ -106,20 +110,22 @@ const RecipeVersionHeaderImage = ({
 }
 
 export const RecipeVersionHeader = ({
-  version
+  version,
+  recipe
 }: {
   version: RecipeVersionJSON
+  recipe: RecipeJSON
 }) => {
-  const imageUrl = version.recipe.image_url
+  const imageUrl = recipe.image_url
   return imageUrl ? (
     <>
       <div className="d-none d-print-block">
-        <RecipeVersionHeaderNoImage version={version} />
+        <RecipeVersionHeaderNoImage version={version} recipe={recipe} />
       </div>
-      <RecipeVersionHeaderImage version={version} />
+      <RecipeVersionHeaderImage version={version} recipe={recipe} />
     </>
   ) : (
-    <RecipeVersionHeaderNoImage version={version} />
+    <RecipeVersionHeaderNoImage version={version} recipe={recipe} />
   )
 }
 
@@ -144,17 +150,17 @@ const Yield = ({ version }: { version: RecipeVersionJSON }) => {
 }
 
 const Source = ({
-  version,
+  recipe,
   className
 }: {
-  version: RecipeVersionJSON
+  recipe: RecipeJSON
   className?: string
 }) => {
-  const work = getWorkTitle(version.recipe)
+  const work = getWorkTitle(recipe)
   if (!work) {
     return null
   }
-  const link = getLink(version.recipe)
+  const link = getLink(recipe)
   const src = link ? (
     <a
       href={link}

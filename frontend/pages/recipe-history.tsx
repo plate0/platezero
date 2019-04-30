@@ -43,6 +43,7 @@ export default class RecipeHistory extends React.Component<Props> {
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
+    console.log(recipe)
     return (
       <Layout>
         <Head
@@ -52,7 +53,10 @@ export default class RecipeHistory extends React.Component<Props> {
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
         <Row className="position-relative">
-          <RecipeVersionHeader version={this.props.versions[0]} />
+          <RecipeVersionHeader
+            version={_.first(this.props.versions)}
+            recipe={recipe}
+          />
         </Row>
         <Row>
           <Col xs="12" className="px-0 px-sm-3">
