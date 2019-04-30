@@ -1917,4 +1917,50 @@ describe('Generic HTML import', () => {
       )
     })
   })
+
+  describe('littlespicejar.com', () => {
+    let source: string
+    let importer = dom(GenericHTML)
+
+    beforeEach(() => {
+      source = readFileSync(
+        'test/assets/littlespicejar.com/caramelized-onion-feta-spinach-pizza-with-white-sauce.html',
+        { encoding: 'utf8' }
+      )
+    })
+
+    test('procedure_lists', async () => {
+      const { procedure_lists } = await importer(source)
+      expect(procedure_lists).toEqual([
+        {
+          lines: [
+            {
+              text:
+                'Heat a tablespoon of olive oil in a medium skillet over medium heat. Add the baby spinach and saute until just wilted. Transfer the spinach to a strainer and using the bottom of a glass, press out some of the excess liquid from the spinach, set aside.'
+            },
+            {
+              text:
+                'Add another tablespoon of olive oil to the same skillet and saute the mushrooms for 3-4 minutes or until they brown just barely. Season with a little salt and pepper, remove to a plate.'
+            },
+            {
+              text:
+                'Add the last tablespoon of olive oil to the skillet set over medium heat. Add the onions and season them with a small pinch of salt. Allow the onions to cook down for 10 minutes, stirring as necessary. Do not allow the onions to brown. Add the sugar and stir to coat evenly. Allow the onions to cook for another 10 minutes. When the onions have cooked down, add the balsamic vinegar and stir to combine, set aside.'
+            },
+            {
+              text:
+                'Position a rack in the center of the oven and preheat the oven to 475ºF. Flatten the pizza dough into a 12-inch circle. Create a lip or rim by thickening the dough around the crust portion. This keeps the sauce in instead of running over the sides. Transfer dough carefully to a parchment lined baking sheet. Let dough rest for 10-15 minutes.'
+            },
+            {
+              text:
+                'In a small saucepan, melt the butter and add the flour and garlic and allow to cook for 1-2 minutes. Do not let the flour brown. Continue to whisk as you add in the warm milk. Add the parmesan cheese, and a small pinch of nutmeg if desired. Season with salt and pepper to taste. When the sauce just barely reaches a boil, remove from heat.'
+            },
+            {
+              text:
+                'Top the prepared pizza dough with sauce, leaving the ‘lip’ sauceless. Sprinkle on three-quarters of the mozzarella cheese, followed by the mushrooms, spinach, and caramelized onions, and finish with the remaining mozzarella and feta cheese. Allow the pizza to bake for 10-15 minutes. You can turn the broiler on for the last minute of cooking if you’d like your edges and cheese to be a little browner.'
+            }
+          ]
+        }
+      ])
+    })
+  })
 })
