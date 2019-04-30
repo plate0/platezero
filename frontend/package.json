@@ -34,7 +34,7 @@
     "express": "4.16.4",
     "express-jwt": "5.3.1",
     "fraction.js": "4.0.12",
-    "ingredient-parser": "https://github.com/plate0/ingredient-parser.git#v0.1.1",
+    "ingredient-parser": "https://github.com/plate0/ingredient-parser.git#v0.2.0",
     "isomorphic-fetch": "2.2.1",
     "jest": "24.5.0",
     "joi": "14.3.1",
