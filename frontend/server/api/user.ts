@@ -9,7 +9,8 @@ import { importers } from './importer'
 import {
   validateNewRecipe,
   validateRecipePatch,
-  validateRecipeVersionPatch
+  validateRecipeVersionPatch,
+  validateUserPatch
 } from '../validate'
 import { User, Recipe, RecipeBranch } from '../../models'
 import { notFound, internalServerError } from '../errors'
@@ -31,6 +32,16 @@ const r = express.Router()
 r.get('/', async (req: AuthenticatedRequest, res) => {
   try {
     const user = await User.findOne({ where: { username: req.user.username } })
+    return res.json(user)
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.put('/', validateUserPatch, async (req: AuthenticatedRequest, res) => {
+  try {
+    const user = await User.findByUsername(req.user.username)
+    await user.update(req.body)
     return res.json(user)
   } catch (err) {
     return internalServerError(res, err)
