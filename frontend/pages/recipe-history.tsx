@@ -43,7 +43,6 @@ export default class RecipeHistory extends React.Component<Props> {
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
-    console.log(recipe)
     return (
       <Layout>
         <Head
