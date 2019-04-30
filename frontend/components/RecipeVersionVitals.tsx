@@ -70,7 +70,7 @@ const RecipeVersionHeaderImage = ({
           >
             {getName(author)}
           </a>{' '}
-          <Source version={version} className="text-white" />
+          <Source version={version} className="text-white text-underline" />
           <div className="mt-3 stats d-flex">
             <Col
               xs="6"

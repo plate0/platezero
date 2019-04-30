@@ -33,12 +33,12 @@ export const RecipeNav = ({
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
   return (
     <Nav className="mb-3 d-print-none recipe-nav">
-      <NavItem className={`${route === '/recipe' ? 'active' : ''}`}>
+      <NavItem active={route === '/recipe'}>
         <Link route={baseURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
         </Link>
       </NavItem>
-      <NavItem className={`${route === '/recipe-history' ? 'active' : ''}`}>
+      <NavItem active={route === '/recipe-history'}>
         <Link route={`${baseURL}/history`} passHref>
           <NavLink active={route === '/recipe-history'}>History</NavLink>
         </Link>
