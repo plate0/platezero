@@ -2,11 +2,10 @@ import React from 'react'
 import ErrorPage from './_error'
 import { Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
-
 import {
   Head,
   Layout,
-  RecipeTitle,
+  RecipeVersionHeader,
   RecipeNav,
   Timestamp,
   ProfilePicture,
@@ -52,10 +51,17 @@ export default class RecipeHistory extends React.Component<Props> {
           image={recipe.image_url}
           url={`/${recipe.owner.username}/${recipe.slug}`}
         />
-        <div className="mt-3">
-          <RecipeTitle recipe={recipe} />
-        </div>
-        <RecipeNav recipe={recipe} route={this.props.pathname} />
+        <Row className="position-relative">
+          <RecipeVersionHeader
+            version={_.first(this.props.versions)}
+            recipe={recipe}
+          />
+        </Row>
+        <Row>
+          <Col xs="12" className="px-0 px-sm-3">
+            <RecipeNav recipe={recipe} route={this.props.pathname} />
+          </Col>
+        </Row>
         <ListGroup className="mb-3">
           {this.props.versions.map(v => {
             const lines = _.split(v.message, '\n\n')

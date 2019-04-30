@@ -9,7 +9,13 @@ import { Tooltip } from './Tooltip'
 export const Navbar = () => {
   const { user } = useContext(UserContext)
   return (
-    <RsNavbar expand={true} color="primary" dark={true} className="shadow-sm">
+    <RsNavbar
+      expand={true}
+      color="primary"
+      dark={true}
+      className="shadow-sm"
+      style={{ zIndex: 1 }}
+    >
       <Container>
         <Link route="/">
           <a className="navbar-brand py-0">
