@@ -1,27 +1,18 @@
 import React from 'react'
 import ErrorPage from './_error'
 import Head from 'next/head'
-import { Dropzone, Layout } from '../components'
+import { Dropzone, Layout, AlertErrors } from '../components'
 import { Spinner, Button, Row, Col } from 'reactstrap'
 import * as _ from 'lodash'
-import { api, PlateZeroApiError } from '../common'
+import { api, getErrorMessages } from '../common'
 import { Link } from '../routes'
 import { UserJSON } from '../models'
 
 enum UploadStatus {
   None,
   Uploading,
-  Uploaded
-}
-
-const errMessages = (err: PlateZeroApiError | Error) => {
-  let messages = []
-  if (err instanceof PlateZeroApiError) {
-    messages = err.messages
-  } else {
-    messages = [err.message]
-  }
-  return messages
+  UploadSucceeded,
+  UploadFailed
 }
 
 const wordings = {
@@ -81,11 +72,11 @@ export default class NewRecipeFile extends React.Component<
     })
     try {
       await api.importFiles(formData)
-      this.setState({ status: UploadStatus.Uploaded })
+      this.setState({ status: UploadStatus.UploadSucceeded })
     } catch (err) {
       this.setState({
-        status: UploadStatus.Uploaded,
-        errors: errMessages(err)
+        status: UploadStatus.UploadFailed,
+        errors: getErrorMessages(err)
       })
     }
   }
@@ -133,7 +124,24 @@ export default class NewRecipeFile extends React.Component<
                 <Spinner color="primary" />
               </div>
             )}
-            {status == UploadStatus.Uploaded && (
+            {status == UploadStatus.UploadFailed && (
+              <>
+                <h4 className="text-danger">That didn't work, sorry!</h4>
+                <p>
+                  There was a problem uploading your files. Were you trying to
+                  upload too many? The maximum combined file size we currently
+                  accept is 100 megabytes, so if you're uploading a lot of
+                  recipes you may need to try using smaller batches.
+                </p>
+                <p>
+                  If you continue to have problems, please{' '}
+                  <a href="mailto:bugs@platezero.com">report a bug</a> and we'll
+                  take a look!
+                </p>
+                <AlertErrors errors={this.state.errors} />
+              </>
+            )}
+            {status == UploadStatus.UploadSucceeded && (
               <div>
                 <h4>Hurray! Your recipe has been uploaded.</h4>
                 <p>
