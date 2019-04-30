@@ -167,7 +167,12 @@ const Source = ({
   ) : (
     <span itemProp="isBasedOn">{work}</span>
   )
-  return <>from {src}</>
+  return (
+    <>
+      <span className="mx-2">&#8226;</span>
+      {src}
+    </>
+  )
 }
 
 const formatDuration = (seconds: number) => {
