@@ -28,6 +28,10 @@ $changed-base: $warning;
   text-decoration: line-through;
 }
 
+.text-underline {
+  text-decoration: underline;
+}
+
 summary {
   color: $secondary;
 }

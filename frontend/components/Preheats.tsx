@@ -2,18 +2,23 @@ import React from 'react'
 import * as _ from 'lodash'
 import { PreheatJSON } from '../models'
 
-export const Preheats = ({ preheats }: { preheats: PreheatJSON[] }) => (
-  <ul>
-    {_.map(preheats, (preheat, key) => (
-      <li key={key}>
-        <Preheat preheat={preheat} />
-      </li>
-    ))}
-  </ul>
-)
+export const Preheats = ({ preheats }: { preheats: PreheatJSON[] }) => {
+  if (_.size(preheats) === 0) {
+    return null
+  }
+  return (
+    <ul className="list-unstyled">
+      {_.map(preheats, (preheat, key) => (
+        <li key={key}>
+          <Preheat preheat={preheat} />
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 export const Preheat = ({ preheat }: { preheat: PreheatJSON }) => (
-  <span className="text-danger">
+  <span className="badge badge-pill badge-danger">
     {preheat.name} {preheat.temperature} {preheat.unit}
   </span>
 )

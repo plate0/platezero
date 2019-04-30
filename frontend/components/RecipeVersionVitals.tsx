@@ -1,85 +1,194 @@
 import React from 'react'
 import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
-
+import { Col } from 'reactstrap'
 import { RecipeVersionJSON, RecipeJSON } from '../models'
 import { toHoursAndMinutes } from '../common/time'
-import { Preheat } from './Preheats'
+import { getName } from '../common/model-helpers'
+import { Link } from '../routes'
 
-interface Props {
-  recipeVersion: RecipeVersionJSON
-}
-export const RecipeVersionVitals = (props: Props) => {
-  const vitals = _.flatten(
-    _.map([duration, recipeYield, source, preheats], visit =>
-      visit(props.recipeVersion)
-    )
+const RecipeVersionHeaderNoImage = ({
+  version,
+  recipe
+}: {
+  version: RecipeVersionJSON
+  recipe: RecipeJSON
+}) => {
+  const title = recipe.title
+  const subtitle = recipe.subtitle
+  const author = version.author
+  const yld = <Yield version={version} />
+  const time = <Duration version={version} />
+  return (
+    <Col xs="12" className="my-3">
+      <h1 className="mb-0">{title}</h1>
+      <h5 className="m-0">{subtitle}</h5>
+      <Link to="user" params={{ username: author.username }}>
+        <a itemProp="author">{getName(version.author)} </a>
+      </Link>
+      <Source recipe={recipe} />
+      {(yld || time) && (
+        <ul className="mb-0 mt-3 list-unstyled">
+          {yld && <li>{yld}</li>}
+          {time && <li>{time}</li>}
+        </ul>
+      )}
+    </Col>
   )
-  if (!vitals.length) {
+}
+
+const RecipeVersionHeaderImage = ({
+  version,
+  recipe
+}: {
+  version: RecipeVersionJSON
+  recipe: RecipeJSON
+}) => {
+  const title = recipe.title
+  const subtitle = recipe.subtitle
+  const author = version.author
+  const imageUrl = recipe.image_url
+  return (
+    <Col xs="12" className="px-0 px-sm-3 d-print-none">
+      <div className="position-relative">
+        <img
+          className="w-100 d-print-none"
+          src={imageUrl}
+          itemProp="image"
+          alt={`Picture of ${title}`}
+        />
+        <div
+          className="position-absolute text-white w-100 p-2 pt-5"
+          style={{
+            bottom: 0,
+            background: 'linear-gradient(transparent, rgba(0,0,0,.70))'
+          }}
+        >
+          <h1 className="m-0">{title}</h1>
+          <h5>{subtitle}</h5>
+          <a
+            href={`/${author.username}`}
+            style={{ textDecoration: 'underline' }}
+            itemProp="author"
+            className="text-white"
+          >
+            {getName(author)}
+          </a>{' '}
+          <Source recipe={recipe} className="text-white text-underline" />
+          <div className="mt-3 stats d-flex">
+            <Col
+              xs="6"
+              className="align-items-center d-flex justify-content-center text-center"
+            >
+              <Yield version={version} />
+            </Col>
+            <Col
+              xs="6"
+              className="align-items-center d-flex justify-content-center text-center"
+              style={{ borderLeft: '1px solid #ccc' }}
+            >
+              <Duration version={version} />
+            </Col>
+          </div>
+        </div>
+      </div>
+      <style jsx>
+        {`
+          h1,
+          h5 {
+            text-shadow: 0 1px 0 black;
+          }
+
+          img[itemProp='image'] {
+            height: 500px;
+            object-fit: cover;
+          }
+        `}
+      </style>
+    </Col>
+  )
+}
+
+export const RecipeVersionHeader = ({
+  version,
+  recipe
+}: {
+  version: RecipeVersionJSON
+  recipe: RecipeJSON
+}) => {
+  const imageUrl = recipe.image_url
+  return imageUrl ? (
+    <>
+      <div className="d-none d-print-block">
+        <RecipeVersionHeaderNoImage version={version} recipe={recipe} />
+      </div>
+      <RecipeVersionHeaderImage version={version} recipe={recipe} />
+    </>
+  ) : (
+    <RecipeVersionHeaderNoImage version={version} recipe={recipe} />
+  )
+}
+
+export const Duration = ({ version }: { version: RecipeVersionJSON }) => {
+  const d = _.get(version, 'recipeDuration.duration_seconds')
+  if (!d) {
     return null
   }
   return (
-    <ul className="list-inline">
-      {vitals.map((vital, idx) => (
-        <li className="list-inline-item text-muted" key={idx}>
-          {vital}
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-const preheats = (rv: RecipeVersionJSON) =>
-  _.map(rv.preheats, preheat => <Preheat preheat={preheat} />)
-
-const formatDuration = (seconds: number) => {
-  const { h, m } = toHoursAndMinutes(seconds)
-  const hs = `${h}h`
-  const ms = `${m}m`
-  if (h > 0) {
-    return m !== 0 ? `${hs} ${ms}` : hs
-  }
-  return ms
-}
-
-const duration = (rv: RecipeVersionJSON) => {
-  const d = _.get(rv, 'recipeDuration.duration_seconds')
-  if (!d) {
-    return []
-  }
-  return (
     <time itemProp="cookTime" dateTime={`PT${d}S`}>
-      Takes {formatDuration(d)}
+      {formatDuration(d)}
     </time>
   )
 }
 
-const recipeYield = (rv: RecipeVersionJSON) => {
-  const y = _.get(rv, 'recipeYield.text')
+const Yield = ({ version }: { version: RecipeVersionJSON }) => {
+  let y = _.get(version, 'recipeYield.text')
   if (!y) {
-    return []
+    return null
   }
-  return (
-    <>
-      Yields <span itemProp="recipeYield">{y}</span>
-    </>
-  )
+  return <span itemProp="recipeYield">{y}</span>
 }
 
-const source = (rv: RecipeVersionJSON) => {
-  const work = getWorkTitle(rv.recipe)
+const Source = ({
+  recipe,
+  className
+}: {
+  recipe: RecipeJSON
+  className?: string
+}) => {
+  const work = getWorkTitle(recipe)
   if (!work) {
-    return []
+    return null
   }
-  const link = getLink(rv.recipe)
+  const link = getLink(recipe)
   const src = link ? (
-    <a href={link} target="_blank" itemProp="isBasedOn">
+    <a
+      href={link}
+      target="_blank"
+      itemProp="isBasedOn"
+      className={className || ''}
+    >
       {work}
     </a>
   ) : (
     <span itemProp="isBasedOn">{work}</span>
   )
-  return <>Adapted from {src}</>
+  return (
+    <>
+      <span className="mx-2">&#8226;</span>
+      {src}
+    </>
+  )
+}
+
+const formatDuration = (seconds: number) => {
+  const { h, m } = toHoursAndMinutes(seconds)
+  const hs = `${h} ${h > 1 ? 'hours' : 'hour'}`
+  const ms = `${m} ${m > 1 ? 'minutes' : 'minute'}`
+  if (h > 0) {
+    return m !== 0 ? `${hs} ${ms}` : hs
+  }
+  return ms
 }
 
 // piece together the full display of the work, either "[work] by [author]", or

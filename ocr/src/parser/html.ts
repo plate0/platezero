@@ -1,4 +1,4 @@
-import { parse } from './ingredient'
+import { parseIngredient } from 'ingredient-parser'
 import * as moment from 'moment'
 import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
@@ -147,8 +147,8 @@ const findMap = ($: any, options: FindMap) => {
 
 /* Ingredient List Strategies */
 function ingredientMapper($: any) {
-  return function(this: any) {
-    return parse(_.trim($(this).text()))
+  return function(this: any): any {
+    return parseIngredient(_.trim($(this).text()))
   }
 }
 
@@ -192,7 +192,7 @@ export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
     .closest('ul')
     .find('li')
     .map(function(this: any) {
-      return parse($(this).text())
+      return parseIngredient($(this).text())
     })
     .get()
   return lines
@@ -205,7 +205,7 @@ export const ingredient_lists = (sel: string) => (
   {
     lines: $(sel)
       .map(function(this: any) {
-        return parse(_.trim($(this).text()))
+        return parseIngredient(_.trim($(this).text()))
       })
       .get()
   }

@@ -39,19 +39,34 @@ export const RecipeList = ({ children, recipes, user }: RecipesProps) => {
   return (
     <section className="my-3">
       {children}
-      <ListGroup className="mt-3">
+      <ListGroup className="mt-3" flush>
         {recipes.map(recipe => (
-          <ListGroupItem key={recipe.id}>
-            <div>
-              <Link route={`/${user.username}/${recipe.slug}`}>
-                <a className="text-dark stretched-link">
-                  <strong>{recipe.title}</strong>
-                </a>
-              </Link>
-            </div>
-            <div className="small text-muted text-truncate">
-              {recipe.description || 'by ' + getName(recipe.owner)}
-            </div>
+          <ListGroupItem key={recipe.id} className="px-0">
+            <Link route={`/${user.username}/${recipe.slug}`}>
+              <a className="text-dark d-flex align-items-center">
+                {recipe.image_url && (
+                  <Col xs="2" md="1" className="px-0">
+                    <img
+                      className="w-100"
+                      src={recipe.image_url}
+                      alt={`Picture of ${recipe.title}`}
+                    />
+                  </Col>
+                )}
+                <Col
+                  xs={recipe.image_url ? '10' : '12'}
+                  md={recipe.image_url ? '11' : '12'}
+                  className={recipe.image_url ? 'pr-0' : 'px-0'}
+                >
+                  <div>
+                    <strong>{recipe.title}</strong>
+                  </div>
+                  <div className="small text-muted text-truncate">
+                    {recipe.description || 'by ' + getName(recipe.owner)}
+                  </div>
+                </Col>
+              </a>
+            </Link>
           </ListGroupItem>
         ))}
       </ListGroup>

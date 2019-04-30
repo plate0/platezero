@@ -63,7 +63,10 @@ export default class Login extends React.Component<any, LoginState> {
                   </div>
                   {error}
                   <div className="border rounded p-3">
-                    <Form onSubmit={e => this.login(e, updateUser)}>
+                    <Form
+                      onSubmit={e => this.login(e, updateUser)}
+                      className="mb-3"
+                    >
                       <FormGroup>
                         <Label for="username">
                           <strong>Username</strong>
@@ -99,6 +102,13 @@ export default class Login extends React.Component<any, LoginState> {
                         Sign In
                       </Button>
                     </Form>
+                    <div className="small text-muted text-center">
+                      Forgot your password? Email{' '}
+                      <a href="mailto:hello@platezero.com">
+                        hello@platezero.com
+                      </a>{' '}
+                      and we'll get it sorted out!
+                    </div>
                   </div>
                 </div>
               </div>

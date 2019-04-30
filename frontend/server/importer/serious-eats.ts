@@ -1,6 +1,6 @@
 import { last } from 'lodash'
 import * as moment from 'moment'
-import { parse } from '../../common/ingredient'
+import { parseIngredient } from 'ingredient-parser'
 import * as html from './html'
 import { IngredientListJSON } from '../../models'
 import { mapValues } from './importer'
@@ -48,7 +48,7 @@ const ingredient_lists = ($: any): IngredientListJSON[] => {
           lines: []
         }
       }
-      list.lines.push(parse(el.text()))
+      list.lines.push(parseIngredient(el.text()))
     }
   })
   lists.push(list)
