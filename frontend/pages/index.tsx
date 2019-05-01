@@ -35,7 +35,7 @@ const HomeNav = () => {
       style={{ top: 0, left: 0 }}
     >
       <div className="position-absolute w-100 d-flex">
-        <NavbarBrand href="/" className="mx-auto text-dark">
+        <NavbarBrand href="/" className="mx-auto text-dark d-sm-none">
           PlateZero
         </NavbarBrand>
       </div>
@@ -80,7 +80,7 @@ export default class Index extends Component {
             >
               <h1 className="d-none d-sm-block">PlateZero</h1>
               <h2>Save, Remix, and Share your favorite recipes</h2>
-              <Button color="primary">Get Started</Button>
+              <Button color="primary">Join the Beta</Button>
             </Col>
           </Row>
         </div>
@@ -91,60 +91,35 @@ export default class Index extends Component {
                 className="w-100 mb-3"
                 src="https://s3.amazonaws.com/com-platezero-static/assets/devices.jpg"
               />
-              <h2>All your recipes in one place, easily searchable</h2>
+              <h2>All your recipes in one place, easily searchable.</h2>
               <p className="lead">
-                PlateZero is a website for all your recipes. It works
-                beautifully on mobile devices and computers.
-              </p>
-              <p>
-                Want an App instead of a website? We do too. There's a lot to
-                add to PlateZero and we really want a website, so for now, this
-                is the fastest way to code. The best way to show your support
-                would be signing up, using PlateZero, and telling us how badly
-                you want an app!
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs="12" md="6">
-              <img
-                className="w-100 rounded shadow-sm"
-                src="https://static.platezero.com/assets/record-player.jpg"
-              />
-            </Col>
-            <Col xs="12" md="6">
-              <h2>Remix recipes to perfect them as you go.</h2>
-              <p className="lead">
-                Always know where you started with your history tab.
-              </p>
-              <p>
-                Your recipes are special because you make them. You tweak them,
-                make them again, and eventually perfect the perfect dish. The
-                journey is as important as the amazing meal in front of you, and
-                PlateZero captures that rich history.
+                It works beautifully on mobile devices and computers.
               </p>
             </Col>
           </Row>
         </Container>
-        <Row style={{ backgroundColor: 'mistyrose' }}>
-          <Col xs="12">
-            <h3>From the Developers</h3>
-            <blockquote className="blockquote">
-              <p>
-                Hi, 👋! We made PlateZero since we were frustrated about not
-                having a good place to keep our favorite dishes. It needed to be
-                source abnostics, store recipes in a consistent format.
-              </p>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
-                posuere erat a ante.
-              </p>
-              <footer className="blockquote-footer">
-                Someone famous in <cite title="Source Title">Source Title</cite>
-              </footer>
-            </blockquote>
-          </Col>
-        </Row>
+        <div className="bg-light">
+          <Container>
+            <Row className="py-4">
+              <Col xs="12" md="6">
+                <img
+                  className="w-100 rounded shadow-sm"
+                  src="https://static.platezero.com/assets/record-player.jpg"
+                />
+              </Col>
+              <Col xs="12" md="6" className="align-self-center">
+                <h2>Remix recipes to perfect them as you go.</h2>
+                <p className="lead">
+                  Always know where you started with your history tab. Your
+                  recipes are special because you make them. You tweak them,
+                  make them again, and perfect the dish. The journey is as
+                  important as the amazing meal in front of you, and PlateZero
+                  captures that rich history.
+                </p>
+              </Col>
+            </Row>
+          </Container>
+        </div>
         <Container>
           <Row>
             <Col xs="12" md={{ size: 6, order: 12 }}>
@@ -180,8 +155,27 @@ export default class Index extends Component {
               </ul>
             </Col>
           </Row>
-          <Row>get started</Row>
         </Container>
+        <div style={{ backgroundColor: 'mistyrose' }}>
+          <Container>
+            <Row className="py-4">
+              <Col xs="12">
+                <blockquote className="blockquote">
+                  <p>Hi 👋,</p>
+                  <p>
+                    We made PlateZero since we were frustrated about not having
+                    a good place to keep our favorite dishes. It needed to be
+                    source agnostic, store recipes in a consistent format.
+                  </p>
+                  <footer className="blockquote-footer">
+                    Ben, Ethan, Katie{' '}
+                    <cite title="Source Title">PlateZero Cofounders</cite>
+                  </footer>
+                </blockquote>
+              </Col>
+            </Row>
+          </Container>
+        </div>
         <Footer />
         <style jsx>{`
           .hero-image {
