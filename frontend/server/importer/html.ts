@@ -1,4 +1,4 @@
-import { parse } from '../../common/ingredient'
+import { parseIngredient } from 'ingredient-parser'
 import * as moment from 'moment'
 import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
@@ -106,7 +106,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
     `(${utilities.join('|')})\\s[a-z]*\\s?(\\d+)\\s?(degrees|º|°)?\\s?(C|F)?`,
     'gim'
   )
-  const preheats: PreheatJSON[] = []
+  let preheats: PreheatJSON[] = []
   let m
   const text = _.trim(sel ? $(sel).text() : $.text())
   while ((m = regex.exec(text)) !== null) {
@@ -120,6 +120,7 @@ export const preheats = (sel?: string) => ($: any): PreheatJSON[] => {
       unit: _.upperCase(m[4]) || 'F' //TODO: Default to user preference?
     })
   }
+  preheats = _.uniqBy(preheats, 'name')
   return preheats
 }
 
@@ -154,7 +155,7 @@ const findMap = ($: any, options: FindMap) => {
 /* Ingredient List Strategies */
 function ingredientMapper($: any) {
   return function() {
-    return parse(_.trim($(this).text()))
+    return parseIngredient(_.trim($(this).text()))
   }
 }
 
@@ -198,7 +199,7 @@ export const plateZeroIngredientLists = ($: any): IngredientLineJSON[] => {
     .closest('ul')
     .find('li')
     .map(function() {
-      return parse($(this).text())
+      return parseIngredient($(this).text())
     })
     .get()
   return lines
@@ -211,7 +212,7 @@ export const ingredient_lists = (sel: string) => (
   {
     lines: $(sel)
       .map(function() {
-        return parse(_.trim($(this).text()))
+        return parseIngredient(_.trim($(this).text()))
       })
       .get()
   }
@@ -245,6 +246,7 @@ function procedureMapper($: any) {
 export const recipeSchemaProcedureLists = ($: any) => {
   const search = [
     { selector: 'ol[itemprop="recipeInstructions"] li' },
+    { selector: 'ol li', css: /instruction/i },
     { selector: ':not([itemscope])[itemprop="recipeInstructions"]' },
     {
       selector: '[itemprop="recipeInstructions"] [itemprop="itemListElement"]'
@@ -252,7 +254,6 @@ export const recipeSchemaProcedureLists = ($: any) => {
     {
       selector: '[itemprop="recipeInstructions"] [itemprop="text"]'
     },
-    { selector: 'ol li', css: /instruction/i },
     // Seriously, people?
     { selector: 'ul li', css: /instruction/i },
     // https://www.wptasty.com/tasty-recipes

@@ -6,8 +6,7 @@ import {
   ProcedureListJSON,
   ProcedureLineJSON
 } from '../../models'
-import { fraction } from '../../common/fraction'
-import { unitfy } from '../../common/unit'
+import { parseAmount, parseUnit } from 'ingredient-parser'
 const TurndownService = require('turndown')
 
 const title = ($: any) => $('.ba-recipe-title h1')[0].children[0].data.trim()
@@ -24,7 +23,7 @@ const description = ($: any) =>
 
 const image_url = ($: any) => $('.ba-hero-image img').prop('src')
 
-const getYield = ($: any) => $('[itemprop="recipeYield"]').text()
+const getYield = ($: any) => $('[itemprop="recipeYield"]').text() + ' servings'
 
 const duration = ($: any) =>
   moment.duration($('[itemprop="totalTime"]').attr('content')).asSeconds()
@@ -65,14 +64,14 @@ const ingredient_lists = ($: any): IngredientListJSON[] => [
           .replace(new RegExp(`^${amount}`), '')
           .trim()
         const [quantity, unit] = amount.replace(/\n/gm, ' ').split(' ')
-        const f = fraction(quantity)
+        const f = parseAmount(quantity)
         return {
           name,
           quantity_numerator: f.n,
           quantity_denominator: f.d,
           preparation: undefined,
           optional: false,
-          unit: unitfy(unit)
+          unit: parseUnit(unit)
         }
       })
       .get()

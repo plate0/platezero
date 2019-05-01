@@ -4544,6 +4544,13 @@ inflight@^1.0.4:
     once "^1.3.0"
     wrappy "1"
 
+"ingredient-parser@https://github.com/plate0/ingredient-parser.git#v0.2.0":
+  version "0.2.0"
+  resolved "https://github.com/plate0/ingredient-parser.git#ca4d10fa9788db68cec4e6972fb98ea96785798e"
+  dependencies:
+    fraction.js "4.0.12"
+    lodash "4.17.11"
+
 inherits@2, inherits@2.0.3, inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.0, inherits@~2.0.1, inherits@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"

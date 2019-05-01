@@ -4,7 +4,7 @@ import Fraction from 'fraction.js'
 
 import { IngredientListJSON, IngredientLineJSON } from '../models'
 import { IngredientLists } from './IngredientLists'
-import { unitfy } from '../common/unit'
+import { parseIngredient } from 'ingredient-parser'
 import { changesBetween } from '../common/changes'
 import { LivePreviewEditor } from './LivePreviewEditor'
 import { Blankslate } from './Blankslate'
@@ -43,27 +43,22 @@ export function IngredientListsEditor(props: Props) {
       }
       formattingTips={
         <ul className="small">
-          <li>Write your ingredients, one on each line, in the box above.</li>
           <li>
-            The recognized format is <code>[quantity]</code>,{' '}
-            <code>[unit]</code>, <code>[ingredient]</code>.
+            You can add a preparation note for an ingredient, such as “diced,”
+            by writing <strong>--</strong> and then your note, like this:{' '}
+            <strong>1 clove of garlic -- minced</strong>
           </li>
           <li>
-            To specify a note or preparation for an ingredient, such as “diced,”
-            separate it from the ingredient name with <code>--</code>. For
-            example: <code>1 clove of garlic -- minced</code>
-          </li>
-          <li>
-            To mark an ingredient as Optional, write <code>(optional)</code> at
-            the end of the line.
+            Mark an ingredient as optional by writing{' '}
+            <strong>(optional)</strong> after it.
           </li>
           <li>
             Separate your ingredients into different sections by leaving a blank
             line in between them.
           </li>
           <li>
-            Give your sections titles by beginning a line with a <code>#</code>,
-            such as <code># For the sauce:</code>.
+            Give your sections titles by beginning a line with a{' '}
+            <strong>#</strong>, such as <strong># For the sauce</strong>.
           </li>
         </ul>
       }
@@ -87,7 +82,7 @@ function ingredientListToText(list: IngredientListJSON): string {
 function amount({
   quantity_numerator,
   quantity_denominator
-}): string | undefined {
+}: IngredientLineJSON): string | undefined {
   if (!quantity_numerator || !quantity_denominator) {
     return undefined
   }
@@ -119,91 +114,24 @@ function parseIngredientLists(text: string): IngredientListJSON[] {
   return _.reduce(
     lines,
     (acc, line) => {
+      line = _.trim(line)
       if (_.size(acc) === 0) {
         acc.push({ name: undefined, lines: [] })
       }
       const section = _.last(acc)
-      if (_.startsWith(line, '# ')) {
+      if (_.startsWith(line, '#')) {
         // it's a name
-        section.name = line.substring(2)
+        section.name = line.substring(1)
       } else if (_.trim(line) === '' && _.size(section.lines) > 0) {
         // it's a blank line and we've already filled lines in this section, we
         // should start a new section
         acc.push({ name: undefined, lines: [] })
       } else if (_.trim(line) !== '') {
         // it's a non-blank, non-header line: parse it as an ingredient!
-        section.lines.push(parseIngredientLine(line))
+        section.lines.push(parseIngredient(line))
       }
       return acc
     },
     []
   )
-}
-
-function parseIngredientLine(text: string): IngredientLineJSON {
-  const [quantity_numerator, quantity_denominator, rest1] = parseAmount(text)
-  const [unit, rest2] = parseUnit(rest1)
-  const [name, rest3] = parseName(rest2)
-  const [preparation, rest4] = parsePreparation(rest3)
-  const optional = parseOptional(rest4)
-  return {
-    quantity_numerator,
-    quantity_denominator,
-    unit,
-    name,
-    preparation,
-    optional
-  }
-}
-
-function parseAmount(text: string): [number, number, string] {
-  try {
-    // first try to match a decimal
-    const decResults = text.match(/^(\d*\.\d+?)/)
-    if (decResults) {
-      const f = new Fraction(decResults[0])
-      const rest = text.substring(_.size(decResults[0]))
-      return [f.n, f.d, rest]
-    }
-    // next, if no decimal was found, try to match a whole number or whole
-    // number + fraction
-    const results = text.match(/^((\d+\s+)?\d+(\/\d+)?)/)
-    if (results) {
-      const f = new Fraction(results[0])
-      const rest = text.substring(_.size(results[0]))
-      return [f.n, f.d, rest]
-    }
-  } catch {}
-  return [undefined, undefined, text]
-}
-
-function parseUnit(text: string): [string, string] {
-  const words = _.split(_.trim(text), /\s+/)
-  const maybeUnit = unitfy(_.head(words))
-  if (maybeUnit) {
-    return [maybeUnit, _.join(_.tail(words), ' ')]
-  }
-  return [undefined, text]
-}
-
-function parseName(text: string): [string, string] {
-  const [name, ...rest] = _.split(text, '--')
-  if (_.endsWith(name, OPTIONAL)) {
-    return [
-      _.trim(_.replace(name, OPTIONAL, '')),
-      _.trim(_.join(rest, ' ') + OPTIONAL)
-    ]
-  }
-  return [_.trim(name), _.trim(_.join(rest, ' '))]
-}
-
-function parsePreparation(text: string): [string, string] {
-  if (_.endsWith(text, OPTIONAL)) {
-    return [_.trim(_.replace(text, OPTIONAL, '')), OPTIONAL]
-  }
-  return [_.trim(text), undefined]
-}
-
-function parseOptional(text: string): boolean {
-  return _.endsWith(_.trim(text), OPTIONAL)
 }
