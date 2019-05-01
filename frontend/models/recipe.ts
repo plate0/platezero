@@ -50,7 +50,7 @@ const isUniqueSlugError = (e): boolean => {
   return Boolean(
     e.name == 'SequelizeUniqueConstraintError' &&
       e.fields['user_id'] &&
-      e.fields['slug']
+      e.fields['lower(slug::text)']
   )
 }
 
