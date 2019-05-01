@@ -49,6 +49,7 @@
     "node-sass": "4.11.0",
     "nodemon": "1.18.11",
     "pg": "7.9.0",
+    "prom-client": "11.3.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-dropzone": "10.1.3",
