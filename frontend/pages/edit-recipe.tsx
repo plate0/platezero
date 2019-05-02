@@ -17,6 +17,7 @@ import {
 
 import {
   AlertErrors,
+  EditableImage,
   Layout,
   ProcedureListsEditor,
   IngredientListsEditor,
@@ -117,6 +118,16 @@ export default class EditRecipe extends React.Component<Props, State> {
     }
   }
 
+  onRecipeImageEdit = async (image_url: string) => {
+    const v = this.props.recipeVersion
+    try {
+      await api.patchRecipe(v.recipe.slug, { image_url })
+      location.reload()
+    } catch (err) {
+      this.setState({ errors: getErrorMessages(err) })
+    }
+  }
+
   public render() {
     if (this.props.statusCode) {
       return <ErrorPage statusCode={this.props.statusCode} />
@@ -127,6 +138,19 @@ export default class EditRecipe extends React.Component<Props, State> {
         <Head>
           <title>Editing {v.recipe.title} on PlateZero</title>
         </Head>
+        <Row>
+          <Col xs="12">
+            <img
+              className="w-100"
+              src={v.recipe.image_url}
+              style={{ objectFit: 'cover', height: 200 }}
+            />
+            <EditableImage
+              hasExisting={!!v.recipe.image_url}
+              onUpdate={this.onRecipeImageEdit}
+            />
+          </Col>
+        </Row>
         <Row className="mt-3">
           <Col>
             <h1>{v.recipe.title}</h1>
