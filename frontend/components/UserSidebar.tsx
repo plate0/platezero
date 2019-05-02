@@ -8,7 +8,6 @@ import {
   FormGroup,
   FormText,
   Input,
-  Label,
   ModalHeader
 } from 'reactstrap'
 import { IfLoggedIn } from './IfLoggedIn'
@@ -83,25 +82,28 @@ export const UserSidebar = (props: { user: UserJSON }) => {
         <Button
           block
           outline
-          color="primary"
+          color="secondary"
           size="sm"
           onClick={() => setEditOpen(true)}
         >
-          Change Name&hellip;
+          Edit Name&hellip;
         </Button>
         <Modal isOpen={isEditOpen} toggle={toggleEdit}>
           <ModalHeader toggle={toggleEdit}>Change Display Name</ModalHeader>
           <ModalBody>
             <FormGroup>
-              <Label>Display Name</Label>
               <Input
                 type="text"
                 value={name}
+                bsSize="lg"
+                placeholder="None"
                 onChange={e => setName(e.target.value)}
               />
               <FormText>
                 If you add a display name, it will appear instead of your
-                username across PlateZero.
+                username across PlateZero. Your username will still be{' '}
+                <strong>{user.username}</strong> and your URL will still be{' '}
+                <code>platezero.com/{user.username}</code>.
               </FormText>
             </FormGroup>
             <AlertErrors errors={editErrors} />
