@@ -50,6 +50,14 @@ const HomeNav = () => {
   )
 }
 
+const CallToAction = ({ className }: { className?: string }) => (
+  <Link to="register">
+    <a className={`btn btn-primary ${className}`} role="button">
+      Join the Beta for Free
+    </a>
+  </Link>
+)
+
 export default class Index extends Component {
   public render() {
     return (
@@ -69,11 +77,7 @@ export default class Index extends Component {
             >
               <h1 className="d-none d-sm-block">PlateZero</h1>
               <h2>Save, Remix, and Share your favorite recipes</h2>
-              <Link to="register">
-                <a className="btn btn-primary btn-lg" role="button">
-                  Join the Beta
-                </a>
-              </Link>
+              <CallToAction />
             </Col>
           </Row>
         </div>
@@ -84,7 +88,7 @@ export default class Index extends Component {
                 className="w-100 mb-3"
                 src="https://s3.amazonaws.com/com-platezero-static/assets/devices.jpg"
               />
-              <h2 className="mt-5">
+              <h2 className="mt-3">
                 All your recipes in one place, easily searchable.
               </h2>
               <p className="lead">
@@ -107,7 +111,9 @@ export default class Index extends Component {
                 md="6"
                 className="align-self-center text-center text-md-left"
               >
-                <h2>Remix recipes to perfect them as you go.</h2>
+                <h2 className="mt-3 mt-md-0">
+                  Remix recipes to perfect them as you go.
+                </h2>
                 <p className="lead">
                   Always know where you started with your history tab. Your
                   recipes are special because you make them. You tweak them,
@@ -132,7 +138,7 @@ export default class Index extends Component {
               md="6"
               className="align-self-center text-center text-md-right"
             >
-              <h2>Share your recipes</h2>
+              <h2 className="mt-2 mt-md-0">Share your recipes</h2>
               <p className="lead">
                 Share recipes easily with friends and family, so they can try
                 out their favorites on their own!
@@ -140,7 +146,7 @@ export default class Index extends Component {
             </Col>
           </Row>
         </Container>
-        <div style={{ backgroundColor: '#3ae8b050' }}>
+        <div style={{ backgroundColor: '#19afd050' }}>
           <Container>
             <Row className="py-6">
               <Col xs="12">
@@ -163,31 +169,23 @@ export default class Index extends Component {
           </Container>
         </div>
         <Container>
-          <Row className="py-5">
+          <Row className="py-3">
             <Col xs="12" md={{ offset: 3, size: 6 }} className="text-center">
-              <h3>And lots of great other things</h3>
+              <h3>Great Features</h3>
               <ul className="list-unstyled">
-                <li>Change everything about the recipes.</li>
-                <li>
-                  Search your recipes to quickly find what you're looking for.
-                </li>
-                <li>
-                  Easily add your recipes from anywhere. Websites, documents, or
-                  pictures.
-                </li>
+                <li>Update every recipe.</li>
+                <li>Powerful search.</li>
+                <li>Add recipes from any source.</li>
+                <li>Automagic picture recognition.</li>
               </ul>
             </Col>
           </Row>
         </Container>
-        <div style={{ backgroundColor: 'ocean' }}>
+        <div>
           <Container>
             <Row className="py-5">
               <Col className="d-flex justify-content-center align-items-center">
-                <Link to="register">
-                  <a className="btn btn-primary btn-lg" role="button">
-                    Join the Beta
-                  </a>
-                </Link>
+                <CallToAction className="btn-lg" />
               </Col>
             </Row>
           </Container>
