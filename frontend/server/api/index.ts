@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as _ from 'lodash'
 import * as jwtMiddleware from 'express-jwt'
+import * as prom from 'prom-client'
 import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
@@ -70,7 +71,12 @@ r.get('/', (_, res) => {
 })
 
 // login route
+const loginAttemptCounter = new prom.Counter({
+  name: 'pz_api_login_attempts',
+  help: 'Login attempts'
+})
 r.post('/login', async (req, res) => {
+  loginAttemptCounter.inc()
   const { username, password } = req.body
   if (!username || !password) {
     return badRequest(res, 'username and password are required')

@@ -12,7 +12,6 @@ import {
   Unique
 } from 'sequelize-typescript'
 import * as bcrypt from 'bcrypt'
-import * as crypto from 'crypto'
 import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 import { RefreshToken } from './refresh_token'
@@ -68,21 +67,7 @@ export class User extends Model<User> implements UserJSON {
     return undefined
   }
 
-  @Column
-  public get avatar_url(): string {
-    const dv = this.getDataValue('avatar_url')
-    if (!dv) {
-      const emailHash = crypto.createHash('md5')
-      emailHash.update(this.getDataValue('email').toLowerCase())
-      const hex = emailHash.digest('hex')
-      return `https://www.gravatar.com/avatar/${hex}`
-    }
-    return dv
-  }
-
-  public set avatar_url(value: string) {
-    this.setDataValue('avatar_url', value)
-  }
+  @Column public avatar_url: string
 
   @Column public confirmed_at: Date
 

@@ -43,27 +43,22 @@ export function IngredientListsEditor(props: Props) {
       }
       formattingTips={
         <ul className="small">
-          <li>Write your ingredients, one on each line, in the box above.</li>
           <li>
-            The recognized format is <code>[quantity]</code>,{' '}
-            <code>[unit]</code>, <code>[ingredient]</code>.
+            You can add a preparation note for an ingredient, such as “diced,”
+            by writing <strong>--</strong> and then your note, like this:{' '}
+            <strong>1 clove of garlic -- minced</strong>
           </li>
           <li>
-            To specify a note or preparation for an ingredient, such as “diced,”
-            separate it from the ingredient name with <code>--</code>. For
-            example: <code>1 clove of garlic -- minced</code>
-          </li>
-          <li>
-            To mark an ingredient as Optional, write <code>(optional)</code> at
-            the end of the line.
+            Mark an ingredient as optional by writing{' '}
+            <strong>(optional)</strong> after it.
           </li>
           <li>
             Separate your ingredients into different sections by leaving a blank
             line in between them.
           </li>
           <li>
-            Give your sections titles by beginning a line with a <code>#</code>,
-            such as <code># For the sauce:</code>.
+            Give your sections titles by beginning a line with a{' '}
+            <strong>#</strong>, such as <strong># For the sauce</strong>.
           </li>
         </ul>
       }
@@ -119,13 +114,14 @@ function parseIngredientLists(text: string): IngredientListJSON[] {
   return _.reduce(
     lines,
     (acc, line) => {
+      line = _.trim(line)
       if (_.size(acc) === 0) {
         acc.push({ name: undefined, lines: [] })
       }
       const section = _.last(acc)
-      if (_.startsWith(line, '# ')) {
+      if (_.startsWith(line, '#')) {
         // it's a name
-        section.name = line.substring(2)
+        section.name = line.substring(1)
       } else if (_.trim(line) === '' && _.size(section.lines) > 0) {
         // it's a blank line and we've already filled lines in this section, we
         // should start a new section

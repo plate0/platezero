@@ -7,7 +7,7 @@ export const RecipeListBlankslate = (props: { username: string }) => (
   <Blankslate>
     <h1>No recipes yet :(</h1>
     <IfLoggedIn username={props.username}>
-      <Link route="/recipes/new">
+      <Link route="/recipe/new">
         <a className="btn btn-primary">Create your first!</a>
       </Link>
     </IfLoggedIn>

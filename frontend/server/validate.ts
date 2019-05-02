@@ -123,3 +123,10 @@ export const validateRecipePatch = validator({
     .uri()
     .allow(null)
 })
+
+export const validateUserPatch = validator({
+  name: Joi.string().allow(null),
+  avatar_url: Joi.string()
+    .uri()
+    .allow(null)
+})

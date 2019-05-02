@@ -239,6 +239,14 @@ class Api {
         ...authHeaders(this.token)
       }
     }).then(handleError)
+
+  updateUser = (body: object, opts: RequestInit = {}) =>
+    this._fetch<UserJSON>('/user', {
+      ...opts,
+      body: JSON.stringify(body),
+      method: 'PUT',
+      headers: { Accept: 'application/json', ...authHeaders(this.token) }
+    })
 }
 
 export const api = new Api()

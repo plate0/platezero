@@ -13,13 +13,11 @@ import { AlertErrors } from './AlertErrors'
 import { api, getErrorMessages } from '../common'
 
 interface Props {
-  src: string
+  hasExisting: boolean
   onUpdate?: (url: string) => any
-  canEdit?: boolean
-  children: any
 }
 
-export const EditableImage = ({ src, canEdit, onUpdate, children }: Props) => {
+export const EditableImage = ({ hasExisting, onUpdate }: Props) => {
   const [open, setOpen] = useState(false)
   const [isUploading, setUploading] = useState(false)
   const [errors, setErrors] = useState(null)
@@ -61,38 +59,18 @@ export const EditableImage = ({ src, canEdit, onUpdate, children }: Props) => {
     }
   }
 
-  if (!_.isUndefined(canEdit) && !canEdit) {
-    return children
-  }
-
   return (
     <div className="mb-3">
-      {src ? (
-        <>
-          {children}
-          <div className="text-right">
-            <Button
-              color="link"
-              className="text-secondary pr-0"
-              size="sm"
-              onClick={toggle}
-            >
-              <i className="fal fa-pencil" /> Edit Image
-            </Button>
-          </div>
-        </>
-      ) : (
-        <div className="bg-light text-center">
-          <Button
-            color="link"
-            className="text-secondary p-3"
-            size="sm"
-            onClick={toggle}
-          >
-            <i className="fal fa-cloud-upload" /> Add Image
-          </Button>
-        </div>
-      )}
+      <div className="text-center">
+        <Button
+          color="link"
+          className="text-secondary"
+          size="sm"
+          onClick={toggle}
+        >
+          <i className="fal fa-pencil" /> Edit Image
+        </Button>
+      </div>
       <Modal isOpen={open} toggle={toggle}>
         <ModalHeader toggle={toggle}>Choose Image</ModalHeader>
         <ModalBody>
@@ -123,10 +101,10 @@ export const EditableImage = ({ src, canEdit, onUpdate, children }: Props) => {
             Cancel
           </Button>
           <Button color="primary" outline onClick={choose}>
-            {src && uploadedImage && 'Update Image'}
-            {src && !uploadedImage && 'Remove Existing Image'}
-            {!src && uploadedImage && 'Save New Image'}
-            {!src && !uploadedImage && 'Keep Using No Image'}
+            {hasExisting && uploadedImage && 'Update Image'}
+            {hasExisting && !uploadedImage && 'Remove Existing Image'}
+            {!hasExisting && uploadedImage && 'Save New Image'}
+            {!hasExisting && !uploadedImage && 'Keep Using No Image'}
           </Button>
         </ModalFooter>
       </Modal>

@@ -39,15 +39,11 @@ export function ProcedureListsEditor(props: Props) {
       formattingTips={
         <ul className="small">
           <li>
-            Write your steps in the box above, leaving a blank line between each
-            one.
-          </li>
-          <li>
             Separate your steps into sections by beginning a line with a{' '}
-            <code>#</code>, such as <code># For the sauce:</code>.
+            <strong>#</strong>, such as <strong># For the sauce</strong>.
           </li>
           <li>
-            You can make text <code>**bold**</code> or <code>_italic_</code>.
+            You can make text <strong>**bold**</strong> or <em>_italic_</em>.
           </li>
         </ul>
       }
@@ -81,16 +77,17 @@ function procedureLineToText(line: ProcedureLineJSON): string {
 }
 
 function parseProcedureLists(text: string): ProcedureListJSON[] {
-  const lines = _.split(text, '\n\n')
+  const lines = _.split(text, '\n')
   return _.reduce(
     lines,
     (acc, line) => {
+      line = _.trim(line)
       if (_.size(acc) === 0) {
         acc.push({ name: undefined, lines: [] })
       }
       const section = _.last(acc)
-      if (_.startsWith(line, '# ')) {
-        const name = line.substring(2)
+      if (_.startsWith(line, '#')) {
+        const name = line.substring(1)
         if (section.name) {
           acc.push({ name, lines: [] })
         } else {
