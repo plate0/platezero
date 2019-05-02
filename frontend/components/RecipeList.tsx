@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, ListGroup, ListGroupItem } from 'reactstrap'
+import { ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
 import { UserJSON, RecipeJSON } from '../models'
 import { Link } from '../routes'
@@ -30,28 +30,35 @@ export const RecipeList = ({ children, recipes, user }: RecipesProps) => {
         {recipes.map(recipe => (
           <ListGroupItem key={recipe.id} className="px-0">
             <Link route={`/${user.username}/${recipe.slug}`}>
-              <a className="text-dark d-flex align-items-center">
-                {recipe.image_url && (
-                  <Col xs="2" md="1" className="px-0">
-                    <img
-                      className="w-100"
-                      src={recipe.image_url}
-                      alt={`Picture of ${recipe.title}`}
-                    />
-                  </Col>
-                )}
-                <Col
-                  xs={recipe.image_url ? '10' : '12'}
-                  md={recipe.image_url ? '11' : '12'}
-                  className={recipe.image_url ? 'pr-0' : 'px-0'}
+              <a className="d-flex flex-row">
+                <div>
+                  <div
+                    style={{
+                      width: 80,
+                      height: 50,
+                      backgroundImage: `url(${recipe.image_url ||
+                        '/static/recipe-placeholder-sm.jpg'})`,
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover'
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    position: 'relative',
+                    paddingLeft: '1rem',
+                    width: 'calc(100% - 80px)'
+                  }}
                 >
-                  <div>
+                  <div className="text-dark text-truncate">
                     <strong>{recipe.title}</strong>
                   </div>
-                  <div className="small text-muted text-truncate">
-                    {recipe.description || 'by ' + getName(recipe.owner)}
-                  </div>
-                </Col>
+                  {recipe.description && (
+                    <div className="small text-muted text-truncate">
+                      {recipe.description}
+                    </div>
+                  )}
+                </div>
               </a>
             </Link>
           </ListGroupItem>
