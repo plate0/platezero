@@ -32,27 +32,20 @@ export const Navbar = () => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <>
-    <NavItem>
-      <Link route={`/${user.username}/recipes`}>
-        <a className="btn btn-link text-light">Recipes</a>
-      </Link>
-    </NavItem>
-    <NavItem>
-      <Link route={`/${user.username}`}>
-        <a className="d-block py-1 px-2">
-          <ProfilePicture img={user.avatar_url} size={30} />
-        </a>
-      </Link>
-    </NavItem>
-  </>
+  <NavItem>
+    <Link route={`/${user.username}`}>
+      <a className="d-block py-1 px-2">
+        <ProfilePicture img={user.avatar_url} size={30} />
+      </a>
+    </Link>
+  </NavItem>
 )
 
 const NewRecipeDropdown = () => (
   <Tooltip tip="Add a new recipe">
     <Link route="new-recipe">
       <a className="add-recipe text-white btn btn-link" id="add-recipe">
-        <i className="fal fa-plus" />
+        Add Recipe
       </a>
     </Link>
   </Tooltip>

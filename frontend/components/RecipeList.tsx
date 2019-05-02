@@ -1,5 +1,5 @@
 import React from 'react'
-import { Col, Row, ListGroup, ListGroupItem } from 'reactstrap'
+import { Col, ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
 import { UserJSON, RecipeJSON } from '../models'
 import { Link } from '../routes'
@@ -10,22 +10,9 @@ export const RecipeListHeader = ({ user }: { user: UserJSON }) => {
   const me = <h2 className="m-0">Your Recipes</h2>
   const not = <h2 className="m-0">{getName(user)}&#8217;s Recipes</h2>
   return (
-    <Row className="align-items-center">
-      <Col>
-        <IfLoggedIn username={user.username} else={not}>
-          {me}
-        </IfLoggedIn>
-      </Col>
-      <IfLoggedIn username={user.username}>
-        <Col xs="auto">
-          <Link route="new-recipe">
-            <a role="button" className="btn btn-link">
-              Add Recipe
-            </a>
-          </Link>
-        </Col>
-      </IfLoggedIn>
-    </Row>
+    <IfLoggedIn username={user.username} else={not}>
+      {me}
+    </IfLoggedIn>
   )
 }
 
