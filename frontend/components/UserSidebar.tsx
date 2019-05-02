@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {
+  Row,
+  Col,
   Modal,
   ModalFooter,
   Button,
@@ -57,76 +59,77 @@ export const UserSidebar = (props: { user: UserJSON }) => {
 
   return (
     <>
-      <div className="mb-3 text-center">
-        <ProfilePicture size={128} img={user.avatar_url} />
-        <IfLoggedIn username={user.username}>
-          <EditableImage
-            hasExisting={!!user.avatar_url}
-            onUpdate={onAvatarChange}
-          />
-          <AlertErrors errors={avatarErrors} />
-        </IfLoggedIn>
-      </div>
-      {user.name && (
-        <div className="text-truncate" style={{ fontSize: '1.25rem' }}>
-          <strong title={user.name}>{user.name}</strong>
-        </div>
-      )}
-      <div
-        className="text-muted mb-3 text-truncate"
-        style={{ fontSize: '1.25rem' }}
-      >
-        <span title={user.username}>{user.username}</span>
-      </div>
-      <IfLoggedIn username={user.username}>
-        <Button
-          block
-          outline
-          color="secondary"
-          size="sm"
-          onClick={() => setEditOpen(true)}
-        >
-          Edit Name&hellip;
-        </Button>
-        <Modal isOpen={isEditOpen} toggle={toggleEdit}>
-          <ModalHeader toggle={toggleEdit}>Change Display Name</ModalHeader>
-          <ModalBody>
-            <FormGroup>
-              <Input
-                type="text"
-                value={name}
-                bsSize="lg"
-                placeholder="None"
-                onChange={e => setName(e.target.value)}
+      <Row>
+        <Col xs="6" sm="12">
+          <div className="mb-3 text-center">
+            <ProfilePicture size={128} img={user.avatar_url} />
+            <IfLoggedIn username={user.username}>
+              <EditableImage
+                hasExisting={!!user.avatar_url}
+                onUpdate={onAvatarChange}
               />
-              <FormText>
-                If you add a display name, it will appear instead of your
-                username across PlateZero. Your username will still be{' '}
-                <strong>{user.username}</strong> and your URL will still be{' '}
-                <code>platezero.com/{user.username}</code>.
-              </FormText>
-            </FormGroup>
-            <AlertErrors errors={editErrors} />
-          </ModalBody>
-          <ModalFooter>
+              <AlertErrors errors={avatarErrors} />
+            </IfLoggedIn>
+          </div>
+        </Col>
+        <Col xs="6" sm="12" className="mb-3">
+          {user.name && (
+            <div className="text-truncate" style={{ fontSize: '1.25rem' }}>
+              <strong title={user.name}>{user.name}</strong>
+            </div>
+          )}
+          <div
+            className="text-muted mb-3 text-truncate"
+            style={{ fontSize: '1.25rem' }}
+          >
+            <span title={user.username}>{user.username}</span>
+          </div>
+          <IfLoggedIn username={user.username}>
             <Button
-              color="link"
-              className="text-secondary"
-              onClick={toggleEdit}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="primary"
               outline
-              onClick={saveDisplayName}
-              disabled={isSaving}
+              color="secondary"
+              size="sm"
+              onClick={() => setEditOpen(true)}
             >
-              {isSaving && <Spinner size="sm" />} Save Changes
+              Edit Name&hellip;
             </Button>
-          </ModalFooter>
-        </Modal>
-      </IfLoggedIn>
+          </IfLoggedIn>
+        </Col>
+      </Row>
+      <Modal isOpen={isEditOpen} toggle={toggleEdit}>
+        <ModalHeader toggle={toggleEdit}>Change Display Name</ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Input
+              type="text"
+              value={name}
+              bsSize="lg"
+              placeholder="None"
+              onChange={e => setName(e.target.value)}
+            />
+            <FormText>
+              If you add a display name, it will appear instead of your username
+              across PlateZero. Your username will still be{' '}
+              <strong>{user.username}</strong> and your URL will still be{' '}
+              <code>platezero.com/{user.username}</code>.
+            </FormText>
+          </FormGroup>
+          <AlertErrors errors={editErrors} />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="link" className="text-secondary" onClick={toggleEdit}>
+            Cancel
+          </Button>
+          <Button
+            color="primary"
+            outline
+            onClick={saveDisplayName}
+            disabled={isSaving}
+          >
+            {isSaving && <Spinner size="sm" />} Save Changes
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   )
 }
