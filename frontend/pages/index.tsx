@@ -41,7 +41,7 @@ const HomeNav = () => {
           PlateZero
         </NavbarBrand>
       </div>
-      <div className="ml-auto" style={{ zIndex: 1 }}>
+      <div className="ml-auto mr-2" style={{ zIndex: 1 }}>
         <Nav navbar>
           <NavItem>{action}</NavItem>
         </Nav>
@@ -84,7 +84,9 @@ export default class Index extends Component {
                 className="w-100 mb-3"
                 src="https://s3.amazonaws.com/com-platezero-static/assets/devices.jpg"
               />
-              <h2>All your recipes in one place, easily searchable.</h2>
+              <h2 className="mt-5">
+                All your recipes in one place, easily searchable.
+              </h2>
               <p className="lead">
                 It works beautifully on phones and computers.
               </p>
@@ -137,25 +139,10 @@ export default class Index extends Component {
               </p>
             </Col>
           </Row>
-          <Row className="py-5">
-            <Col xs="12" md={{ offset: 3, size: 6 }} className="text-center">
-              <h3>And lots of great other things</h3>
-              <ul className="list-unstyled">
-                <li>Change everything about the recipes.</li>
-                <li>
-                  Search your recipes to quickly find what you're looking for
-                </li>
-                <li>
-                  Easily add your recipes from anywhere. Websites, documents, or
-                  pictures.
-                </li>
-              </ul>
-            </Col>
-          </Row>
         </Container>
-        <div style={{ backgroundColor: 'mistyrose' }}>
+        <div style={{ backgroundColor: '#3ae8b050' }}>
           <Container>
-            <Row className="py-4">
+            <Row className="py-6">
               <Col xs="12">
                 <blockquote className="blockquote">
                   <p>Hi 👋,</p>
@@ -175,6 +162,23 @@ export default class Index extends Component {
             </Row>
           </Container>
         </div>
+        <Container>
+          <Row className="py-5">
+            <Col xs="12" md={{ offset: 3, size: 6 }} className="text-center">
+              <h3>And lots of great other things</h3>
+              <ul className="list-unstyled">
+                <li>Change everything about the recipes.</li>
+                <li>
+                  Search your recipes to quickly find what you're looking for.
+                </li>
+                <li>
+                  Easily add your recipes from anywhere. Websites, documents, or
+                  pictures.
+                </li>
+              </ul>
+            </Col>
+          </Row>
+        </Container>
         <div style={{ backgroundColor: 'ocean' }}>
           <Container>
             <Row className="py-5">
