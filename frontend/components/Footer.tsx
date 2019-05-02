@@ -25,11 +25,6 @@ export const Footer = () => (
             </li>
           </ul>
         </Col>
-        <Col>
-          <a target="_blank" href="https://twitter.com/platezer0">
-            <i className="fab fa-twitter" />
-          </a>
-        </Col>
       </Row>
     </Container>
     <style jsx>
