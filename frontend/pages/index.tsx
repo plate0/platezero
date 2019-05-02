@@ -1,33 +1,22 @@
-import React, { Component, useContext, useState } from 'react'
+import React, { Component, useContext } from 'react'
 import {
-  Jumbotron,
   Container,
-  Button,
   Row,
   Col,
-  Card,
-  CardBody,
   Navbar,
-  NavbarToggler,
   NavbarBrand,
   NavItem,
-  NavLink,
-  Collapse,
   Nav
 } from 'reactstrap'
 import Head from 'next/head'
 import '../style/index.scss'
-import { Layout, ProfilePicture } from '../components'
-import { api } from '../common/http'
-import { UserJSON } from '../models/user'
+import { ProfilePicture } from '../components'
 import { Link } from '../routes'
-import { getName } from '../common/model-helpers'
 import { UserContext } from '../context/UserContext'
 import { Footer } from '../components/Footer'
 
 const HomeNav = () => {
   const { user } = useContext(UserContext)
-  const [isOpen, setOpen] = useState(false)
   const action = user ? (
     <Link route={`/${user.username}`}>
       <a className="d-block py-1 px-2">
@@ -179,8 +168,7 @@ export default class Index extends Component {
                     recipes, and we hope it becomes your home too!
                   </p>
                   <footer className="blockquote-footer text-right">
-                    Ben, Ethan, Katie{' '}
-                    <cite title="Source Title">PlateZero Cofounders</cite>
+                    Ben, Ethan, Katie
                   </footer>
                 </blockquote>
               </Col>
