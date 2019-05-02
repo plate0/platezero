@@ -65,7 +65,10 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
     } = this.props.router
     q = _.isArray(q) ? _.first(q) : q
     username = _.isArray(username) ? _.first(username) : username
-    if (q !== prevProps.router.query.q) {
+    if (
+      q !== prevProps.router.query.q ||
+      username !== prevProps.router.query.username
+    ) {
       this.setState(
         {
           query: (q as string) || '',
