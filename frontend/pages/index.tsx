@@ -88,11 +88,10 @@ export default class Index extends Component {
                 className="w-100 mb-3"
                 src="https://s3.amazonaws.com/com-platezero-static/assets/devices.jpg"
               />
-              <h2 className="mt-3">
-                All your recipes in one place, easily searchable.
-              </h2>
+              <h2 className="mt-3">All your recipes in one place.</h2>
               <p className="lead">
-                It works beautifully on phones and computers.
+                Import from <em>anywhere</em>. Websites, cookbooks, recipe
+                cards, and more!
               </p>
             </Col>
           </Row>
