@@ -28,6 +28,19 @@ import { Footer } from '../components/Footer'
 const HomeNav = () => {
   const { user } = useContext(UserContext)
   const [isOpen, setOpen] = useState(false)
+  const action = user ? (
+    <Link route={`/${user.username}`}>
+      <a className="d-block py-1 px-2">
+        <ProfilePicture img={user.avatar_url} size={30} />
+      </a>
+    </Link>
+  ) : (
+    <Link to="login">
+      <a className="nav-link text-dark">
+        Login <i className="fal fa-sign-in" />
+      </a>
+    </Link>
+  )
   return (
     <Navbar
       expand="md"
@@ -39,24 +52,11 @@ const HomeNav = () => {
           PlateZero
         </NavbarBrand>
       </div>
-      <NavbarToggler
-        onClick={() => setOpen(!isOpen)}
-        className="ml-auto"
-        style={{ zIndex: 1 }}
-      >
-        <i className="far fa-bars" />
-      </NavbarToggler>
-      <Collapse isOpen={isOpen} navbar style={{ zIndex: 1 }}>
-        <Nav className="ml-auto" navbar>
-          <NavItem>
-            <Link to="login">
-              <a className="nav-link text-dark">
-                Login <i className="fal fa-sign-in" />
-              </a>
-            </Link>
-          </NavItem>
+      <div className="ml-auto" style={{ zIndex: 1 }}>
+        <Nav navbar>
+          <NavItem>{action}</NavItem>
         </Nav>
-      </Collapse>
+      </div>
     </Navbar>
   )
 }
@@ -80,7 +80,11 @@ export default class Index extends Component {
             >
               <h1 className="d-none d-sm-block">PlateZero</h1>
               <h2>Save, Remix, and Share your favorite recipes</h2>
-              <Button color="primary">Join the Beta</Button>
+              <Link to="register">
+                <a className="btn btn-primary btn-lg" role="button">
+                  Join the Beta
+                </a>
+              </Link>
             </Col>
           </Row>
         </div>
@@ -93,18 +97,18 @@ export default class Index extends Component {
               />
               <h2>All your recipes in one place, easily searchable.</h2>
               <p className="lead">
-                It works beautifully on mobile devices and computers.
+                It works beautifully on phones and computers.
               </p>
             </Col>
           </Row>
         </Container>
         <div className="bg-light">
           <Container>
-            <Row className="py-4">
+            <Row className="py-5">
               <Col xs="12" md="6">
                 <img
                   className="w-100 rounded shadow-sm"
-                  src="https://static.platezero.com/assets/record-player.jpg"
+                  src="https://static.platezero.com/assets/avocado.jpg"
                 />
               </Col>
               <Col xs="12" md="6" className="align-self-center">
@@ -121,36 +125,32 @@ export default class Index extends Component {
           </Container>
         </div>
         <Container>
-          <Row>
+          <Row className="py-5">
             <Col xs="12" md={{ size: 6, order: 12 }}>
               <img
-                className="w-100 rounded shadow-sm"
-                src="https://static.platezero.com/assets/cutting-board-food-prep.jpg"
+                className="w-75"
+                src="https://s3.amazonaws.com/com-platezero-static/assets/sprinkles.jpg"
               />
             </Col>
-            <Col xs="12" md="6">
+            <Col xs="12" md="6" className="align-self-center text-right">
               <h2>Share your recipes</h2>
-              <p>
+              <p className="lead">
                 Share recipes easily with friends and family, so they can try
-                out their favorites on their own
+                out their favorites on their own!
               </p>
-              <p>Sharing is as easy as sending a link to the recipe!</p>
             </Col>
           </Row>
-          <Row>
-            <Col xs="12">
+          <Row className="py-5">
+            <Col xs="12" md={{ offset: 3, size: 6 }} className="text-center">
               <h3>And lots of great other things</h3>
-              <ul>
+              <ul className="list-unstyled">
+                <li>Change everything about the recipes.</li>
                 <li>
-                  Customize descirptions, pictures, everythting about the
-                  recipe, no matter where it came from.
+                  Search your recipes to quickly find what you're looking for
                 </li>
-                <li>Search your, and friends, recipes</li>
-                <li>Add notes</li>
                 <li>
-                  {' '}
-                  add your recipes from any source (Maybe this is a bigger point
-                  to make)
+                  Easily add your recipes from anywhere. Websites, documents, or
+                  pictures.
                 </li>
               </ul>
             </Col>
@@ -164,14 +164,30 @@ export default class Index extends Component {
                   <p>Hi 👋,</p>
                   <p>
                     We made PlateZero since we were frustrated about not having
-                    a good place to keep our favorite dishes. It needed to be
-                    source agnostic, store recipes in a consistent format.
+                    a great place to keep our favorite recipes. It needed to be
+                    available everywhere. It had to show our recipes in a
+                    consistent format. And we needed to be able to add recipes
+                    from <em>any</em> source. PlateZero is our home for all our
+                    recipes, and we hope it becomes your home too!
                   </p>
-                  <footer className="blockquote-footer">
+                  <footer className="blockquote-footer text-right">
                     Ben, Ethan, Katie{' '}
                     <cite title="Source Title">PlateZero Cofounders</cite>
                   </footer>
                 </blockquote>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+        <div style={{ backgroundColor: 'ocean' }}>
+          <Container>
+            <Row className="py-5">
+              <Col className="d-flex justify-content-center align-items-center">
+                <Link to="register">
+                  <a className="btn btn-primary btn-lg" role="button">
+                    Join the Beta
+                  </a>
+                </Link>
               </Col>
             </Row>
           </Container>
