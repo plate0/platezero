@@ -17,7 +17,7 @@ export const Navbar = () => {
       style={{ zIndex: 1 }}
     >
       <Container>
-        <Link route="/">
+        <Link route={user ? `/${user.username}` : '/'}>
           <a className="navbar-brand py-0">
             <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
           </a>
