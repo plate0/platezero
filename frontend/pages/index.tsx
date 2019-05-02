@@ -111,7 +111,11 @@ export default class Index extends Component {
                   src="https://static.platezero.com/assets/avocado.jpg"
                 />
               </Col>
-              <Col xs="12" md="6" className="align-self-center">
+              <Col
+                xs="12"
+                md="6"
+                className="align-self-center text-center text-md-left"
+              >
                 <h2>Remix recipes to perfect them as you go.</h2>
                 <p className="lead">
                   Always know where you started with your history tab. Your
@@ -126,13 +130,17 @@ export default class Index extends Component {
         </div>
         <Container>
           <Row className="py-5">
-            <Col xs="12" md={{ size: 6, order: 12 }}>
+            <Col xs="12" md={{ size: 6, order: 12 }} className="text-center">
               <img
                 className="w-75"
                 src="https://s3.amazonaws.com/com-platezero-static/assets/sprinkles.jpg"
               />
             </Col>
-            <Col xs="12" md="6" className="align-self-center text-right">
+            <Col
+              xs="12"
+              md="6"
+              className="align-self-center text-center text-md-right"
+            >
               <h2>Share your recipes</h2>
               <p className="lead">
                 Share recipes easily with friends and family, so they can try
