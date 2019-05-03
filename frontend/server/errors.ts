@@ -42,7 +42,7 @@ export const notFound = (res: Response) =>
   res.status(HttpStatus.NotFound).json({ errors: ['not found'] })
 
 // HTTP 500 Internal Server Error
-export const internalServerError = (res: Response, error?: any) => {
+export const internalServerError = (res: Response, error: any) => {
   console.error(error || 'internal server error')
   return res
     .status(HttpStatus.InternalServerError)

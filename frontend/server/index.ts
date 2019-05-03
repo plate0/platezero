@@ -2,6 +2,7 @@ import * as express from 'express'
 import * as next from 'next'
 import { join } from 'path'
 import * as prom from 'prom-client'
+import * as _ from 'lodash'
 const { routes } = require('../routes')
 const { sequelize } = require('../models')
 import { api } from './api'
@@ -18,28 +19,35 @@ app.prepare().then(() => {
 
   server.use(express.static(join(__dirname, '..', 'static')))
 
-  const apiLatency = new prom.Histogram({
-    name: 'pz_api_latency',
-    help: 'API latency',
-    labelNames: ['method', 'code']
+  const httpDuration = new prom.Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'How much time is spent receiving and responding to HTTP requests',
+    labelNames: ['method', 'status', 'handler']
   })
-  server.use(
-    '/api',
-    (req, res, next) => {
-      const finish = apiLatency.startTimer({ method: req.method })
-      res.on('finish', () => {
-        finish({ code: res.statusCode })
-      })
-      next()
-    },
-    api
-  )
+  const httpCount = new prom.Counter({
+    name: 'http_requests_total',
+    help: 'Total number of HTTP requests',
+    labelNames: ['method', 'status', 'handler']
+  })
+  server.use((req, res, next) => {
+    const method = req.method
+    const finish = httpDuration.startTimer()
+    res.on('finish', () => {
+      const status = res.statusCode
+      const handler = _.get(req, 'route.stack[0].name', '<undefined>')
+      finish({ status, method, handler })
+      httpCount.inc({ status, method, handler })
+    })
+    next()
+  })
+
+  server.use('/api', api)
 
   server.use(
     '/announcements',
     express.static(join(__dirname, '..', 'announcements'))
   )
-  server.get('/_metrics', (req, res) => {
+  server.get('/_metrics', function getPrometheusMetrics(req, res) {
     const auth = req.headers.authorization
     if (!auth) {
       return res.status(HttpStatus.Unauthorized).end()

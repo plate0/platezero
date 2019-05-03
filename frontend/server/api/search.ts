@@ -25,7 +25,7 @@ export const searchQuery = (q?: string, user_id?: number) => {
   }
 }
 
-r.get('/', async (req, res) => {
+r.get('/', async function search(req, res) {
   const { q, user_id } = req.query
   try {
     const results = await Recipe.findAll(searchQuery(q, user_id))

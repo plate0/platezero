@@ -17,7 +17,7 @@ const isUniqueEmailError = (err: any) =>
   'unique violation' === _.get(err, 'errors[0].type', '') &&
   'email' === _.get(err, 'errors[0].path', '')
 
-r.get('/', async (_, res) => {
+r.get('/', async function getUsers(_, res) {
   try {
     const users = await User.findAll({ order: [['id', 'DESC']] })
     return res.json(users)
@@ -26,7 +26,7 @@ r.get('/', async (_, res) => {
   }
 })
 
-r.post('/', validateNewUser, async (req, res) => {
+r.post('/', validateNewUser, async function createUser(req, res) {
   const { username, password, email } = req.body
   const u = User.build({ username, email })
   try {
@@ -53,7 +53,7 @@ r.post('/', validateNewUser, async (req, res) => {
 
 r.use(
   '/:username',
-  async (req, res, next) => {
+  async function populateUsername(req, res, next) {
     const { username } = req.params
     try {
       const user = await User.findByUsername(username)

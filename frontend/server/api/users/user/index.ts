@@ -13,7 +13,7 @@ export interface UserRequest extends Request {
   user: User
 }
 
-r.get('/', async (req: UserRequest, res) => {
+r.get('/', async function getUser(req: UserRequest, res) {
   try {
     const recipes = await Recipe.findAll({
       where: { user_id: req.user.id },
@@ -31,7 +31,7 @@ r.get('/', async (req: UserRequest, res) => {
   }
 })
 
-r.get('/recipes', async (req: UserRequest, res) => {
+r.get('/recipes', async function getUserRecipes(req: UserRequest, res) {
   const { q } = req.query
   return res.json(
     await Recipe.findAll({
@@ -43,7 +43,7 @@ r.get('/recipes', async (req: UserRequest, res) => {
 
 r.use(
   '/recipes/:slug',
-  async (req: UserRequest, res, next) => {
+  async function populateRecipe(req: UserRequest, res, next) {
     const { slug } = req.params
     try {
       const recipe = await Recipe.findOne({

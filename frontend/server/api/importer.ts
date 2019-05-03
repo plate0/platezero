@@ -5,9 +5,11 @@ import { internalServerError } from '../errors'
 import { Recipe } from '../../models/recipe'
 import { S3 } from 'aws-sdk'
 import fetch from 'node-fetch'
+import * as prom from 'prom-client'
+import { parse } from 'url'
 import { HttpStatus } from '../../common/http-status'
 import { config } from '../config'
-import { size } from 'lodash'
+import { size, each, toString } from 'lodash'
 import { generate } from 'shortid'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
@@ -16,7 +18,14 @@ const { slackHook } = config
 
 const r = express.Router()
 
-r.post('/url', async (req: AuthenticatedRequest, res) => {
+const urlImportCounter = new prom.Counter({
+  name: 'platezero_url_imports_total',
+  help: 'Total number of URLs imported',
+  labelNames: ['hostname']
+})
+r.post('/url', async function importUrl(req: AuthenticatedRequest, res) {
+  const parsed = parse(req.body.url)
+  urlImportCounter.inc({ hostname: parsed.hostname })
   try {
     const importer = Importers.url(req.body.url)
     const recipe = await importer(req.body.url)
@@ -38,6 +47,22 @@ r.post('/url', async (req: AuthenticatedRequest, res) => {
   }
 })
 
+const fileImportCounter = new prom.Counter({
+  name: 'platezero_file_imports_total',
+  help: 'Total number of URLs imported',
+  labelNames: ['mimetype']
+})
+const fileSizeHistogram = new prom.Histogram({
+  name: 'platezero_file_import_bytes',
+  help: 'Imported file size in bytes',
+  labelNames: ['mimetype'],
+  buckets: [1000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000]
+})
+const filesPerUploadHistogram = new prom.Histogram({
+  name: 'platezero_file_import_num_files',
+  help: 'Number of files per upload',
+  buckets: [0, 1, 2, 4, 8, 16, 32, 64]
+})
 const upload = multer({
   storage: multerS3({
     s3,
@@ -47,8 +72,13 @@ const upload = multer({
       cb(null, `${req.user.userId}/${generate()}-${file.originalname}`)
   })
 })
-
-r.post('/file', upload.array('file'), async (req: any, res) => {
+r.post('/file', upload.array('file'), async function importFile(req: any, res) {
+  filesPerUploadHistogram.observe(req.files.length)
+  each(req.files, file => {
+    const mimetype = toString(file.mimetype)
+    fileImportCounter.inc({ mimetype })
+    fileSizeHistogram.observe({ mimetype }, file.size)
+  })
   if (slackHook) {
     fetch(slackHook, {
       method: 'POST',

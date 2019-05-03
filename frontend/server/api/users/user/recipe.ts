@@ -22,7 +22,7 @@ export interface RecipeRequest extends Request {
   recipe: Recipe
 }
 
-r.get('/', async (req: RecipeRequest, res) => {
+r.get('/', async function getRecipe(req: RecipeRequest, res) {
   res.json(
     await req.recipe.reload({
       include: [
@@ -36,7 +36,7 @@ r.get('/', async (req: RecipeRequest, res) => {
   )
 })
 
-r.get('/versions', async (req: RecipeRequest, res) => {
+r.get('/versions', async function getRecipeVersions(req: RecipeRequest, res) {
   try {
     return res.json(
       await RecipeVersion.findAll({
@@ -50,7 +50,10 @@ r.get('/versions', async (req: RecipeRequest, res) => {
   }
 })
 
-r.get('/versions/:id', async (req: RecipeRequest, res) => {
+r.get('/versions/:id', async function getRecipeVersion(
+  req: RecipeRequest,
+  res
+) {
   const id = parseInt(req.params.id, 10)
   const l = RecipeVersion.sequelize.literal
   try {

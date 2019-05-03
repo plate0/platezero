@@ -1,7 +1,6 @@
 import * as express from 'express'
 import * as _ from 'lodash'
 import * as jwtMiddleware from 'express-jwt'
-import * as prom from 'prom-client'
 import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
@@ -63,7 +62,7 @@ r.use(
 )
 
 // the index route. provide some useful URLs
-r.get('/', (_, res) => {
+r.get('/', function apiIndex(_, res) {
   return res.json({
     users_url: `${config.apiUrl}/users`,
     current_user_url: `${config.apiUrl}/user`
@@ -71,12 +70,7 @@ r.get('/', (_, res) => {
 })
 
 // login route
-const loginAttemptCounter = new prom.Counter({
-  name: 'pz_api_login_attempts',
-  help: 'Login attempts'
-})
-r.post('/login', async (req, res) => {
-  loginAttemptCounter.inc()
+r.post('/login', async function login(req, res) {
   const { username, password } = req.body
   if (!username || !password) {
     return badRequest(res, 'username and password are required')
@@ -104,7 +98,7 @@ r.post('/login', async (req, res) => {
 })
 
 // refresh JWT
-r.post('/login/refresh', async (req, res) => {
+r.post('/login/refresh', async function getRefreshToken(req, res) {
   const { token } = req.body
   if (!token) {
     return badRequest(res, '`token` is required')

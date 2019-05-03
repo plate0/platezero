@@ -29,7 +29,7 @@ export interface AuthenticatedRequest extends Request {
 
 const r = express.Router()
 
-r.get('/', async (req: AuthenticatedRequest, res) => {
+r.get('/', async function getCurrentUser(req: AuthenticatedRequest, res) {
   try {
     const user = await User.findOne({ where: { username: req.user.username } })
     return res.json(user)
@@ -38,7 +38,10 @@ r.get('/', async (req: AuthenticatedRequest, res) => {
   }
 })
 
-r.put('/', validateUserPatch, async (req: AuthenticatedRequest, res) => {
+r.put('/', validateUserPatch, async function updateUser(
+  req: AuthenticatedRequest,
+  res
+) {
   try {
     const user = await User.findByUsername(req.user.username)
     await user.update(req.body)
@@ -48,7 +51,10 @@ r.put('/', validateUserPatch, async (req: AuthenticatedRequest, res) => {
   }
 })
 
-r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
+r.post('/recipe', validateNewRecipe, async function createRecipe(
+  req: AuthenticatedRequest,
+  res
+) {
   try {
     return res
       .status(HttpStatus.Created)
@@ -58,30 +64,29 @@ r.post('/recipe', validateNewRecipe, async (req: AuthenticatedRequest, res) => {
   }
 })
 
-r.patch(
-  '/recipes/:slug',
-  validateRecipePatch,
-  async (req: AuthenticatedRequest, res) => {
-    try {
-      const { slug } = req.params
-      const recipe = await Recipe.findOne({
-        where: { user_id: req.user.userId, slug }
-      })
-      if (!recipe) {
-        return notFound(res)
-      }
-      await recipe.update(req.body)
-      return res.json(recipe)
-    } catch (err) {
-      return internalServerError(res, err)
+r.patch('/recipes/:slug', validateRecipePatch, async function updateRecipe(
+  req: AuthenticatedRequest,
+  res
+) {
+  try {
+    const { slug } = req.params
+    const recipe = await Recipe.findOne({
+      where: { user_id: req.user.userId, slug }
+    })
+    if (!recipe) {
+      return notFound(res)
     }
+    await recipe.update(req.body)
+    return res.json(recipe)
+  } catch (err) {
+    return internalServerError(res, err)
   }
-)
+})
 
 r.patch(
   '/recipes/:slug/branches/:branch',
   validateRecipeVersionPatch,
-  async (req: AuthenticatedRequest, res) => {
+  async function updateRecipeVersion(req: AuthenticatedRequest, res) {
     try {
       const { slug, branch } = req.params
       const recipe = await Recipe.findOne({
@@ -105,7 +110,10 @@ r.patch(
   }
 )
 
-r.delete('/recipes/:slug', async (req: AuthenticatedRequest, res) => {
+r.delete('/recipes/:slug', async function deleteRecipe(
+  req: AuthenticatedRequest,
+  res
+) {
   try {
     const { slug } = req.params
     const recipe = await Recipe.findOne({
@@ -151,7 +159,10 @@ const upload = multer({
   })
 })
 
-r.post('/images', upload.single('file'), async (req: any, res) => {
+r.post('/images', upload.single('file'), async function uploadPublicImage(
+  req: any,
+  res
+) {
   res.status(HttpStatus.Created).json({
     url: `https://static.platezero.com/${req.pzUploadKey}`
   })
