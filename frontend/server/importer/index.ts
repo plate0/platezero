@@ -1,5 +1,5 @@
 import { parse } from 'url'
-import { fetch, toHTML } from './importer'
+import { fetch, toHTML, toJSON } from './importer'
 import { dom } from './html'
 import { mapValues } from 'lodash'
 import { BlueApron } from './blue-apron'
@@ -8,6 +8,7 @@ import { NYTCooking } from './nyt-cooking'
 import { GenericHTML } from './generic-html-importer'
 import { FoodNetwork } from './food-network'
 import { Popsugar } from './popsugar'
+import { Reddit } from './reddit'
 
 const importers = mapValues(
   {
@@ -20,6 +21,7 @@ const importers = mapValues(
   },
   importer => fetch(toHTML(dom(importer)))
 )
+importers['www.reddit.com'] = fetch(toJSON(Reddit))
 
 export const url = (u: string) => {
   const parsed = parse(u)
