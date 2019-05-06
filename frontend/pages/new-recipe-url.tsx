@@ -31,6 +31,38 @@ const Loading = () => (
   </div>
 )
 
+const Back = () => (
+  <Link route="new-recipe">
+    <a className="btn btn-link text-dark mt-3">
+      <i className="far fa-chevron-double-left mr-2" />
+      Cancel and go back
+    </a>
+  </Link>
+)
+
+const NotShowing = ({ href }) => {
+  const [show, setShow] = useState(true)
+  return (
+    <div
+      className={`position-absolute rounded p-3 bg-light
+        d-flex justify-content-between
+        ${show ? 'd-block' : 'd-none'}`}
+      style={{ left: '1rem', right: '1rem', bottom: '1rem' }}
+    >
+      <p className="mb-0">
+        Don't see the website? Some sites won't load. Click{' '}
+        <a href={href} target="_blank">
+          here
+        </a>{' '}
+        to open the site in a new tab and copy from there.
+      </p>
+      <Button color="link" className="" onClick={() => setShow(false)}>
+        <i className="fal fa-times-circle" />
+      </Button>
+    </div>
+  )
+}
+
 const UrlForm = ({ onSubmit }) => {
   const [value, setValue] = useState('')
   return (
@@ -63,24 +95,25 @@ const LoadIngredients = ({ disabled, src, onChange, onSubmit }) => {
         <Alert color="danger">
           Sorry, the importer could not find the ingredients.
         </Alert>
-        <iframe
-          src={src}
-          className="w-100"
-          style={{ height: '50vh' }}
-          onLoad={() => console.log('on load')}
-        />
+        <div className="position-relative">
+          <iframe src={src} className="w-100" style={{ height: '50vh' }} />
+          <NotShowing href={src} />
+        </div>
       </Col>
       <Col xs="12">
         <h2>Oops, that didn&rsquo;t quite work.</h2>
         <p>
-          Please copy the ingredients from the website above. Paste them into
-          the text field below and edit them however you would like. When done,
-          press <em>Save & Continue</em>.
+          Please copy the ingredients from the{' '}
+          <a href={src} target="_blank">
+            website above
+          </a>
+          . Paste them into the text field below and edit them however you would
+          like. When done, press <em>Save & Continue</em>.
         </p>
         <IngredientListsEditor lists={[]} onChange={onChange} />
       </Col>
       <Col xs="12" className="d-flex justify-content-between my-3">
-        <a>Cancel and go back</a>
+        <Back />
         <Button color="primary" onClick={onSubmit} disabled={disabled}>
           Save & Continue
         </Button>
@@ -96,18 +129,24 @@ const LoadProcedure = ({ src, onChange, onSubmit }) => {
         <Alert color="danger">
           Sorry, the importer could not find the instructions.
         </Alert>
-        <iframe src={src} className="w-100" style={{ height: '50vh' }} />
+        <div className="position-relative">
+          <iframe src={src} className="w-100" style={{ height: '50vh' }} />
+          <NotShowing href={src} />
+        </div>
       </Col>
       <Col xs="12">
         <p>
-          Please copy the instructions from the source above. Paste them into
-          the text field below and edit them however you would like. When done,
-          press 'Save & Continue'.
+          Please copy the instructions from the
+          <a href={src} target="_blank">
+            website above
+          </a>
+          . Paste them into the text field below and edit them however you would
+          like. When done, press 'Save & Continue'.
         </p>
         <ProcedureListsEditor lists={[]} onChange={onChange} />
       </Col>
       <Col xs="12" className="d-flex justify-content-between">
-        <a>Cancel and go back</a>
+        <Back />
         <Button color="primary" onClick={onSubmit}>
           Save & Continue
         </Button>
