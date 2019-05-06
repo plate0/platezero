@@ -1,10 +1,5 @@
-import { first, get, trim } from 'lodash'
+import { first, get, size, trim } from 'lodash'
 import { mapValues } from './importer'
-import {
-  dom,
-  recipeSchemaIngredientLists,
-  recipeSchemaProcedureLists
-} from './html'
 import { AllHtmlEntities } from 'html-entities'
 import * as cheerio from 'cheerio'
 import { parseIngredient } from 'ingredient-parser'
@@ -46,23 +41,20 @@ const ingredient_lists = (json: any) => {
       })
       .get()
   }
-  return [{ lines }]
+  return size(lines) ? [{ lines }] : []
 }
 
 const procedure_lists = (json: any) => {
   const html = decode(getPostContents(json))
   const $ = cheerio.load(html)
-  return [
-    {
-      lines: $('ol')
-        .last()
-        .find('li')
-        .map(function() {
-          return trim($(this).text())
-        })
-        .get()
-    }
-  ]
+  const lines = $('ol')
+    .last()
+    .find('li')
+    .map(function() {
+      return { text: trim($(this).text()) }
+    })
+    .get()
+  return size(lines) ? [{ lines }] : []
 }
 
 export const RedditRecipes = mapValues({

@@ -21,7 +21,8 @@ const importers = mapValues(
   },
   importer => fetch(toHTML(dom(importer)))
 )
-importers['www.reddit.com'] = fetch(toJSON(Reddit))
+importers['www.reddit.com'] = (url: string) =>
+  fetch(toJSON(Reddit))(`${url}.json`)
 
 export const url = (u: string) => {
   const parsed = parse(u)

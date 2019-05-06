@@ -105,19 +105,31 @@ describe('r/recipes', () => {
 
     test('procedure_lists', async () => {
       const { procedure_lists } = await importer(source)
+      console.log(procedure_lists[0].lines)
       expect(procedure_lists).toEqual([
         {
           lines: [
-            'Slice chicken in small chops (like 1/2 inch)',
-            'Slice bell pepper in tiny bits (about 1/4 inch)',
-            'Cook pasta (according to its packaging)',
-            'Put pan on low heat, add some olive oil, sliced chicken, curry powder and salt&pepper.',
-            'Stir while most of chicken is white, then add bell pepper.',
-            'Add half of prepared tomatoes each sliced in 4 peaces',
-            'Cook until chicken is cooked/done. Then add cream..',
-            'When cream start to boil add other half of sliced tomatoes, minced garlic and pasta.',
-            'Leave it to cool down a little, if you like you can add a little water to get it more saucy.',
-            'Done :)'
+            { text: 'Slice chicken in small chops (like 1/2 inch)' },
+            { text: 'Slice bell pepper in tiny bits (about 1/4 inch)' },
+            { text: 'Cook pasta (according to its packaging)' },
+            {
+              text:
+                'Put pan on low heat, add some olive oil, sliced chicken, curry powder and salt&pepper.'
+            },
+            {
+              text: 'Stir while most of chicken is white, then add bell pepper.'
+            },
+            { text: 'Add half of prepared tomatoes each sliced in 4 peaces' },
+            { text: 'Cook until chicken is cooked/done. Then add cream..' },
+            {
+              text:
+                'When cream start to boil add other half of sliced tomatoes, minced garlic and pasta.'
+            },
+            {
+              text:
+                'Leave it to cool down a little, if you like you can add a little water to get it more saucy.'
+            },
+            { text: 'Done :)' }
           ]
         }
       ])
@@ -274,9 +286,18 @@ describe('r/recipes', () => {
       expect(procedure_lists).toEqual([
         {
           lines: [
-            'Whisk garlic, vinegar, mustard, olive oil, salt and pepper in serving bowl for dressing.',
-            'Add artichokes, olives, tomatoes, red onion and avocado to dressing. Mix well to coat and marinade for at least 1 hour or overnight.',
-            'Add all other ingredients, except lettuce and toss well. Add lettuce and toss just before serving. Serve with french bread and lemonade or wine.'
+            {
+              text:
+                'Whisk garlic, vinegar, mustard, olive oil, salt and pepper in serving bowl for dressing.'
+            },
+            {
+              text:
+                'Add artichokes, olives, tomatoes, red onion and avocado to dressing. Mix well to coat and marinade for at least 1 hour or overnight.'
+            },
+            {
+              text:
+                'Add all other ingredients, except lettuce and toss well. Add lettuce and toss just before serving. Serve with french bread and lemonade or wine.'
+            }
           ]
         }
       ])
