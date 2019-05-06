@@ -45,7 +45,7 @@ const NotShowing = ({ href }) => {
   return (
     <div
       className={`position-absolute rounded p-3 bg-light
-        d-flex justify-content-between
+        align-items-center d-flex justify-content-between
         ${show ? 'd-block' : 'd-none'}`}
       style={{ left: '1rem', right: '1rem', bottom: '1rem' }}
     >
