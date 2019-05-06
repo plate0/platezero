@@ -21,8 +21,10 @@ const importers = mapValues(
   },
   importer => fetch(toHTML(dom(importer)))
 )
-importers['www.reddit.com'] = (url: string) =>
-  fetch(toJSON(Reddit))(`${url}.json`)
+importers['www.reddit.com'] = async (url: string) => {
+  const recipe = await fetch(toJSON(Reddit))(`${url}.json`)
+  return recipe ? recipe : fetch(toHTML(dom(GenericHTML)))(url)
+}
 
 export const url = (u: string) => {
   const parsed = parse(u)
