@@ -56,7 +56,7 @@ const NotShowing = ({ href }) => {
         </a>{' '}
         to open the site in a new tab and copy from there.
       </p>
-      <Button color="link" className="" onClick={() => setShow(false)}>
+      <Button color="link" onClick={() => setShow(false)}>
         <i className="fal fa-times-circle" />
       </Button>
     </div>
