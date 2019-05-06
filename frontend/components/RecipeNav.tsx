@@ -29,22 +29,34 @@ const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
 export const RecipeNav = ({
   recipe,
+  versionId,
+  noteCount,
   route
 }: {
   recipe: RecipeJSON
+  versionId?: number
+  noteCount: number
   route: string
 }) => {
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
+  const versionURL = versionId ? `${baseURL}/versions/${versionId}` : baseURL
   return (
     <Nav className="mb-3 d-print-none recipe-nav">
       <NavItem active={route === '/recipe'}>
-        <Link route={baseURL} passHref>
+        <Link route={versionURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
         </Link>
       </NavItem>
       <NavItem active={route === '/recipe-history'}>
-        <Link route={`${baseURL}/history`} passHref>
+        <Link route={`${versionURL}/history`} passHref>
           <NavLink active={route === '/recipe-history'}>History</NavLink>
+        </Link>
+      </NavItem>
+      <NavItem active={route === '/recipe-notes'}>
+        <Link route={`${versionURL}/notes`} passHref>
+          <NavLink active={route === '/recipe-notes'}>
+            Notes {noteCount > 0 ? `(${noteCount})` : ''}
+          </NavLink>
         </Link>
       </NavItem>
       <NavItem className="border-bottom flex-fill" />

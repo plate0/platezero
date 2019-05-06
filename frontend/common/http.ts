@@ -2,8 +2,8 @@ import 'isomorphic-fetch'
 import getConfig from 'next/config'
 import * as _ from 'lodash'
 import { stringify } from 'query-string'
-import { UserJSON, RecipeJSON, RecipeVersionJSON } from '../models'
-import { PostRecipe, RecipeVersionPatch } from './request-models'
+import { UserJSON, RecipeJSON, RecipeVersionJSON, NoteJSON } from '../models'
+import { PostRecipe, RecipeVersionPatch, NotePatch } from './request-models'
 import { HttpStatus } from './http-status'
 import { get } from 'lodash'
 import { getAuth } from './auth'
@@ -252,6 +252,30 @@ class Api {
       method: 'PUT',
       headers: { Accept: 'application/json', ...authHeaders(this.token) }
     })
+
+  createNote = (note: NoteJSON, opts: RequestInit = {}) =>
+    this._fetch<NoteJSON>(`/user/notes`, {
+      ...opts,
+      body: JSON.stringify(note),
+      method: 'POST'
+    })
+
+  getRecipeNotes = (
+    username: string,
+    slug: string,
+    opts: RequestInit = {}
+  ): Promise<NoteJSON[]> =>
+    this._fetch<NoteJSON[]>(`/users/${username}/recipes/${slug}/notes`, opts)
+
+  patchNote = (id: number, note: NotePatch, opts: RequestInit = {}) =>
+    this._fetch<NoteJSON>(`/user/notes/${id}`, {
+      ...opts,
+      body: JSON.stringify(note),
+      method: 'PATCH'
+    })
+
+  deleteNote = (id: number, opts: RequestInit = {}) =>
+    this._fetch(`/user/notes/${id}`, { ...opts, method: 'DELETE' })
 }
 
 export const api = new Api()

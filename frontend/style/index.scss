@@ -69,3 +69,10 @@ nav .dropdown-toggle::after {
     background-color: $danger;
   }
 }
+
+@each $color, $value in $theme-colors {
+  .theme-#{$color} {
+    color: theme-color-level($color, $alert-color-level);
+    @include gradient-bg(theme-color-level($color, $alert-bg-level));
+  }
+}

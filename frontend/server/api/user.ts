@@ -10,10 +10,12 @@ import {
   validateNewRecipe,
   validateRecipePatch,
   validateRecipeVersionPatch,
-  validateUserPatch
+  validateUserPatch,
+  validateNewNote,
+  validateNotePatch
 } from '../validate'
-import { User, Recipe, RecipeBranch } from '../../models'
-import { notFound, internalServerError } from '../errors'
+import { User, Recipe, RecipeBranch, RecipeVersion, Note } from '../../models'
+import { notFound, internalServerError, badRequest } from '../errors'
 import { HttpStatus } from '../../common/http-status'
 
 const s3 = new S3()
@@ -78,6 +80,70 @@ r.patch('/recipes/:slug', validateRecipePatch, async function updateRecipe(
     }
     await recipe.update(req.body)
     return res.json(recipe)
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.post('/notes', validateNewNote, async function createNote(
+  req: AuthenticatedRequest,
+  res
+) {
+  try {
+    const { recipe_id, recipe_version_id } = req.body
+    const version = await RecipeVersion.findOne({
+      where: { id: recipe_version_id, user_id: req.user.userId, recipe_id }
+    })
+    if (!version) {
+      return badRequest(res)
+    }
+    const note = await Note.create({
+      recipe_id,
+      recipe_version_id,
+      text: req.body.text,
+      pinned: req.body.pinned,
+      author_id: req.user.userId
+    })
+    return res.json(await note.reload({ include: [{ model: User }] }))
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.patch('/notes/:id', validateNotePatch, async function updateNote(
+  req: AuthenticatedRequest,
+  res
+) {
+  try {
+    const note = await Note.findOne({
+      where: { id: req.params.id, author_id: req.user.userId }
+    })
+    if (!note) {
+      return notFound(res)
+    }
+    return res.json(
+      await note.update(req.body, {
+        include: [{ model: User }]
+      })
+    )
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.delete('/notes/:id', async function deleteNote(
+  req: AuthenticatedRequest,
+  res
+) {
+  try {
+    const note = await Note.findOne({
+      where: { id: req.params.id, author_id: req.user.userId }
+    })
+    if (!note) {
+      return notFound(res)
+    }
+    await note.destroy()
+    return res.status(HttpStatus.NoContent).end()
   } catch (err) {
     return internalServerError(res, err)
   }

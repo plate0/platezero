@@ -130,3 +130,15 @@ export const validateUserPatch = validator({
     .uri()
     .allow(null)
 })
+
+export const validateNewNote = validator({
+  recipe_id: Joi.number().required(),
+  recipe_version_id: Joi.number().required(),
+  text: Joi.string().required(),
+  pinned: Joi.boolean()
+})
+
+export const validateNotePatch = validator({
+  pinned: Joi.boolean(),
+  text: Joi.string()
+})

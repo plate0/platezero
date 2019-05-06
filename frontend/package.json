@@ -60,6 +60,7 @@
     "react-dropzone": "10.1.4",
     "react-markdown": "4.0.8",
     "react-select": "2.4.3",
+    "react-textarea-autosize": "7.1.0",
     "reactstrap": "7.1.0",
     "reflect-metadata": "0.1.13",
     "sequelize": "4.43.0",

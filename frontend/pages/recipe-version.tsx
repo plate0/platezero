@@ -1,25 +1,39 @@
 import React from 'react'
-import { Alert, Row, Col } from 'reactstrap'
-import Head from 'next/head'
+import * as _ from 'lodash'
+import { Card, CardHeader, CardBody } from 'reactstrap'
 import ErrorPage from './_error'
-import { Layout, RecipeVersion as RecipeVersionView } from '../components'
-import { RecipeJSON, RecipeVersionJSON } from '../models'
+import {
+  RecipeLayout,
+  RecipeVersion,
+  Timestamp,
+  Markdown,
+  PinnedNotes
+} from '../components'
+import { RecipeJSON, RecipeVersionJSON, NoteJSON } from '../models'
 import { api } from '../common/http'
+import { Link } from '../routes'
+import { getName } from '../common/model-helpers'
 
 interface RecipeVersionProps {
   recipe?: RecipeJSON
+  notes?: NoteJSON[]
   recipeVersion?: RecipeVersionJSON
   statusCode?: number
 }
 
-export default class RecipeVersion extends React.Component<RecipeVersionProps> {
+export default class RecipeVersionPage extends React.Component<
+  RecipeVersionProps
+> {
   static async getInitialProps({ query, res }) {
     try {
+      const { username, slug } = query
+      const recipe = await api.getRecipe(username, slug)
       return {
-        recipe: await api.getRecipe(query.username, query.slug),
+        recipe,
+        notes: await api.getRecipeNotes(username, slug),
         recipeVersion: await api.getRecipeVersion(
-          query.username,
-          query.slug,
+          username,
+          slug,
           parseInt(query.versionId, 10)
         )
       }
@@ -36,36 +50,50 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
     if (this.props.statusCode) {
       return <ErrorPage statusCode={this.props.statusCode} />
     }
-    const { recipe, recipeVersion } = this.props
+    const { recipe, recipeVersion, notes } = this.props
     return (
-      <Layout>
-        <Head>
-          <title>{recipe.title}</title>
-        </Head>
-        <div itemScope={true} itemType="http://schema.org/Recipe">
-          <Row className="mt-3">
-            <Col xs="12">
-              <Alert
-                color="warning"
-                className="d-print-none d-flex justify-content-between align-items-center"
+      <RecipeLayout
+        title={recipe.title}
+        description={recipe.description}
+        recipe={recipe}
+        url={recipe.html_url}
+        pathname={'/recipe'}
+        condensedHeader={true}
+        versionId={recipeVersion.id}
+        noteCount={notes.length}
+      >
+        <Card className="mb-3">
+          <CardHeader className="theme-warning d-flex align-items-center justify-content-between">
+            <div>Viewing a specific version of this recipe</div>
+            <Link
+              route="recipe"
+              params={{ username: recipe.owner.username, slug: recipe.slug }}
+            >
+              <a className="btn btn-link btn-sm">Show Master Version</a>
+            </Link>
+          </CardHeader>
+          <CardBody>
+            <Markdown source={recipeVersion.message} />
+            <div className="text-secondary small mt-3">
+              Authored <Timestamp t={recipeVersion.created_at} /> by{' '}
+              <Link
+                route="/user"
+                params={{ username: recipeVersion.author.username }}
               >
-                <span>Viewing an older version of this recipe.</span>
-                <a
-                  className="btn btn-outline-primary"
-                  href={`/${recipe.owner.username}/${recipe.slug}`}
-                >
-                  Show Current Version
+                <a className="font-weight-bold text-secondary">
+                  {getName(recipeVersion.author)}
                 </a>
-              </Alert>
-            </Col>
-          </Row>
-          <RecipeVersionView
-            version={recipeVersion}
-            recipe={recipe}
-            pathname="/recipe"
-          />
-        </div>
-      </Layout>
+              </Link>
+            </div>
+          </CardBody>
+        </Card>
+        <PinnedNotes
+          currentVersionId={recipeVersion.id}
+          recipe={recipe}
+          notes={notes}
+        />
+        <RecipeVersion version={recipeVersion} />
+      </RecipeLayout>
     )
   }
 }
