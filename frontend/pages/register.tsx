@@ -110,6 +110,7 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
                     type="text"
                     name="username"
                     id="usernameField"
+                    autoCapitalize="none"
                     placeholder="Pick a username (what people will know you as)"
                     value={this.state.username}
                     onChange={this.handleUsernameChange}
