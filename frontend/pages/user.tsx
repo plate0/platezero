@@ -10,7 +10,6 @@ import {
   Layout,
   UserSidebar,
   RecipeList,
-  RecipeListHeader,
   RecipeListBlankslate,
   RecipeListNoSearchResults,
   Search
@@ -114,14 +113,14 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
             <UserSidebar user={user} />
           </Col>
           <Col xs={12} sm={8} md={9} lg={10}>
-            <RecipeListHeader user={user} />
+            <h2 className="m-0">Recipes</h2>
             <Search
               value={query}
               onChange={this.onSearch}
               placeholder="Find a recipe..."
               className="my-2"
             />
-            <RecipeList recipes={recipes} user={user}>
+            <RecipeList recipes={recipes}>
               {query && (
                 <SearchResultsHeader
                   n={recipes.length}
