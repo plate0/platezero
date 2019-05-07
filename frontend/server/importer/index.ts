@@ -9,6 +9,7 @@ import { GenericHTML } from './generic-html-importer'
 import { FoodNetwork } from './food-network'
 import { Popsugar } from './popsugar'
 import { CookingLight } from './cooking-light'
+import { DeliciousMagazine } from './deliciousmagazine'
 import { Reddit } from './reddit'
 
 const importers = mapValues(
@@ -19,7 +20,8 @@ const importers = mapValues(
     'www.seriouseats.com': SeriousEats,
     'www.foodnetwork.com': FoodNetwork,
     'www.cookinglight.com': CookingLight,
-    'www.popsugar.com': Popsugar
+    'www.popsugar.com': Popsugar,
+    'www.deliciousmagazine.co.uk': DeliciousMagazine
   },
   importer => fetch(toHTML(dom(importer)))
 )
