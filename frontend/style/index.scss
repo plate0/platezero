@@ -39,3 +39,17 @@ summary {
 nav .dropdown-toggle::after {
   vertical-align: middle;
 }
+
+// Homepage
+.hero-image {
+  background-position-x: 50%;
+  @include media-breakpoint-up(sm) {
+    background-position-x: 40%;
+  }
+  @include media-breakpoint-up(md) {
+    background-position-x: 20%;
+  }
+  @include media-breakpoint-up(lg) {
+    background-position-x: 0%;
+  }
+}

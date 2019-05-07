@@ -135,17 +135,33 @@ export class App extends React.Component<any, AppState> {
 
   public async onSelectRecipe(r: RecipePath) {
     log.info(r)
-    const folder = app.getPath('userData')
-    const path = await download(r.key, folder)
-    const { base } = parse(path)
-    const recipePath = await convert(folder, base)
-    log.info('converted', recipePath)
-    this.setState({
-      recipeKey: r.key,
-      recipePath,
-      userId: r.userId,
-      modal: false
-    })
+    try {
+      const folder = app.getPath('userData')
+      const path = await download(r.key, folder)
+      const { base } = parse(path)
+      const recipePath = await convert(folder, base)
+      log.info('converted', recipePath)
+      this.setState({
+        recipeKey: r.key,
+        recipePath,
+        userId: r.userId,
+        modal: false
+      })
+    } catch (err) {
+      log.error(err)
+      if (
+        confirm(`${err.message}
+        
+Do you want to open a blank recipe for this user?`)
+      ) {
+        this.setState({
+          recipeKey: r.key,
+          recipePath: '/dev/null',
+          userId: r.userId,
+          modal: false
+        })
+      }
+    }
   }
 
   public async onSelection(buffer: Buffer) {

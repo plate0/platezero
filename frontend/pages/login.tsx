@@ -75,6 +75,7 @@ export default class Login extends React.Component<any, LoginState> {
                           type="text"
                           name="username"
                           className="form-control"
+                          autoCapitalize="none"
                           ref={this.usernameInput}
                           required
                           autoFocus={true}
