@@ -44,7 +44,7 @@ const ingredient_lists = ($: any): IngredientListJSON[] => {
       if (!list) {
         // Default list
         list = {
-          name: el.text(),
+          name: '',
           lines: []
         }
       }
