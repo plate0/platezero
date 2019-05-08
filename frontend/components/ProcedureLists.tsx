@@ -1,20 +1,21 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import { Row, Col, Badge } from 'reactstrap'
 
 import { ProcedureListJSON } from '../models'
-import { Markdown } from './Markdown'
+import { InlineMarkdown } from './InlineMarkdown'
 
 export const ProcedureLists = ({ lists }: { lists: ProcedureListJSON[] }) => (
   <>
-    {lists.map((list, key) => (
-      <ProcedureList key={key} list={list} />
+    {lists.map((list, index) => (
+      <ProcedureList index={index} list={list} />
     ))}
   </>
 )
 
-const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
+const ProcedureList = ({ list, index }: { list: ProcedureListJSON, index: number }) => (
   <div className="mb-3">
-    {list.name && <p className="font-weight-bold border-bottom">{list.name}</p>}
+    {list.name && (<p className="font-weight-bold border-bottom"><ItemNo value={index+1}/> {list.name}</p>)}
     {list.lines.map((l, key) => (
       <div
         key={key}
@@ -36,24 +37,37 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
             <Col xs="12">
               <div className="mb-3">
                 <h5 className="border-bottom pb-2 d-flex align-items-center">
-                  <Badge
-                    color="primary"
-                    pill
-                    className="mr-2"
-                    itemProp="position"
-                  >
-                    {key + 1}
-                  </Badge>
                   <span itemProp="headline">{l.title}</span>
                 </h5>
               </div>
             </Col>
           )}
           <Col xs="12" itemProp="text">
-            <Markdown source={l.text} />
+          {list.name || (
+                  <ItemNo value={key + 1}/>
+                 )}
+           <InlineMarkdown source={l.text} />
           </Col>
         </Row>
       </div>
     ))}
+    <style jsx>
+    {`
+      .badge + p {
+        display: inline;
+      }
+    `}
+  </style>
   </div>
+)
+
+const ItemNo = ({value}: {value: number}) => (
+        <Badge
+        color="primary"
+        pill
+        className="mr-2"
+        itemProp="position"
+      >
+        {value}
+      </Badge>
 )
