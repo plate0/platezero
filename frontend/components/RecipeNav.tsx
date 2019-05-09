@@ -87,7 +87,7 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
               recipe.slug
             }/branches/master/edit`}
           >
-            Update Recipe
+            Edit Recipe
           </DropdownItem>
           <DropdownItem
             onClick={() => setDeleteModalOpen(true)}
