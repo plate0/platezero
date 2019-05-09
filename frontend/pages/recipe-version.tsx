@@ -3,10 +3,11 @@ import { Alert, Row, Col } from 'reactstrap'
 import Head from 'next/head'
 import ErrorPage from './_error'
 import { Layout, RecipeVersion as RecipeVersionView } from '../components'
-import { RecipeVersionJSON } from '../models/recipe_version'
+import { RecipeJSON, RecipeVersionJSON } from '../models'
 import { api } from '../common/http'
 
 interface RecipeVersionProps {
+  recipe?: RecipeJSON
   recipeVersion?: RecipeVersionJSON
   statusCode?: number
 }
@@ -15,6 +16,7 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
   static async getInitialProps({ query, res }) {
     try {
       return {
+        recipe: await api.getRecipe(query.username, query.slug),
         recipeVersion: await api.getRecipeVersion(
           query.username,
           query.slug,
@@ -34,11 +36,11 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
     if (this.props.statusCode) {
       return <ErrorPage statusCode={this.props.statusCode} />
     }
-    const v = this.props.recipeVersion
+    const { recipe, recipeVersion } = this.props
     return (
       <Layout>
         <Head>
-          <title>{v.recipe.title}</title>
+          <title>{recipe.title}</title>
         </Head>
         <div itemScope={true} itemType="http://schema.org/Recipe">
           <Row className="mt-3">
@@ -50,14 +52,18 @@ export default class RecipeVersion extends React.Component<RecipeVersionProps> {
                 <span>Viewing an older version of this recipe.</span>
                 <a
                   className="btn btn-outline-primary"
-                  href={`/${v.recipe.owner.username}/${v.recipe.slug}`}
+                  href={`/${recipe.owner.username}/${recipe.slug}`}
                 >
                   Show Current Version
                 </a>
               </Alert>
             </Col>
           </Row>
-          <RecipeVersionView version={v} pathname="/recipe" />
+          <RecipeVersionView
+            version={recipeVersion}
+            recipe={recipe}
+            pathname="/recipe"
+          />
         </div>
       </Layout>
     )

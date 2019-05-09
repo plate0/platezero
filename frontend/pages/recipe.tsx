@@ -21,9 +21,14 @@ export default class Recipe extends React.Component<Props> {
         _.filter(recipe.branches, r => r.name === 'master')
       )
       const versionId = _.get(masterBranch, 'recipe_version_id')
-      const recipeVersion = versionId
-        ? await api.getRecipeVersion(query.username, query.slug, versionId)
-        : undefined
+      if (!versionId) {
+        return { pathname, statusCode: 404 }
+      }
+      const recipeVersion = await api.getRecipeVersion(
+        query.username,
+        query.slug,
+        versionId
+      )
       return { recipe, recipeVersion, pathname }
     } catch (err) {
       const statusCode = err.statusCode || 500
@@ -57,7 +62,11 @@ export default class Recipe extends React.Component<Props> {
             url={`/${recipe.owner.username}/${recipe.slug}`}
           />
           {recipeVersion && (
-            <RecipeVersionView version={recipeVersion} pathname={pathname} />
+            <RecipeVersionView
+              recipe={recipe}
+              version={recipeVersion}
+              pathname={pathname}
+            />
           )}
         </Layout>
       </>

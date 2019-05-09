@@ -4,31 +4,33 @@ import { Row, Col } from 'reactstrap'
 import { IngredientLists } from './IngredientLists'
 import { ProcedureLists } from './ProcedureLists'
 import { RecipeVersionHeader } from './RecipeVersionVitals'
-import { RecipeVersionJSON } from '../models/recipe_version'
+import { RecipeJSON, RecipeVersionJSON } from '../models'
 import { RecipeNav } from './RecipeNav'
 import { Preheats } from './Preheats'
 
 export const RecipeVersion = ({
   version,
+  recipe,
   pathname
 }: {
   version: RecipeVersionJSON
+  recipe: RecipeJSON
   pathname: string
 }) => {
   return (
     <>
       <Row className="position-relative">
-        <RecipeVersionHeader version={version} recipe={version.recipe} />
+        <RecipeVersionHeader version={version} recipe={recipe} />
       </Row>
       <Row>
         <Col xs="12" className="px-0 px-sm-3">
-          <RecipeNav recipe={version.recipe} route={pathname} />
+          <RecipeNav recipe={recipe} route={pathname} />
         </Col>
       </Row>
-      {version.recipe.description && (
+      {recipe.description && (
         <Row className="mt-3">
           <Col>
-            <p style={{ lineHeight: '2rem' }}>{version.recipe.description}</p>
+            <p style={{ lineHeight: '2rem' }}>{recipe.description}</p>
           </Col>
         </Row>
       )}
