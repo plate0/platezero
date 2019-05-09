@@ -2,11 +2,10 @@ import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
 import { searchQuery } from '../../search'
-import { User } from '../../../../models/user'
-import { Recipe } from '../../../../models/recipe'
+import { User, Recipe, sortable } from '../../../../models'
 import { RecipeRequest, recipe } from './recipe'
 import { notFound, internalServerError } from '../../../errors'
-
+const RecipeSortBy = sortable(Recipe, 'title')
 const r = express.Router()
 
 export interface UserRequest extends Request {
@@ -33,7 +32,7 @@ r.get('/', async function getUser(req: UserRequest, res) {
 
 r.get('/recipes', async function getUserRecipes(req: UserRequest, res) {
   const { q, sort } = req.query
-  const order = [sort ? sort.split('-') : ['title', 'ASC']]
+  const order = [RecipeSortBy(_.split(sort, '-') || [])]
   try {
     return res.json(
       await Recipe.findAll({
