@@ -6,13 +6,15 @@ import { withRouter, WithRouterProps } from 'next/router'
 import * as parse from 'url-parse'
 import ErrorPage from './_error'
 import { Router } from '../routes'
+import { stringify } from 'query-string'
 import {
   Layout,
   UserSidebar,
   RecipeList,
   RecipeListBlankslate,
   RecipeListNoSearchResults,
-  Search
+  Search,
+  SortRecipes
 } from '../components'
 import { UserJSON, RecipeJSON } from '../models'
 import { api } from '../common/http'
@@ -20,6 +22,7 @@ import { getName } from '../common/model-helpers'
 
 interface UserProps {
   query?: string
+  sort?: string
   user?: UserJSON
   recipes?: RecipeJSON[]
   statusCode?: number
@@ -34,6 +37,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
   constructor(props: any) {
     super(props)
     this.onSearch = this.onSearch.bind(this)
+    this.onSort = this.onSort.bind(this)
     this.onClear = this.onClear.bind(this)
     this.state = {
       query: props.query || '',
@@ -43,11 +47,12 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
 
   static async getInitialProps({ query, res }) {
     try {
-      const { username, q } = query
+      const { username, q, sort } = query
       return {
         user: await api.getUser(username),
         query: q,
-        recipes: await api.getUserRecipes(username, q)
+        sort,
+        recipes: await api.getUserRecipes(username, q, sort)
       }
     } catch (err) {
       const statusCode = err.statusCode || 500
@@ -59,19 +64,23 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
   }
 
   public async componentDidUpdate(prevProps) {
+    console.log('sort', this.props.router)
     let {
-      query: { q, username }
+      query: { q, username, sort }
     } = this.props.router
     q = _.isArray(q) ? _.first(q) : q
+    sort = _.isArray(sort) ? _.first(sort) : sort
+    console.log('sort', sort, prevProps.router.query.sort)
     username = _.isArray(username) ? _.first(username) : username
     if (
       q !== prevProps.router.query.q ||
+      sort !== prevProps.router.query.sort ||
       username !== prevProps.router.query.username
     ) {
       this.setState(
         {
           query: (q as string) || '',
-          ...(q ? {} : { recipes: await api.getUserRecipes(username, q) })
+          ...(q ? {} : { recipes: await api.getUserRecipes(username, q, sort) })
         },
         q ? this.refresh : undefined
       )
@@ -80,7 +89,18 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
 
   public onSearch(q: string) {
     const { pathname } = parse(this.props.router.asPath)
-    const href = `${pathname}?q=${encodeURIComponent(q)}`
+    const { sort } = this.props
+    const query = stringify({ q, sort })
+    const href = `${pathname}?${query}`
+    Router.replaceRoute(href, { shallow: true })
+  }
+
+  public onSort(e: any) {
+    const sort = e.target.value
+    const q = this.state.query
+    const { pathname } = parse(this.props.router.asPath)
+    const query = stringify({ q, sort })
+    const href = `${pathname}?${query}`
     Router.replaceRoute(href, { shallow: true })
   }
 
@@ -114,12 +134,19 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
           </Col>
           <Col xs={12} sm={8} md={9} lg={10}>
             <h2 className="m-0">Recipes</h2>
-            <Search
-              value={query}
-              onChange={this.onSearch}
-              placeholder="Find a recipe..."
-              className="my-2"
-            />
+            <Row className="align-items-center">
+              <Col>
+                <Search
+                  value={query}
+                  onChange={this.onSearch}
+                  placeholder="Find a recipe..."
+                  className="my-2"
+                />
+              </Col>
+              <Col xs="auto">
+                <SortRecipes selected={this.props.sort} onSort={this.onSort} />
+              </Col>
+            </Row>
             <RecipeList recipes={recipes}>
               {query && (
                 <SearchResultsHeader

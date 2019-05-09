@@ -32,11 +32,13 @@ r.get('/', async function getUser(req: UserRequest, res) {
 })
 
 r.get('/recipes', async function getUserRecipes(req: UserRequest, res) {
-  const { q } = req.query
+  const { q, sort } = req.query
+  console.log(sort)
+  const order = [sort ? sort.split('-') : ['title', 'ASC']]
   return res.json(
     await Recipe.findAll({
       ...searchQuery(q, req.user.id),
-      order: [['title', 'ASC']]
+      order
     })
   )
 })
