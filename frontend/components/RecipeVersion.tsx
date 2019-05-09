@@ -7,6 +7,7 @@ import { RecipeVersionHeader } from './RecipeVersionVitals'
 import { RecipeVersionJSON } from '../models/recipe_version'
 import { RecipeNav } from './RecipeNav'
 import { Preheats } from './Preheats'
+import { PrintButton } from './PrintButton'
 
 export const RecipeVersion = ({
   version,
