@@ -1,21 +1,20 @@
 import { Reddit } from './reddit'
-import { readFileSync } from 'fs'
+import { testAsset } from '../../test/readfile'
 
 describe('reddit', () => {
-  let source: string
-  let importer = Reddit
+  const importer = Reddit
 
-  beforeEach(() => {
-    source = JSON.parse(
-      readFileSync(
-        'test/assets/www.reddit.com/r/recipes/pasta_with_chicken_in_cream_sauce.json',
-        { encoding: 'utf8' }
+  let result
+  beforeAll(async () => {
+    const source = JSON.parse(
+      await testAsset(
+        'www.reddit.com/r/recipes/pasta_with_chicken_in_cream_sauce.json'
       )
     )
+    result = await importer(source)
   })
 
-  test('get title', async () => {
-    const { title } = await importer(source)
-    expect(title).toEqual('Pasta with chicken in cream sauce')
+  test('get title', () => {
+    expect(result.title).toEqual('Pasta with chicken in cream sauce')
   })
 })

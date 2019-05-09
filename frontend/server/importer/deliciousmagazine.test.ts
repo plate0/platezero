@@ -1,28 +1,26 @@
 import { DeliciousMagazine } from './deliciousmagazine'
 import { dom } from './html'
-import { readFileSync } from 'fs'
-
-const recipe =
-  'test/assets/www.deliciousmagazine.co.uk/tofu-with-caramel-and-sichuan-pepper.html'
+import { testAsset } from '../../test/readfile'
 
 describe('deliciousmagazine', () => {
-  let source: string
-  let importer = dom(DeliciousMagazine)
+  const importer = dom(DeliciousMagazine)
 
-  beforeEach(() => {
-    source = readFileSync(recipe, { encoding: 'utf8' })
+  let result
+  beforeAll(async () => {
+    const source = await testAsset(
+      'www.deliciousmagazine.co.uk/tofu-with-caramel-and-sichuan-pepper.html'
+    )
+    result = await importer(source)
   })
 
-  test('title', async () => {
-    const { title } = await importer(source)
-    expect(title).toEqual(
+  test('title', () => {
+    expect(result.title).toEqual(
       'Tofu with caramel and sichuan pepper | delicious. magazine'
     )
   })
 
-  test('ingredient_lists', async () => {
-    const { ingredient_lists } = await importer(source)
-    expect(ingredient_lists).toEqual([
+  test('ingredient_lists', () => {
+    expect(result.ingredient_lists).toEqual([
       {
         lines: [
           {
@@ -240,9 +238,8 @@ describe('deliciousmagazine', () => {
     ])
   })
 
-  test('procedure_lists', async () => {
-    const { procedure_lists } = await importer(source)
-    expect(procedure_lists).toEqual([
+  test('procedure_lists', () => {
+    expect(result.procedure_lists).toEqual([
       {
         lines: [
           {

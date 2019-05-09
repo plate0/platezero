@@ -1,51 +1,45 @@
 import { GenericHTML } from './generic-html-importer'
 import { dom } from './html'
-import { readFileSync } from 'fs'
+import { testAsset } from '../../test/readfile'
 
 describe('Generic HTML import', () => {
+  const importer = dom(GenericHTML)
+
   describe('www.wholelivinglauren.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/www.wholelivinglauren.com/creamy-vegan-pumpkin-soup.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'www.wholelivinglauren.com/creamy-vegan-pumpkin-soup.html'
       )
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual('Creamy Vegan Pumpkin Soup')
+    test('title', () => {
+      expect(result.title).toEqual('Creamy Vegan Pumpkin Soup')
     })
 
-    test('description', async () => {
-      const { description } = await importer(source)
-      expect(description).toEqual(
+    test('description', () => {
+      expect(result.description).toEqual(
         `Boy oh boy do I have something tasty (and super easy) for you today. I've said it before and I'll say it again. Soup is my jam. It's one of my absolute favorite foods. And this time of year there is nothing better than a piping hot bowl of creamy, comforting soup. Add pumpkin to the mix and WHOA...c`
       )
     })
 
-    test('image_url', async () => {
-      const { image_url } = await importer(source)
-      expect(image_url).toEqual(
+    test('image_url', () => {
+      expect(result.image_url).toEqual(
         'http://static1.squarespace.com/static/530e90a4e4b0340ce5266903/530e97a4e4b0fe3537f031c0/5817fd93c534a52382cccd35/1534429575718/fullsizeoutput_47b.jpeg?format=1500w'
       )
     })
 
-    test('yield', async () => {
-      const { yield: yld } = await importer(source)
-      expect(yld).toEqual('4-5')
+    test('yield', () => {
+      expect(result.yield).toEqual('4-5')
     })
 
-    test('duration', async () => {
-      const { duration } = await importer(source)
-      expect(duration).toBeUndefined()
+    test('duration', () => {
+      expect(result.duration).toBeUndefined()
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -57,18 +51,18 @@ describe('Generic HTML import', () => {
               unit: 'tbsp'
             },
             {
-              name: 'medium yellow onion',
+              name: 'medium yellow onion, chopped',
               quantity_numerator: 1,
               quantity_denominator: 1,
-              preparation: 'chopped',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'cloves garlic',
+              name: 'cloves garlic, minced',
               quantity_numerator: 3,
               quantity_denominator: 1,
-              preparation: 'minced',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
@@ -137,7 +131,7 @@ describe('Generic HTML import', () => {
               unit: 'tsp'
             },
             {
-              name: 'pinch of cayenne pepper (optional)',
+              name: 'pinch of cayenne pepper',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
               preparation: undefined,
@@ -149,9 +143,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -178,26 +171,22 @@ describe('Generic HTML import', () => {
   })
 
   describe('paleogrubs.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/paleogrubs.com/best-paleo-brownie-recipe.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'paleogrubs.com/best-paleo-brownie-recipe.html'
       )
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual(
+    test('title', () => {
+      expect(result.title).toEqual(
         'The Best Fudgy Paleo Brownies Ever – Easy and Flourless Brownie Recipe'
       )
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -261,9 +250,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -281,24 +269,18 @@ describe('Generic HTML import', () => {
   })
 
   describe('kitchen.benburwell.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/kitchen.benburwell.com/palak-paneer.html',
-        { encoding: 'utf8' }
-      )
+    let result
+    beforeAll(async () => {
+      const source = await testAsset('kitchen.benburwell.com/palak-paneer.html')
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual('Palak Paneer')
+    test('title', () => {
+      expect(result.title).toEqual('Palak Paneer')
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -326,42 +308,42 @@ describe('Generic HTML import', () => {
               unit: 'tbsp'
             },
             {
-              name: 'paneer',
+              name: 'paneer, cut into 1/2 inch cubes',
               quantity_numerator: 24,
               quantity_denominator: 1,
-              preparation: 'cut into 1/2 inch cubes',
+              preparation: undefined,
               optional: false,
               unit: 'oz'
             },
             {
-              name: 'spinach',
+              name: 'spinach, pureed',
               quantity_numerator: 2,
               quantity_denominator: 1,
-              preparation: 'pureed',
+              preparation: undefined,
               optional: false,
               unit: 'lb'
             },
             {
-              name: 'medium white onion',
+              name: 'medium white onion, finely diced',
               quantity_numerator: 2,
               quantity_denominator: 1,
-              preparation: 'finely diced',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'fresh ginger',
+              name: 'fresh ginger, minced',
               quantity_numerator: 2,
               quantity_denominator: 1,
-              preparation: 'minced',
+              preparation: undefined,
               optional: false,
               unit: 'in'
             },
             {
-              name: 'garlic cloves',
+              name: 'garlic cloves, minced',
               quantity_numerator: 8,
               quantity_denominator: 1,
-              preparation: 'minced',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
@@ -398,10 +380,10 @@ describe('Generic HTML import', () => {
               unit: 'c'
             },
             {
-              name: 'rice',
+              name: 'rice, cooked',
               quantity_numerator: 3,
               quantity_denominator: 2,
-              preparation: 'cooked',
+              preparation: undefined,
               optional: false,
               unit: 'c'
             }
@@ -410,9 +392,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -449,24 +430,20 @@ describe('Generic HTML import', () => {
   })
 
   describe('detoxinista.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/detoxinista.com/ingredient-peanut-butter-cookies.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'detoxinista.com/ingredient-peanut-butter-cookies.html'
       )
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual('4-Ingredient Peanut Butter Cookies')
+    test('title', () => {
+      expect(result.title).toEqual('4-Ingredient Peanut Butter Cookies')
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -486,10 +463,10 @@ describe('Generic HTML import', () => {
               unit: 'c'
             },
             {
-              name: 'egg (or a flax egg; see notes)',
+              name: 'egg (or a flax egg',
               quantity_numerator: 1,
               quantity_denominator: 1,
-              preparation: undefined,
+              preparation: 'see notes)',
               optional: false,
               unit: undefined
             },
@@ -506,9 +483,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -538,19 +514,16 @@ describe('Generic HTML import', () => {
   })
 
   describe('avocadopesto.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/avocadopesto.com/roasted-cauliflower-soup.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'avocadopesto.com/roasted-cauliflower-soup.html'
       )
+      result = await importer(source)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -606,7 +579,7 @@ describe('Generic HTML import', () => {
               quantity_numerator: 1,
               quantity_denominator: 1,
               preparation: undefined,
-              optional: true,
+              optional: false,
               unit: 'tsp'
             },
             {
@@ -614,7 +587,7 @@ describe('Generic HTML import', () => {
               quantity_numerator: 1,
               quantity_denominator: 1,
               preparation: undefined,
-              optional: true,
+              optional: false,
               unit: 'tsp'
             },
             {
@@ -626,12 +599,12 @@ describe('Generic HTML import', () => {
               unit: 'c'
             },
             {
-              name: 'can coconut milk (optional',
+              name:
+                'can coconut milk (optional, use almond flour instead if sensitive to the taste of coconut milk)',
               quantity_numerator: 1,
               quantity_denominator: 1,
-              preparation:
-                'use almond flour instead if sensitive to the taste of coconut milk)',
-              optional: true,
+              preparation: undefined,
+              optional: false,
               unit: undefined
             },
             {
@@ -665,42 +638,39 @@ describe('Generic HTML import', () => {
   })
 
   describe('kblog.lunchboxbunch.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/kblog.lunchboxbunch.com/easy-sweet-potato-veggie-burgers-with.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'kblog.lunchboxbunch.com/easy-sweet-potato-veggie-burgers-with.html'
       )
+      result = await importer(source)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
-              name: 'medium sweet potato',
+              name: 'medium sweet potato, baked and peeled',
               quantity_numerator: 1,
               quantity_denominator: 1,
-              preparation: 'baked and peeled',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'oz. cooked white beans (canned',
+              name: 'oz. cooked white beans (canned, drained and rinsed)',
               quantity_numerator: 16,
               quantity_denominator: 1,
-              preparation: 'drained and rinsed)',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'white onion',
+              name: 'white onion, chopped',
               quantity_numerator: 1,
               quantity_denominator: 2,
-              preparation: 'chopped',
+              preparation: undefined,
               optional: false,
               unit: 'c'
             },
@@ -762,26 +732,27 @@ describe('Generic HTML import', () => {
               unit: 'c'
             },
             {
-              name: '- 1 cup finely chopped greens (kale',
+              name: '- 1 cup finely chopped greens (kale, spinach, parsley)',
               quantity_numerator: 1,
               quantity_denominator: 2,
-              preparation: 'spinach, parsley)',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'toppings: avocado',
+              name: 'toppings: avocado, tomato, vegenaise, burger buns, greens',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: 'tomato, vegenaise, burger buns, greens',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'skillet: 1 Tbsp oil ( extra virgin olive oil',
+              name:
+                'skillet: 1 Tbsp oil ( extra virgin olive oil, coconut oil, or other)',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: 'coconut oil, or other)',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
@@ -790,30 +761,30 @@ describe('Generic HTML import', () => {
               quantity_numerator: undefined,
               quantity_denominator: undefined,
               preparation: undefined,
-              optional: true,
-              unit: undefined
-            },
-            {
-              name: 'medium sweet potato',
-              quantity_numerator: 1,
-              quantity_denominator: 1,
-              preparation: 'baked and peeled',
               optional: false,
               unit: undefined
             },
             {
-              name: 'oz. cooked white beans (canned',
+              name: 'medium sweet potato, baked and peeled',
+              quantity_numerator: 1,
+              quantity_denominator: 1,
+              preparation: undefined,
+              optional: false,
+              unit: undefined
+            },
+            {
+              name: 'oz. cooked white beans (canned, drained and rinsed)',
               quantity_numerator: 16,
               quantity_denominator: 1,
-              preparation: 'drained and rinsed)',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'white onion',
+              name: 'white onion, chopped',
               quantity_numerator: 1,
               quantity_denominator: 2,
-              preparation: 'chopped',
+              preparation: undefined,
               optional: false,
               unit: 'c'
             },
@@ -875,26 +846,27 @@ describe('Generic HTML import', () => {
               unit: 'c'
             },
             {
-              name: '- 1 cup finely chopped greens (kale',
+              name: '- 1 cup finely chopped greens (kale, spinach, parsley)',
               quantity_numerator: 1,
               quantity_denominator: 2,
-              preparation: 'spinach, parsley)',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'toppings: avocado',
+              name: 'toppings: avocado, tomato, vegenaise, burger buns, greens',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: 'tomato, vegenaise, burger buns, greens',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
             {
-              name: 'skillet: 1 Tbsp oil ( extra virgin olive oil',
+              name:
+                'skillet: 1 Tbsp oil ( extra virgin olive oil, coconut oil, or other)',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: 'coconut oil, or other)',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
@@ -903,7 +875,7 @@ describe('Generic HTML import', () => {
               quantity_numerator: undefined,
               quantity_denominator: undefined,
               preparation: undefined,
-              optional: true,
+              optional: false,
               unit: undefined
             }
           ]
@@ -911,9 +883,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -975,26 +946,23 @@ describe('Generic HTML import', () => {
   })
 
   describe('joyfoodsunshine.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/joyfoodsunshine.com/paleo-banana-bread.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'joyfoodsunshine.com/paleo-banana-bread.html'
       )
+      result = await importer(source)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
-              name: 'large overripe bananas\nabout 1 cup',
+              name: 'large overripe bananas\nabout 1 cup, mashed',
               quantity_numerator: 2,
               quantity_denominator: 1,
-              preparation: 'mashed',
+              preparation: undefined,
               optional: false,
               unit: undefined
             },
@@ -1099,9 +1067,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -1142,50 +1109,42 @@ describe('Generic HTML import', () => {
   })
 
   describe('www.ambitiouskitchen.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/www.ambitiouskitchen.com/chocolate-chip-coconut-flour-pumpkin-bars.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'www.ambitiouskitchen.com/chocolate-chip-coconut-flour-pumpkin-bars.html'
       )
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual(
+    test('title', () => {
+      expect(result.title).toEqual(
         'Chocolate Chip Coconut Flour Pumpkin Bars | Ambitious Kitchen'
       )
     })
 
-    test('description', async () => {
-      const { description } = await importer(source)
-      expect(description).toEqual(
+    test('description', () => {
+      expect(result.description).toEqual(
         'Incredible paleo chocolate chip coconut flour pumpkin bars that taste like pumpkin pie. Healthy enjoy to enjoy as a snack but indulgent like a dessert.'
       )
     })
 
-    test('image_url', async () => {
-      const { image_url } = await importer(source)
-      expect(image_url).toEqual(
+    test('image_url', () => {
+      expect(result.image_url).toEqual(
         'https://www.ambitiouskitchen.com/wp-content/uploads/2015/09/Chocolate-Pumpkin-Bars-2.jpg'
       )
     })
 
-    test('yield', async () => {
-      const { yield: yld } = await importer(source)
-      expect(yld).toEqual('12 bars')
+    test('yield', () => {
+      expect(result.yield).toEqual('12 bars')
     })
 
-    test('duration', async () => {
-      const { duration } = await importer(source)
-      expect(duration).toEqual(1800)
+    test('duration', () => {
+      expect(result.duration).toEqual(1800)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -1293,9 +1252,9 @@ describe('Generic HTML import', () => {
               unit: 'tsp'
             },
             {
-              name: 'dark chocolate chips',
+              name: 'dark chocolate chips, divided',
               optional: false,
-              preparation: 'divided',
+              preparation: undefined,
               quantity_denominator: 2,
               quantity_numerator: 1,
               unit: 'c'
@@ -1305,9 +1264,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -1333,48 +1291,40 @@ describe('Generic HTML import', () => {
   })
 
   describe('www.becomingness.com.au', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/www.becomingness.com.au/slow-cooker-butter-chicken.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'www.becomingness.com.au/slow-cooker-butter-chicken.html'
       )
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual('Slow Cooker Butter Chicken')
+    test('title', () => {
+      expect(result.title).toEqual('Slow Cooker Butter Chicken')
     })
 
-    test('description', async () => {
-      const { description } = await importer(source)
-      expect(description).toEqual(
+    test('description', () => {
+      expect(result.description).toEqual(
         'My healthy slow cooker butter chicken is one of the tastiest slow cooker meals ever. It is so easy to prepare too.'
       )
     })
 
-    test('image_url', async () => {
-      const { image_url } = await importer(source)
-      expect(image_url).toEqual(
+    test('image_url', () => {
+      expect(result.image_url).toEqual(
         'https://www.becomingness.com.au/wp-content/uploads/2018/06/Slow-cooker-butter-chicken-4.jpg'
       )
     })
 
-    test('yield', async () => {
-      const { yield: yld } = await importer(source)
-      expect(yld).toEqual('4-6')
+    test('yield', () => {
+      expect(result.yield).toEqual('4-6')
     })
 
-    test('duration', async () => {
-      const { duration } = await importer(source)
-      expect(duration).toBeUndefined()
+    test('duration', () => {
+      expect(result.duration).toBeUndefined()
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -1406,19 +1356,16 @@ describe('Generic HTML import', () => {
   })
 
   describe('paleoleap.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/paleoleap.com/flourless-banana-pancakes.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'paleoleap.com/flourless-banana-pancakes.html'
       )
+      result = await importer(source)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -1462,18 +1409,18 @@ describe('Generic HTML import', () => {
               unit: 'tsp'
             },
             {
-              name: 'Maple syrup; (optional)',
+              name: 'Maple syrup',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: undefined,
+              preparation: '',
               optional: true,
               unit: undefined
             },
             {
-              name: 'Fresh fruits; (optional)',
+              name: 'Fresh fruits',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: undefined,
+              preparation: '',
               optional: true,
               unit: undefined
             }
@@ -1482,9 +1429,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             { text: 'Crack the eggs in a bowl and whisk them.' },
@@ -1511,48 +1457,40 @@ describe('Generic HTML import', () => {
   })
 
   describe('www.wellplated.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/www.wellplated.com/no-bake-protein-balls.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'www.wellplated.com/no-bake-protein-balls.html'
       )
+      result = await importer(source)
     })
 
-    test('title', async () => {
-      const { title } = await importer(source)
-      expect(title).toEqual('No Bake Cookie Dough Protein Balls')
+    test('title', () => {
+      expect(result.title).toEqual('No Bake Cookie Dough Protein Balls')
     })
 
-    test('description', async () => {
-      const { description } = await importer(source)
-      expect(description).toEqual(
+    test('description', () => {
+      expect(result.description).toEqual(
         `If you’ve ever wondered why chocolate chip cookies have to contain calories (can’t we delegate that task to celery sticks?), these Cookie Dough No Bake Protein Balls are for you! Clean-eating approved, low carb, and protein-packed, these healthy energy bites taste like chocolate chip cookie dough but are made entirely from wholesome, good-for-you ingredients. Translation: with this protein ball recipe, cookie dough is a health food. Celery, consider yourself replaced. As someone who mutates into Oscar the Grouch when she’s hungry, I’m constantly looking for easy, healthy snack ideas. Call it hanger-management. These Cookie Dough Protein Balls are everything I`
       )
     })
 
-    test('image_url', async () => {
-      const { image_url } = await importer(source)
-      expect(image_url).toEqual(
+    test('image_url', () => {
+      expect(result.image_url).toEqual(
         'https://www.wellplated.com/wp-content/uploads/2016/07/Protein-Balls.jpg'
       )
     })
 
-    test('yield', async () => {
-      const { yield: yld } = await importer(source)
-      expect(yld).toBeUndefined()
+    test('yield', () => {
+      expect(result.yield).toBeUndefined()
     })
 
-    test('duration', async () => {
-      const { duration } = await importer(source)
-      expect(duration).toBeUndefined()
+    test('duration', () => {
+      expect(result.duration).toBeUndefined()
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -1564,27 +1502,26 @@ describe('Generic HTML import', () => {
               unit: 'c'
             },
             {
-              name:
-                'vanilla whey protein powder  — about 2 scoops—use plant-based protein powder to make dairy free',
+              name: 'vanilla whey protein powder',
               optional: false,
-              preparation: undefined,
+              preparation:
+                'about 2 scoops—use plant-based protein powder to make dairy free',
               quantity_denominator: 2,
               quantity_numerator: 1,
               unit: 'c'
             },
             {
-              name:
-                'coconut flour* — plus 1-2 tablespoons additional as needed',
+              name: 'coconut flour*',
               optional: false,
-              preparation: undefined,
+              preparation: 'plus 1-2 tablespoons additional as needed',
               quantity_denominator: 3,
               quantity_numerator: 1,
               unit: 'c'
             },
             {
-              name: 'honey — or pure maple syrup',
+              name: 'honey',
               optional: false,
-              preparation: undefined,
+              preparation: 'or pure maple syrup',
               quantity_denominator: 2,
               quantity_numerator: 3,
               unit: 'tbsp'
@@ -1615,9 +1552,9 @@ describe('Generic HTML import', () => {
               unit: undefined
             },
             {
-              name: 'dark chocolate chips — dairy free if needed',
+              name: 'dark chocolate chips',
               optional: false,
-              preparation: undefined,
+              preparation: 'dairy free if needed',
               quantity_denominator: 1,
               quantity_numerator: 2,
               unit: 'tbsp'
@@ -1627,9 +1564,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -1647,27 +1583,23 @@ describe('Generic HTML import', () => {
   })
 
   describe('therealfoodrds.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/therealfoodrds.com/cauliflower-buffalo-bites.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'therealfoodrds.com/cauliflower-buffalo-bites.html'
       )
+      result = await importer(source)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
-              name: 'large head of cauliflower',
+              name: 'large head of cauliflower, stems removed (or 2',
               quantity_numerator: 1,
               quantity_denominator: 1,
-              preparation:
-                'stems removed (or 2 – 10 oz. bag cauliflower florets)',
+              preparation: '10 oz. bag cauliflower florets)',
               optional: false,
               unit: undefined
             },
@@ -1712,7 +1644,7 @@ describe('Generic HTML import', () => {
               unit: 'tsp'
             },
             {
-              name: 'cayenne pepper (optional)',
+              name: 'cayenne pepper',
               quantity_numerator: 1,
               quantity_denominator: 4,
               preparation: undefined,
@@ -1728,10 +1660,10 @@ describe('Generic HTML import', () => {
               unit: undefined
             },
             {
-              name: 'Parsley or green onions',
+              name: 'Parsley or green onions, chopped',
               quantity_numerator: undefined,
               quantity_denominator: undefined,
-              preparation: 'chopped (optional)',
+              preparation: undefined,
               optional: true,
               unit: undefined
             }
@@ -1740,9 +1672,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -1772,19 +1703,16 @@ describe('Generic HTML import', () => {
   })
 
   describe('whatmollymade.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/whatmollymade.com/fudgy-paleo-brownies.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'whatmollymade.com/fudgy-paleo-brownies.html'
       )
+      result = await importer(source)
     })
 
-    test('ingredient_lists', async () => {
-      const { ingredient_lists } = await importer(source)
-      expect(ingredient_lists).toEqual([
+    test('ingredient_lists', () => {
+      expect(result.ingredient_lists).toEqual([
         {
           lines: [
             {
@@ -1872,9 +1800,8 @@ describe('Generic HTML import', () => {
       ])
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {
@@ -1900,38 +1827,32 @@ describe('Generic HTML import', () => {
   })
 
   describe('blog.nuts.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/blog.nuts.com/gluten-free-almond-cake-recipe.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'blog.nuts.com/gluten-free-almond-cake-recipe.html'
       )
+      result = await importer(source)
     })
 
-    test('image_url', async () => {
-      const { image_url } = await importer(source)
-      expect(image_url).toEqual(
+    test('image_url', () => {
+      expect(result.image_url).toEqual(
         'https://blog.nuts.com/wp-content/uploads/2015/02/gluten-free-almond-cake-slice-feature.jpg'
       )
     })
   })
 
   describe('littlespicejar.com', () => {
-    let source: string
-    let importer = dom(GenericHTML)
-
-    beforeEach(() => {
-      source = readFileSync(
-        'test/assets/littlespicejar.com/caramelized-onion-feta-spinach-pizza-with-white-sauce.html',
-        { encoding: 'utf8' }
+    let result
+    beforeAll(async () => {
+      const source = await testAsset(
+        'littlespicejar.com/caramelized-onion-feta-spinach-pizza-with-white-sauce.html'
       )
+      result = await importer(source)
     })
 
-    test('procedure_lists', async () => {
-      const { procedure_lists } = await importer(source)
-      expect(procedure_lists).toEqual([
+    test('procedure_lists', () => {
+      expect(result.procedure_lists).toEqual([
         {
           lines: [
             {

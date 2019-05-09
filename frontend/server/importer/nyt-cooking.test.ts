@@ -1,55 +1,48 @@
 import { NYTCooking } from './nyt-cooking'
 import { dom } from './html'
-import { readFileSync } from 'fs'
-
-const recipe =
-  'test/assets/cooking.nytimes.com/1014688-baked-orzo-with-artichokes-and-peas.html'
+import { testAsset } from '../../test/readfile'
 
 describe('NYT Cooking import', () => {
-  let source: string
-  let importer = dom(NYTCooking)
+  const importer = dom(NYTCooking)
 
-  beforeEach(() => {
-    source = readFileSync(recipe, { encoding: 'utf8' })
+  let result
+  beforeAll(async () => {
+    const source = await testAsset(
+      'cooking.nytimes.com/1014688-baked-orzo-with-artichokes-and-peas.html'
+    )
+    result = await importer(source)
   })
 
-  test('get title', async () => {
-    const { title } = await importer(source)
-    expect(title).toEqual('Baked Orzo With Artichokes and Peas Recipe')
+  test('get title', () => {
+    expect(result.title).toEqual('Baked Orzo With Artichokes and Peas Recipe')
   })
 
-  test('get subtitle', async () => {
-    const { subtitle } = await importer(source)
-    expect(subtitle).toBeUndefined()
+  test('get subtitle', () => {
+    expect(result.subtitle).toBeUndefined()
   })
 
-  test('get description', async () => {
-    const { description } = await importer(source)
-    expect(description).toEqual(
+  test('get description', () => {
+    expect(result.description).toEqual(
       'This is a Greek-inspired pastitsio, a comforting béchamel-enriched mix of orzo, artichokes and peas Rather than butter, the béchamel in this dish is made with a couple of glugs of good extra virgin olive oil.'
     )
   })
 
-  test('get image_url', async () => {
-    const { image_url } = await importer(source)
-    expect(image_url).toEqual(
+  test('get image_url', () => {
+    expect(result.image_url).toEqual(
       'https://static01.nyt.com/images/2013/04/23/science/23recipehealth/23recipehealth-superJumbo.jpg'
     )
   })
 
-  test('get yield', async () => {
-    const { yield: yld } = await importer(source)
-    expect(yld).toEqual('6 servings')
+  test('get yield', () => {
+    expect(result.yield).toEqual('6 servings')
   })
 
-  test('get duration', async () => {
-    const { duration } = await importer(source)
-    expect(duration).toEqual(4200)
+  test('get duration', () => {
+    expect(result.duration).toEqual(4200)
   })
 
-  test('get preheats', async () => {
-    const { preheats } = await importer(source)
-    expect(preheats).toEqual([
+  test('get preheats', () => {
+    expect(result.preheats).toEqual([
       {
         name: 'oven',
         temperature: 350,
@@ -58,9 +51,8 @@ describe('NYT Cooking import', () => {
     ])
   })
 
-  test('get ingredients', async () => {
-    const { ingredient_lists } = await importer(source)
-    expect(ingredient_lists).toEqual([
+  test('get ingredients', () => {
+    expect(result.ingredient_lists).toEqual([
       {
         lines: [
           {
@@ -96,9 +88,10 @@ describe('NYT Cooking import', () => {
             unit: 'tbsp'
           },
           {
-            name: 'large garlic cloves',
+            name:
+              'large garlic cloves, minced, or 1 small bulb of green garlic, minced',
             optional: false,
-            preparation: 'minced, or 1 small bulb of green garlic, minced',
+            preparation: undefined,
             quantity_denominator: 1,
             quantity_numerator: 2,
             unit: undefined
@@ -136,9 +129,9 @@ describe('NYT Cooking import', () => {
             unit: 'tbsp'
           },
           {
-            name: 'ounces Parmesan',
+            name: 'ounces Parmesan, grated (1/2 cup)',
             optional: false,
-            preparation: 'grated (1/2 cup)',
+            preparation: undefined,
             quantity_denominator: 1,
             quantity_numerator: 2,
             unit: undefined
@@ -148,9 +141,8 @@ describe('NYT Cooking import', () => {
     ])
   })
 
-  test('get procedure', async () => {
-    const { procedure_lists } = await importer(source)
-    expect(procedure_lists).toEqual([
+  test('get procedure', () => {
+    expect(result.procedure_lists).toEqual([
       {
         lines: [
           { text: 'Make the béchamel and set aside.' },
