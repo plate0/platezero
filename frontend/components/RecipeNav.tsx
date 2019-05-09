@@ -105,7 +105,7 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
           </DropdownItem>
           <DropdownItem
             onClick={() => setDeleteModalOpen(true)}
-            className="text-danger"
+            cssModule={{ 'dropdown-item': 'dropdown-item-danger' }}
           >
             Delete Recipe&hellip;
           </DropdownItem>

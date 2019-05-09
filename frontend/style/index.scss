@@ -60,3 +60,12 @@ nav .dropdown-toggle::after {
     width: 400px;
   }
 }
+
+.dropdown-item-danger {
+  @extend .dropdown-item;
+  color: $danger;
+  &:hover {
+    color: white;
+    background-color: $danger;
+  }
+}
