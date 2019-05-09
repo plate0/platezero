@@ -70,5 +70,8 @@
     "url-parse": "1.4.4",
     "uuid": "3.3.2",
     "yargs": "13.2.2"
+  },
+  "devDependencies": {
+    "prettier": "1.17.0"
   }
 }
