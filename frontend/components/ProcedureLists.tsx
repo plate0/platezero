@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { Row, Col, Badge } from 'reactstrap'
 
 import { ProcedureListJSON } from '../models'
@@ -8,7 +7,7 @@ import { Markdown } from './Markdown'
 export const ProcedureLists = ({ lists }: { lists: ProcedureListJSON[] }) => (
   <>
     {lists.map((list, index) => (
-      <ProcedureList index={index} list={list} />
+      <ProcedureList key={index} list={list} />
     ))}
   </>
 )
@@ -48,13 +47,8 @@ const ProcedureList = ({ list }: { list: ProcedureListJSON }) => (
   </div>
 )
 
-const ItemNo = ({value}: {value: number}) => (
-        <Badge
-        color="primary"
-        pill
-        className="mr-2"
-        itemProp="position"
-      >
-        {value}
-      </Badge>
+const ItemNo = ({ value }: { value: number }) => (
+  <Badge color="primary" pill className="mr-2" itemProp="position">
+    {value}
+  </Badge>
 )
