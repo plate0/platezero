@@ -30,6 +30,7 @@ interface UserProps {
 
 interface UserState {
   query: string
+  sort: string
   recipes: RecipeJSON[]
 }
 
@@ -40,6 +41,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
     this.onSort = this.onSort.bind(this)
     this.onClear = this.onClear.bind(this)
     this.state = {
+      sort: props.sort || '',
       query: props.query || '',
       recipes: props.recipes
     }
@@ -64,13 +66,11 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
   }
 
   public async componentDidUpdate(prevProps) {
-    console.log('sort', this.props.router)
     let {
       query: { q, username, sort }
     } = this.props.router
     q = _.isArray(q) ? _.first(q) : q
     sort = _.isArray(sort) ? _.first(sort) : sort
-    console.log('sort', sort, prevProps.router.query.sort)
     username = _.isArray(username) ? _.first(username) : username
     if (
       q !== prevProps.router.query.q ||
@@ -79,17 +79,18 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
     ) {
       this.setState(
         {
+          sort: (sort as string) || '',
           query: (q as string) || '',
           ...(q ? {} : { recipes: await api.getUserRecipes(username, q, sort) })
         },
-        q ? this.refresh : undefined
+        q || sort ? this.refresh : undefined
       )
     }
   }
 
   public onSearch(q: string) {
     const { pathname } = parse(this.props.router.asPath)
-    const { sort } = this.props
+    const { sort } = this.state
     const query = stringify({ q, sort })
     const href = `${pathname}?${query}`
     Router.replaceRoute(href, { shallow: true })
@@ -111,9 +112,9 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
 
   refresh = _.debounce(async () => {
     const { user } = this.props
-    const { query } = this.state
+    const { query, sort } = this.state
     this.setState({
-      recipes: await api.getUserRecipes(user.username, query)
+      recipes: await api.getUserRecipes(user.username, query, sort)
     })
   }, 200)
 
@@ -122,7 +123,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
-    const { recipes, query } = this.state
+    const { recipes, query, sort } = this.state
     return (
       <Layout>
         <Head>
@@ -144,7 +145,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
                 />
               </Col>
               <Col xs="auto">
-                <SortRecipes selected={this.props.sort} onSort={this.onSort} />
+                <SortRecipes selected={sort} onSort={this.onSort} />
               </Col>
             </Row>
             <RecipeList recipes={recipes}>
