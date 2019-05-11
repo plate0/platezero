@@ -1,1 +1,11 @@
+title: PlateZero Blog
+email: hello@platezero.com
+description: The official PlateZero blog, featuring updates from the PlateZero team.
+baseurl: "/"
+url: "http://blog.platezero.com"
+twitter_username: platezer0
+github_username:  plate0
+markdown: kramdown
 theme: minima
+plugins:
+  - jekyll-feed
