@@ -1,4 +1,8 @@
-Subject: PlateZero Update, Early May 2019
+---
+layout: post
+title: PlateZero Update, Early May 2019
+categories: update
+---
 
 Well, it's technically a new month! We heard from a few of you that waiting a
 whole month between updates is too long, so we're going to try doing this every

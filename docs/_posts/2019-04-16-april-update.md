@@ -1,4 +1,8 @@
-Subject: PlateZero Monthly Update, April 2019
+---
+layout: post
+title: PlateZero Monthly Update, April 2019
+categories: update
+---
 
 Hi there, and welcome to PlateZero's first monthly update! We're very excited
 that you've decided to create an account and we hope that this periodic email
