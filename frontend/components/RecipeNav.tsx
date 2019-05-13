@@ -23,6 +23,7 @@ import { IfLoggedIn } from './IfLoggedIn'
 import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
 import { PrintButton } from './PrintButton'
+import { ShareButton } from './ShareButton'
 
 export const RecipeNav = ({
   recipe,
@@ -45,6 +46,11 @@ export const RecipeNav = ({
         </Link>
       </NavItem>
       <NavItem className="border-bottom flex-fill" />
+      <NavItem className="border-bottom pr-2">
+        <div className="align-items-center d-flex h-100">
+          <ShareButton url={baseURL} />
+        </div>
+      </NavItem>
       <NavItem className="border-bottom">
         <div className="align-items-center d-flex h-100">
           <PrintButton />
