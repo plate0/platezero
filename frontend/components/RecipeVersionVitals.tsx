@@ -6,6 +6,7 @@ import { RecipeVersionJSON, RecipeJSON } from '../models'
 import { toHoursAndMinutes } from '../common/time'
 import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
+import { Image } from './Image'
 
 const RecipeVersionHeaderNoImage = ({
   version,
@@ -51,7 +52,7 @@ const RecipeVersionHeaderImage = ({
   return (
     <Col xs="12" className="px-0 px-sm-3 d-print-none">
       <div className="position-relative">
-        <img
+        <Image
           className="w-100 d-print-none"
           src={imageUrl}
           itemProp="image"
