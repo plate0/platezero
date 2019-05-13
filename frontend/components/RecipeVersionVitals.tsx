@@ -59,7 +59,7 @@ const RecipeVersionHeaderImage = ({
           alt={`Picture of ${title}`}
           style={{ objectFit: 'cover' }}
           src={imageUrl}
-          proxy=".99"
+          proxy="r360"
         />
         <div
           className="position-absolute text-white w-100 p-2 pt-5"
