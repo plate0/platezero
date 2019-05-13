@@ -55,10 +55,11 @@ const RecipeVersionHeaderImage = ({
         <Image
           height="500"
           className="w-100 d-print-none"
-          src={imageUrl}
           itemProp="image"
           alt={`Picture of ${title}`}
           style={{ objectFit: 'cover' }}
+          src={imageUrl}
+          proxy="0x0"
         />
         <div
           className="position-absolute text-white w-100 p-2 pt-5"
