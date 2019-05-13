@@ -14,7 +14,9 @@ export const buildProxyURL = (props: ImageProps) => {
   const options = compact([
     props.smartCrop ? 'sc' : null,
     props.size || null,
-    props.width || props.height ? `${props.width}x${props.height}` : null,
+    props.width || props.height
+      ? `${props.width || ''}x${props.height || ''}`
+      : null,
     props.quality ? `q${props.quality}` : null
   ]).join(',')
   return IMAGE_PROXY + (options ? options + '/' : '') + props.src

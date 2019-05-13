@@ -53,10 +53,12 @@ const RecipeVersionHeaderImage = ({
     <Col xs="12" className="px-0 px-sm-3 d-print-none">
       <div className="position-relative">
         <Image
+          height="500"
           className="w-100 d-print-none"
           src={imageUrl}
           itemProp="image"
           alt={`Picture of ${title}`}
+          style={{ objectFit: 'cover' }}
         />
         <div
           className="position-absolute text-white w-100 p-2 pt-5"
@@ -98,11 +100,6 @@ const RecipeVersionHeaderImage = ({
           h1,
           h5 {
             text-shadow: 0 1px 0 black;
-          }
-
-          img[itemProp='image'] {
-            height: 500px;
-            object-fit: cover;
           }
         `}
       </style>
