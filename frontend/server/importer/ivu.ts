@@ -2,12 +2,11 @@
 import { mapValues } from './importer'
 import {
   //  Preheat,
-  IngredientListJSON
-  //  ProcedureListJSON,
-  //  ProcedureLineJSON
+  IngredientListJSON,
+    ProcedureListJSON,
 } from '../../models'
 import { parseAmount, parseUnit } from 'ingredient-parser'
-//const TurndownService = require('turndown')
+const TurndownService = require('turndown')
 
 const rxAmount = /^[0-9/ ½⅓⅔¼¾⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒]+/
 		
@@ -72,10 +71,42 @@ const ingredient_lists = ($: any): IngredientListJSON[] => [
   }
 ]
 
+const procedure_lists = ($: any): ProcedureListJSON[] => {
+    const turndown = new TurndownService()
+    let ulIndex
+    const td = $('table table td')
+    // Remove elements up to and including 'ul'
+    td.children().each(function (index, element){
+        if (element.type == 'tag') {
+            let name = element.name
+            if (name == 'ul') {
+                ulIndex = index
+                return false
+            }
+        }
+        })
+      while (ulIndex >= 0) {
+          td.children().remove(':nth-child('+(1+ulIndex--)+')')  
+      }
+      let html = td.html()+td.children().html()
+      let md = turndown.turndown(html)
+    return [
+      {
+        name: undefined,
+        lines: [{
+            image_url: undefined,
+            title: undefined,
+            text: md
+        }]
+      }
+    ]
+  }
+
 export const Ivu = mapValues({
   title: title,
   source_author: source_author,
   yield: getYield,
-  ingredient_lists: ingredient_lists
-  //  procedure_lists: procedure_lists
+  ingredient_lists: ingredient_lists,
+  procedure_lists: procedure_lists
 })
+

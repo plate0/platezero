@@ -43,4 +43,14 @@ describe('IVU', () => {
             {preparation: undefined, optional: false, quantity_numerator: undefined, quantity_denominator: undefined, unit: undefined,   name: 'salt and pepper -- to taste'}
             ])
       })
+      
+      test('get procedure lists', async () => {
+          const { procedure_lists: lists } = await importer(source)
+          expect(lists).toHaveLength(1)
+          expect(lists[0].lines).toHaveLength(1)
+          expect(lists[0].lines[0]['image_url']).toBeUndefined()
+          expect(lists[0].lines[0]['title']).toBeUndefined()
+          expect(lists[0].lines[0]['text']).toMatch(/^Quarter onion and slice thinly./)
+        })
+
 })
