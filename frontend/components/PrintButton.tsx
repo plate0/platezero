@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from 'reactstrap'
 
-export const PrintButton = (props = {}) => (
+export const PrintButton = (props: any = {}) => (
   <Button
     color="primary"
     className={`rounded-circle btn-sm ${props.className || ''}`}
