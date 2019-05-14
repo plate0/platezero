@@ -3,6 +3,7 @@ import { ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
 import { RecipeJSON } from '../models'
 import { Link } from '../routes'
+import { Image } from './Image'
 
 export interface RecipesProps {
   children: any
@@ -18,25 +19,15 @@ export const RecipeList = ({ children, recipes }: RecipesProps) => {
           <ListGroupItem key={recipe.id} className="px-0">
             <Link route={recipe.html_url}>
               <a className="d-flex flex-row">
-                <div>
-                  <div
-                    style={{
-                      width: 80,
-                      height: 50,
-                      backgroundImage: `url(${recipe.image_url ||
-                        '/static/recipe-placeholder-sm.jpg'})`,
-                      backgroundPosition: 'center',
-                      backgroundSize: 'cover'
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    position: 'relative',
-                    paddingLeft: '1rem',
-                    width: 'calc(100% - 80px)'
-                  }}
-                >
+                <Image
+                  width="80"
+                  height="50"
+                  src={
+                    recipe.image_url ||
+                    'https://static.platezero.com/recipe-placeholder-sm.jpg'
+                  }
+                />
+                <div className="pl-2">
                   <div className="text-dark text-truncate">
                     <strong>{recipe.title}</strong>
                   </div>

@@ -22,6 +22,7 @@ import { getErrorMessages, api } from '../common/http'
 import { IfLoggedIn } from './IfLoggedIn'
 import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
+import { PrintButton } from './PrintButton'
 
 export const RecipeNav = ({
   recipe,
@@ -44,6 +45,11 @@ export const RecipeNav = ({
         </Link>
       </NavItem>
       <NavItem className="border-bottom flex-fill" />
+      <NavItem className="border-bottom">
+        <div className="align-items-center d-flex h-100">
+          <PrintButton />
+        </div>
+      </NavItem>
       <div className="border-bottom">
         <IfLoggedIn username={recipe.owner.username}>
           <ActionMenu recipe={recipe} />
@@ -87,7 +93,7 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
               recipe.slug
             }/branches/master/edit`}
           >
-            Update Recipe
+            Edit Recipe
           </DropdownItem>
           <DropdownItem
             onClick={() => setDeleteModalOpen(true)}

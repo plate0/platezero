@@ -1,45 +1,40 @@
 import { CookingLight } from './cooking-light'
 import { dom } from './html'
-import { readFileSync } from 'fs'
-
-const recipe =
-  'test/assets/www.cookinglight.com/beef-broccoli-stuffed-sweet-potatoes.html'
+import { testAsset } from '../../test/readfile'
 
 describe('www.cookinglight.com', () => {
-  let source: string
-  let importer = dom(CookingLight)
+  const importer = dom(CookingLight)
 
-  beforeEach(() => {
-    source = readFileSync(recipe, { encoding: 'utf8' })
+  let result
+  beforeEach(async () => {
+    const source = await testAsset(
+      'www.cookinglight.com/beef-broccoli-stuffed-sweet-potatoes.html'
+    )
+    result = await importer(source)
   })
 
-  test('title', async () => {
-    const { title } = await importer(source)
-    expect(title).toEqual(
+  test('title', () => {
+    expect(result.title).toEqual(
       'Beef and Broccoli Stuffed Sweet Potatoes - Cooking Light'
     )
   })
 
-  test('description', async () => {
-    const { description } = await importer(source)
-    expect(description).toEqual(
+  test('description', () => {
+    expect(result.description).toEqual(
       "Russets aren't the only spuds worth stuffing. Smoke and heat, achieved with chili powder and ground red pepper, work particularly well with sweet potatoes. This makes for a great paleo main dish, or cut them smaller and serve open-faced as a Super Bowl-style appetizer."
     )
   })
 
-  test('duration', async () => {
-    const { duration } = await importer(source)
-    expect(duration).toEqual(1500)
+  test('duration', () => {
+    expect(result.duration).toEqual(1500)
   })
 
-  test('yield', async () => {
-    const { yield: yld } = await importer(source)
-    expect(yld).toEqual('Serves 4 (serving size: 1 stuffed potato)')
+  test('yield', () => {
+    expect(result.yield).toEqual('Serves 4 (serving size: 1 stuffed potato)')
   })
 
-  test('ingredient_lists', async () => {
-    const { ingredient_lists } = await importer(source)
-    expect(ingredient_lists).toEqual([
+  test('ingredient_lists', () => {
+    expect(result.ingredient_lists).toEqual([
       {
         lines: [
           {
@@ -143,9 +138,8 @@ describe('www.cookinglight.com', () => {
     ])
   })
 
-  test('procedure_lists', async () => {
-    const { procedure_lists } = await importer(source)
-    expect(procedure_lists).toEqual([
+  test('procedure_lists', () => {
+    expect(result.procedure_lists).toEqual([
       {
         lines: [
           {

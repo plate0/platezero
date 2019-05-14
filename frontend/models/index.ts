@@ -1,3 +1,4 @@
+import { toLower } from 'lodash'
 import { Sequelize } from 'sequelize-typescript'
 import { IngredientLine } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
@@ -47,6 +48,21 @@ sequelize.addModels([
   RecipeVersionPreheat,
   User
 ])
+
+export const OrderDirections = {
+  asc: 'ASC',
+  desc: 'DESC'
+}
+
+export const sortable = (model: any, defaultCol: string) => ([
+  col,
+  direction
+]: any) => {
+  const dir = OrderDirections[toLower(direction)]
+    ? OrderDirections[toLower(direction)]
+    : 'ASC'
+  return model.rawAttributes[col] ? [col, dir] : [defaultCol, dir]
+}
 
 export * from './ingredient_line'
 export * from './ingredient_list_line'

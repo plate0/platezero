@@ -1,50 +1,43 @@
 import { FoodNetwork } from './food-network'
-import { readFileSync } from 'fs'
 import { dom } from './html'
-
-const recipe =
-  'test/assets/www.foodnetwork.com/roasted-cauliflower-and-chickpeas-recipe-2107641.html'
+import { testAsset } from '../../test/readfile'
 
 describe('Food Network importer', () => {
-  let source: string
-  let importer = dom(FoodNetwork)
-
-  beforeEach(() => {
-    source = readFileSync(recipe, { encoding: 'utf8' })
+  let result
+  beforeAll(async () => {
+    const source = await testAsset(
+      'www.foodnetwork.com/roasted-cauliflower-and-chickpeas-recipe-2107641.html'
+    )
+    const importer = dom(FoodNetwork)
+    result = await importer(source)
   })
 
-  test('title', async () => {
-    const { title } = await importer(source)
-    expect(title).toEqual('Roasted Cauliflower and Chickpeas')
+  test('title', () => {
+    expect(result.title).toEqual('Roasted Cauliflower and Chickpeas')
   })
 
-  test('description', async () => {
-    const { description } = await importer(source)
-    expect(description).toEqual(
+  test('description', () => {
+    expect(result.description).toEqual(
       'Get Roasted Cauliflower and Chickpeas Recipe from Food Network'
     )
   })
 
-  test('image_url', async () => {
-    const { image_url } = await importer(source)
-    expect(image_url).toEqual(
+  test('image_url', () => {
+    expect(result.image_url).toEqual(
       'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2012/3/3/0/GI1110H_Roasted-Cauliflower-and-Chickpeas_s4x3.jpg.rend.hgtvcom.616.462.suffix/1371606179656.jpeg'
     )
   })
 
-  test('yield', async () => {
-    const { yield: yld } = await importer(source)
-    expect(yld).toEqual('4 servings')
+  test('yield', () => {
+    expect(result.yield).toEqual('4 servings')
   })
 
-  test('duration', async () => {
-    const { duration } = await importer(source)
-    expect(duration).toEqual(3300)
+  test('duration', () => {
+    expect(result.duration).toEqual(3300)
   })
 
-  test('preheats', async () => {
-    const { preheats } = await importer(source)
-    expect(preheats).toEqual([
+  test('preheats', () => {
+    expect(result.preheats).toEqual([
       {
         name: 'oven',
         temperature: 400,
@@ -53,9 +46,8 @@ describe('Food Network importer', () => {
     ])
   })
 
-  test('ingredient_lists', async () => {
-    const { ingredient_lists } = await importer(source)
-    expect(ingredient_lists).toEqual([
+  test('ingredient_lists', () => {
+    expect(result.ingredient_lists).toEqual([
       {
         lines: [
           {
@@ -115,33 +107,25 @@ describe('Food Network importer', () => {
             unit: 'tbsp'
           },
           {
-            name: 'head cauliflower',
+            name: 'head cauliflower, cut into florets',
             quantity_numerator: 1,
             quantity_denominator: 1,
-            preparation: 'cut into florets',
+            preparation: undefined,
             optional: false,
             unit: undefined
           },
           {
-            name: 'One 19-ounce can chickpeas',
+            name: 'One 19-ounce can chickpeas, drained',
             quantity_numerator: undefined,
             quantity_denominator: undefined,
-            preparation: 'drained',
+            preparation: undefined,
             optional: false,
             unit: undefined
           },
           {
-            name: 'sweet onion',
+            name: 'sweet onion, sliced',
             quantity_numerator: 1,
             quantity_denominator: 2,
-            preparation: 'sliced',
-            optional: false,
-            unit: undefined
-          },
-          {
-            name: 'Kosher salt and freshly cracked black pepper',
-            quantity_numerator: undefined,
-            quantity_denominator: undefined,
             preparation: undefined,
             optional: false,
             unit: undefined
@@ -155,10 +139,18 @@ describe('Food Network importer', () => {
             unit: undefined
           },
           {
-            name: 'Fresh cilantro sprigs',
+            name: 'Kosher salt and freshly cracked black pepper',
             quantity_numerator: undefined,
             quantity_denominator: undefined,
-            preparation: 'for garnish',
+            preparation: undefined,
+            optional: false,
+            unit: undefined
+          },
+          {
+            name: 'Fresh cilantro sprigs, for garnish',
+            quantity_numerator: undefined,
+            quantity_denominator: undefined,
+            preparation: undefined,
             optional: false,
             unit: undefined
           },
@@ -175,9 +167,8 @@ describe('Food Network importer', () => {
     ])
   })
 
-  test('procedure_lists', async () => {
-    const { procedure_lists } = await importer(source)
-    expect(procedure_lists).toEqual([
+  test('procedure_lists', () => {
+    expect(result.procedure_lists).toEqual([
       {
         lines: [
           { text: 'Preheat the oven to 400 degrees F.' },

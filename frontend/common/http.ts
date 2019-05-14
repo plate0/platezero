@@ -1,6 +1,7 @@
 import 'isomorphic-fetch'
 import getConfig from 'next/config'
 import * as _ from 'lodash'
+import { stringify } from 'query-string'
 import { UserJSON, RecipeJSON, RecipeVersionJSON } from '../models'
 import { PostRecipe, RecipeVersionPatch } from './request-models'
 import { HttpStatus } from './http-status'
@@ -141,11 +142,15 @@ class Api {
 
   getUserRecipes = (
     username: string,
-    query?: string,
+    q?: string,
+    sort?: string,
     opts: RequestInit = {}
   ) => {
-    const q = query ? `?q=${query}` : ''
-    return this._fetch<RecipeJSON[]>(`/users/${username}/recipes${q}`, opts)
+    const query = stringify({ q, sort })
+    return this._fetch<RecipeJSON[]>(
+      `/users/${username}/recipes${query ? '?' + query : ''}`,
+      opts
+    )
   }
 
   getRecipe = (
