@@ -102,7 +102,7 @@ const procedure_lists = ($: any): ProcedureListJSON[] => {
     ]
   }
 
-export const Ivu = mapValues({
+export const IVU = mapValues({
   title: title,
   source_author: source_author,
   yield: getYield,
