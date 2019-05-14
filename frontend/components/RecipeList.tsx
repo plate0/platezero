@@ -27,7 +27,7 @@ export const RecipeList = ({ children, recipes }: RecipesProps) => {
                     'https://static.platezero.com/recipe-placeholder-sm.jpg'
                   }
                 />
-                <div className="pl-2">
+                <div className="pl-2 col-9 col-md-10 col-lg-11">
                   <div className="text-dark text-truncate">
                     <strong>{recipe.title}</strong>
                   </div>
