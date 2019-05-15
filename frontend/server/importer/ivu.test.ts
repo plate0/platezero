@@ -1,37 +1,33 @@
 import { IVU } from './ivu'
 import { dom } from './html'
-import { readFileSync } from 'fs'
-
-const recipe = 'test/assets/ivu.org/sauteed-peppers.html'
+import { testAsset } from '../../test/readfile'
 
 describe('IVU', () => {
-  let source: string
-  let importer = dom(IVU)
+  let result
+  const importer = dom(IVU)
 
-  beforeEach(() => {
-    source = readFileSync(recipe, { encoding: 'utf8' })
-  })
+    beforeAll(async () => {
+      const source = await testAsset(
+              'ivu.org/sauteed-peppers.html'
+      )
+      result = await importer(source)
+    })
 
   test('get title', async () => {
-    const { title } = await importer(source)
-    expect(title).toEqual('Sauteed Peppers')
+    expect(result.title).toEqual('Sauteed Peppers')
   })
 
   test('get author', async () => {
-    const { source_author } = await importer(source)
-    expect(source_author).toEqual('Karen Sonnessa')
+    expect(result.source_author).toEqual('Karen Sonnessa')
   })
 
   test('get yield', async () => {
-    const o = await importer(source)
-    const Yield = o['yield']
-    expect(Yield).toEqual('Serving Size: 1')
+    expect(result.yield).toEqual('Serving Size: 1')
   })
 
   test('get ingredient lists', async () => {
-    const { ingredient_lists: list } = await importer(source)
-    expect(list).toHaveLength(1)
-    expect(list[0].lines).toEqual([
+    expect(result.ingredient_lists).toHaveLength(1)
+    expect(result.ingredient_lists[0].lines).toEqual([
       {
         preparation: undefined,
         optional: false,
@@ -100,12 +96,11 @@ describe('IVU', () => {
   })
 
   test('get procedure lists', async () => {
-    const { procedure_lists: lists } = await importer(source)
-    expect(lists).toHaveLength(1)
-    expect(lists[0].lines).toHaveLength(8)
-    expect(lists[0].lines[0]['image_url']).toBeUndefined()
-    expect(lists[0].lines[0]['title']).toBeUndefined()
-    expect(lists[0].lines[0]['text']).toMatch(
+    expect(result.procedure_lists).toHaveLength(1)
+    expect(result.procedure_lists[0].lines).toHaveLength(8)
+    expect(result.procedure_lists[0].lines[0]['image_url']).toBeUndefined()
+    expect(result.procedure_lists[0].lines[0]['title']).toBeUndefined()
+    expect(result.procedure_lists[0].lines[0]['text']).toMatch(
       /^Quarter onion and slice thinly./
     )
   })
