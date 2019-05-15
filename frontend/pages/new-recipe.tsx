@@ -59,7 +59,7 @@ export default class ImportRecipe extends React.Component {
           {links.map((s, key) => (
             <Col xs="6" md="2" className="my-3" key={key}>
               <Link to={s.route} params={s.params}>
-                <a>
+                <a className="import">
                   <div
                     className="p-3 text-center d-flex align-items-center flex-column border rounded"
                     style={{
@@ -67,8 +67,7 @@ export default class ImportRecipe extends React.Component {
                     }}
                   >
                     <i
-                      className={`write fal fa-${s.icon} fa-4x rounded
-          `}
+                      className={`write fal fa-${s.icon} fa-4x rounded`}
                       style={{ color: s.color }}
                     />
                     <div className="mt-2">{s.text}</div>
@@ -78,24 +77,22 @@ export default class ImportRecipe extends React.Component {
             </Col>
           ))}
         </Row>
+        <Row className="justify-content-center">
+          <Col xs="10" md="6" className="text-center">
+            <p className="text-muted">
+              Want to add recipes from somewhere else? A cookbook, or many
+              URL&#39;s? <a href="mailto:hello@platezero.com">Contact Us</a> for
+              help.
+            </p>
+          </Col>
+        </Row>
         <style jsx>
           {`
-            .import {
-              height: 200px;
-              background-color: rgb(248, 249, 250);
-              border: 1px solid rgb(222, 226, 230);
-              border-radius: 0.25rem;
-              align-items: center;
-              justify-content: center;
-              display: flex;
-              flex-direction: column;
-            }
-
-            a {
+            a.import {
               color: #212529;
             }
 
-            a:hover {
+            a.import:hover {
               text-decoration: none;
             }
           `}
