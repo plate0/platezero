@@ -13,6 +13,7 @@ import { ProcedureLine } from '../../../../models/procedure_line'
 import { Preheat } from '../../../../models/preheat'
 import { IngredientList } from '../../../../models/ingredient_list'
 import { IngredientLine } from '../../../../models/ingredient_line'
+import { Note } from '../../../../models/note'
 import { notFound, internalServerError } from '../../../errors'
 
 const r = express.Router()
@@ -23,8 +24,9 @@ export interface RecipeRequest extends Request {
 }
 
 r.get('/', async function getRecipe(req: RecipeRequest, res) {
-  res.json(
-    await req.recipe.reload({
+  try {
+    const recipe = await Recipe.findOne({
+      where: { id: req.recipe.id },
       include: [
         {
           model: RecipeBranch,
@@ -33,7 +35,10 @@ r.get('/', async function getRecipe(req: RecipeRequest, res) {
         { model: User }
       ]
     })
-  )
+    return res.json(recipe)
+  } catch (err) {
+    return internalServerError(res, err)
+  }
 })
 
 r.get('/versions', async function getRecipeVersions(req: RecipeRequest, res) {
@@ -47,6 +52,19 @@ r.get('/versions', async function getRecipeVersions(req: RecipeRequest, res) {
     )
   } catch (error) {
     return internalServerError(res, error)
+  }
+})
+
+r.get('/notes', async function getRecipeNotes(req: RecipeRequest, res) {
+  try {
+    return res.json(
+      await Note.findAll({
+        where: { recipe_id: req.recipe.id },
+        order: [['created_at', 'DESC']]
+      })
+    )
+  } catch (err) {
+    return internalServerError(res, err)
   }
 })
 

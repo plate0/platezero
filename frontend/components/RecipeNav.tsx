@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react'
 import Router from 'next/router'
+import { get } from 'lodash'
 import {
   FormGroup,
   Label,
@@ -15,7 +16,7 @@ import {
   NavItem,
   NavLink
 } from 'reactstrap'
-
+import getConfig from 'next/config'
 import { RecipeJSON } from '../models/recipe'
 import { UserContext } from '../context/UserContext'
 import { getErrorMessages, api } from '../common/http'
@@ -23,28 +24,47 @@ import { IfLoggedIn } from './IfLoggedIn'
 import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
 import { PrintButton } from './PrintButton'
+import { ShareButton } from './ShareButton'
+const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
 export const RecipeNav = ({
   recipe,
+  versionId,
+  noteCount,
   route
 }: {
   recipe: RecipeJSON
+  versionId?: number
+  noteCount: number
   route: string
 }) => {
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
+  const versionURL = versionId ? `${baseURL}/versions/${versionId}` : baseURL
   return (
     <Nav className="mb-3 d-print-none recipe-nav">
       <NavItem active={route === '/recipe'}>
-        <Link route={baseURL} passHref>
+        <Link route={versionURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
         </Link>
       </NavItem>
       <NavItem active={route === '/recipe-history'}>
-        <Link route={`${baseURL}/history`} passHref>
+        <Link route={`${versionURL}/history`} passHref>
           <NavLink active={route === '/recipe-history'}>History</NavLink>
         </Link>
       </NavItem>
+      <NavItem active={route === '/recipe-notes'}>
+        <Link route={`${versionURL}/notes`} passHref>
+          <NavLink active={route === '/recipe-notes'}>
+            Notes {noteCount > 0 ? `(${noteCount})` : ''}
+          </NavLink>
+        </Link>
+      </NavItem>
       <NavItem className="border-bottom flex-fill" />
+      <NavItem className="border-bottom pr-2">
+        <div className="align-items-center d-flex h-100">
+          <ShareButton url={SITE_URL + baseURL} />
+        </div>
+      </NavItem>
       <NavItem className="border-bottom">
         <div className="align-items-center d-flex h-100">
           <PrintButton />
@@ -97,7 +117,7 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
           </DropdownItem>
           <DropdownItem
             onClick={() => setDeleteModalOpen(true)}
-            className="text-danger"
+            cssModule={{ 'dropdown-item': 'dropdown-item-danger' }}
           >
             Delete Recipe&hellip;
           </DropdownItem>

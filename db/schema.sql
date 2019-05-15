@@ -21,6 +21,18 @@ CREATE TABLE ingredient_lists (
     image_url character varying
 );
 
+CREATE TABLE notes (
+  id SERIAL PRIMARY KEY,
+  recipe_id integer NOT NULL,
+  recipe_version_id integer NOT NULL,
+  author_id integer NOT NULL,
+  text varchar NOT NULL,
+  pinned boolean NOT NULL DEFAULT false,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone,
+  deleted_at timestamp without time zone
+);
+
 CREATE TABLE preheats (
     id SERIAL PRIMARY KEY,
     name character varying NOT NULL,
@@ -146,24 +158,27 @@ CREATE TABLE refresh_tokens (
 );
 
 -- foreign keys
-ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_list_id) REFERENCES ingredient_lists (id);
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_line_id) REFERENCES ingredient_lines (id);
-ALTER TABLE procedure_list_lines ADD FOREIGN KEY (procedure_list_id) REFERENCES procedure_lists (id);
+ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_list_id) REFERENCES ingredient_lists (id);
+ALTER TABLE notes ADD FOREIGN KEY (author_id) REFERENCES users (id);
+ALTER TABLE notes ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
+ALTER TABLE notes ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE procedure_list_lines ADD FOREIGN KEY (procedure_line_id) REFERENCES procedure_lines (id);
+ALTER TABLE procedure_list_lines ADD FOREIGN KEY (procedure_list_id) REFERENCES procedure_lists (id);
 ALTER TABLE recipe_branches ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 ALTER TABLE recipe_branches ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_collaborators ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 ALTER TABLE recipe_collaborators ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE recipe_version_ingredient_lists ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_version_ingredient_lists ADD FOREIGN KEY (ingredient_list_id) REFERENCES ingredient_lists (id);
-ALTER TABLE recipe_version_preheats ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
+ALTER TABLE recipe_version_ingredient_lists ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_version_preheats ADD FOREIGN KEY (preheat_id) REFERENCES preheats (id);
-ALTER TABLE recipe_version_procedure_lists ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
+ALTER TABLE recipe_version_preheats ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_version_procedure_lists ADD FOREIGN KEY (procedure_list_id) REFERENCES procedure_lists (id);
-ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
-ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE recipe_version_procedure_lists ADD FOREIGN KEY (recipe_version_id) REFERENCES recipe_versions (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (parent_recipe_version_id) REFERENCES recipe_versions (id);
-ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
 ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_duration_id) REFERENCES recipe_durations (id);
+ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
+ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_yields (id);
+ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);

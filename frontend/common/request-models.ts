@@ -31,3 +31,8 @@ export interface RecipeVersionPatch {
   recipeDuration: RecipeDurationJSON
   recipeYield: RecipeYieldJSON
 }
+
+export interface NotePatch {
+  pinned?: boolean
+  text?: string
+}

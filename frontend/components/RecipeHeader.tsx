@@ -2,64 +2,47 @@ import React from 'react'
 import * as _ from 'lodash'
 import * as parseUrl from 'url-parse'
 import { Col } from 'reactstrap'
-import { RecipeVersionJSON, RecipeJSON } from '../models'
-import { toHoursAndMinutes } from '../common/time'
+import { RecipeJSON } from '../models'
 import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
 import { Image } from './Image'
 
-const RecipeVersionHeaderNoImage = ({
-  version,
-  recipe
-}: {
-  version: RecipeVersionJSON
-  recipe: RecipeJSON
-}) => {
+const RecipeHeaderNoImage = ({ recipe }: { recipe: RecipeJSON }) => {
   const title = recipe.title
   const subtitle = recipe.subtitle
-  const author = version.author
-  const yld = <Yield version={version} />
-  const time = <Duration version={version} />
   return (
     <Col xs="12" className="my-3">
       <h1 className="mb-0">{title}</h1>
       <h5 className="m-0">{subtitle}</h5>
-      <Link to="user" params={{ username: author.username }}>
-        <a itemProp="author">{getName(version.author)} </a>
+      <Link to="user" params={{ username: recipe.owner.username }}>
+        <a itemProp="author">{getName(recipe.owner)} </a>
       </Link>
       <Source recipe={recipe} />
-      {(yld || time) && (
-        <ul className="mb-0 mt-3 list-unstyled">
-          {yld && <li>{yld}</li>}
-          {time && <li>{time}</li>}
-        </ul>
-      )}
     </Col>
   )
 }
 
-const RecipeVersionHeaderImage = ({
-  version,
-  recipe
+const RecipeHeaderImage = ({
+  recipe,
+  condensed
 }: {
-  version: RecipeVersionJSON
   recipe: RecipeJSON
+  condensed: boolean
 }) => {
   const title = recipe.title
   const subtitle = recipe.subtitle
-  const author = version.author
   const imageUrl = recipe.image_url
   return (
     <Col xs="12" className="px-0 px-sm-3 d-print-none">
       <div className="position-relative">
         <Image
-          height="500"
+          height={condensed ? '250' : '500'}
           className="w-100 d-print-none"
           itemProp="image"
           alt={`Picture of ${title}`}
           style={{ objectFit: 'cover' }}
           src={imageUrl}
-          proxy="0x0"
+          proxy="r360"
         />
         <div
           className="position-absolute text-white w-100 p-2 pt-5"
@@ -71,29 +54,14 @@ const RecipeVersionHeaderImage = ({
           <h1 className="m-0">{title}</h1>
           <h5>{subtitle}</h5>
           <a
-            href={`/${author.username}`}
+            href={`/${recipe.owner.username}`}
             style={{ textDecoration: 'underline' }}
             itemProp="author"
             className="text-white"
           >
-            {getName(author)}
+            {getName(recipe.owner)}
           </a>{' '}
           <Source recipe={recipe} className="text-white text-underline" />
-          <div className="mt-3 stats d-flex">
-            <Col
-              xs="6"
-              className="align-items-center d-flex justify-content-center text-center"
-            >
-              <Yield version={version} />
-            </Col>
-            <Col
-              xs="6"
-              className="align-items-center d-flex justify-content-center text-center"
-              style={{ borderLeft: '1px solid #ccc' }}
-            >
-              <Duration version={version} />
-            </Col>
-          </div>
         </div>
       </div>
       <style jsx>
@@ -108,44 +76,24 @@ const RecipeVersionHeaderImage = ({
   )
 }
 
-export const RecipeVersionHeader = ({
-  version,
-  recipe
+export const RecipeHeader = ({
+  recipe,
+  condensed
 }: {
-  version: RecipeVersionJSON
   recipe: RecipeJSON
+  condensed: boolean
 }) => {
   const imageUrl = recipe.image_url
   return imageUrl ? (
     <>
       <div className="d-none d-print-block">
-        <RecipeVersionHeaderNoImage version={version} recipe={recipe} />
+        <RecipeHeaderNoImage recipe={recipe} />
       </div>
-      <RecipeVersionHeaderImage version={version} recipe={recipe} />
+      <RecipeHeaderImage recipe={recipe} condensed={condensed} />
     </>
   ) : (
-    <RecipeVersionHeaderNoImage version={version} recipe={recipe} />
+    <RecipeHeaderNoImage recipe={recipe} />
   )
-}
-
-export const Duration = ({ version }: { version: RecipeVersionJSON }) => {
-  const d = _.get(version, 'recipeDuration.duration_seconds')
-  if (!d) {
-    return null
-  }
-  return (
-    <time itemProp="cookTime" dateTime={`PT${d}S`}>
-      {formatDuration(d)}
-    </time>
-  )
-}
-
-const Yield = ({ version }: { version: RecipeVersionJSON }) => {
-  let y = _.get(version, 'recipeYield.text')
-  if (!y) {
-    return null
-  }
-  return <span itemProp="recipeYield">{y}</span>
 }
 
 const Source = ({
@@ -178,16 +126,6 @@ const Source = ({
       {src}
     </>
   )
-}
-
-const formatDuration = (seconds: number) => {
-  const { h, m } = toHoursAndMinutes(seconds)
-  const hs = `${h} ${h > 1 ? 'hours' : 'hour'}`
-  const ms = `${m} ${m > 1 ? 'minutes' : 'minute'}`
-  if (h > 0) {
-    return m !== 0 ? `${hs} ${ms}` : hs
-  }
-  return ms
 }
 
 // piece together the full display of the work, either "[work] by [author]", or

@@ -11,7 +11,26 @@ export const routes: any = nextroutes()
   .add('recipe', '/:username/:slug')
   .add('recipe-version', '/:username/:slug/versions/:versionId')
   .add('edit-recipe', '/:username/:slug/branches/:branch/edit')
-  .add('recipe-history', '/:username/:slug/history')
+  .add({
+    name: 'recipe-history',
+    pattern: '/:username/:slug/history',
+    page: 'recipe-history'
+  })
+  .add({
+    name: 'recipe-version-history',
+    pattern: '/:username/:slug/versions/:versionId/history',
+    page: 'recipe-history'
+  })
+  .add({
+    name: 'recipe-version-notes',
+    pattern: '/:username/:slug/versions/:versionId/notes',
+    page: 'recipe-notes'
+  })
+  .add({
+    name: 'notes',
+    pattern: '/:username/:slug/notes',
+    page: 'recipe-notes'
+  })
 
 // Usage:
 // import { Link } from '../routes'

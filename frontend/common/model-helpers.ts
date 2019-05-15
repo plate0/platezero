@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import { UserJSON } from '../models/user'
+import { UserJSON } from '../models'
 
 export const getName = (user: UserJSON): string =>
   user.name ? user.name : user.username
