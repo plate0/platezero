@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { FormGroup, Label, Input, FormText, Button } from 'reactstrap'
+import TextareaAutosize from 'react-textarea-autosize'
 import { api, getErrorMessages } from '../common/http'
 import { AlertErrors } from './AlertErrors'
 import { NoteJSON } from '../models'
@@ -44,8 +45,9 @@ export const AddNote = ({
   return (
     <form onSubmit={createNote}>
       <FormGroup>
-        <Input
-          type="textarea"
+        <TextareaAutosize
+          minRows={3}
+          className="form-control"
           value={text}
           onChange={e => setText(e.target.value)}
           disabled={isWorking}

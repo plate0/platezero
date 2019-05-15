@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 import Router from 'next/router'
 import { get } from 'lodash'
 import {
@@ -220,8 +221,8 @@ const RenameModal = ({
         </FormGroup>
         <FormGroup>
           <Label>Description</Label>
-          <Input
-            type="textarea"
+          <TextareaAutosize
+            className="form-control"
             value={description}
             onChange={e => setDescription(e.target.value)}
           />

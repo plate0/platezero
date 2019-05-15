@@ -10,10 +10,10 @@ import {
   Row,
   Col,
   Button,
-  Input,
   FormGroup,
   FormText
 } from 'reactstrap'
+import TextareaAutosize from 'react-textarea-autosize'
 
 import {
   AlertErrors,
@@ -199,8 +199,9 @@ export default class EditRecipe extends React.Component<Props, State> {
             <Row>
               <Col>
                 <FormGroup>
-                  <Input
-                    type="textarea"
+                  <TextareaAutosize
+                    minRows={3}
+                    className="form-control"
                     value={this.state.message}
                     placeholder="e.g. Remove crushed red pepper to make it less spicy"
                     onChange={e => this.setState({ message: e.target.value })}

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import * as _ from 'lodash'
-import { Row, Col, Input } from 'reactstrap'
+import { Row, Col } from 'reactstrap'
+import TextareaAutosize from 'react-textarea-autosize'
 
 interface Props<T> {
   initialData: T
@@ -43,8 +44,8 @@ export function LivePreviewEditor<T>(props: Props<T>) {
     <Row>
       <Col xs="12" sm="6">
         <div style={{ position: 'relative' }}>
-          <Input
-            type="textarea"
+          <TextareaAutosize
+            className="form-control"
             style={{
               minHeight: props.minHeight,
               backgroundColor: 'transparent'
