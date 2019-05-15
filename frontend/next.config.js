@@ -20,6 +20,9 @@ module.exports = (config, { defaultConfig }) => {
       publicRuntimeConfig: {
         api: {
           url: process.env.API_URL
+        },
+        www: {
+          url: process.env.SITE_URL
         }
       }
     })

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react'
 import Router from 'next/router'
+import { get } from 'lodash'
 import {
   FormGroup,
   Label,
@@ -15,7 +16,7 @@ import {
   NavItem,
   NavLink
 } from 'reactstrap'
-
+import getConfig from 'next/config'
 import { RecipeJSON } from '../models/recipe'
 import { UserContext } from '../context/UserContext'
 import { getErrorMessages, api } from '../common/http'
@@ -23,6 +24,8 @@ import { IfLoggedIn } from './IfLoggedIn'
 import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
 import { PrintButton } from './PrintButton'
+import { ShareButton } from './ShareButton'
+const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
 export const RecipeNav = ({
   recipe,
@@ -45,6 +48,11 @@ export const RecipeNav = ({
         </Link>
       </NavItem>
       <NavItem className="border-bottom flex-fill" />
+      <NavItem className="border-bottom pr-2">
+        <div className="align-items-center d-flex h-100">
+          <ShareButton url={SITE_URL + baseURL} />
+        </div>
+      </NavItem>
       <NavItem className="border-bottom">
         <div className="align-items-center d-flex h-100">
           <PrintButton />

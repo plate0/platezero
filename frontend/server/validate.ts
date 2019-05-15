@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import * as Joi from '@hapi/joi'
 import { Request, Response } from 'express'
 import * as _ from 'lodash'
 import { HttpStatus } from '../common/http-status'
@@ -91,7 +91,7 @@ export const validateNewUser = validator({
     .max(25)
     .required(),
   email: Joi.string()
-    .email({ minDomainAtoms: 2 })
+    .email({ minDomainSegments: 2 })
     .required(),
   password: Joi.string()
     .min(8)
