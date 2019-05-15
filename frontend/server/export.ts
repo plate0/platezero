@@ -1,6 +1,7 @@
 import * as express from 'express'
 import * as _ from 'lodash'
 import * as cheerio from 'cheerio'
+import * as prom from 'prom-client'
 import { Converter } from 'showdown'
 import {
   User,
@@ -141,12 +142,19 @@ const getRecipeVersion = (recipe_id, id) => {
   })
 }
 
+const plainTextCounter = new prom.Counter({
+  name: 'platezero_export_total',
+  help: 'Total number of recipes exporterd',
+  labelNames: ['format']
+})
+
 const r = express.Router()
 // Can do `.:format` and then
 // https://expressjs.com/en/api.html#res.format
 // to handle many formats
 r.get('/:username/:slug.txt', async (req, res) => {
   const { username, slug } = req.params
+  plainTextCounter.inc({ format: 'txt' })
   try {
     const user = await getUser(username)
     if (!user) {
