@@ -11,9 +11,7 @@ import { config } from './config'
 import { HttpStatus } from '../common/http-status'
 
 const app = next({ dev: config.dev })
-const handler = routes.getRequestHandler(app, ({ req, res, route, query }) => {
-  app.render(req, res, route.page, query)
-})
+const handler = routes.getRequestHandler(app)
 
 app.prepare().then(() => {
   prom.collectDefaultMetrics({ timeout: 5000 })
