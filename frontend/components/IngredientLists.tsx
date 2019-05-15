@@ -25,9 +25,15 @@ const IngredientListLine = ({
       <span className={highlight ? 'text-success' : ''}>{line.unit}</span>
     )
   }
-  parts.push(<>{line.name}</>)
+  if (line.preparation && !highlight) {
+    parts.push(line.name + ';')
+  } else {
+    parts.push(line.name)
+  }
   if (line.preparation) {
-    parts.push(<span className="text-secondary">{line.preparation}</span>)
+    parts.push(
+      <span className={highlight ? 'text-info' : ''}>{line.preparation}</span>
+    )
   }
   if (line.optional) {
     parts.push(<span className="badge badge-info">Optional</span>)
