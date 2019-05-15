@@ -6,10 +6,9 @@ import * as _ from 'lodash'
 const { routes } = require('../routes')
 const { sequelize } = require('../models')
 import { api } from './api'
+import { exportRecipes } from './export'
 import { config } from './config'
 import { HttpStatus } from '../common/http-status'
-import { notFound, internalServerError } from './errors'
-import { Recipe } from '../models'
 
 const app = next({ dev: config.dev })
 const handler = routes.getRequestHandler(app, ({ req, res, route, query }) => {
@@ -47,40 +46,6 @@ app.prepare().then(() => {
 
   server.use('/api', api)
 
-  server.get('/:username/:slug.txt', async (req, res) => {
-    console.log('HEREEEEEEE')
-    const { slug } = req.params
-    try {
-      // find user?
-      const recipe = await Recipe.findOne({
-        where: { slug }
-      })
-      if (!recipe) {
-        return notFound(res)
-      }
-      res.send(recipe.toString())
-    } catch (error) {
-      return internalServerError(res, error)
-    }
-  })
-
-  server.get('/:username/:slug/.txt', async (req, res) => {
-    console.log('HEREEEEEEE')
-    const { slug } = req.params
-    try {
-      // find user?
-      const recipe = await Recipe.findOne({
-        where: { slug }
-      })
-      if (!recipe) {
-        return notFound(res)
-      }
-      res.send(recipe.toString())
-    } catch (error) {
-      return internalServerError(res, error)
-    }
-  })
-
   server.use(
     '/announcements',
     express.static(join(__dirname, '..', 'announcements'))
@@ -96,6 +61,7 @@ app.prepare().then(() => {
     }
     return res.end(prom.register.metrics())
   })
+  server.use(exportRecipes)
   server.use(handler)
 
   sequelize
