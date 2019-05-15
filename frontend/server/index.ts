@@ -6,6 +6,7 @@ import * as _ from 'lodash'
 const { routes } = require('../routes')
 const { sequelize } = require('../models')
 import { api } from './api'
+import { exportRecipes } from './export'
 import { config } from './config'
 import { HttpStatus } from '../common/http-status'
 
@@ -58,6 +59,7 @@ app.prepare().then(() => {
     }
     return res.end(prom.register.metrics())
   })
+  server.use(exportRecipes)
   server.use(handler)
 
   sequelize
