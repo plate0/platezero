@@ -42,13 +42,33 @@ export function LivePreviewEditor<T>(props: Props<T>) {
   return (
     <Row>
       <Col xs="12" sm="6">
-        <Input
-          type="textarea"
-          style={{ minHeight: props.minHeight }}
-          placeholder={props.placeholder || ''}
-          value={text}
-          onChange={e => setText(e.target.value)}
-        />
+        <div style={{ position: 'relative' }}>
+          <Input
+            type="textarea"
+            style={{
+              minHeight: props.minHeight,
+              backgroundColor: 'transparent'
+            }}
+            value={text}
+            onChange={e => setText(e.target.value)}
+          />
+          <div
+            className="text-muted"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              overflow: 'hidden',
+              padding: '0.375rem 1rem',
+              whiteSpace: 'pre',
+              zIndex: -10
+            }}
+          >
+            {text && text.length ? '' : props.placeholder}
+          </div>
+        </div>
         {props.formattingTips && (
           <details>
             <summary>Formatting Tips</summary>
