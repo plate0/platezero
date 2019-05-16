@@ -191,18 +191,18 @@ const AttributionModal = ({
   toggle: () => void
   close: () => void
 }) => {
-  const [source_url,    setSourceUrl]    = useState(recipe.source_url)
-  const [source_title,  setSourceTitle]  = useState(recipe.source_title)
+  const [source_url, setSourceUrl] = useState(recipe.source_url)
+  const [source_title, setSourceTitle] = useState(recipe.source_title)
   const [source_author, setSourceAuthor] = useState(recipe.source_author)
-  const [source_isbn,   setSourceIsbn]   = useState(recipe.source_isbn)
+  const [source_isbn, setSourceIsbn] = useState(recipe.source_isbn)
   const [errors, setErrors] = useState([])
   const handleSave = async () => {
-  const patch = { 
-        source_url,   
-        source_title, 
-        source_author,
-        source_isbn,  
-        }
+    const patch = {
+      source_url,
+      source_title,
+      source_author,
+      source_isbn
+    }
     setErrors([])
     try {
       await api.patchRecipe(recipe.slug, patch)
@@ -216,19 +216,31 @@ const AttributionModal = ({
       <ModalBody>
         <FormGroup>
           <Label>Source Title</Label>
-          <Input value={source_title} onChange={e => setSourceTitle(e.target.value)} />
+          <Input
+            value={source_title}
+            onChange={e => setSourceTitle(e.target.value)}
+          />
         </FormGroup>
         <FormGroup>
           <Label>Source Author</Label>
-          <Input value={source_author} onChange={e => setSourceAuthor(e.target.value)} />
+          <Input
+            value={source_author}
+            onChange={e => setSourceAuthor(e.target.value)}
+          />
         </FormGroup>
         <FormGroup>
           <Label>Source ISBN</Label>
-          <Input value={source_isbn} onChange={e => setSourceIsbn(e.target.value)} />
+          <Input
+            value={source_isbn}
+            onChange={e => setSourceIsbn(e.target.value)}
+          />
         </FormGroup>
         <FormGroup>
           <Label>Source URL</Label>
-          <Input value={source_url} onChange={e => setSourceUrl(e.target.value)} />
+          <Input
+            value={source_url}
+            onChange={e => setSourceUrl(e.target.value)}
+          />
         </FormGroup>
         <AlertErrors errors={errors} className="mt-3 mb-0 small" />
         <Button color="success" block onClick={handleSave}>
