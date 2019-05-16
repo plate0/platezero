@@ -34,6 +34,21 @@ interface UserState {
   recipes: RecipeJSON[]
 }
 
+async function getRecipes({
+  username,
+  q,
+  sort
+}: {
+  username: string
+  q?: string
+  sort?: string
+}): Promise<RecipeJSON[]> {
+  if (q) {
+    return _.map(await api.searchUserRecipes({ username, q, sort }), 'recipe')
+  }
+  return await api.getUserRecipes(username, sort)
+}
+
 class User extends React.Component<UserProps & WithRouterProps, UserState> {
   constructor(props: any) {
     super(props)
@@ -54,7 +69,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
         user: await api.getUser(username),
         query: q,
         sort,
-        recipes: await api.getUserRecipes(username, q, sort)
+        recipes: await getRecipes({ username, q, sort })
       }
     } catch (err) {
       const statusCode = err.statusCode || 500
@@ -81,7 +96,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
         {
           sort: (sort as string) || '',
           query: (q as string) || '',
-          ...(q ? {} : { recipes: await api.getUserRecipes(username, q, sort) })
+          ...(q ? {} : { recipes: await getRecipes({ username, q, sort }) })
         },
         q || sort ? this.refresh : undefined
       )
@@ -114,9 +129,9 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
     const { user } = this.props
     const { query, sort } = this.state
     this.setState({
-      recipes: await api.getUserRecipes(user.username, query, sort)
+      recipes: await getRecipes({ username: user.username, q: query, sort })
     })
-  }, 200)
+  }, 500)
 
   public render() {
     const { user, statusCode } = this.props

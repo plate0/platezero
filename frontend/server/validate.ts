@@ -3,9 +3,15 @@ import { Request, Response } from 'express'
 import * as _ from 'lodash'
 import { HttpStatus } from '../common/http-status'
 
-const validator = schema => {
+const requestBodyGetter = (req: Request) => req.body
+const requestQueryGetter = (req: Request) => req.query
+
+const validator = (schema, objectGetter?: (req: Request) => object) => {
+  if (!objectGetter) {
+    objectGetter = requestBodyGetter
+  }
   return (req: Request, res: Response, next) => {
-    const result = Joi.validate(req.body, schema, {
+    const result = Joi.validate(objectGetter(req), schema, {
       abortEarly: false,
       convert: false,
       allowUnknown: false
@@ -154,3 +160,15 @@ export const validateNotePatch = validator({
   pinned: Joi.boolean(),
   text: Joi.string()
 })
+
+export const validateRecipeSearch = validator(
+  {
+    q: Joi.string().required(),
+    username: Joi.string().required(),
+    sort: Joi.string()
+      .regex(/^(title|created_at)-(asc|desc)$/)
+      .allow('')
+      .optional()
+  },
+  requestQueryGetter
+)

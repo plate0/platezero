@@ -40,6 +40,7 @@ export const Sort = ({ selected, by, onSort }: SortProps) => (
 const sortBy = (by: SortBy[]) => props => <Sort {...props} by={by} />
 
 export const SortRecipes = sortBy([
+  { name: 'Relevance', value: '' },
   { name: 'Name A-Z', value: 'title-asc' },
   { name: 'Name Z-A', value: 'title-desc' },
   { name: 'Newest', value: 'created_at-desc' },

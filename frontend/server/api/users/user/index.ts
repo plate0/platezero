@@ -1,7 +1,6 @@
 import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
-import { searchQuery } from '../../search'
 import { User, Recipe, sortable } from '../../../../models'
 import { RecipeRequest, recipe } from './recipe'
 import { notFound, internalServerError } from '../../../errors'
@@ -31,15 +30,10 @@ r.get('/', async function getUser(req: UserRequest, res) {
 })
 
 r.get('/recipes', async function getUserRecipes(req: UserRequest, res) {
-  const { q, sort } = req.query
+  const { sort } = req.query
   const order = [RecipeSortBy(_.split(sort, '-') || [])]
   try {
-    return res.json(
-      await Recipe.findAll({
-        ...searchQuery(q, req.user.id),
-        order
-      })
-    )
+    return res.json(await Recipe.findAll({ order }))
   } catch (err) {
     return internalServerError(res, err)
   }

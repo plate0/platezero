@@ -12,6 +12,7 @@ import { Recipe } from './recipe'
 import { RecipeBranch } from './recipe_branch'
 import { RecipeCollaborator } from './recipe_collaborator'
 import { RecipeDuration } from './recipe_duration'
+import { RecipeSearchDocument } from './recipe_search_document'
 import { RecipeVersion } from './recipe_version'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { RecipeVersionPreheat } from './recipe_version_preheat'
@@ -42,6 +43,7 @@ sequelize.addModels([
   RecipeBranch,
   RecipeCollaborator,
   RecipeDuration,
+  RecipeSearchDocument,
   RecipeVersion,
   RecipeVersionIngredientList,
   RecipeVersionPreheat,
@@ -79,6 +81,7 @@ export * from './recipe'
 export * from './recipe_branch'
 export * from './recipe_collaborator'
 export * from './recipe_duration'
+export * from './recipe_search_document'
 export * from './recipe_version'
 export * from './recipe_version_ingredient_list'
 export * from './recipe_version_procedure_list'
