@@ -1,9 +1,19 @@
 import React, { useContext } from 'react'
-import { Nav, NavItem, Container, Navbar as RsNavbar } from 'reactstrap'
+import {
+  Nav,
+  NavItem,
+  Container,
+  Navbar as RsNavbar,
+  UncontrolledDropdown,
+  DropdownMenu,
+  DropdownToggle,
+  DropdownItem
+} from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
+import { logout } from '../common'
 
 export const Navbar = () => {
   const { user } = useContext(UserContext)
@@ -21,7 +31,7 @@ export const Navbar = () => {
             <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
           </a>
         </Link>
-        <Nav className="ml-auto" navbar>
+        <Nav className="ml-auto" navbar className="align-items-center">
           {user && <NewRecipeDropdown />}
           {user ? <UserCardNav user={user} /> : <AnonNav />}
         </Nav>
@@ -31,13 +41,30 @@ export const Navbar = () => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <NavItem>
-    <Link route={`/${user.username}`}>
-      <a className="d-block py-1 px-2">
-        <ProfilePicture img={user.avatar_url} size={30} />
-      </a>
-    </Link>
-  </NavItem>
+  <UserContext.Consumer>
+    {({ updateUser }) => (
+      <UncontrolledDropdown nav inNavbar>
+        <DropdownToggle nav caret>
+          <ProfilePicture img={user.avatar_url} size={30} />
+        </DropdownToggle>
+        <DropdownMenu right>
+          <Link route={`/${user.username}`}>
+            <a className="dropdown-item" role="menuitem">
+              Recipes
+            </a>
+          </Link>
+          <DropdownItem
+            onClick={() => {
+              logout()
+              updateUser(null)
+            }}
+          >
+            Logout
+          </DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    )}
+  </UserContext.Consumer>
 )
 
 const NewRecipeDropdown = () => (

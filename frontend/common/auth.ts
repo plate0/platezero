@@ -1,5 +1,6 @@
 import cookie from 'js-cookie'
 import nextCookie from 'next-cookies'
+import Router from 'next/router'
 import { UserJSON } from '../models/user'
 
 export interface Authentication {
@@ -20,4 +21,9 @@ export const getAuth = (ctx: any = undefined): Authentication => {
   } catch {
     return {}
   }
+}
+
+export const logout = () => {
+  cookie.remove('auth')
+  Router.push('/')
 }
