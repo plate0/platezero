@@ -11,6 +11,12 @@ import {
 } from '../../models'
 const TurndownService = require('turndown')
 
+// Used to filter Cheerio nodes by regex
+export const where = ($: any, r: RegExp) => (_i, e) =>
+  $(e)
+    .text()
+    .match(r)
+
 export const text = (sel: string) => ($: any) => _.trim($(sel).text())
 
 export const title = () => {
