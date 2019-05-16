@@ -12,6 +12,7 @@ import { CookingLight } from './cooking-light'
 import { DeliciousMagazine } from './deliciousmagazine'
 import { Reddit } from './reddit'
 import { IVU } from './ivu'
+import { Vegukate } from './vegukate'
 
 const importers = mapValues(
   {
@@ -23,7 +24,8 @@ const importers = mapValues(
     'www.cookinglight.com': CookingLight,
     'www.popsugar.com': Popsugar,
     'www.deliciousmagazine.co.uk': DeliciousMagazine,
-    "ivu.org": IVU,
+    'ivu.org': IVU,
+    'vegukate.com': Vegukate
   },
   importer => fetch(toHTML(dom(importer)))
 )
