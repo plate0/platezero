@@ -121,7 +121,19 @@ export const validateRecipePatch = validator({
   description: Joi.string().allow(''),
   image_url: Joi.string()
     .uri()
+    .allow(null),
+  source_url: Joi.string()
     .allow(null)
+    .allow(''),
+  source_title: Joi.string()
+    .allow(null)
+    .allow(''),
+  source_author: Joi.string()
+    .allow(null)
+    .allow(''),
+  source_isbn: Joi.string()
+    .allow(null)
+    .allow('')
 })
 
 export const validateUserPatch = validator({

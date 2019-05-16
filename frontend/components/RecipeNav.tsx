@@ -93,6 +93,7 @@ export const RecipeNav = ({
 const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
   const [isOpen, setOpen] = useState(false)
   const [isRenameModalOpen, setRenameModalOpen] = useState(false)
+  const [isAttributionModalOpen, setAttributionModalOpen] = useState(false)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   return (
     <>
@@ -108,6 +109,9 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
         <DropdownMenu right>
           <DropdownItem onClick={() => setRenameModalOpen(true)}>
             Edit Title and Description
+          </DropdownItem>
+          <DropdownItem onClick={() => setAttributionModalOpen(true)}>
+            Edit Attribution
           </DropdownItem>
           <DropdownItem
             href={`/${recipe.owner.username}/${
@@ -129,6 +133,12 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
         recipe={recipe}
         toggle={() => setRenameModalOpen(!isRenameModalOpen)}
         close={() => setRenameModalOpen(false)}
+      />
+      <AttributionModal
+        isOpen={isAttributionModalOpen}
+        recipe={recipe}
+        toggle={() => setAttributionModalOpen(!isAttributionModalOpen)}
+        close={() => setAttributionModalOpen(false)}
       />
       <DeleteModal
         isOpen={isDeleteModalOpen}
@@ -177,6 +187,86 @@ const DeleteModal = ({
           onClick={close}
         >
           Never mind, keep it for now
+        </Button>
+      </ModalBody>
+    </Modal>
+  )
+}
+
+const AttributionModal = ({
+  recipe,
+  isOpen,
+  toggle,
+  close
+}: {
+  recipe: RecipeJSON
+  isOpen: boolean
+  toggle: () => void
+  close: () => void
+}) => {
+  const [source_url, setSourceUrl] = useState(recipe.source_url)
+  const [source_title, setSourceTitle] = useState(recipe.source_title)
+  const [source_author, setSourceAuthor] = useState(recipe.source_author)
+  const [source_isbn, setSourceIsbn] = useState(recipe.source_isbn)
+  const [errors, setErrors] = useState([])
+  const handleSave = async () => {
+    const patch = {
+      source_url,
+      source_title,
+      source_author,
+      source_isbn
+    }
+    setErrors([])
+    try {
+      await api.patchRecipe(recipe.slug, patch)
+      Router.push(`/${recipe.owner.username}/${recipe.slug}`)
+    } catch (e) {
+      setErrors(getErrorMessages(e))
+    }
+  }
+  return (
+    <Modal isOpen={isOpen} toggle={toggle} size="lg">
+      <ModalBody>
+        <FormGroup>
+          <Label>Source Title</Label>
+          <Input
+            value={source_title}
+            onChange={e => setSourceTitle(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label>Source Author</Label>
+          <Input
+            value={source_author}
+            onChange={e => setSourceAuthor(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label>Source ISBN</Label>
+          <Input
+            value={source_isbn}
+            onChange={e => setSourceIsbn(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label>Source URL</Label>
+          <Input
+            value={source_url}
+            onChange={e => setSourceUrl(e.target.value)}
+          />
+        </FormGroup>
+        <AlertErrors errors={errors} className="mt-3 mb-0 small" />
+        <Button color="success" block onClick={handleSave}>
+          Save
+        </Button>
+        <Button
+          color="link"
+          className="text-muted"
+          outline
+          block
+          onClick={close}
+        >
+          Never mind
         </Button>
       </ModalBody>
     </Modal>
