@@ -2,3 +2,4 @@ venv
 .project
 **/*.marks
 .settings
+docs/Gemfile.lock
