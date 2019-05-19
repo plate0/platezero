@@ -149,7 +149,7 @@ export default class NewRecipeFile extends React.Component<
                   an email to you when it is ready.
                 </p>
                 <div className="text-center">
-                  <Link to={`/${user.username}/recipes`}>
+                  <Link to={`/${user.username}`}>
                     <a className="btn btn-link">View My Recipes</a>
                   </Link>
                 </div>
