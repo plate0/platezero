@@ -31,7 +31,7 @@ export const Navbar = () => {
             <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
           </a>
         </Link>
-        <Nav className="ml-auto" navbar className="align-items-center">
+        <Nav className="ml-auto align-items-center" navbar>
           {user && <NewRecipeDropdown />}
           {user ? <UserCardNav user={user} /> : <AnonNav />}
         </Nav>
