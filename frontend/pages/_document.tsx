@@ -3,14 +3,26 @@
 
 // ./pages/_document.js
 import Document, { Head, Main, NextScript } from 'next/document'
+import { api } from '../common/http'
+import { UserJSON } from '../models'
 
-export default class MyDocument extends Document {
+const currentUser = async (): Promise<UserJSON | undefined> => {
+  try {
+    return await api.getCurrentUser()
+  } catch (e) {
+    return undefined
+  }
+}
+
+export default class MyDocument extends Document<{ user?: UserJSON }> {
   static async getInitialProps(ctx) {
+    api.loadAuth(ctx)
     const initialProps = await Document.getInitialProps(ctx)
-    return { ...initialProps }
+    return { ...initialProps, user: ctx.req ? await currentUser() : undefined }
   }
 
   render() {
+    const userId = this.props.user ? this.props.user.username : undefined
     return (
       <html lang="en">
         <Head>
@@ -109,6 +121,7 @@ export default class MyDocument extends Document {
             dangerouslySetInnerHTML={{
               __html: `
   var _paq = window._paq || [];
+  ${userId ? "_paq.push(['setUserId', '" + userId + "']);" : ''}
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   (function() {

@@ -56,6 +56,9 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
       const w = window as any
       if (w && w._paq) {
         w._paq.push(['setCustomUrl', url])
+        if (this.state.user) {
+          w._paq.push(['setUserId', this.state.user.username])
+        }
         w._paq.push(['trackPageView'])
       }
     })

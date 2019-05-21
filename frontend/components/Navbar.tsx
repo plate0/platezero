@@ -56,6 +56,11 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
           <DropdownItem
             onClick={() => {
               logout()
+              const w = window as any
+              if (w && w._paq) {
+                w._paq.push(['resetUserId'])
+                w._paq.push(['trackPageView'])
+              }
               updateUser(null)
             }}
           >
