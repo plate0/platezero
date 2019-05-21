@@ -33,7 +33,9 @@ r.get('/recipes', async function getUserRecipes(req: UserRequest, res) {
   const { sort } = req.query
   const order = [RecipeSortBy(_.split(sort, '-') || [])]
   try {
-    return res.json(await Recipe.findAll({ order }))
+    return res.json(
+      await Recipe.findAll({ where: { user_id: req.user.id }, order })
+    )
   } catch (err) {
     return internalServerError(res, err)
   }
