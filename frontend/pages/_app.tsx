@@ -1,4 +1,5 @@
 import React from 'react'
+import Router from 'next/router'
 import App, { Container } from 'next/app'
 import '../style/index.scss'
 import { UserJSON } from '../models/user'
@@ -51,6 +52,13 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
         user: await currentUser()
       })
     }
+    Router.events.on('routeChangeStart', url => {
+      const w = window as any
+      if (w && w._paq) {
+        w._paq.push(['setCustomUrl', url])
+        w._paq.push(['trackPageView'])
+      }
+    })
   }
 
   public updateUser = (user: UserJSON) => this.setState({ user })
