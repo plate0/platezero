@@ -14,12 +14,22 @@ import { parse } from 'path'
 import { create } from './create'
 import { writeFileSync } from 'fs'
 import { toMarkdown } from './markdown'
-import { archive, download, convert } from './utils'
+import { archive, download, convert, rotate } from './utils'
 import log from 'electron-log'
 import { ipcRenderer } from 'electron'
 const app = require('electron').remote.app
 
+const load = (src: string) =>
+  new Promise(resolve => {
+    const image = new Image()
+    image.onload = function() {
+      resolve(image)
+    }
+    image.src = src + '?' + new Date().getTime()
+  })
+
 interface AppState {
+  image?: any
   recipe: MarkdownRecipe
   active: string
   recipePath?: string
@@ -42,6 +52,7 @@ export class App extends React.Component<any, AppState> {
     this.previous = this.previous.bind(this)
     this.loadImage = this.loadImage.bind(this)
     this.finished = this.finished.bind(this)
+    this.rotate = this.rotate.bind(this)
     this.state = {
       recipe: {
         title: '',
@@ -98,6 +109,7 @@ export class App extends React.Component<any, AppState> {
       },
       active: 'title',
       modal: false,
+      image: undefined,
       recipePath: undefined,
       recipeKey: undefined,
       userId: undefined
@@ -108,6 +120,20 @@ export class App extends React.Component<any, AppState> {
     const active = _.first(_.filter(RecipeParts, { key }))
     if (active) {
       this.setState({ active: active.val })
+    }
+  }
+
+  public async rotate(degrees: string) {
+    try {
+      const { recipePath } = this.state
+      if (!recipePath) {
+        return
+      }
+      await rotate(recipePath, degrees)
+      const image = await load(recipePath)
+      this.setState({ image })
+    } catch (err) {
+      alert(err)
     }
   }
 
@@ -140,8 +166,10 @@ export class App extends React.Component<any, AppState> {
       const path = await download(r.key, folder)
       const { base } = parse(path)
       const recipePath = await convert(folder, base)
+      const image = await load(recipePath)
       log.info('converted', recipePath)
       this.setState({
+        image,
         recipeKey: r.key,
         recipePath,
         userId: r.userId,
@@ -155,6 +183,7 @@ export class App extends React.Component<any, AppState> {
 Do you want to open a blank recipe for this user?`)
       ) {
         this.setState({
+          image: new Image(),
           recipeKey: r.key,
           recipePath: '/dev/null',
           userId: r.userId,
@@ -169,19 +198,16 @@ Do you want to open a blank recipe for this user?`)
     const result = await ocr(buffer)
     const adapter = adapters[this.state.active]
     let val = adapter ? adapter(result) : result
-    this.setState(s => {
-      if (this.state.active === 'procedures') {
-        val = this.state.recipe.procedures += ` ${val}`
-      }
-      return {
+    this.setState(
+      (s: AppState) => ({
         ...s,
         recipe: {
           ...s.recipe,
-          [this.state.active]: val
+          [s.active]: s.recipe[s.active] + val
         }
-      }
-    })
-    this.next()
+      }),
+      this.next
+    )
   }
 
   // When the user directly edits the markdown
@@ -244,6 +270,7 @@ Do you want to open a blank recipe for this user?`)
           yld: '',
           duration: ''
         },
+        image: undefined,
         recipePath: undefined,
         recipeKey: undefined
       })
@@ -253,8 +280,8 @@ Do you want to open a blank recipe for this user?`)
   }
 
   public render() {
-    const { recipePath } = this.state
-    if (!recipePath) {
+    const { image } = this.state
+    if (!image) {
       return (
         <Container>
           <Config onSelect={this.onSelectRecipe} />
@@ -266,8 +293,22 @@ Do you want to open a blank recipe for this user?`)
       <div>
         <Navbar active={this.state.active} onClick={this.onActiveChange} />
         <Row>
-          <Col xs="9">
-            <Canvas onSelection={this.onSelection} imagePath={recipePath} />
+          <Col xs="9" className="position-relative">
+            <Canvas onSelection={this.onSelection} image={image} />
+            <button
+              className="position-absolute"
+              style={{ left: 0, top: 0 }}
+              onClick={() => this.rotate('-90')}
+            >
+              left
+            </button>
+            <button
+              className="position-absolute"
+              style={{ right: 0, top: 0 }}
+              onClick={() => this.rotate('90')}
+            >
+              right
+            </button>
           </Col>
           <Col xs="3" style={{ maxHeight: '960px', overflow: 'auto' }}>
             <Recipe
