@@ -39,6 +39,16 @@ export const convert = (dir: string, base: string): Promise<string> => {
   })
 }
 
+export const rotate = (file: string, degrees: string): Promise<any> => {
+  log.info('rotating')
+  return new Promise((resolve, reject) => {
+    log.info('running convert:', `convert ${file} -rotate '${degrees}' ${file}`)
+    exec(`convert '${file}' -rotate '${degrees}' '${file}'`, err =>
+      err ? reject(err) : resolve()
+    )
+  })
+}
+
 // archive recipe in s3
 export const archive = (Key: string) => {
   const id = uuid()

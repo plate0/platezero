@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { TransformCanvasRenderingContext2D, decorate } from './context'
+import { writeFileSync } from 'fs'
 
 // TODO: Get from DOM, I could not figure it out
 const NAVBAR_HEIGHT = 47
@@ -11,8 +12,8 @@ const ctrlPass = (fn: Function) => (e: any) => (e.ctrlKey ? fn(e) : void 0)
 const notCtrlPass = (fn: Function) => (e: any) => (e.ctrlKey ? void 0 : fn(e))
 
 export interface CanvasProps {
+  image?: any
   onSelection: (buffer: Buffer) => void
-  imagePath?: string
 }
 
 interface Point {
@@ -30,9 +31,9 @@ interface Rect {
 interface CanvasState {
   canvas: any
   ctx: TransformCanvasRenderingContext2D
-  image: any //Image
   rect: Rect
   last: Point
+  rotate: number
   dragStart?: Point
   dragging: boolean
 }
@@ -42,13 +43,14 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
   constructor(props: CanvasProps) {
     super(props)
     this.state = {
-      image: new Image(),
       rect: { x: 0, y: 0, width: 0, height: 0 },
       last: { x: 0, y: 0 },
+      rotate: 0,
       dragging: false
     } as any
     this.scroll = this.scroll.bind(this)
     this.zoom = this.zoom.bind(this)
+    this.rotate = this.rotate.bind(this)
     this.mousedown = this.mousedown.bind(this)
     this.ctrldown = this.ctrldown.bind(this)
     this.mousemove = this.mousemove.bind(this)
@@ -56,12 +58,10 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     this.mouseup = this.mouseup.bind(this)
   }
 
-  public componentWillReceiveProps(next: CanvasProps) {
-    console.log('Will receive props', next)
-    if (next.imagePath !== this.props.imagePath) {
+  public componentDidUpdate(prev: CanvasProps) {
+    if (prev.image !== this.props.image) {
       this.setState(
         s => ({
-          image: new Image(),
           rect: { x: 0, y: 0, width: 0, height: 0 },
           dragging: false,
           last: {
@@ -70,8 +70,8 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
           }
         }),
         () => {
-          if (next.imagePath) {
-            this.load(next.imagePath)
+          if (this.props.image) {
+            this.load(this.props.image)
           }
         }
       )
@@ -91,8 +91,8 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
       y: canvas.height / 2
     }
     this.setState({ canvas, ctx, last }, () => {
-      if (this.props.imagePath) {
-        this.load(this.props.imagePath)
+      if (this.props.image) {
+        this.load(this.props.image)
       }
     })
 
@@ -118,7 +118,7 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     if (!rect.x || !rect.y || !rect.width || !rect.height) {
       return
     }
-    const { image } = this.state
+    const { image } = this.props
     const { x, y, width, height } = rect
     const newCanvas = document.createElement('canvas')
     newCanvas.width = width
@@ -127,9 +127,11 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     if (!newContext) {
       throw new Error('Error getting canvas context')
     }
+    //newContext.rotate(this.state.rotate)
     newContext.drawImage(image, x, y, width, height, 0, 0, width, height)
     let data = newCanvas.toDataURL('image/jpeg')
     data = data.replace(/^data:image\/jpeg;base64,/, '')
+    writeFileSync('test.jpg', data, { encoding: 'base64' })
     this.setState({ rect: { x: 0, y: 0, width: 0, height: 0 } })
     return Buffer.from(data, 'base64')
   }
@@ -218,17 +220,25 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
     this.draw()
   }
 
-  private load(src: string) {
-    const { ctx, canvas, image } = this.state
-    const self = this
-    image.onload = function() {
-      const scale = canvas.width / (this.width + 200)
-      ctx.scale(scale, scale)
-      // Bump it in a little
-      ctx.translate(100, 50)
-      self.draw()
-    }
-    image.src = src
+  public rotate(rotate: number) {
+    const { ctx } = this.state
+    this.setState(
+      s => ({
+        rotate: s.rotate + rotate
+      }),
+      () => {
+        ctx.rotate(this.state.rotate)
+        this.draw()
+      }
+    )
+  }
+
+  private load(image: any) {
+    const { ctx, canvas } = this.state
+    const scale = canvas.width / (image.width + 200)
+    ctx.scale(scale, scale)
+    ctx.translate(100, 50)
+    this.draw()
   }
 
   private adjustCanvasPoint(e: MouseEvent): Point {
@@ -240,7 +250,8 @@ export class Canvas extends React.Component<CanvasProps, CanvasState> {
   }
 
   public draw() {
-    const { canvas, ctx, image, rect } = this.state
+    const { canvas, ctx, rect } = this.state
+    const { image } = this.props
     var p1 = ctx.transformedPoint(0, 0)
     var p2 = ctx.transformedPoint(canvas.width, canvas.height)
     ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
