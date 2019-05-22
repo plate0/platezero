@@ -1,7 +1,12 @@
 import React from 'react'
 import * as _ from 'lodash'
 import ErrorPage from './_error'
-import { RecipeLayout, RecipeVersion, PinnedNotes } from '../components'
+import {
+  RecipeLayout,
+  RecipeVersion,
+  PinnedNotes,
+  Markdown
+} from '../components'
 import { RecipeJSON, RecipeVersionJSON, NoteJSON } from '../models'
 import { api } from '../common/http'
 
@@ -65,9 +70,7 @@ export default class Recipe extends React.Component<Props> {
         noteCount={notes.length}
         pathname={pathname}
       >
-        {recipe.description && (
-          <p style={{ lineHeight: '2rem' }}>{recipe.description}</p>
-        )}
+        {recipe.description && <Markdown source={recipe.description} />}
         <PinnedNotes
           currentVersionId={masterVersion.id}
           recipe={recipe}
