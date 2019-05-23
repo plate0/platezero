@@ -7,6 +7,7 @@ import {
   Label,
   Input,
   Modal,
+  ModalHeader,
   ModalBody,
   Dropdown,
   DropdownToggle,
@@ -18,7 +19,7 @@ import {
   NavLink
 } from 'reactstrap'
 import getConfig from 'next/config'
-import { RecipeJSON } from '../models/recipe'
+import { RecipeJSON, NoteJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { RecipeContext } from '../context/RecipeContext'
 import { getErrorMessages, api } from '../common/http'
@@ -27,10 +28,13 @@ import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
 import { PrintButton } from './PrintButton'
 import { ShareButton } from './ShareButton'
+import { AddNote } from './AddNote'
 const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
 export const RecipeNav = ({ route }: { route: string }) => {
-  const { recipe, explicitVersionId, notes } = useContext(RecipeContext)
+  const { recipe, viewingVersion, explicitVersionId, notes } = useContext(
+    RecipeContext
+  )
   const noteCount = notes.length
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
   const versionURL = explicitVersionId
@@ -68,7 +72,7 @@ export const RecipeNav = ({ route }: { route: string }) => {
       </NavItem>
       <div className="border-bottom">
         <IfLoggedIn username={recipe.owner.username}>
-          <ActionMenu recipe={recipe} />
+          <ActionMenu recipe={recipe} effectiveVersionId={viewingVersion.id} />
         </IfLoggedIn>
       </div>
       <style jsx global>
@@ -85,11 +89,18 @@ export const RecipeNav = ({ route }: { route: string }) => {
   )
 }
 
-const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
+const ActionMenu = ({
+  recipe,
+  effectiveVersionId
+}: {
+  recipe: RecipeJSON
+  effectiveVersionId: number
+}) => {
   const [isOpen, setOpen] = useState(false)
   const [isRenameModalOpen, setRenameModalOpen] = useState(false)
   const [isAttributionModalOpen, setAttributionModalOpen] = useState(false)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [isNoteModalOpen, setNoteModalOpen] = useState(false)
   return (
     <>
       <Dropdown
@@ -114,6 +125,9 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
             }/branches/master/edit`}
           >
             Edit Recipe
+          </DropdownItem>
+          <DropdownItem onClick={() => setNoteModalOpen(true)}>
+            Add Note
           </DropdownItem>
           <DropdownItem
             onClick={() => setDeleteModalOpen(true)}
@@ -140,6 +154,13 @@ const ActionMenu = ({ recipe }: { recipe: RecipeJSON }) => {
         recipe={recipe}
         toggle={() => setDeleteModalOpen(!isDeleteModalOpen)}
         close={() => setDeleteModalOpen(false)}
+      />
+      <NoteModal
+        isOpen={isNoteModalOpen}
+        recipeId={recipe.id}
+        versionId={effectiveVersionId}
+        toggle={() => setNoteModalOpen(!isNoteModalOpen)}
+        close={() => setNoteModalOpen(false)}
       />
     </>
   )
@@ -316,6 +337,48 @@ const RenameModal = ({
         <Button color="success" block onClick={handleSave}>
           Save
         </Button>
+        <Button
+          color="link"
+          className="text-muted"
+          outline
+          block
+          onClick={close}
+        >
+          Never mind
+        </Button>
+      </ModalBody>
+    </Modal>
+  )
+}
+
+const NoteModal = ({
+  recipeId,
+  versionId,
+  isOpen,
+  toggle,
+  close
+}: {
+  recipeId: number
+  versionId: number
+  isOpen: boolean
+  toggle: () => void
+  close: () => void
+}) => {
+  const [errors] = useState([])
+  const { addNote } = useContext(RecipeContext)
+  return (
+    <Modal isOpen={isOpen} toggle={toggle} size="lg">
+      <ModalHeader>Add Note</ModalHeader>
+      <ModalBody>
+        <AddNote
+          recipeId={recipeId}
+          currentVersionId={versionId}
+          onCreate={(newNote: NoteJSON) => {
+            addNote(newNote)
+            close()
+          }}
+        />
+        <AlertErrors errors={errors} className="mt-3 mb-0 small" />
         <Button
           color="link"
           className="text-muted"
