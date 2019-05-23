@@ -1,5 +1,4 @@
 import * as express from 'express'
-import * as Importers from '../importer'
 import { AuthenticatedRequest } from './user'
 import { internalServerError } from '../errors'
 import { Recipe } from '../../models/recipe'
@@ -11,6 +10,7 @@ import { HttpStatus } from '../../common/http-status'
 import { config } from '../config'
 import { size, each, toString } from 'lodash'
 import { generate } from 'shortid'
+import { parse as parseRecipe } from 'recipe-parser'
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const s3 = new S3()
@@ -27,8 +27,7 @@ r.post('/url', async function importUrl(req: AuthenticatedRequest, res) {
   const parsed = parse(req.body.url)
   urlImportCounter.inc({ hostname: parsed.hostname })
   try {
-    const importer = Importers.url(req.body.url)
-    const recipe = await importer(req.body.url)
+    const recipe = await parseRecipe(req.body.url)
     recipe.source_url = req.body.url
     // TODO: if any issues, make github issue/slack
     const status =
