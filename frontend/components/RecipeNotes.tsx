@@ -1,30 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { CustomInput, Button } from 'reactstrap'
 import { Note } from './Note'
 import { Blankslate } from './Blankslate'
 import { AddNote } from './AddNote'
 import { IfLoggedIn } from './IfLoggedIn'
 import { NoteJSON, RecipeJSON } from '../models'
+import { RecipeContext } from '../context/RecipeContext'
 
 export const RecipeNotes = ({
-  notes: initialNotes,
   currentVersionId,
   recipe
 }: {
-  notes: NoteJSON[]
   currentVersionId: number
   recipe: RecipeJSON
 }) => {
-  const [notes, setNotes] = useState(initialNotes)
+  const { notes, addNote, editNote, removeNote } = useContext(RecipeContext)
   const [showAll, setShowAll] = useState(false)
-
-  const removeNote = (id: number) => () => {
-    setNotes(notes.filter(note => note.id !== id))
-  }
-
-  const editNote = (id: number) => (newNote: NoteJSON) => {
-    setNotes(notes.map(note => (note.id === id ? newNote : note)))
-  }
 
   const showNote = (note: NoteJSON) =>
     Boolean(showAll || note.recipe_version_id === currentVersionId)
@@ -39,7 +30,7 @@ export const RecipeNotes = ({
         <AddNote
           recipeId={recipe.id}
           currentVersionId={currentVersionId}
-          onCreate={newNote => setNotes([newNote, ...notes])}
+          onCreate={addNote}
         />
         <hr />
       </IfLoggedIn>
@@ -65,8 +56,8 @@ export const RecipeNotes = ({
             key={n.id}
             note={n}
             versionLink={versionLink}
-            onDelete={removeNote(n.id)}
-            onChange={editNote(n.id)}
+            onDelete={() => removeNote(n.id)}
+            onChange={editNote}
           />
         )
       })}

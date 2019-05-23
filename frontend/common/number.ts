@@ -1,7 +1,12 @@
-export function maybeNumber(x: string | undefined): number | undefined {
+export function maybeNumber(
+  x: number | string | undefined
+): number | undefined {
   if (!x) {
     return undefined
   }
-  const n = parseInt(x, 10)
-  return isFinite(n) ? n : undefined
+  const n = typeof x === 'number' ? x : parseInt(x, 10)
+  if (isFinite(n)) {
+    return n
+  }
+  return undefined
 }

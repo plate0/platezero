@@ -20,6 +20,7 @@ import {
 import getConfig from 'next/config'
 import { RecipeJSON } from '../models/recipe'
 import { UserContext } from '../context/UserContext'
+import { RecipeContext } from '../context/RecipeContext'
 import { getErrorMessages, api } from '../common/http'
 import { IfLoggedIn } from './IfLoggedIn'
 import { AlertErrors } from './AlertErrors'
@@ -28,19 +29,13 @@ import { PrintButton } from './PrintButton'
 import { ShareButton } from './ShareButton'
 const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
-export const RecipeNav = ({
-  recipe,
-  versionId,
-  noteCount,
-  route
-}: {
-  recipe: RecipeJSON
-  versionId?: number
-  noteCount: number
-  route: string
-}) => {
+export const RecipeNav = ({ route }: { route: string }) => {
+  const { recipe, explicitVersionId, notes } = useContext(RecipeContext)
+  const noteCount = notes.length
   const baseURL = `/${recipe.owner.username}/${recipe.slug}`
-  const versionURL = versionId ? `${baseURL}/versions/${versionId}` : baseURL
+  const versionURL = explicitVersionId
+    ? `${baseURL}/versions/${explicitVersionId}`
+    : baseURL
   return (
     <Nav className="mb-3 d-print-none recipe-nav">
       <NavItem active={route === '/recipe'}>

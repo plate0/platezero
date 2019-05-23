@@ -1,28 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import { Note } from './Note'
-import { NoteJSON, RecipeJSON } from '../models'
+import { NoteJSON } from '../models'
+import { RecipeContext } from '../context/RecipeContext'
 
-export const PinnedNotes = ({
-  notes: initialNotes,
-  currentVersionId,
-  recipe
-}: {
-  notes: NoteJSON[]
-  currentVersionId: number
-  recipe: RecipeJSON
-}) => {
-  const [notes, setNotes] = useState(initialNotes)
-
-  const removeNote = (id: number) => () => {
-    setNotes(notes.filter(note => note.id !== id))
-  }
-
-  const editNote = (id: number) => (newNote: NoteJSON) => {
-    setNotes(notes.map(note => (note.id === id ? newNote : note)))
-  }
+export const PinnedNotes = () => {
+  const { recipe, viewingVersion, notes, editNote, removeNote } = useContext(
+    RecipeContext
+  )
 
   const versionLink = (n: NoteJSON) =>
-    n.recipe_version_id && n.recipe_version_id !== currentVersionId
+    n.recipe_version_id && n.recipe_version_id !== viewingVersion.id
       ? `${recipe.html_url}/versions/${n.recipe_version_id}`
       : undefined
 
@@ -35,8 +22,8 @@ export const PinnedNotes = ({
             key={n.id}
             note={n}
             versionLink={versionLink(n)}
-            onDelete={removeNote(n.id)}
-            onChange={editNote(n.id)}
+            onDelete={() => removeNote(n.id)}
+            onChange={editNote}
           />
         ))}
     </div>

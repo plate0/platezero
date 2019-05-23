@@ -1,74 +1,44 @@
 import React from 'react'
-import ErrorPage from './_error'
 import { Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
 import {
   RecipeLayout,
+  RecipeLayoutProps,
+  fetchRecipeLayoutProps,
   Timestamp,
   ProfilePicture,
   Markdown
 } from '../components'
-import { RecipeJSON, RecipeVersionJSON } from '../models'
+import { RecipeVersionJSON } from '../models'
 import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
 import { Link } from '../routes'
-import { maybeNumber } from '../common/number'
 
 interface Props {
-  recipe?: RecipeJSON
-  versionId?: number
+  layoutProps: RecipeLayoutProps
   versions?: RecipeVersionJSON[]
-  noteCount?: number
-  pathname: string
-  statusCode?: number
 }
 
 export default class RecipeHistory extends React.Component<Props> {
   static async getInitialProps({ pathname, query, res }): Promise<Props> {
+    const layoutProps = await fetchRecipeLayoutProps({ pathname, query, res })
     try {
-      const { username, slug, versionId } = query
-      const recipe = await api.getRecipe(username, slug)
-      const versions = await api.getRecipeVersions(username, slug)
-      const noteCount = (await api.getRecipeNotes(username, slug)).length
-      return {
-        recipe,
-        versionId: maybeNumber(versionId),
-        versions,
-        noteCount,
-        pathname
-      }
-    } catch (err) {
-      const statusCode = err.statusCode || 500
-      if (res) {
-        res.statusCode = statusCode
-      }
-      return { pathname, statusCode }
+      const versions = await api.getRecipeVersions(
+        layoutProps.recipe.owner.username,
+        layoutProps.recipe.slug
+      )
+      return { layoutProps, versions }
+    } catch {
+      return { layoutProps }
     }
   }
 
   public render() {
-    const {
-      recipe,
-      versionId,
-      versions,
-      noteCount,
-      pathname,
-      statusCode
-    } = this.props
-    if (statusCode) {
-      return <ErrorPage statusCode={statusCode} />
-    }
+    const { layoutProps, versions } = this.props
+    const { recipe, viewingVersion } = layoutProps
+    const { owner, slug } = recipe
     return (
-      <RecipeLayout
-        recipe={recipe}
-        title={`History of ${recipe.title} - PlateZero`}
-        description={recipe.description}
-        url={recipe.html_url}
-        pathname={pathname}
-        condensedHeader={true}
-        versionId={versionId}
-        noteCount={noteCount}
-      >
+      <RecipeLayout {...layoutProps} condensedHeader={true}>
         <ListGroup className="mb-3">
           {versions.map(v => {
             const lines = _.split(v.message, '\n\n')
@@ -79,9 +49,7 @@ export default class RecipeHistory extends React.Component<Props> {
                   <Col>
                     <div className="pb-1">
                       <Link
-                        route={`/${recipe.owner.username}/${
-                          recipe.slug
-                        }/versions/${v.id}`}
+                        route={`/${owner.username}/${slug}/versions/${v.id}`}
                       >
                         <a>{_.head(lines)}</a>
                       </Link>
@@ -102,13 +70,11 @@ export default class RecipeHistory extends React.Component<Props> {
                     )}
                   </Col>
                   <Col xs="auto" className="ml-auto">
-                    {v.id === versionId ? (
+                    {v.id === viewingVersion.id ? (
                       <span className="text-success">currently viewing</span>
                     ) : (
                       <Link
-                        route={`/${recipe.owner.username}/${
-                          recipe.slug
-                        }/versions/${v.id}`}
+                        route={`/${owner.username}/${slug}/versions/${v.id}`}
                       >
                         <a className="btn btn-outline-primary">Show Version</a>
                       </Link>

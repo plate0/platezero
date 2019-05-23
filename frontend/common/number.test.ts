@@ -1,16 +1,24 @@
 import { maybeNumber } from './number'
 
 describe('maybeNumber', () => {
-  test('zero', () => {
+  test('zero string', () => {
     expect(maybeNumber('0')).toEqual(0)
   })
 
-  test('positive', () => {
+  test('positive string', () => {
     expect(maybeNumber('50')).toEqual(50)
   })
 
-  test('negative', () => {
+  test('negative string', () => {
     expect(maybeNumber('-50')).toEqual(-50)
+  })
+
+  test('negative number', () => {
+    expect(maybeNumber(-50)).toEqual(-50)
+  })
+
+  test('positive number', () => {
+    expect(maybeNumber(50)).toEqual(50)
   })
 
   test('empty string', () => {
@@ -23,5 +31,13 @@ describe('maybeNumber', () => {
 
   test('null', () => {
     expect(maybeNumber(null)).toBeUndefined()
+  })
+
+  test('nan', () => {
+    expect(maybeNumber(NaN)).toBeUndefined()
+  })
+
+  test('infinity', () => {
+    expect(maybeNumber(Infinity)).toBeUndefined()
   })
 })
