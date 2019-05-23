@@ -7871,7 +7871,7 @@ realpath-native@^1.1.0:
   dependencies:
     util.promisify "^1.0.0"
 
-"recipe-parser@https://github.com/plate0/recipe-parser#master":
+"recipe-parser@https://github.com/plate0/recipe-parser#v0.1.0":
   version "0.1.0"
   resolved "https://github.com/plate0/recipe-parser#26c12c4092965ebd63f1dc32fe4f4ee184018f15"
   dependencies:
