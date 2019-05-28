@@ -42,6 +42,10 @@ r.post('/url', async function importUrl(req: AuthenticatedRequest, res) {
           : recipe
       )
   } catch (err) {
+    // TODO: Export recipe error
+    if (err.recipe) {
+      return res.status(HttpStatus.UnprocessableEntity).json(err.recipe)
+    }
     return internalServerError(res, err)
   }
 })
