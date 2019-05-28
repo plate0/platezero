@@ -62,7 +62,7 @@
     "react-share": "2.4.0",
     "react-textarea-autosize": "7.1.0",
     "reactstrap": "7.1.0",
-    "recipe-parser": "https://github.com/plate0/recipe-parser#v0.3.0",
+    "recipe-parser": "https://github.com/plate0/recipe-parser#v0.3.1",
     "reflect-metadata": "0.1.13",
     "sequelize": "4.43.0",
     "sequelize-typescript": "0.6.10",

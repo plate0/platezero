@@ -7871,9 +7871,9 @@ realpath-native@^1.1.0:
   dependencies:
     util.promisify "^1.0.0"
 
-"recipe-parser@https://github.com/plate0/recipe-parser#v0.3.0":
-  version "0.3.0"
-  resolved "https://github.com/plate0/recipe-parser#37a55814e64f2740dbcd5dcd874e98b81cd5c820"
+"recipe-parser@https://github.com/plate0/recipe-parser#v0.3.1":
+  version "0.3.1"
+  resolved "https://github.com/plate0/recipe-parser#35cd3a1f4858ac8df3968140e8a1133e900e9f09"
   dependencies:
     axios "0.18.0"
     cheerio "1.0.0-rc.3"
