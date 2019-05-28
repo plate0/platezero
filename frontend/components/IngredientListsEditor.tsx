@@ -23,7 +23,7 @@ export function IngredientListsEditor(props: Props) {
       dataToText={ingredientListsToText}
       textToData={parseIngredientLists}
       placeholder={`1 clove of garlic -- minced\n1 1/2 c water\nmayonaise (optional)\nsalt and pepper to taste`}
-      preview={lists => <IngredientLists lists={lists} highlight={true} />}
+      preview={lists => <IngredientLists lists={lists} />}
       onChange={props.onChange}
       differ={changesBetween}
       minHeight="7rem"

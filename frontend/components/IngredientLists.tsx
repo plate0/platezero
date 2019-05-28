@@ -3,37 +3,24 @@ import React from 'react'
 import { IngredientListJSON, IngredientLineJSON } from '../models'
 import { Amount } from './Amount'
 
-const IngredientListLine = ({
-  line,
-  highlight
-}: {
-  line: IngredientLineJSON
-  highlight: boolean
-}) => {
+const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   const parts = []
   if (line.quantity_numerator && line.quantity_denominator) {
     parts.push(
-      <Amount
-        className={highlight ? 'text-success' : ''}
-        numerator={line.quantity_numerator}
-        denominator={line.quantity_denominator}
-      />
+      <abbr title="recognized amount">
+        <Amount
+          numerator={line.quantity_numerator}
+          denominator={line.quantity_denominator}
+        />
+      </abbr>
     )
   }
   if (line.unit) {
-    parts.push(
-      <span className={highlight ? 'text-success' : ''}>{line.unit}</span>
-    )
+    parts.push(<abbr title="recognized unit of measure">{line.unit}</abbr>)
   }
-  if (line.preparation && !highlight) {
-    parts.push(line.name + ';')
-  } else {
-    parts.push(line.name)
-  }
+  parts.push(line.name)
   if (line.preparation) {
-    parts.push(
-      <span className={highlight ? 'text-info' : ''}>{line.preparation}</span>
-    )
+    parts.push(<span className="text-info">{line.preparation}</span>)
   }
   if (line.optional) {
     parts.push(<span className="badge badge-info">Optional</span>)
@@ -47,33 +34,21 @@ const IngredientListLine = ({
   )
 }
 
-const IngredientList = ({
-  list,
-  highlight
-}: {
-  list: IngredientListJSON
-  highlight: boolean
-}) => (
+const IngredientList = ({ list }: { list: IngredientListJSON }) => (
   <>
     {list.name && <p className="font-weight-bold border-bottom">{list.name}</p>}
     <ul className="list-unstyled">
       {list.lines.map((line, key) => (
-        <IngredientListLine key={key} line={line} highlight={highlight} />
+        <IngredientListLine key={key} line={line} />
       ))}
     </ul>
   </>
 )
 
-export const IngredientLists = ({
-  lists,
-  highlight
-}: {
-  lists: IngredientListJSON[]
-  highlight?: boolean
-}) => (
+export const IngredientLists = ({ lists }: { lists: IngredientListJSON[] }) => (
   <>
     {lists.map((list, key) => (
-      <IngredientList list={list} key={key} highlight={!!highlight} />
+      <IngredientList list={list} key={key} />
     ))}
   </>
 )
