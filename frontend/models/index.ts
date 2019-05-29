@@ -20,6 +20,7 @@ import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { RecipeYield } from './recipe_yield'
 import { RefreshToken } from './refresh_token'
 import { User } from './user'
+import { UserActivity } from './user_activity'
 import { config } from '../server/config'
 
 export const sequelize = new Sequelize({
@@ -50,7 +51,8 @@ sequelize.addModels([
   RecipeVersionProcedureList,
   RecipeYield,
   RefreshToken,
-  User
+  User,
+  UserActivity
 ])
 
 export const OrderDirections = {
@@ -88,3 +90,4 @@ export * from './recipe_version_procedure_list'
 export * from './recipe_yield'
 export * from './refresh_token'
 export * from './user'
+export * from './user_activity'

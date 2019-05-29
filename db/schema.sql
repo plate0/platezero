@@ -135,6 +135,12 @@ CREATE TABLE recipes (
 );
 CREATE UNIQUE INDEX ON recipes (user_id, lower(slug));
 
+CREATE TABLE user_activity (
+  date date NOT NULL,
+  user_id integer NOT NULL,
+  UNIQUE(date, user_id)
+);
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username character varying UNIQUE NOT NULL,
@@ -220,3 +226,4 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_
 ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE user_activity ADD FOREIGN KEY (user_id) REFERENCES users (id);

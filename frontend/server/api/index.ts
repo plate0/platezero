@@ -3,9 +3,8 @@ import * as _ from 'lodash'
 import * as jwtMiddleware from 'express-jwt'
 import { users } from './users'
 import { user } from './user'
-import { User } from '../../models/user'
+import { RefreshToken, User, UserActivity } from '../../models'
 import { search } from './search'
-import { RefreshToken } from '../../models'
 import { config } from '../config'
 import {
   unauthorized,
@@ -35,6 +34,16 @@ r.use(
     }
   })
 )
+
+r.use(async function recordUserActivity(req, _res, next) {
+  const u = (req as any).user
+  if (u) {
+    try {
+      await UserActivity.record(u.userId)
+    } catch {}
+  }
+  next()
+})
 
 r.use((err, _req, res, next) => {
   if (err && err.name === 'UnauthorizedError') {
