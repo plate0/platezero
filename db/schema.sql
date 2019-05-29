@@ -138,6 +138,7 @@ CREATE UNIQUE INDEX ON recipes (user_id, lower(slug));
 CREATE TABLE shopping_lists (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
+  user_id INT NOT NULL,
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone
@@ -151,12 +152,6 @@ CREATE TABLE shopping_list_items (
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone
-);
-
-CREATE TABLE shopping_lists_users (
-  shopping_list_id INT NOT NULL,
-  user_id INT NOT NULL,
-  owner boolean NOT NULL
 );
 
 CREATE TABLE users (
@@ -244,7 +239,5 @@ ALTER TABLE recipe_versions ADD FOREIGN KEY (recipe_yield_id) REFERENCES recipe_
 ALTER TABLE recipe_versions ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);
-
+ALTER TABLE shopping_lists ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE shopping_list_items ADD FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists (id);
-ALTER TABLE shopping_lists_users ADD FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists (id);
-ALTER TABLE shopping_lists_users ADD FOREIGN KEY (user_id) REFERENCES users (id);
