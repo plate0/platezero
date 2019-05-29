@@ -76,37 +76,108 @@ function procedureLineToText(line: ProcedureLineJSON): string {
   return text
 }
 
-function parseProcedureLists(text: string): ProcedureListJSON[] {
+export function parseProcedureLists(text: string): ProcedureListJSON[] {
+  const IMG_PREFIX = 'image:'
+  const HEADER_PREFIX = '#'
   const lines = _.split(text, '\n')
   return _.reduce(
     lines,
     (acc, line) => {
-      line = _.trim(line)
-      if (_.size(acc) === 0) {
-        acc.push({ name: undefined, lines: [] })
+      // skip blank lines
+      if (_.trim(line) === '') {
+        return acc
       }
-      const section = _.last(acc)
-      if (_.startsWith(line, '#')) {
-        const name = line.substring(1)
-        if (section.name) {
-          acc.push({ name, lines: [] })
-        } else {
-          section.name = name
-        }
-      } else if (_.trim(line) !== '') {
-        let lastLine = _.last(section.lines) as ProcedureLineJSON
-        if (!lastLine || lastLine.text) {
-          lastLine = { image_url: undefined, text: undefined, title: undefined }
-          section.lines.push(lastLine)
-        }
-        if (_.startsWith(line, 'image: ')) {
-          lastLine.image_url = line.substring(7)
-        } else {
-          lastLine.text = _.trim(line)
-        }
+
+      // add a new section if it's a header
+      if (_.startsWith(line, HEADER_PREFIX)) {
+        const name = getSuffix(HEADER_PREFIX, line)
+        acc.push({ name, lines: [] })
+        return acc
       }
+
+      // images are the start of a new line
+      if (_.startsWith(line, IMG_PREFIX)) {
+        const section = getOrCreateSection(acc)
+        const image_url = getSuffix(IMG_PREFIX, line)
+        section.lines.push({ image_url, text: undefined, title: undefined })
+        return acc
+      }
+
+      // figure the previous line, if any
+      const lastLine = getLastLine(acc)
+
+      // if there's a previous line with only an image, then this line is the
+      // text for it
+      if (lastLine && !lastLine.text) {
+        lastLine.text = line
+        return acc
+      }
+
+      // special case: should we join this text with the previous line?
+      if (shouldJoin(lastLine, line)) {
+        lastLine.text += '\n' + line
+        return acc
+      }
+
+      // add a new line
+      // if we don't already have a section, create one for the new line
+      const section = getOrCreateSection(acc)
+      section.lines.push({
+        text: line,
+        title: undefined,
+        image_url: undefined
+      })
+
       return acc
     },
     []
   )
+}
+
+// given a possibly-empty list of possibly-empty sections, return the last line
+// of the last section, or undefined if it does not exist
+function getLastLine(
+  sections: ProcedureListJSON[]
+): ProcedureLineJSON | undefined {
+  const section = _.last(sections)
+  if (!section) {
+    return undefined
+  }
+  return _.last(section.lines)
+}
+
+// given a possibly-empty list of sections, return the last section or a newly
+// created one
+function getOrCreateSection(sections: ProcedureListJSON[]) {
+  const existingSection = _.last(sections)
+  if (existingSection) {
+    return existingSection
+  }
+  const section = { name: undefined, lines: [] }
+  sections.push(section)
+  return section
+}
+
+// check whether we are in the middle of a table (previous line ends with | and
+// current line starts with |)
+function isInTable(lastLine: ProcedureLineJSON | undefined, currLine: string) {
+  return Boolean(
+    lastLine && _.endsWith(lastLine.text, '|') && _.startsWith(currLine, '|')
+  )
+}
+
+// check whether a line ends in a line break (two spaces)
+function hasLineBreak(line: ProcedureLineJSON | undefined) {
+  return Boolean(line && _.endsWith(line.text, '  '))
+}
+
+// check whether the current line text should be joined into the previous line,
+// such as is the case when the previous line ends with a break
+function shouldJoin(lastLine: ProcedureLineJSON | undefined, currLine: string) {
+  return isInTable(lastLine, currLine) || hasLineBreak(lastLine)
+}
+
+// given a prefix and a line, get the rest of the line
+function getSuffix(prefix: string, line: string) {
+  return _.trim(line.substring(prefix.length))
 }
