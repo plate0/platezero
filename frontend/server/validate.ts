@@ -172,3 +172,16 @@ export const validateRecipeSearch = validator(
   },
   requestQueryGetter
 )
+
+export const validateShoppingListPostPatch = validator({
+  name: Joi.string().required()
+})
+
+export const validateShoppingListItemPost = validator({
+  name: Joi.string().required()
+})
+
+export const validateShoppingListItemPatch = validator({
+  name: Joi.string(),
+  completed: Joi.boolean()
+})

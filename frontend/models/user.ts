@@ -16,6 +16,7 @@ import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
 import { RefreshToken } from './refresh_token'
 import { Recipe, RecipeJSON } from './recipe'
+import { ShoppingList } from './shopping_list'
 import { config } from '../server/config'
 
 export interface UserJSON {
@@ -84,6 +85,9 @@ export class User extends Model<User> implements UserJSON {
 
   @HasMany(() => RefreshToken)
   public refresh_tokens: RefreshToken[]
+
+  @HasMany(() => ShoppingList)
+  public shoppingLists: ShoppingList[]
 
   @Column(DataType.VIRTUAL)
   public get url(): string {

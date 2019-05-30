@@ -1,6 +1,4 @@
-import { randomBytes } from 'crypto'
 import {
-  Default,
   AllowNull,
   AutoIncrement,
   BelongsTo,
@@ -9,17 +7,22 @@ import {
   Model,
   PrimaryKey,
   Table,
-  Unique,
   CreatedAt,
   UpdatedAt,
   DeletedAt
 } from 'sequelize-typescript'
-import { User } from './user'
+import { ShoppingList } from './shopping_list'
+
+export interface ShoppingListItemJSON {
+  id?: number
+  name: string
+  completed: boolean
+}
 
 @Table({
-  tableName: 'refresh_tokens'
+  tableName: 'shopping_list_items'
 })
-export class RefreshToken extends Model<RefreshToken> {
+export class ShoppingListItem extends Model<ShoppingListItem> {
   @AutoIncrement
   @PrimaryKey
   @Column
@@ -27,16 +30,15 @@ export class RefreshToken extends Model<RefreshToken> {
 
   @AllowNull(false)
   @Column
-  @ForeignKey(() => User)
-  public user_id: number
+  @ForeignKey(() => ShoppingList)
+  public shopping_list_id: number
 
   @AllowNull(false)
-  @Unique
-  @Default(() => randomBytes(64).toString('hex'))
   @Column
-  public token: string
+  public name: string
 
-  @Column public last_used: Date
+  @Column
+  public completed: boolean
 
   @Column
   @CreatedAt
@@ -50,6 +52,6 @@ export class RefreshToken extends Model<RefreshToken> {
   @DeletedAt
   public deleted_at: Date
 
-  @BelongsTo(() => User)
-  public user: User
+  @BelongsTo(() => ShoppingList)
+  public shoppingList: ShoppingList
 }
