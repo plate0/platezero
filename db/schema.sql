@@ -154,6 +154,12 @@ CREATE TABLE shopping_list_items (
   deleted_at timestamp without time zone
 );
 
+CREATE TABLE user_activity (
+  date date NOT NULL,
+  user_id integer NOT NULL,
+  UNIQUE(date, user_id)
+);
+
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username character varying UNIQUE NOT NULL,
@@ -241,3 +247,4 @@ ALTER TABLE recipes ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE shopping_lists ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE shopping_list_items ADD FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists (id);
+ALTER TABLE user_activity ADD FOREIGN KEY (user_id) REFERENCES users (id);

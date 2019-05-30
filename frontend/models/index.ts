@@ -22,6 +22,7 @@ import { RefreshToken } from './refresh_token'
 import { ShoppingList } from './shopping_list'
 import { ShoppingListItem } from './shopping_list_item'
 import { User } from './user'
+import { UserActivity } from './user_activity'
 import { config } from '../server/config'
 
 export const sequelize = new Sequelize({
@@ -54,7 +55,8 @@ sequelize.addModels([
   RefreshToken,
   ShoppingList,
   ShoppingListItem,
-  User
+  User,
+  UserActivity
 ])
 
 export const OrderDirections = {
@@ -94,3 +96,4 @@ export * from './refresh_token'
 export * from './shopping_list'
 export * from './shopping_list_item'
 export * from './user'
+export * from './user_activity'
