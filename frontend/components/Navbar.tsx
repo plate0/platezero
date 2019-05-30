@@ -75,9 +75,7 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
 const NewRecipeDropdown = () => (
   <>
     <Link route="shopping">
-      <a className="add-recipe text-white btn btn-link" id="add-recipe">
-        Shopping Lists
-      </a>
+      <a className="text-white btn btn-link">Shopping</a>
     </Link>
     <Link route="new-recipe">
       <a className="add-recipe text-white btn btn-link" id="add-recipe">

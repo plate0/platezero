@@ -11,7 +11,12 @@ import {
   ShoppingListJSON,
   ShoppingListItemJSON
 } from '../models'
-import { PostRecipe, RecipeVersionPatch, NotePatch } from './request-models'
+import {
+  PostRecipe,
+  RecipeVersionPatch,
+  NotePatch,
+  ShoppingListItemPatch
+} from './request-models'
 import { HttpStatus } from './http-status'
 import { get } from 'lodash'
 import { getAuth } from './auth'
@@ -327,7 +332,7 @@ class Api {
   patchShoppingListItem = (
     listId: number,
     id: number,
-    body: any,
+    body: ShoppingListItemPatch,
     opts: RequestInit = {}
   ) =>
     this._fetch<ShoppingListItemJSON>(`/shopping/list/${listId}/item/${id}`, {

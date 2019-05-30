@@ -36,3 +36,8 @@ export interface NotePatch {
   pinned?: boolean
   text?: string
 }
+
+export interface ShoppingListItemPatch {
+  name?: string
+  completed?: boolean
+}

@@ -50,7 +50,6 @@ r.use(
   '/shopping',
   (req, res, next) => {
     const { user } = req as any
-    console.log('SHOPPING FIRST STOP', user)
     if (!user) {
       return unauthorized(res)
     }
