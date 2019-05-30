@@ -6,7 +6,10 @@ import {
   Column,
   Model,
   PrimaryKey,
-  Table
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt
 } from 'sequelize-typescript'
 import { ShoppingList } from './shopping_list'
 
@@ -37,11 +40,17 @@ export class ShoppingListItem extends Model<ShoppingListItem> {
   @Column
   public completed: boolean
 
-  @Column public created_at: Date
+  @Column
+  @CreatedAt
+  public created_at: Date
 
-  @Column public updated_at: Date
+  @Column
+  @UpdatedAt
+  public updated_at: Date
 
-  @Column public deleted_at: Date
+  @Column
+  @DeletedAt
+  public deleted_at: Date
 
   @BelongsTo(() => ShoppingList)
   public shoppingList: ShoppingList

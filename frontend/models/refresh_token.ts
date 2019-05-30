@@ -9,7 +9,10 @@ import {
   Model,
   PrimaryKey,
   Table,
-  Unique
+  Unique,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt
 } from 'sequelize-typescript'
 import { User } from './user'
 
@@ -35,11 +38,17 @@ export class RefreshToken extends Model<RefreshToken> {
 
   @Column public last_used: Date
 
-  @Column public created_at: Date
+  @Column
+  @CreatedAt
+  public created_at: Date
 
-  @Column public updated_at: Date
+  @Column
+  @UpdatedAt
+  public updated_at: Date
 
-  @Column public deleted_at: Date
+  @Column
+  @DeletedAt
+  public deleted_at: Date
 
   @BelongsTo(() => User)
   public user: User

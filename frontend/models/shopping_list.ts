@@ -8,7 +8,10 @@ import {
   HasMany,
   PrimaryKey,
   Table,
-  Unique
+  Unique,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt
 } from 'sequelize-typescript'
 import { User } from './user'
 import { ShoppingListItem, ShoppingListItemJSON } from './shopping_list_item'
@@ -38,11 +41,17 @@ export class ShoppingList extends Model<ShoppingList> {
   @Column
   public name: string
 
-  @Column public created_at: Date
+  @Column
+  @CreatedAt
+  public created_at: Date
 
-  @Column public updated_at: Date
+  @Column
+  @UpdatedAt
+  public updated_at: Date
 
-  @Column public deleted_at: Date
+  @Column
+  @DeletedAt
+  public deleted_at: Date
 
   @BelongsTo(() => User)
   public user: User
