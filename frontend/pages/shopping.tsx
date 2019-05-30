@@ -2,7 +2,12 @@ import * as React from 'react'
 import * as _ from 'lodash'
 import ErrorPage from './_error'
 import Head from 'next/head'
-import { Layout, ShoppingLists as Shopping, ShoppingList } from '../components'
+import {
+  Blankslate,
+  Layout,
+  ShoppingLists as Shopping,
+  ShoppingList
+} from '../components'
 import { Button, Row, Col } from 'reactstrap'
 import { api } from '../common/http'
 import { ShoppingListJSON, ShoppingListItemJSON, UserJSON } from '../models'
@@ -130,24 +135,48 @@ class ShoppingLists extends React.Component<
         <Head>
           <title>Shopping Lists - PlateZero</title>
         </Head>
-        <Row className="mt-3">
-          <Col className={id ? 'd-none d-md-block' : ''} xs="12" md="4" lg="3">
-            <div className="d-flex align-items-center justify-content-between">
-              <h2 className="mb-0">Lists</h2>
-              <Button color="link" onClick={this.addList}>
-                <i className="far fa-plus" />
-              </Button>
-            </div>
-            <Shopping lists={_.values(lists)} />
-          </Col>
-          <Col className={!id ? 'd-none d-md-block' : ''} xs="12" md="8" lg="9">
-            <ShoppingList
-              list={active}
-              add={this.addListItem}
-              complete={this.completeListItem}
-            />
-          </Col>
-        </Row>
+        {_.size(lists) === 0 && (
+          <Row className="mt-3">
+            <Col xs="12">
+              <Blankslate>
+                <h2>No Shopping Lists</h2>
+                <Button color="primary" onClick={this.addList}>
+                  Create List
+                </Button>
+              </Blankslate>
+            </Col>
+          </Row>
+        )}
+        {_.size(lists) > 0 && (
+          <Row className="mt-3">
+            <Col
+              className={id ? 'd-none d-md-block' : ''}
+              xs="12"
+              md="4"
+              lg="3"
+            >
+              <div className="d-flex align-items-center justify-content-between">
+                <h2 className="mb-0">Lists</h2>
+                <Button color="link" onClick={this.addList}>
+                  <i className="far fa-plus" />
+                </Button>
+              </div>
+              <Shopping lists={_.values(lists)} />
+            </Col>
+            <Col
+              className={!id ? 'd-none d-md-block' : ''}
+              xs="12"
+              md="8"
+              lg="9"
+            >
+              <ShoppingList
+                list={active}
+                add={this.addListItem}
+                complete={this.completeListItem}
+              />
+            </Col>
+          </Row>
+        )}
       </Layout>
     )
   }

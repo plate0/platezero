@@ -29,7 +29,7 @@ export const ShoppingList = ({ list, add, complete }: ShoppingListProps) => (
           <Input
             type="checkbox"
             checked={item.completed}
-            onClick={() => complete(list, item, key)}
+            onChange={() => complete(list, item, key)}
           />{' '}
           {item.name}
         </ListGroupItem>
