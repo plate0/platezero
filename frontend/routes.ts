@@ -3,6 +3,15 @@ const nextroutes = require('next-routes')
 export const routes: any = nextroutes()
   .add('login')
   .add('register')
+  .add({
+    name: 'shopping',
+    pattern: '/shopping'
+  })
+  .add({
+    name: 'shopping-list',
+    pattern: '/shopping/:id',
+    page: 'shopping'
+  })
   .add('user', '/:username')
   .add('new-recipe', '/recipe/new')
   .add('new-recipe-text', '/recipe/new/text')

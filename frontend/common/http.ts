@@ -7,7 +7,9 @@ import {
   RecipeJSON,
   RecipeVersionJSON,
   NoteJSON,
-  RecipeSearchDocumentJSON
+  RecipeSearchDocumentJSON,
+  ShoppingListJSON,
+  ShoppingListItemJSON
 } from '../models'
 import { PostRecipe, RecipeVersionPatch, NotePatch } from './request-models'
 import { HttpStatus } from './http-status'
@@ -297,6 +299,42 @@ class Api {
 
   deleteNote = (id: number, opts: RequestInit = {}) =>
     this._fetch(`/user/notes/${id}`, { ...opts, method: 'DELETE' })
+
+  getShoppingLists = (opts: RequestInit = {}) =>
+    this._fetch<ShoppingListJSON[]>(`/shopping/lists`, opts)
+
+  getShoppingList = (id: number, opts: RequestInit = {}) =>
+    this._fetch<ShoppingListJSON>(`/shopping/list/${id}`, opts)
+
+  createShoppingList = (name: string, opts: RequestInit = {}) =>
+    this._fetch<ShoppingListJSON>(`/shopping/list`, {
+      ...opts,
+      body: JSON.stringify({ name }),
+      method: 'POST'
+    })
+
+  createShoppingListItem = (
+    listId: number,
+    name: string,
+    opts: RequestInit = {}
+  ) =>
+    this._fetch<ShoppingListItemJSON>(`/shopping/list/${listId}/item`, {
+      ...opts,
+      body: JSON.stringify({ name }),
+      method: 'POST'
+    })
+
+  patchShoppingListItem = (
+    listId: number,
+    id: number,
+    body: any,
+    opts: RequestInit = {}
+  ) =>
+    this._fetch<ShoppingListItemJSON>(`/shopping/list/${listId}/item/${id}`, {
+      ...opts,
+      body: JSON.stringify(body),
+      method: 'PATCH'
+    })
 }
 
 export const api = new Api()

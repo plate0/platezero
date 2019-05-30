@@ -26,11 +26,10 @@ interface AppState {
 
 export default class PlateZeroApp extends App<AppProps, AppState> {
   static async getInitialProps({ Component, ctx }) {
+    api.loadAuth(ctx)
     const pageProps = Component.getInitialProps
       ? await Component.getInitialProps(ctx)
       : {}
-
-    api.loadAuth(ctx)
     return {
       user: ctx.req ? await currentUser() : undefined,
       pageProps

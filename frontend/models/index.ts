@@ -19,6 +19,8 @@ import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { RecipeYield } from './recipe_yield'
 import { RefreshToken } from './refresh_token'
+import { ShoppingList } from './shopping_list'
+import { ShoppingListItem } from './shopping_list_item'
 import { User } from './user'
 import { config } from '../server/config'
 
@@ -50,6 +52,8 @@ sequelize.addModels([
   RecipeVersionProcedureList,
   RecipeYield,
   RefreshToken,
+  ShoppingList,
+  ShoppingListItem,
   User
 ])
 
@@ -87,4 +91,6 @@ export * from './recipe_version_ingredient_list'
 export * from './recipe_version_procedure_list'
 export * from './recipe_yield'
 export * from './refresh_token'
+export * from './shopping_list'
+export * from './shopping_list_item'
 export * from './user'

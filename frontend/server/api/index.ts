@@ -5,6 +5,7 @@ import { users } from './users'
 import { user } from './user'
 import { User } from '../../models/user'
 import { search } from './search'
+import { shopping } from './shopping'
 import { RefreshToken } from '../../models'
 import { config } from '../config'
 import {
@@ -45,6 +46,18 @@ r.use((err, _req, res, next) => {
 
 r.use('/users', users)
 r.use('/search', search)
+r.use(
+  '/shopping',
+  (req, res, next) => {
+    const { user } = req as any
+    console.log('SHOPPING FIRST STOP', user)
+    if (!user) {
+      return unauthorized(res)
+    }
+    next()
+  },
+  shopping
+)
 
 // the /user path represents the _currently authenticated_ user. this is where
 // things like changing passwords, creating recipes, etc happen. so in this
