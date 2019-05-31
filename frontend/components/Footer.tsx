@@ -15,24 +15,14 @@ export const Footer = () => (
   <footer className="text-muted bg-light mt-auto d-print-none py-5 d-none d-md-block">
     <Container>
       <ul className="list-unstyled d-flex align-items-center justify-content-between mb-0">
-        <li>
-          <a href="mailto:bugs@platezero.com">
-            <i className="fal fa-bug fa-fw mr-2" />
-            Report a bug
-          </a>
-        </li>
-        <li>
-          <a href="mailto:hello@platezero.com">
-            <i className="fal fa-envelope fa-fw mr-2" />
-            Contact us
-          </a>
-        </li>
-        <li>
-          <a href="https://blog.platezero.com" target="_blank">
-            <i className="fal fa-rss fa-fw mr-2" />
-            Blog
-          </a>
-        </li>
+        {FooterLinks.map(l => (
+          <li key={l.name}>
+            <a href={l.link}>
+              <i className={`fal ${l.icon} fa-fw mr-2`} />
+              {l.name}
+            </a>
+          </li>
+        ))}
       </ul>
     </Container>
     <style jsx>

@@ -16,7 +16,13 @@ import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
 import { logout } from '../common'
 
-export const Navbar = ({ mobileMenuOpen }) => {
+export interface NavbarProps {
+  title: string
+  root: boolean
+  back: any
+}
+
+export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
   const { user } = useContext(UserContext)
   return (
     <RsNavbar
@@ -27,21 +33,32 @@ export const Navbar = ({ mobileMenuOpen }) => {
       style={{ zIndex: 1 }}
     >
       <Container>
-        <Button
-          className="py-0 text-white d-block d-md-none"
-          color="link"
-          onClick={mobileMenuOpen}
-          style={{ fontSize: '1.5rem' }}
-        >
-          <i className="far fa-bars" />
-        </Button>
+        {root && (
+          <Button
+            className="py-0 text-white d-block d-md-none"
+            color="link"
+            onClick={mobileMenuOpen}
+          >
+            <i style={{ fontSize: '1.5rem' }} className="far fa-bars" />
+          </Button>
+        )}
+        {!root && (
+          <Button
+            className="pl-0 py-0 text-white d-md-none d-flex align-items-center link-never-underline"
+            color="link"
+            onClick={back}
+          >
+            <i className="far fa-chevron-left mr-2" />
+            Back
+          </Button>
+        )}
         <Link route={user ? `/${user.username}` : '/'}>
           <a className="navbar-brand py-0 d-none d-md-block">
             <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
           </a>
         </Link>
         <div className="title text-white d-block d-md-none flex-fill text-center">
-          Ethan Mick
+          {title}
         </div>
         <Nav className="ml-auto align-items-center" navbar>
           {user && <NewRecipeDropdown />}

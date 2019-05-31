@@ -16,6 +16,7 @@ export const MobileMenu = ({
   const { user } = useContext(UserContext)
   const NavRoutes = [
     { name: 'Recipes', route: 'user', params: { username: user.username } },
+    { name: 'Add Recipe', route: 'new-recipe' },
     { name: 'Shopping Lists', route: 'shopping' }
   ]
   const route = (route: string, params: any = {}) => () => {
@@ -52,7 +53,7 @@ export const MobileMenu = ({
       <footer className="position-absolute">
         <ul className="list-unstyled ml-4">
           {FooterLinks.map(l => (
-            <li>
+            <li key={l.name}>
               <a href={l.link} className="text-dark" target="_blank">
                 <i className={`fal ${l.icon} fa-fw mr-2`} />
                 {l.name}

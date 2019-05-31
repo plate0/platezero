@@ -32,6 +32,10 @@ $changed-base: $warning;
   text-decoration: underline;
 }
 
+.link-never-underline:hover {
+  text-decoration: none !important;
+}
+
 summary {
   color: $secondary;
 }

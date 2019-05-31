@@ -140,7 +140,7 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
     }
     const { recipes, query, sort } = this.state
     return (
-      <Layout>
+      <Layout title={getName(user)}>
         <Head>
           <title>{getName(user)} on PlateZero</title>
         </Head>
