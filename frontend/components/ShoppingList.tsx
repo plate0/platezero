@@ -1,9 +1,18 @@
 import * as React from 'react'
-import { Button, Input, ListGroup, ListGroupItem } from 'reactstrap'
+import {
+  Button,
+  Input,
+  ListGroup,
+  ListGroupItem,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from 'reactstrap'
 import { ShoppingListJSON, ShoppingListItemJSON } from '../models'
 
 export type AddItemHandler = (list: ShoppingListJSON) => any
-export type CompleteHandler = (
+export type ChangeHandler = (
   list: ShoppingListJSON,
   item: ShoppingListItemJSON,
   idx: number
@@ -12,10 +21,16 @@ export type CompleteHandler = (
 export interface ShoppingListProps {
   list: ShoppingListJSON
   add: AddItemHandler
-  complete: CompleteHandler
+  complete: ChangeHandler
+  remove: ChangeHandler
 }
 
-export const ShoppingList = ({ list, add, complete }: ShoppingListProps) => (
+export const ShoppingList = ({
+  list,
+  add,
+  complete,
+  remove
+}: ShoppingListProps) => (
   <>
     <div className="d-flex align-items-center justify-content-between">
       <h2 className="mb-0">{list.name}</h2>
@@ -25,13 +40,24 @@ export const ShoppingList = ({ list, add, complete }: ShoppingListProps) => (
     </div>
     <ListGroup flush>
       {(list.items || []).map((item, key) => (
-        <ListGroupItem key={key}>
-          <Input
+        <ListGroupItem key={key} className="d-flex align-items-center">
+          <input
+            className="mr-2"
             type="checkbox"
             checked={item.completed}
             onChange={() => complete(list, item, key)}
           />{' '}
-          {item.name}
+          <div className="flex-fill">{item.name}</div>
+          <UncontrolledDropdown>
+            <DropdownToggle color="link">
+              <i className="far fa-ellipsis-v" />
+            </DropdownToggle>
+            <DropdownMenu right>
+              <DropdownItem onClick={() => remove(list, item, key)}>
+                Delete
+              </DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
         </ListGroupItem>
       ))}
     </ListGroup>

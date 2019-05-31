@@ -340,6 +340,16 @@ class Api {
       body: JSON.stringify(body),
       method: 'PATCH'
     })
+
+  deleteShoppingListItem = (
+    listId: number,
+    id: number,
+    opts: RequestInit = {}
+  ) =>
+    this._fetch<ShoppingListItemJSON>(`/shopping/list/${listId}/item/${id}`, {
+      ...opts,
+      method: 'DELETE'
+    })
 }
 
 export const api = new Api()

@@ -124,6 +124,24 @@ class ShoppingLists extends React.Component<
     )
   }
 
+  public removeListItem = async (
+    list: ShoppingListJSON,
+    item: ShoppingListItemJSON,
+    idx: number
+  ) => {
+    this.setState(
+      s => ({
+        active: {
+          ...s.active,
+          items: _.filter(s.active.items, (_, i) => i != idx)
+        }
+      }),
+      async () => {
+        await api.deleteShoppingListItem(list.id, item.id)
+      }
+    )
+  }
+
   public render() {
     const { id, statusCode } = this.props
     const { active, lists } = this.state
@@ -173,6 +191,7 @@ class ShoppingLists extends React.Component<
                 list={active}
                 add={this.addListItem}
                 complete={this.completeListItem}
+                remove={this.removeListItem}
               />
             </Col>
           </Row>
