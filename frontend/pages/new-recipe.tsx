@@ -47,14 +47,17 @@ export default class ImportRecipe extends React.Component {
         <Head>
           <title>Add a new Recipe</title>
         </Head>
-        <h2 className="mt-5 text-center">Add a Recipe</h2>
+        <h2 className="mt-4 text-center">Add a Recipe</h2>
         <p className="lead text-center">Where will your recipe come from?</p>
         <div className="mb-3 d-flex justify-content-center align-items-center flex-wrap">
           {links.map((s, key) => (
             <Card
               key={key}
               className="m-2"
-              style={{ boxShadow: '0 0 5px rgba(0, 0, 0, 0.1) inset' }}
+              style={{
+                boxShadow: '0 0 5px rgba(0, 0, 0, 0.1) inset',
+                minWidth: 150
+              }}
             >
               <CardBody className="text-center d-relative">
                 <div className="mb-3">
@@ -72,7 +75,7 @@ export default class ImportRecipe extends React.Component {
             </Card>
           ))}
         </div>
-        <p className="mx-5 text-muted text-center">
+        <p className="mx-4 text-muted text-center">
           Want to add recipes from somewhere else, like an entire cookbook or
           many URLs? <a href="mailto:hello@platezero.com">Contact us</a> for
           help.

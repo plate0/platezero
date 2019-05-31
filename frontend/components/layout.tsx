@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container } from 'reactstrap'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
+import { MobileMenu } from './MobileMenu'
 
 export interface LayoutProps {
   fluid?: boolean
@@ -9,15 +10,25 @@ export interface LayoutProps {
   className?: string
 }
 
-export const Layout = (props: LayoutProps) => (
-  <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
-    <Navbar />
-    <Container
-      fluid={props.fluid}
-      className={`${props.className ? props.className : ''}`}
-    >
-      {props.children}
-    </Container>
-    <Footer />
-  </div>
-)
+export const Layout = (props: LayoutProps) => {
+  const [menuOpen, setMenuOpen] = useState(false)
+  return (
+    <>
+      <div
+        id="main"
+        className={`d-flex flex-column ${menuOpen ? 'blur' : ''}`}
+        style={{ minHeight: '100vh' }}
+      >
+        <Navbar mobileMenuOpen={() => setMenuOpen(true)} />
+        <Container
+          fluid={props.fluid}
+          className={`${props.className ? props.className : ''}`}
+        >
+          {props.children}
+        </Container>
+        <Footer />
+      </div>
+      <MobileMenu isOpen={menuOpen} close={() => setMenuOpen(false)} />
+    </>
+  )
+}

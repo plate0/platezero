@@ -76,3 +76,10 @@ nav .dropdown-toggle::after {
     @include gradient-bg(theme-color-level($color, $alert-bg-level));
   }
 }
+
+#main {
+  transition: filter 250ms ease-in-out;
+  &.blur {
+    filter: blur(20px);
+  }
+}
