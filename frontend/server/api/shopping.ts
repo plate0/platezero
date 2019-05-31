@@ -62,7 +62,8 @@ r.get('/list/:id', async (req: ShoppingRequest, res) => {
           user_id: req.user.id,
           id
         },
-        include: [{ model: ShoppingListItem }]
+        include: [{ model: ShoppingListItem }],
+        order: [['items', 'completed', 'ASC'], ['items', 'created_at', 'ASC']]
       })
     )
   } catch (err) {
