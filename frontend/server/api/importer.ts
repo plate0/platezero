@@ -18,6 +18,18 @@ const { slackHook } = config
 
 const r = express.Router()
 
+const { fork } = require('child_process')
+console.log('Starting shrimp process')
+const shrimp = fork(`${__dirname}/../shrimp/main`, [
+  'pipe',
+  'pipe',
+  'pipe',
+  'ipc'
+])
+shrimp.on('close', code => {
+  console.log(`shrimp process exited with code ${code}`)
+})
+
 const urlImportCounter = new prom.Counter({
   name: 'platezero_url_imports_total',
   help: 'Total number of URLs imported',
@@ -81,6 +93,13 @@ r.post('/file', upload.array('file'), async function importFile(req: any, res) {
     const mimetype = toString(file.mimetype)
     fileImportCounter.inc({ mimetype })
     fileSizeHistogram.observe({ mimetype }, file.size)
+
+    console.log('parent: sending message')
+    shrimp.send(file, null, {}, err => {
+      if (err) {
+        console.error(`Failed to send ${file.originalName} for parsing. ${err}`)
+      }
+    })
   })
   if (slackHook) {
     fetch(slackHook, {

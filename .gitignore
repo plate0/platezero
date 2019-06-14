@@ -3,3 +3,5 @@ venv
 **/*.marks
 .settings
 docs/Gemfile.lock
+node_modules/
+**/*.log
