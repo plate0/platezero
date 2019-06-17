@@ -34,6 +34,7 @@ export async function load(file: S3File): Promise<string[]> {
     await downloadFile(filePath, file.bucket, file.key)
     let text = await loadText(filePath, file.originalname)
     console.log(text)
+    fs.unlinkSync(filePath)
     return text
   } catch (err) {
     console.error(`Failed ${err}`)
