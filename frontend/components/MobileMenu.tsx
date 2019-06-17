@@ -14,6 +14,9 @@ export const MobileMenu = ({
   close: CloseHandler
 }) => {
   const { user } = useContext(UserContext)
+  if (!user) {
+    return null
+  }
   const NavRoutes = [
     { name: 'Recipes', route: 'user', params: { username: user.username } },
     { name: 'Add Recipe', route: 'new-recipe' },
@@ -65,12 +68,13 @@ export const MobileMenu = ({
       <style jsx>{`
         .mobile.menu {
           position: fixed;
-          left: ${isOpen ? 0 : -380 + 'px'};
+          left: ${isOpen ? 0 : '-100vw'};
           top: 0;
           width: 100%;
           height: 100%;
           z-index: 9999;
           transition: ease 250ms;
+          transform: translateZ(1px);
         }
 
         ul li {

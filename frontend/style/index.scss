@@ -83,6 +83,7 @@ nav .dropdown-toggle::after {
 
 #main {
   transition: filter 250ms ease-in-out;
+  filter: blur(0);
   &.blur {
     filter: blur(20px);
   }
