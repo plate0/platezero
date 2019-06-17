@@ -1,8 +1,6 @@
-const dev = require("../dev");
 
 module.exports = {
   load: async filename => {
-    dev.debug(`Loading PDF from ${filename}`);
 
     let p = new Promise((resolve, reject) => {
       var pdfReader = require("pdfreader");
@@ -12,10 +10,8 @@ module.exports = {
       var pageWidth;
       rdr.parseFileItems(filename, function(err, item) {
         if (err) {
-          dev.debug("reject");
           throw new Error(err);
         } else if (!item) {
-          dev.debug("resolve");
           resolve(transform(mapOfRows));
         } else if (item.page && item.width) {
           pageWidth = item.width;
@@ -60,7 +56,6 @@ function transform(mapOfRows) {
       return n;
     })
     .forEach(k => out.push(mapOfRows.get(k).join(" ")));
-  dev.debug(out.length);
   return unify(out);
 }
 

@@ -1,72 +1,56 @@
+import { PostRecipe } from 'common/request-models'
+
+const loader = require('./loader')
+const parser = require('./parser')
 
 async function run() {
-    log( 'Process running' )
-    let code = await processMessages()
-    log( 'Process terminating with code ${code}' )
-    process.exitCode = code 
+  log('Process running')
+  const code = await processMessages()
+  log('Process terminating with code ${code}')
+  process.exitCode = code
 }
 
 async function processMessages(): Promise<number> {
-    return new Promise<number>( async ( resolve, reject ) => {
-        try {
-            log( 'Waiting for messages' )
-            let file
-            do {
-                file = await getMessage()
-                if (file) {
-                    log( `Received message ${JSON.stringify(file)}` )
-                    let text = await loadText(file.url);
-                    const recipe = parser.parse(text);
-                    postRecipe(recipe)
-                }
-            } while ( file  )
-            resolve( 0 )
-        } catch ( err ) {
-            console.error( 'Shrimp: ' + err )
-            reject( 1 )
+  return new Promise<number>(async (resolve, reject) => {
+    try {
+      log('Waiting for messages')
+      let msg
+      do {
+        msg = await getMessage()
+        if (msg) {
+          log(`Received message ${JSON.stringify(msg, null, 2)}`)
+          try {
+            const text = await loader.load(msg.file)
+            const recipe = parser.parse(text)
+            // TODO validate
+            postRecipe(msg.user, recipe)
+          } catch (err) {
+            console.error(
+              `Failed to process ${msg.file.originalname} for user ${msg.user}`
+            )
+          }
         }
-    } )
+      } while (msg)
+      resolve(0)
+    } catch (err) {
+      console.error('Shrimp: ' + err)
+      reject(1)
+    }
+  })
 }
 
-function postRecipe(Object o) {}
+function postRecipe(_user: number, _recipe: PostRecipe) {}
 
 async function getMessage() {
-    return new Promise(( resolve, _reject ) => {
-        process.on( 'message', message => {
-            resolve( message )
-        } )
-    } )
+  return new Promise((resolve, _reject) => {
+    process.on('message', message => {
+      resolve(message)
+    })
+  })
 }
 
-function log( text ) {
-    console.log( `Shrimp: ${text}` )
+function log(text) {
+  console.log(`Shrimp: ${text}`)
 }
-
-const docx = require("./extractors/docx");
-const odt = require("./extractors/odt");
-const pdf = require("./extractors/pdf");
-const txt = require("./extractors/txt");
-const parser = require("./parser");
-
-function loadText(filename) {
-  let ext = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase(0);
-  switch (ext) {
-    case "docx":
-      return docx.load(filename);
-      break;
-    case "odt":
-      return odt.load(filename);
-      break;
-    case "pdf":
-      return pdf.load(filename);
-      break;
-    case "txt":
-      return txt.load(filename);
-      break;
-    default:
-      throw `Unsupported file type: ${ext}`;
-  }
-}
-
 
 run()

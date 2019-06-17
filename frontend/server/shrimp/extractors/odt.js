@@ -1,4 +1,3 @@
-const dev = require("../dev");
 
 module.exports = {
   load: async filename => {

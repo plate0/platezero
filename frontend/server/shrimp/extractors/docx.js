@@ -1,4 +1,3 @@
-const dev = require("../dev");
 
 module.exports = {
   load: async filename => {
@@ -16,7 +15,6 @@ module.exports = {
     $("w\\:t").each((i, el) => {
       out.push($(el).text());
     });
-    //        dev.debug(`loadDocx: ${out}`)
     return out;
   }
 };
