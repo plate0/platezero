@@ -22,11 +22,14 @@ async function processMessages(): Promise<number> {
           try {
             const text = await loader.load(msg.file)
             const recipe = parser.parse(text)
+            console.log(JSON.stringify(recipe, null, 2))
             // TODO validate
             postRecipe(msg.user, recipe)
           } catch (err) {
             console.error(
-              `Failed to process ${msg.file.originalname} for user ${msg.user}`
+              `Failed to process ${msg.file.originalname} for user ${
+                msg.user
+              }\n\t${err}`
             )
           }
         }

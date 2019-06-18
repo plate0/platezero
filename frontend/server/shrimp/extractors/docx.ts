@@ -1,6 +1,7 @@
 module.exports = {
   load: async filename => {
     const AdmZip = require('adm-zip')
+    const cheerio = require('cheerio')
     // Read document.xml from docx document
     const zip = new AdmZip(filename)
     const xml = zip.readAsText('word/document.xml')
