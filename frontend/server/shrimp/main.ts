@@ -1,7 +1,6 @@
-import { PostRecipe } from 'common/request-models'
-
 const loader = require('./loader')
 const parser = require('./parser')
+const poster = require('./poster')
 
 async function run() {
   log('Process running')
@@ -22,9 +21,9 @@ async function processMessages(): Promise<number> {
           try {
             const text = await loader.load(msg.file)
             const recipe = parser.parse(text)
-            console.log(JSON.stringify(recipe, null, 2))
+            //            console.log(JSON.stringify(recipe, null, 2))
             // TODO validate
-            postRecipe(msg.user, recipe)
+            await poster.post(recipe, msg.user)
           } catch (err) {
             console.error(
               `Failed to process ${msg.file.originalname} for user ${
@@ -41,8 +40,6 @@ async function processMessages(): Promise<number> {
     }
   })
 }
-
-function postRecipe(_user: number, _recipe: PostRecipe) {}
 
 async function getMessage() {
   return new Promise((resolve, _reject) => {
