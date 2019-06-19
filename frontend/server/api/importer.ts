@@ -95,7 +95,6 @@ r.post('/file', upload.array('file'), async function importFile(req: any, res) {
     fileSizeHistogram.observe({ mimetype }, file.size)
 
     let msg = { file: file, user: req.user.userId }
-    console.log(`Sending message ${JSON.stringify(msg, null, 2)}`)
     shrimp.send(msg, null, {}, err => {
       if (err) {
         console.error(`Failed to send ${file.originalName} for parsing. ${err}`)

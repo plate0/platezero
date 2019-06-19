@@ -1,6 +1,25 @@
 const loader = require('./loader')
 const parser = require('./parser')
 const poster = require('./poster')
+const archiver = require('./archiver')
+const v = require('./validator')
+
+interface S3File {
+  originalname: string
+  encoding: string
+  mimetype: string
+  size: number
+  bucket: string
+  key: string
+  acl: string
+  contentType: string
+  contentDisposition: string
+  storageClass: string
+  serverSideEncryption: string
+  metadata: string
+  location: string
+  etag: string
+}
 
 async function run() {
   log('Process running')
@@ -17,13 +36,21 @@ async function processMessages(): Promise<number> {
       do {
         msg = await getMessage()
         if (msg) {
-          log(`Received message ${JSON.stringify(msg, null, 2)}`)
+          log(`Received message file: ${msg.file.key}, user: ${msg.user}`)
           try {
             const text = await loader.load(msg.file)
+            log('Loaded')
             const recipe = parser.parse(text)
-            //            console.log(JSON.stringify(recipe, null, 2))
-            // TODO validate
+            log('Parsed')
+            const errors = v.validate(recipe)
+            if (errors && errors.length > 0) {
+              throw new Error('Validation failed:\n' + errors.join('\n'))
+            }
+            log('Validated')
             await poster.post(recipe, msg.user)
+            log('Posted')
+            await archiver.archive(msg.file)
+            log('Achived')
           } catch (err) {
             console.error(
               `Failed to process ${msg.file.originalname} for user ${

@@ -11,23 +11,6 @@ const odt = require('./extractors/odt')
 const pdf = require('./extractors/pdf')
 const txt = require('./extractors/txt')
 
-interface S3File {
-  originalname: string
-  encoding: string
-  mimetype: string
-  size: number
-  bucket: string
-  key: string
-  acl: string
-  contentType: string
-  contentDisposition: string
-  storageClass: string
-  serverSideEncryption: string
-  metadata: string
-  location: string
-  etag: string
-}
-
 export async function load(file: S3File): Promise<string[]> {
   const filePath = path.join(os.tmpdir(), uuidv4())
   try {
