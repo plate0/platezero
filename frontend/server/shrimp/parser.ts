@@ -238,24 +238,29 @@ function getDescription(lines: string[], cursor: Cursor): string {
   for (let i = cursor.start; i < cursor.end; ++i) {
     out.push(lines[i])
   }
-  return out.join(' ')
+  return out.length === 0 ? undefined : out.join(' ')
 }
 
 function getIngredients(w: Wisdom): IngredientListJSON[] {
-  const raw = getText(w, 'ingredients')
   const list = <IngredientListJSON>{ lines: [] }
-  raw.forEach(line => {
-    list.lines.push(parseIngredient(line))
-  })
+  const raw = getText(w, 'ingredients')
+  if (raw) {
+    raw.forEach(line => {
+      list.lines.push(parseIngredient(line))
+    })
+  }
   return [list]
 }
 
 function getMethods(w: Wisdom): ProcedureListJSON[] {
-  const raw = denumerate(getText(w, 'steps'))
   const list = <ProcedureListJSON>{ lines: [] }
-  raw.forEach(line => {
-    list.lines.push({ text: line })
-  })
+  const text = getText(w, 'steps')
+  if (text) {
+    const raw = denumerate(text)
+    raw.forEach(line => {
+      list.lines.push({ text: line })
+    })
+  }
   return [list]
 }
 
@@ -291,7 +296,7 @@ function getYield(w: Wisdom): string {
   if (lines) {
     return lines.join(' ')
   }
-  return null
+  return undefined
 }
 
 // TODO Not working

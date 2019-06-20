@@ -44,7 +44,7 @@ async function processMessages(): Promise<number> {
             log('Parsed')
             const errors = v.validate(recipe)
             if (errors && errors.length > 0) {
-              throw new Error('Validation failed:\n' + errors.join('\n'))
+              throw 'Validation failed:\n' + errors.join('\n') + '\n'
             }
             log('Validated')
             await poster.post(recipe, msg.user)
@@ -55,7 +55,7 @@ async function processMessages(): Promise<number> {
             console.error(
               `Failed to process ${msg.file.originalname} for user ${
                 msg.user
-              }\n\t${err}`
+              }\n\t${err} ${err instanceof Error ? err.stack : ''}`
             )
           }
         }
