@@ -120,7 +120,9 @@ class Wisdom {
       } else {
         next = this.lines.length
       }
+      log(e1[1].lex)
       let eos = this.endOfSection(e1[1].cursor.start)
+      log(`${e1[1].lex} ${eos} ${next}`)
       e1[1].cursor.end = eos && eos < next ? eos : next
     }
 
@@ -132,8 +134,8 @@ class Wisdom {
     this.wombats = Array.from(this.map.values())
 
     this.mindTheGaps()
-    log(`${JSON.stringify(this.wombats)}`)
-    log(`${JSON.stringify(this.gaps)}`)
+    log(this.wombats)
+    log(this.gaps)
   }
 
   mindTheGaps() {
@@ -147,9 +149,16 @@ class Wisdom {
   }
 
   endOfSection(i: number): number {
+    ++i
+    log(i)
+    while (i < this.lines.length && this.lines[i] == Section) {
+      ++i
+    }
+    log(i)
     while (i < this.lines.length && this.lines[i] != Section) {
       ++i
     }
+    log(i)
     return i < this.lines.length ? i : undefined
   }
 
@@ -356,6 +365,9 @@ function getPreheat(w: Wisdom): PreheatJSON[] {
 function getYield(w: Wisdom): string {
   const lines = getText(w, 'yield')
   if (lines) {
+    if (lines.length == 1 && /^\s*\d+\s*$/.test(lines[0])) {
+      return `Serves ${lines[0]}`
+    }
     return lines.join(' ')
   }
   return undefined
