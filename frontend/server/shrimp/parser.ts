@@ -120,7 +120,6 @@ class Wisdom {
       } else {
         next = this.lines.length
       }
-      log(e1[1].lex)
       let eos = this.endOfSection(e1[1].cursor.start)
       log(`${e1[1].lex} ${eos} ${next}`)
       e1[1].cursor.end = eos && eos < next ? eos : next
@@ -138,6 +137,20 @@ class Wisdom {
     log(this.gaps)
   }
 
+  /**
+   * Try to locate gaps between the sections
+   * e.g.
+   * Ingredients
+   *   eye of toad
+   *   wing of bat
+   * <section marker>
+   * This text has no wombat:
+   *   it's a gap!>
+   * Procedure
+   *   hubble
+   *   bubble
+   *
+   */
   mindTheGaps() {
     for (let i = 0; i < this.wombats.length; ++i) {
       const next =
@@ -148,17 +161,22 @@ class Wisdom {
     }
   }
 
-  endOfSection(i: number): number {
-    ++i
-    log(i)
+  /**
+   * Look for a section marker that
+   *   1. is not the start line
+   *   2. follows at least one line that is not a section marker
+   *
+   * @param start the index of the start line
+   * @return the index of the section marker, or undefined
+   */
+  endOfSection(start: number): number {
+    let i = start + 1
     while (i < this.lines.length && this.lines[i] == Section) {
       ++i
     }
-    log(i)
     while (i < this.lines.length && this.lines[i] != Section) {
       ++i
     }
-    log(i)
     return i < this.lines.length ? i : undefined
   }
 
