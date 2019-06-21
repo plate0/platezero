@@ -1,25 +1,10 @@
+import { log } from './common'
+
 const loader = require('./loader')
 const parser = require('./parser')
 const poster = require('./poster')
 const archiver = require('./archiver')
 const v = require('./validator')
-
-interface S3File {
-  originalname: string
-  encoding: string
-  mimetype: string
-  size: number
-  bucket: string
-  key: string
-  acl: string
-  contentType: string
-  contentDisposition: string
-  storageClass: string
-  serverSideEncryption: string
-  metadata: string
-  location: string
-  etag: string
-}
 
 async function run() {
   log('Process running')
@@ -40,6 +25,7 @@ async function processMessages(): Promise<number> {
           try {
             const text = await loader.load(msg.file)
             log('Loaded')
+            log(text)
             const recipe = parser.parse(text)
             log('Parsed')
             const errors = v.validate(recipe)
@@ -52,10 +38,10 @@ async function processMessages(): Promise<number> {
             await archiver.archive(msg.file)
             log('Achived')
           } catch (err) {
-            console.error(
+            log(
               `Failed to process ${msg.file.originalname} for user ${
                 msg.user
-              }\n\t${err} ${err instanceof Error ? err.stack : ''}`
+              }\n ${err instanceof Error ? err.stack : err}`
             )
           }
         }
@@ -74,10 +60,6 @@ async function getMessage() {
       resolve(message)
     })
   })
-}
-
-function log(text) {
-  console.log(`Shrimp: ${text}`)
 }
 
 run()

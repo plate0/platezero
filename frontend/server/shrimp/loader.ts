@@ -1,3 +1,5 @@
+import { S3File } from './common'
+
 const AWS = require('aws-sdk')
 const fs = require('fs')
 const uuidv4 = require('uuid/v4')

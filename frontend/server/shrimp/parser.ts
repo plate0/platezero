@@ -1,4 +1,5 @@
 import * as moment from 'moment'
+import { Section, log } from './common'
 import {
   PreheatJSON,
   IngredientListJSON,
@@ -56,7 +57,8 @@ class Wombat {
  * https://en.wikipedia.org/wiki/List_of_English_terms_of_venery,_by_animal#W
  */
 class Wisdom {
-  array: Wombat[]
+  wombats: Wombat[]
+  gaps: Cursor[]
   lines: string[]
   map: Map<string, Wombat>
   /**
@@ -65,7 +67,8 @@ class Wisdom {
   constructor(lines) {
     this.map = new Map()
     this.lines = lines
-    this.array = []
+    this.wombats = []
+    this.gaps = []
   }
 
   /**
@@ -90,33 +93,64 @@ class Wisdom {
   }
 
   /**
-   * Sort the collection of wombats by cursor start position.
-   * This method <em>must</em> be called after all wombats have been added
+   * Sort the collection of wombats by cursor start position
+   * and fix up each cursor end position to be the lowest of:
+   *    1. the next cursor start position
+   *    2. the next 'end of section' marker
+   *    3. the end of the text
+   *
+   * This method <em>must</em> be called after <em>all</em> wombats have been added
    */
   sort() {
-    let map = new Map()
-    let out = Array.from(this.map.entries())
-    out.sort((e1, e2) => {
+    log(this.map)
+    // Sort the map entries by 'cursor.start' value
+    let entries = Array.from(this.map.entries())
+    log(entries)
+    entries.sort((e1, e2) => {
       return e1[1].cursor.start - e2[1].cursor.start
     })
 
-    for (let i = 0; i < out.length; ++i) {
-      let e1 = out[i]
-      if (i + 1 < out.length) {
-        let e2 = out[i + 1]
-        let next = e2[1].cursor.start
-        if (next) {
-          e1[1].cursor.end = next
-        }
+    // Complete the 'cursor.end' values
+    for (let i = 0; i < entries.length; ++i) {
+      let e1 = entries[i]
+      let next
+      if (i + 1 < entries.length) {
+        let e2 = entries[i + 1]
+        next = e2[1].cursor.start
       } else {
-        e1[1].cursor.end = this.lines.length
+        next = this.lines.length
       }
+      let eos = this.endOfSection(e1[1].cursor.start)
+      e1[1].cursor.end = eos && eos < next ? eos : next
     }
 
-    out.forEach(e => map.set(e[0], e[1]))
-
+    // Create a new map in the new sort order
+    let map = new Map()
+    entries.forEach(e => map.set(e[0], e[1]))
     this.map = map
-    this.array = Array.from(this.map.values())
+
+    this.wombats = Array.from(this.map.values())
+
+    this.mindTheGaps()
+    log(`${JSON.stringify(this.wombats)}`)
+    log(`${JSON.stringify(this.gaps)}`)
+  }
+
+  mindTheGaps() {
+    for (let i = 0; i < this.wombats.length; ++i) {
+      const next =
+        i < this.wombats.length - 1
+          ? this.wombats[i + 1].cursor.start
+          : this.lines.length
+      this.gaps.push(new Cursor(this.wombats[i].cursor.end, next))
+    }
+  }
+
+  endOfSection(i: number): number {
+    while (i < this.lines.length && this.lines[i] != Section) {
+      ++i
+    }
+    return i < this.lines.length ? i : undefined
   }
 
   /**
@@ -210,7 +244,7 @@ function parse(lines: string[]): PostRecipe {
     r.title = o['text']
     cursor = o['cursor']
   }
-  cursor.advance(w.array[0].cursor.start)
+  cursor.advance(w.wombats[0].cursor.start)
   r.description = getDescription(lines, cursor)
 
   r.ingredient_lists = getIngredients(w)
@@ -226,7 +260,7 @@ function parse(lines: string[]): PostRecipe {
 function getTitle(lines, cursor) {
   for (let i = cursor.start; i < lines.length; ++i) {
     let text = lines[i].trim()
-    if (text.length > 0) {
+    if (text.length > 0 && text != Section) {
       cursor.end = i + 1
       return { text, cursor }
     }
@@ -236,17 +270,25 @@ function getTitle(lines, cursor) {
 function getDescription(lines: string[], cursor: Cursor): string {
   let out = []
   for (let i = cursor.start; i < cursor.end; ++i) {
-    out.push(lines[i])
+    if (lines[i] != Section) {
+      out.push(lines[i])
+    }
   }
   return out.length === 0 ? undefined : out.join(' ')
 }
 
 function getIngredients(w: Wisdom): IngredientListJSON[] {
   const list = <IngredientListJSON>{ lines: [] }
-  const raw = getText(w, 'ingredients')
+  let raw = getText(w, 'ingredients')
+  if (!raw) {
+    const cursor = w.gaps.shift()
+    raw = getByCursor(w, cursor)
+  }
   if (raw) {
     raw.forEach(line => {
-      list.lines.push(parseIngredient(line))
+      if (line != Section) {
+        list.lines.push(parseIngredient(line))
+      }
     })
   }
   return [list]
@@ -254,14 +296,34 @@ function getIngredients(w: Wisdom): IngredientListJSON[] {
 
 function getMethods(w: Wisdom): ProcedureListJSON[] {
   const list = <ProcedureListJSON>{ lines: [] }
-  const text = getText(w, 'steps')
+  let text = getText(w, 'steps')
+  if (!text) {
+    const cursor = w.gaps.shift()
+    text = getByCursor(w, cursor)
+  }
   if (text) {
     const raw = denumerate(text)
     raw.forEach(line => {
-      list.lines.push({ text: line })
+      if (line != Section) {
+        list.lines.push({ text: line })
+      }
     })
   }
   return [list]
+}
+
+function getByCursor(w: Wisdom, cursor: Cursor): string[] {
+  let out
+  if (cursor) {
+    out = []
+    for (let i = cursor.start; i < cursor.end; ++i) {
+      let text = w.lines[i]
+      if (text.trim().length > 0) {
+        out.push(text)
+      }
+    }
+  }
+  return out
 }
 
 function getTotalTime(w: Wisdom): number {
@@ -340,7 +402,7 @@ function getText(w: Wisdom, tag: string): string[] {
     // capture the rest of the text
     for (; i < cursor.end; ++i) {
       let text = w.lines[i]
-      if (text.trim().length > 0) {
+      if (text.trim().length > 0 && text != Section) {
         out.push(text)
       }
     }

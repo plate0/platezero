@@ -1,3 +1,5 @@
+import { Section } from '../common'
+
 module.exports = {
   load: async filename => {
     const AdmZip = require('adm-zip')
@@ -29,9 +31,9 @@ function extractText($, node, depth) {
           case 'text:p':
           case 'text:h':
           case 'text:section':
-            out.push(' ')
+            out.push(Section)
             out = out.concat(extractText($, $(el), depth + 1))
-            out.push(' ')
+            out.push(Section)
             break
           case 'text:list-item':
           case 'text:list-header':

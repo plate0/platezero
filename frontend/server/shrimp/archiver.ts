@@ -1,3 +1,5 @@
+import { S3File } from './common'
+
 const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 
