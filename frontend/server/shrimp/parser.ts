@@ -385,10 +385,9 @@ function getDuration(w: Wisdom, tag: string): number {
   return moment.duration({ hours: h, minutes: m }).asSeconds()
 }
 
-// TODO Untested
 function getPreheat(w: Wisdom): PreheatJSON[] {
   let r = new Array<PreheatJSON>()
-  const rx = /([\w\s]+\b)\s*(\d+)\s*([CF])/
+  const rx = /(\D+)\s*(\d+)\s*\u00b0*([CF]\b)/
   const lines = getText(w, 'preheat')
   if (lines) {
     const text = lines.join(' ')
@@ -401,7 +400,6 @@ function getPreheat(w: Wisdom): PreheatJSON[] {
   return r
 }
 
-// TODO analyse text, pulls in too much info
 function getYield(w: Wisdom): string {
   const lines = getText(w, 'yield')
   if (lines) {
