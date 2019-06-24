@@ -102,10 +102,8 @@ class Wisdom {
    * This method <em>must</em> be called after <em>all</em> wombats have been added
    */
   sort() {
-    log(this.map)
     // Sort the map entries by 'cursor.start' value
     let entries = Array.from(this.map.entries())
-    log(entries)
     entries.sort((e1, e2) => {
       return e1[1].cursor.start - e2[1].cursor.start
     })
@@ -121,7 +119,6 @@ class Wisdom {
         next = this.lines.length
       }
       let eos = this.endOfSection(e1[1].cursor.start)
-      log(`${e1[1].lex} ${eos} ${next}`)
       e1[1].cursor.end = eos && eos < next ? eos : next
     }
 
@@ -363,6 +360,31 @@ function getTotalTime(w: Wisdom): number {
   return t
 }
 
+function getDuration(w: Wisdom, tag: string): number {
+  const rxHours = /(\d+)\s*h\w+/i
+  const rxMinutes = /(\d+)\s*m\w+/i
+  let h = 0,
+    m = 0
+  const lines = getText(w, tag)
+  log(lines)
+  if (lines) {
+    const text = lines.join(' ')
+    let a = rxHours.exec(text)
+    log(a)
+    if (a) {
+      h = parseInt(a[1], 10)
+      h = isNaN(h) ? 0 : h
+    }
+    a = rxMinutes.exec(text)
+    log(a)
+    if (a) {
+      m = parseInt(a[1], 10)
+      m = isNaN(m) ? 0 : m
+    }
+  }
+  return moment.duration({ hours: h, minutes: m }).asSeconds()
+}
+
 // TODO Untested
 function getPreheat(w: Wisdom): PreheatJSON[] {
   let r = new Array<PreheatJSON>()
@@ -383,32 +405,19 @@ function getPreheat(w: Wisdom): PreheatJSON[] {
 function getYield(w: Wisdom): string {
   const lines = getText(w, 'yield')
   if (lines) {
-    if (lines.length == 1 && /^\s*\d+\s*$/.test(lines[0])) {
-      return `Serves ${lines[0]}`
+    for (let i = 0; i < lines.length; ++i) {
+      let line = lines[i]
+      if (/^\s*\d+\s*$/.test(line)) {
+        return `Serves ${line}`
+      } else {
+        let a = /\d+/.exec(line)
+        if (a) {
+          return line
+        }
+      }
     }
-    return lines.join(' ')
   }
   return undefined
-}
-
-// TODO Not working
-function getDuration(w: Wisdom, tag: string): number {
-  const rxHours = /(\d+)\s*h\w+/i
-  const rxMinutes = /(\d+)\s*m\w+/i
-  let h, m
-  const lines = getText(w, tag)
-  if (lines) {
-    const text = lines.join(' ')
-    let a = rxHours.exec(text)
-    if (a) {
-      h = a[0][1]
-    }
-    a = rxMinutes.exec(text)
-    if (a) {
-      m = a[0][1]
-    }
-  }
-  return moment.duration({ hours: h, minutes: m }).asSeconds()
 }
 
 function getText(w: Wisdom, tag: string): string[] {
