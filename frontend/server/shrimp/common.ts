@@ -21,7 +21,7 @@ export const Section = '§'
 export function log(msg: Object) {
   console.log(
     `\x1b[94mShrimp:\x1b[0m ${
-      'string' == typeof msg ? msg : JSON.stringify(msg)
+      'string' == typeof msg ? msg : JSON.stringify(msg, null, 2)
     }`
   )
 }
