@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as shrimp from '../shrimp/shrimp'
 import { AuthenticatedRequest } from './user'
 import { internalServerError } from '../errors'
 import { Recipe } from '../../models/recipe'
@@ -17,18 +18,6 @@ const s3 = new S3()
 const { slackHook } = config
 
 const r = express.Router()
-
-const { fork } = require('child_process')
-console.log('Starting shrimp process')
-const shrimp = fork(`${__dirname}/../shrimp/main`, [
-  'pipe',
-  'pipe',
-  'pipe',
-  'ipc'
-])
-shrimp.on('close', code => {
-  console.log(`shrimp process exited with code ${code}`)
-})
 
 const urlImportCounter = new prom.Counter({
   name: 'platezero_url_imports_total',
@@ -89,18 +78,15 @@ const upload = multer({
 })
 r.post('/file', upload.array('file'), async function importFile(req: any, res) {
   filesPerUploadHistogram.observe(req.files.length)
-  each(req.files, file => {
+  let recipe
+  each(req.files, async file => {
     const mimetype = toString(file.mimetype)
     fileImportCounter.inc({ mimetype })
     fileSizeHistogram.observe({ mimetype }, file.size)
 
-    let msg = { file: file, user: req.user.userId }
-    shrimp.send(msg, null, {}, err => {
-      if (err) {
-        console.error(`Failed to send ${file.originalName} for parsing. ${err}`)
-      }
-    })
+    recipe = await shrimp.importFile(file, req.user.userId)
   })
+
   if (slackHook) {
     fetch(slackHook, {
       method: 'POST',
@@ -116,9 +102,12 @@ ${req.files.map(f => f.originalname).join('\n')}`
       })
     })
   }
-  res.status(HttpStatus.Accepted).json({
-    upload: 'success'
-  })
+  if (recipe) {
+    res.status(HttpStatus.Created).json({ upload: 'success' })
+    // Redirect here
+  } else {
+    res.status(HttpStatus.Accepted).json({ upload: 'success' })
+  }
 })
 
 export const importers = r
