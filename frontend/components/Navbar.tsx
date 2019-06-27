@@ -1,20 +1,9 @@
 import React, { useContext } from 'react'
-import {
-  Button,
-  Nav,
-  NavItem,
-  Container,
-  Navbar as RsNavbar,
-  UncontrolledDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem
-} from 'reactstrap'
+import { Button, Nav, NavItem, Container, Navbar as RsNavbar } from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
-import { logout } from '../common'
 
 export interface NavbarProps {
   title: string
@@ -29,7 +18,7 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
       expand={true}
       color="primary"
       dark={true}
-      className="shadow-sm"
+      className="shadow-sm px-2"
       style={{ zIndex: 1 }}
     >
       <Container>
@@ -70,35 +59,11 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <UserContext.Consumer>
-    {({ updateUser }) => (
-      <UncontrolledDropdown nav inNavbar>
-        <DropdownToggle nav caret className="py-0">
-          <ProfilePicture img={user.avatar_url} size={30} />
-        </DropdownToggle>
-        <DropdownMenu right>
-          <Link route={`/${user.username}`}>
-            <a className="dropdown-item" role="menuitem">
-              Recipes
-            </a>
-          </Link>
-          <DropdownItem
-            onClick={() => {
-              logout()
-              const w = window as any
-              if (w && w._paq) {
-                w._paq.push(['resetUserId'])
-                w._paq.push(['trackPageView'])
-              }
-              updateUser(null)
-            }}
-          >
-            Logout
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    )}
-  </UserContext.Consumer>
+  <Link route={`/${user.username}`}>
+    <a>
+      <ProfilePicture img={user.avatar_url} size={30} />
+    </a>
+  </Link>
 )
 
 const NewRecipeDropdown = () => (
