@@ -1,4 +1,5 @@
 import React from 'react'
+import Router from 'next/router'
 import Recipe from './recipe'
 import ErrorPage from './_error'
 import Head from 'next/head'
@@ -73,12 +74,15 @@ export default class NewRecipeFile extends React.Component<
     this.setState({
       status: UploadStatus.Uploading
     })
-    try {
-      const {httpStatus, recipe} = await api.importFiles(formData)
-      console.log(`httpStatus: ${httpStatus}, ${JSON.stringify(recipe).substring(0, 50)}`)
-      this.setState({ status: (httpStatus == HttpStatus.Created? UploadStatus.ParseSucceeded: UploadStatus.UploadSucceeded),
-          recipe: recipe})
-    } catch (err) {
+     try {
+       const {httpStatus, recipe} = await api.importFiles(formData)
+       if (httpStatus == HttpStatus.Created && recipe) {
+         Router.push(recipe.html_url)
+         return
+       }
+       console.log(`httpStatus: ${httpStatus}, ${JSON.stringify(recipe).substring(0, 50)}`)
+       this.setState({ status: UploadStatus.UploadSucceeded, recipe })
+     } catch (err) {
       this.setState({
         status: UploadStatus.UploadFailed,
         errors: getErrorMessages(err)
@@ -91,13 +95,6 @@ export default class NewRecipeFile extends React.Component<
     const { status, recipe } = this.state
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
-    }
-    
-    if (status == UploadStatus.ParseSucceeded) {
-        console.log('Building query')
-       const query = {username: recipe.owner.username, slug: recipe.slug} 
-       console.log(`Query: ${JSON.stringify(query)}`)
-       return <Recipe query={query} /> 
     }
 
     return (
