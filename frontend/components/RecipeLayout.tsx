@@ -47,7 +47,9 @@ export const fetchRecipeLayoutProps = async ({
 }): Promise<RecipeLayoutProps> => {
   try {
     const { username, slug, versionId } = query
+    console.log(`username: ${username}, slug: ${slug}`)
     const recipe = await api.getRecipe(username, slug)
+    console.log(`recipe: ${recipe}`)
     const masterVersionId = _.get(
       _.find(recipe.branches, { name: 'master' }),
       'recipe_version_id'

@@ -1,4 +1,5 @@
 import React from 'react'
+import Recipe from './recipe'
 import ErrorPage from './_error'
 import Head from 'next/head'
 import { Dropzone, Layout, AlertErrors } from '../components'
@@ -7,11 +8,13 @@ import * as _ from 'lodash'
 import { api, getErrorMessages } from '../common'
 import { Link } from '../routes'
 import { UserJSON } from '../models'
+import { HttpStatus } from "../common/http-status";
 
 enum UploadStatus {
   None,
   Uploading,
   UploadSucceeded,
+  ParseSucceeded,
   UploadFailed
 }
 
@@ -71,8 +74,10 @@ export default class NewRecipeFile extends React.Component<
       status: UploadStatus.Uploading
     })
     try {
-      await api.importFiles(formData)
-      this.setState({ status: UploadStatus.UploadSucceeded })
+      const {httpStatus, recipe} = await api.importFiles(formData)
+      console.log(`httpStatus: ${httpStatus}, ${JSON.stringify(recipe).substring(0, 50)}`)
+      this.setState({ status: (httpStatus == HttpStatus.Created? UploadStatus.ParseSucceeded: UploadStatus.UploadSucceeded),
+          recipe: recipe})
     } catch (err) {
       this.setState({
         status: UploadStatus.UploadFailed,
@@ -83,9 +88,16 @@ export default class NewRecipeFile extends React.Component<
 
   public render() {
     const { wording, user, statusCode } = this.props
-    const { status } = this.state
+    const { status, recipe } = this.state
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
+    }
+    
+    if (status == UploadStatus.ParseSucceeded) {
+        console.log('Building query')
+       const query = {username: recipe.owner.username, slug: recipe.slug} 
+       console.log(`Query: ${JSON.stringify(query)}`)
+       return <Recipe query={query} /> 
     }
 
     return (
