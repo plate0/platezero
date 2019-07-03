@@ -1,5 +1,5 @@
 import * as moment from 'moment'
-import { Section, log } from './common'
+import { Section } from './common'
 import {
   PreheatJSON,
   IngredientListJSON,
@@ -130,8 +130,6 @@ class Wisdom {
     this.wombats = Array.from(this.map.values())
 
     this.mindTheGaps()
-    log(this.wombats)
-    log(this.gaps)
   }
 
   /**
@@ -366,17 +364,14 @@ function getDuration(w: Wisdom, tag: string): number {
   let h = 0,
     m = 0
   const lines = getText(w, tag)
-  log(lines)
   if (lines) {
     const text = lines.join(' ')
     let a = rxHours.exec(text)
-    log(a)
     if (a) {
       h = parseInt(a[1], 10)
       h = isNaN(h) ? 0 : h
     }
     a = rxMinutes.exec(text)
-    log(a)
     if (a) {
       m = parseInt(a[1], 10)
       m = isNaN(m) ? 0 : m

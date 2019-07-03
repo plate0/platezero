@@ -15,7 +15,6 @@ export async function importFile(file: S3File, user: number): Promise<Recipe> {
     try {
       const text = await loader.load(file)
       log('Loaded')
-      log(text)
       const parsed = parser.parse(text)
       log('Parsed')
       const errors = v.validate(parsed)

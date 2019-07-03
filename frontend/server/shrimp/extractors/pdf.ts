@@ -7,15 +7,12 @@ module.exports = {
     let p = new Promise((resolve, reject) => {
       let rdr = new pdfReader.PdfReader({ debug: 'true' })
 
-      var mapOfRows = new Map() // indexed by [column, x-position, y-position]
+      var mapOfRows = new Map() // indexed by [column, y-position, x-position]
       var pageWidth
-      var debug = []
       rdr.parseFileItems(filename, function(err, item) {
-        debug.push(item)
         if (err) {
           reject(err)
         } else if (!item) {
-          //    log(debug)
           resolve(transform(mapOfRows))
         } else if (item.page && item.width) {
           pageWidth = item.width
@@ -40,14 +37,7 @@ function transform(mapOfRows: Map<Key, string>): string[] {
   let out = []
   Array.from(mapOfRows.keys())
     .sort((k1, k2) => {
-      let n = k1.column - k2.column
-      if (n === 0) {
-        n = k1.y - k2.y
-      }
-      if (n === 0) {
-        n = k1.x - k2.x
-      }
-      return n
+      return k1.column - k2.column || k1.y - k2.y || k1.x - k2.x
     })
     .forEach(k => out.push({ key: k, text: mapOfRows.get(k) }))
   return unify(out)
