@@ -1,4 +1,4 @@
-//import { log } from "../common";
+import { Section } from '../common'
 
 const pdfReader = require('pdfreader')
 
@@ -7,19 +7,19 @@ module.exports = {
     let p = new Promise((resolve, reject) => {
       let rdr = new pdfReader.PdfReader({ debug: 'true' })
 
-      var mapOfRows = new Map() // indexed by [column, y-position, x-position]
+      var mapOfItems = new Map<Key, Item>() // indexed by [column, y-position, x-position]
       var pageWidth
       rdr.parseFileItems(filename, function(err, item) {
         if (err) {
           reject(err)
         } else if (!item) {
-          resolve(transform(mapOfRows))
+          resolve(transform(mapOfItems))
         } else if (item.page && item.width) {
           pageWidth = item.width
         } else if (item.text) {
           if (item.x > 0 && item.y > 0) {
             const key = new Key(pageWidth, item.x, item.y)
-            mapOfRows.set(key, item.text)
+            mapOfItems.set(key, item)
           }
         }
       })
@@ -33,13 +33,13 @@ module.exports = {
 // an array of text rows, sorted by position
 // such that all rows in column 0 precede all rows
 // in column 1
-function transform(mapOfRows: Map<Key, string>): string[] {
+function transform(mapOfItems: Map<Key, Item>): string[] {
   let out = []
-  Array.from(mapOfRows.keys())
+  Array.from(mapOfItems.keys())
     .sort((k1, k2) => {
       return k1.column - k2.column || k1.y - k2.y || k1.x - k2.x
     })
-    .forEach(k => out.push({ key: k, text: mapOfRows.get(k) }))
+    .forEach(k => out.push({ key: k, item: mapOfItems.get(k) }))
   return unify(out)
 }
 
@@ -50,19 +50,25 @@ function transform(mapOfRows: Map<Key, string>): string[] {
  *
  * @todo Try to figure out which contiguous lines constitute a paragraph and join them together
  *
- * @param {KeyedText[]}   an array of {key:, text:} where key is {column:, x:, y:}
+ * @param {KeyedItem[]}   an array of {key:, item:} where key is {column:, x:, y:}
  * @return {string[]}
  */
-function unify(input: KeyedText[]): string[] {
+function unify(input: KeyedItem[]): string[] {
   let out = []
+  let previous: Item
   for (let i = 0; i < input.length; ) {
+    let item = input[i].item
+    if (i > 0 && !haveSameStyle(previous, item)) {
+      out.push(Section)
+    }
+    previous = item
     let text = ''
     for (
       let row = input[i], y = row.key.y;
       i < input.length && row.key.y == y;
       row = input[++i]
     ) {
-      text += ' ' + input[i].text
+      text += ' ' + input[i].item.text
     }
     out.push(text)
   }
@@ -80,11 +86,50 @@ class Key {
   }
 }
 
-class KeyedText {
+interface Item {
+  x: number // x position
+  y: number // y position
+  w: number // width
+  sw: number // font space width, use to merge adjacent text blocks
+  clr: number // colour id
+  A: string // alignment (left, right, center)
+  R: [
+    {
+      // array of text runs
+      T: string // flash_encoded text
+      RA: any // rotation
+      S: number // style id
+      TS: number[] // [faceIdx, fontSize, bold?1:0, italic?1:0]
+    }
+  ]
+  text: string // text content
+}
+
+class KeyedItem {
   key: Key
-  text: string
-  constructor(key, text) {
+  item: Item
+  constructor(key, item) {
     this.key = key
-    this.text = text
+    this.item = item
   }
+}
+
+// Copied from https://github.com/modesty/pdf2json/lib/pdffont.js
+function haveSameStyle(t1, t2) {
+  let retVal = t1.R[0].S === t2.R[0].S
+  if (retVal && t1.R[0].S < 0) {
+    for (let i = 0; i < t1.R[0].TS.length; i++) {
+      if (t1.R[0].TS[i] !== t2.R[0].TS[i]) {
+        retVal = false
+        break
+      }
+    }
+  }
+  if (retVal) {
+    // make sure both block are not rotated
+    retVal =
+      typeof t1.R[0].RA === 'undefined' && typeof t2.R[0].RA === 'undefined'
+  }
+
+  return retVal
 }
