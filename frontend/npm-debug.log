@@ -1,0 +1,26 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/local/bin/npm', 'repo' ]
+2 info using npm@3.10.8
+3 info using node@v12.4.0
+4 silly fetchPackageMetaData .
+5 silly fetchDirectoryPackageData .
+6 verbose stack Error: no repository
+6 verbose stack     at getUrlAndOpen (/usr/local/lib/node_modules/npm/lib/repo.js:27:21)
+6 verbose stack     at /usr/local/lib/node_modules/npm/lib/repo.js:21:5
+6 verbose stack     at /usr/local/lib/node_modules/npm/lib/fetch-package-metadata.js:37:12
+6 verbose stack     at addRequestedAndFinish (/usr/local/lib/node_modules/npm/lib/fetch-package-metadata.js:67:5)
+6 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:356:5
+6 verbose stack     at checkBinReferences_ (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:320:45)
+6 verbose stack     at final (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:354:3)
+6 verbose stack     at then (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:124:5)
+6 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:243:12
+6 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:78:16
+7 verbose cwd /home/brian/virtyx/recipe/frontend
+8 error Linux 4.15.0-51-generic
+9 error argv "/usr/bin/node" "/usr/local/bin/npm" "repo"
+10 error node v12.4.0
+11 error npm  v3.10.8
+12 error no repository
+13 error If you need help, you may report this error at:
+13 error     <https://github.com/npm/npm/issues>
+14 verbose exit [ 1, true ]
