@@ -2,6 +2,7 @@ import React from 'react'
 
 import { IngredientListJSON, IngredientLineJSON } from '../models'
 import { Amount } from './Amount'
+import { MarkdownInline } from './Markdown'
 
 const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   const parts = []
@@ -18,9 +19,13 @@ const IngredientListLine = ({ line }: { line: IngredientLineJSON }) => {
   if (line.unit) {
     parts.push(<abbr title="recognized unit of measure">{line.unit}</abbr>)
   }
-  parts.push(line.name)
+  parts.push(<MarkdownInline source={line.name} />)
   if (line.preparation) {
-    parts.push(<span className="text-info">{line.preparation}</span>)
+    parts.push(
+      <span className="text-info">
+        <MarkdownInline source={line.preparation} />
+      </span>
+    )
   }
   if (line.optional) {
     parts.push(<span className="badge badge-info">Optional</span>)
