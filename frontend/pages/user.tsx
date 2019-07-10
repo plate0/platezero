@@ -5,7 +5,7 @@ import Head from 'next/head'
 import { withRouter, WithRouterProps } from 'next/router'
 import * as parse from 'url-parse'
 import ErrorPage from './_error'
-import { Router } from '../routes'
+import { Link, Router } from '../routes'
 import { stringify } from 'query-string'
 import {
   Layout,
@@ -14,7 +14,9 @@ import {
   RecipeListBlankslate,
   RecipeListNoSearchResults,
   Search,
-  SortRecipes
+  SortRecipes,
+  ProfilePicture,
+  IfLoggedIn
 } from '../components'
 import { UserJSON, RecipeJSON } from '../models'
 import { api } from '../common/http'
@@ -145,8 +147,15 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
           <title>{getName(user)} on PlateZero</title>
         </Head>
         <Row className="mt-3">
-          <Col xs={12} sm={4} md={3} lg={2}>
-            <UserSidebar user={user} />
+          <Col xs={12} sm={4} md={3} lg={2} className="text-center">
+            <ProfilePicture size={64} img={user.avatar_url} />
+            <IfLoggedIn>
+              <p>
+                <Link route="profile">
+                  <a className="btn btn-link">Edit Profile</a>
+                </Link>
+              </p>
+            </IfLoggedIn>
           </Col>
           <Col xs={12} sm={8} md={9} lg={10}>
             <h2 className="m-0">Recipes</h2>

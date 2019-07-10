@@ -70,35 +70,11 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <UserContext.Consumer>
-    {({ updateUser }) => (
-      <UncontrolledDropdown nav inNavbar>
-        <DropdownToggle nav caret className="py-0">
-          <ProfilePicture img={user.avatar_url} size={30} />
-        </DropdownToggle>
-        <DropdownMenu right>
-          <Link route={`/${user.username}`}>
-            <a className="dropdown-item" role="menuitem">
-              Recipes
-            </a>
-          </Link>
-          <DropdownItem
-            onClick={() => {
-              logout()
-              const w = window as any
-              if (w && w._paq) {
-                w._paq.push(['resetUserId'])
-                w._paq.push(['trackPageView'])
-              }
-              updateUser(null)
-            }}
-          >
-            Logout
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    )}
-  </UserContext.Consumer>
+  <Link route={`/${user.username}`}>
+    <a>
+      <ProfilePicture img={user.avatar_url} size={30} />
+    </a>
+  </Link>
 )
 
 const NewRecipeDropdown = () => (
