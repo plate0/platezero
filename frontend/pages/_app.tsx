@@ -51,7 +51,37 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
         user: await currentUser()
       })
     }
+
+    // scrolls holds the scroll position we saved before navigating for each
+    // page
+    const scrolls = {}
+
+    // nextScroll is the saved location we should jump back to when the route
+    // change is complete.
+    let nextScroll = undefined
+
+    Router.beforePopState(url => {
+      const prevPosition = scrolls[url.as]
+      if (prevPosition) {
+        nextScroll = prevPosition
+      }
+      return true
+    })
+
+    Router.events.on('routeChangeComplete', url => {
+      if (nextScroll) {
+        window.scrollTo(nextScroll.x, nextScroll.y)
+        nextScroll = undefined
+      }
+    })
+
     Router.events.on('routeChangeStart', url => {
+      // if the user has scrolled, add their current position to the map so we
+      // can return them here when they navigate back/forward.
+      if (window.scrollX !== 0 || window.scrollY !== 0) {
+        scrolls[window.location] = { x: window.scrollX, y: window.scrollY }
+      }
+
       const w = window as any
       if (w && w._paq) {
         w._paq.push(['setCustomUrl', url])
