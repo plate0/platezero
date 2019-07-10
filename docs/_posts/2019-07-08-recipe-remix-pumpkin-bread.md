@@ -3,6 +3,7 @@ layout: post
 title: "Recipe Remix: Pumpkin Bread Week 1"
 categories: remix
 author: Katie
+image: https://static.platezero.com/blog/pumpkin_bread_1.jpg
 ---
 
 **_Recipe Remix Series:_** _We’re remixing and perfecting our recipes as we go-
