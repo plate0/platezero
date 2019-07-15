@@ -9,7 +9,7 @@ import * as _ from 'lodash'
 import { api, getErrorMessages } from '../common'
 import { Link } from '../routes'
 import { UserJSON } from '../models'
-import { HttpStatus } from "../common/http-status";
+import { HttpStatus } from '../common/http-status'
 
 enum UploadStatus {
   None,
@@ -42,7 +42,6 @@ export default class NewRecipeFile extends React.Component<
   NewRecipeFileState
 > {
   static async getInitialProps({ query, res }) {
-    console.log(query)
     const { type } = query
     const wording = wordings[type] || wordings['file']
     try {
@@ -74,15 +73,14 @@ export default class NewRecipeFile extends React.Component<
     this.setState({
       status: UploadStatus.Uploading
     })
-     try {
-       const {httpStatus, recipe} = await api.importFiles(formData)
-       if (httpStatus == HttpStatus.Created && recipe) {
-         Router.push(recipe.html_url)
-         return
-       }
-       console.log(`httpStatus: ${httpStatus}, ${JSON.stringify(recipe).substring(0, 50)}`)
-       this.setState({ status: UploadStatus.UploadSucceeded, recipe })
-     } catch (err) {
+    try {
+      const { httpStatus, recipe } = await api.importFiles(formData)
+      if (httpStatus == HttpStatus.Created && recipe) {
+        Router.push(recipe.html_url)
+        return
+      }
+      this.setState({ status: UploadStatus.UploadSucceeded, recipe })
+    } catch (err) {
       this.setState({
         status: UploadStatus.UploadFailed,
         errors: getErrorMessages(err)
@@ -92,7 +90,7 @@ export default class NewRecipeFile extends React.Component<
 
   public render() {
     const { wording, user, statusCode } = this.props
-    const { status, recipe } = this.state
+    const { status } = this.state
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
