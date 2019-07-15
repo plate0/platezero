@@ -8,5 +8,8 @@ github_username:  plate0
 markdown: kramdown
 theme: minima
 show_excerpts: true
+twitter:
+  username: platezer0
+  card: summary
 plugins:
   - jekyll-feed

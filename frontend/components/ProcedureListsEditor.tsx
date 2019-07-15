@@ -45,6 +45,17 @@ export function ProcedureListsEditor(props: Props) {
           <li>
             You can make text <strong>**bold**</strong> or <em>_italic_</em>.
           </li>
+          <li>
+            Include a link to 
+            <ul>
+              <li>
+                 <strong>[</strong><span style={{color:'#19afd0'}}>another recipe</span><strong>](</strong>/user-name/cheese_sauce<strong>)</strong>
+              </li>  
+              <li>
+                 <strong>[</strong><span style={{color:'#19afd0'}}>another site</span><strong>](</strong>https://ivu.org/recipes/northam/cornbread-recipe-j.html<strong>)</strong>
+              </li>  
+            </ul>
+          </li>
         </ul>
       }
     />
