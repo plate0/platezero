@@ -28,6 +28,7 @@ import { AlertErrors } from './AlertErrors'
 import { Link } from '../routes'
 import { PrintButton } from './PrintButton'
 import { ShareButton } from './ShareButton'
+import { FavoriteButton } from './FavoriteButton'
 import { AddNote } from './AddNote'
 const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
@@ -60,6 +61,11 @@ export const RecipeNav = ({ route }: { route: string }) => {
         </Link>
       </NavItem>
       <NavItem className="border-bottom flex-fill" />
+      <NavItem className="border-bottom pr-2">
+        <div className="align-items-center d-flex h-100">
+          <FavoriteButton recipeId={recipe.id} />
+        </div>
+      </NavItem>
       <NavItem className="border-bottom pr-2">
         <div className="align-items-center d-flex h-100">
           <ShareButton url={SITE_URL + baseURL} />

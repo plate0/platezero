@@ -353,6 +353,22 @@ class Api {
       ...opts,
       method: 'DELETE'
     })
+
+  getFavorites = (username: string, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON[]>(`/users/${username}/favorites`, opts)
+
+  addFavorite = (recipe_id: number, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON>(`/user/favorites`, {
+      ...opts,
+      body: JSON.stringify({ recipe_id }),
+      method: 'POST'
+    })
+
+  removeFavorite = (recipeId: number, opts: RequestInit = {}) =>
+    this._fetch<any>(`/user/favorites/${recipeId}`, {
+      ...opts,
+      method: 'DELETE'
+    })
 }
 
 export const api = new Api()

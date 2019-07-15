@@ -1,7 +1,7 @@
 import * as express from 'express'
 import { Request } from 'express'
 import * as _ from 'lodash'
-import { User, Recipe, sortable } from '../../../../models'
+import { User, Recipe, Favorite, sortable } from '../../../../models'
 import { RecipeRequest, recipe } from './recipe'
 import { notFound, internalServerError } from '../../../errors'
 const RecipeSortBy = sortable(Recipe, 'title')
@@ -60,5 +60,13 @@ r.use(
   },
   recipe
 )
+
+r.get('/favorites', async function getUserFavorites(req: UserRequest, res) {
+  try {
+    return res.json(await Favorite.findAll({ where: { user_id: req.user.id } }))
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
 
 export const user = r
