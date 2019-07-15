@@ -149,7 +149,7 @@ class ShoppingLists extends React.Component<
       return <ErrorPage statusCode={statusCode} />
     }
     return (
-      <Layout>
+      <Layout title={id ? _.get(active, 'name', 'Shopping') : 'Shopping'}>
         <Head>
           <title>Shopping Lists - PlateZero</title>
         </Head>

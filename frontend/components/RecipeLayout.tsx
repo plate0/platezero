@@ -93,7 +93,7 @@ export const RecipeLayout = ({
     return <ErrorPage statusCode={statusCode} />
   }
   return (
-    <Layout>
+    <Layout title={title}>
       <Head
         title={title}
         description={description}

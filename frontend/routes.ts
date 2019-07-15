@@ -12,6 +12,7 @@ export const routes: any = nextroutes()
     pattern: '/shopping/:id',
     page: 'shopping'
   })
+  .add('profile', '/profile')
   .add('user', '/:username')
   .add('new-recipe', '/recipe/new')
   .add('new-recipe-text', '/recipe/new/text')
@@ -40,6 +41,21 @@ export const routes: any = nextroutes()
     pattern: '/:username/:slug/notes',
     page: 'recipe-notes'
   })
+
+export const RouteTitles = {
+  login: 'Login',
+  register: 'Register',
+  'edit-recipe': 'Edit Recipe',
+  'new-recipe': 'Add Recipe',
+  'new-recipe-text': 'New Recipe',
+  'new-recipe-url': 'New Recipe',
+  'new-recipe-file': 'New Recipe'
+}
+
+export const titleForRoute = (url: string): string => {
+  const { route } = routes.match(url)
+  return route ? RouteTitles[route.name] : ''
+}
 
 // Usage:
 // import { Link } from '../routes'

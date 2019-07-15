@@ -38,7 +38,6 @@ export default class NewRecipeFile extends React.Component<
   NewRecipeFileState
 > {
   static async getInitialProps({ query, res }) {
-    console.log(query)
     const { type } = query
     const wording = wordings[type] || wordings['file']
     try {
