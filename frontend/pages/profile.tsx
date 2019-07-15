@@ -10,7 +10,12 @@ import {
   Input
 } from 'reactstrap'
 import Head from 'next/head'
-import { Layout, ProfilePicture, EditableImage } from '../components'
+import {
+  AlertErrors,
+  Layout,
+  ProfilePicture,
+  EditableImage
+} from '../components'
 import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
 import { UserContext } from '../context/UserContext'
@@ -99,7 +104,7 @@ export default class Profile extends React.Component<
 
   public render() {
     const { user, statusCode } = this.props
-    const { isSaving } = this.state
+    const { isSaving, editErrors, avatarErrors } = this.state
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
@@ -116,6 +121,7 @@ export default class Profile extends React.Component<
               hasExisting={!!user.avatar_url}
               onUpdate={this.onAvatarChange}
             />
+            <AlertErrors errors={avatarErrors} />
           </Col>
         </Row>
         <Row>
@@ -139,6 +145,7 @@ export default class Profile extends React.Component<
                     <strong>{user.username}</strong> and your URL will still be{' '}
                     <code>platezero.com/{user.username}</code>.
                   </FormText>
+                  <AlertErrors errors={editErrors} />
                 </Col>
               </FormGroup>
               <div className="text-center d-flex">
