@@ -1,4 +1,4 @@
-import { S3File } from './common'
+import { log, S3File } from './common'
 
 const AWS = require('aws-sdk')
 const fs = require('fs')
@@ -31,13 +31,13 @@ function downloadFile(filePath: string, bucketName: string, key: string) {
       Bucket: bucketName,
       Key: key
     }
-    console.log(`Downloading ${filePath}`)
+    log(`Downloading ${filePath}`)
     s3.getObject(params, (err, data) => {
       if (err) {
         reject(err)
       } else {
         fs.writeFileSync(filePath, data.Body)
-        console.log('Downloaded')
+        log('Downloaded')
         resolve(null)
       }
     })
