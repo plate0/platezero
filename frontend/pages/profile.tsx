@@ -1,9 +1,20 @@
 import React from 'react'
-import { Button, Row, Col, Form, FormGroup, Label, Input } from 'reactstrap'
+import {
+  Button,
+  Row,
+  Col,
+  Form,
+  FormGroup,
+  FormText,
+  Label,
+  Input
+} from 'reactstrap'
 import Head from 'next/head'
 import { Layout, ProfilePicture, EditableImage } from '../components'
 import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
+import { UserContext } from '../context/UserContext'
+import { logout } from '../common'
 
 interface ProfileProps {
   user?: UserJSON
@@ -28,15 +39,16 @@ export default class Profile extends React.Component<
     this.state = {
       avatarErrors: [],
       isEdit: false,
-      name: '',
+      name: props.user.name,
       isSaving: false,
       editErrors: [],
       user: props.user
     }
     this.onAvatarChange = this.onAvatarChange.bind(this)
+    this.onSave = this.onSave.bind(this)
   }
 
-  static async getInitialProps({}) {
+  static async getInitialProps() {
     try {
       return {
         user: await api.getCurrentUser()
@@ -66,8 +78,28 @@ export default class Profile extends React.Component<
     }
   }
 
+  public async onSave(e: any) {
+    e.preventDefault()
+    this.setState({ isSaving: true, editErrors: [] })
+    try {
+      const newUser = await api.updateUser({ name: this.state.name || null })
+      this.setState({
+        user: newUser
+      })
+    } catch (err) {
+      this.setState({
+        editErrors: getErrorMessages(err)
+      })
+    } finally {
+      this.setState({
+        isSaving: false
+      })
+    }
+  }
+
   public render() {
     const { user, statusCode } = this.props
+    const { isSaving } = this.state
     if (statusCode) {
       return <ErrorPage statusCode={statusCode} />
     }
@@ -88,7 +120,7 @@ export default class Profile extends React.Component<
         </Row>
         <Row>
           <Col className="justify-content-center">
-            <Form>
+            <Form onSubmit={this.onSave}>
               <FormGroup row>
                 <Label for="name" xs={3}>
                   Name
@@ -98,21 +130,15 @@ export default class Profile extends React.Component<
                     type="text"
                     name="name"
                     id="name"
-                    value={user.username}
+                    value={this.state.name}
+                    onChange={e => this.setState({ name: e.target.value })}
                   />
-                </Col>
-              </FormGroup>
-              <FormGroup row>
-                <Label for="username" xs={3}>
-                  Username
-                </Label>
-                <Col xs={9}>
-                  <Input
-                    type="text"
-                    name="username"
-                    id="username"
-                    value={user.username}
-                  />
+                  <FormText>
+                    If you add a display name, it will appear instead of your
+                    username across PlateZero. Your username will still be{' '}
+                    <strong>{user.username}</strong> and your URL will still be{' '}
+                    <code>platezero.com/{user.username}</code>.
+                  </FormText>
                 </Col>
               </FormGroup>
               <div className="text-center d-flex">
@@ -120,6 +146,7 @@ export default class Profile extends React.Component<
                   type="submit"
                   color="success"
                   className="px-3 flex-fill"
+                  disabled={isSaving}
                 >
                   Save
                 </Button>
@@ -132,9 +159,26 @@ export default class Profile extends React.Component<
             <h3>Other Options</h3>
           </Col>
           <Col xs="12" className="d-flex">
-            <Button outline color="danger" className="flex-fill">
-              Logout
-            </Button>
+            <UserContext.Consumer>
+              {({ updateUser }) => (
+                <Button
+                  outline
+                  color="danger"
+                  className="flex-fill"
+                  onClick={() => {
+                    logout()
+                    const w = window as any
+                    if (w && w._paq) {
+                      w._paq.push(['resetUserId'])
+                      w._paq.push(['trackPageView'])
+                    }
+                    updateUser(null)
+                  }}
+                >
+                  Logout
+                </Button>
+              )}
+            </UserContext.Consumer>
           </Col>
         </Row>
       </Layout>

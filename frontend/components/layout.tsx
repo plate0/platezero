@@ -15,7 +15,6 @@ export interface LayoutProps {
 }
 
 const _Layout = (props: LayoutProps & WithRouterProps) => {
-  console.log(props)
   const { router } = props
   const { asPath } = router
   const root = !includes(asPath.substring(1), '/')

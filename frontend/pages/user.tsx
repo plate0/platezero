@@ -149,7 +149,8 @@ class User extends React.Component<UserProps & WithRouterProps, UserState> {
         <Row className="mt-3">
           <Col xs={12} sm={4} md={3} lg={2} className="text-center">
             <ProfilePicture size={64} img={user.avatar_url} />
-            <IfLoggedIn>
+            <h3>{user.username}</h3>
+            <IfLoggedIn username={user.username}>
               <p>
                 <Link route="profile">
                   <a className="btn btn-link">Edit Profile</a>
