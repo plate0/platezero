@@ -1,5 +1,8 @@
 import { Section } from '../common'
 
+const ELEMENT_NODE = 1,
+  TEXT_NODE = 3
+
 module.exports = {
   load: async filename => {
     const AdmZip = require('adm-zip')
@@ -25,7 +28,7 @@ function extractText($, node, depth) {
   $(node)
     .contents()
     .each((_i, el) => {
-      if (el.nodeType == 1) {
+      if (el.nodeType === ELEMENT_NODE) {
         switch (el.tagName) {
           case 'text:list':
           case 'text:p':
@@ -43,7 +46,7 @@ function extractText($, node, depth) {
             out = out.concat(extractText($, $(el), depth + 1))
             break
         }
-      } else if (el.nodeType === 3) {
+      } else if (el.nodeType === TEXT_NODE) {
         let text = el.nodeValue
         out.push(text)
       }
