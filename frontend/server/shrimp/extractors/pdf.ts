@@ -9,14 +9,20 @@ module.exports = {
 
       var mapOfItems = new Map<Key, Item>() // indexed by [column, y-position, x-position]
       var pageWidth
-      rdr.parseFileItems(filename, function(err, item) {
+
+      // Read the file and pass each 'item' to 'cb'
+      rdr.parseFileItems(filename, function cb(err, item) {
         if (err) {
+          // Reject on error
           reject(err)
         } else if (!item) {
+          // Null item indicates end of file; resolve
           resolve(transform(mapOfItems))
         } else if (item.page && item.width) {
+          // This item is a page, save the width
           pageWidth = item.width
         } else if (item.text) {
+          // This item has text; extract it
           if (item.x > 0 && item.y > 0) {
             const key = new Key(pageWidth, item.x, item.y)
             mapOfItems.set(key, item)
