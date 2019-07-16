@@ -5,6 +5,8 @@ import * as _ from 'lodash'
 
 import { FavoriteJSON, RecipeJSON } from '../models'
 import { api } from '../common/http'
+import { HttpStatus } from '../common/http-status'
+import { Router } from '../routes'
 
 export const FavoriteButton = ({ recipeId }: { recipeId: number }) => {
   const { user } = useContext(UserContext)
@@ -42,7 +44,9 @@ export const FavoriteButton = ({ recipeId }: { recipeId: number }) => {
         setFavorite(true)
       }
     } catch (err) {
-      console.error(err)
+      if (err.statusCode === HttpStatus.Unauthorized) {
+        Router.push('/login')
+      }
     } finally {
       setWorking(false)
     }
