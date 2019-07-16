@@ -369,6 +369,19 @@ class Api {
       ...opts,
       method: 'DELETE'
     })
+
+  getRecipes = async (
+    { username, q, sort }: { username: string; q?: string; sort?: string },
+    opts: RequestInit = {}
+  ) => {
+    if (q) {
+      return _.map(
+        await this.searchUserRecipes({ username, q, sort }, opts),
+        'recipe'
+      )
+    }
+    return await this.getUserRecipes(username, sort, opts)
+  }
 }
 
 export const api = new Api()
