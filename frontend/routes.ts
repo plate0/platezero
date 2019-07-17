@@ -4,6 +4,10 @@ export const routes: any = nextroutes()
   .add('login')
   .add('register')
   .add({
+    name: 'pzp-a1',
+    pattern: '/pzp'
+  })
+  .add({
     name: 'shopping',
     pattern: '/shopping'
   })

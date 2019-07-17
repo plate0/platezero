@@ -1,0 +1,203 @@
+import * as React from 'react'
+import { Card, Container, Col, Row } from 'reactstrap'
+import Head from 'next/head'
+
+const Mailchimp = () => (
+  <>
+    <div id="mc_embed_signup">
+      <form
+        action="https://virtyx.us14.list-manage.com/subscribe/post?u=d18eecd2a37d39601d53b3c72&amp;id=e008d02ba0"
+        method="post"
+        id="mc-embedded-subscribe-form"
+        name="mc-embedded-subscribe-form"
+        className="validate"
+        target="_blank"
+        noValidate
+      >
+        <div id="mc_embed_signup_scroll" className="input-group">
+          <input
+            type="email"
+            name="EMAIL"
+            className="email form-control"
+            id="mce-EMAIL"
+            placeholder="email address"
+            required
+          />
+          <div className="input-group-append">
+            <input
+              type="submit"
+              value="Join Wait List"
+              name="subscribe"
+              id="mc-embedded-subscribe"
+              className="btn btn-primary"
+            />
+          </div>
+          <div style={{ position: 'absolute', left: -5000 }} aria-hidden="true">
+            <input
+              type="text"
+              name="b_d18eecd2a37d39601d53b3c72_e008d02ba0"
+              tabIndex="-1"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <style jsx>
+      {`
+        #mc_embed_signup {
+        }
+      `}
+    </style>
+  </>
+)
+
+const Header = ({}) => (
+  <>
+    <header>
+      <Container>
+        <nav className="p-3">
+          <div>PlateZero Pro</div>
+        </nav>
+        <div className="py-0 py-md-4" />
+        <Row className="hero pt-3 pt-md-6">
+          <Col
+            className="text-center"
+            xs={{ size: 12 }}
+            md={{ size: 8, offset: 2 }}
+          >
+            <h1>Hate Meal Planning?</h1>
+            <h2 className="mb-3">
+              Never worry about eating delicious, healthy food at home. Curious?
+              Join our wait list!
+            </h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={{ offset: 1, size: 10 }} md={{ offset: 3, size: 6 }}>
+            <Mailchimp />
+          </Col>
+        </Row>
+        <Row className="pt-3 pt-md-5">
+          <Col className="justify-content-center d-flex">
+            <h1>
+              <span className="text-success">$50</span>/month
+            </h1>
+          </Col>
+        </Row>
+        <div className="row headlines justify-content-around pt-0 pt-md-5">
+          <Col xs="10" md="4">
+            <Card
+              className="mt-3 mt-md-0 p-3 shadow-sm border-0"
+              style={{ height: 180 }}
+            >
+              <h3>Personalization</h3>
+              <p>
+                Tell us your preferences about what foods you love, like, or
+                dislike. Inform us of allergies and other personal preferences.
+              </p>
+            </Card>
+          </Col>
+          <Col xs="10" md="4">
+            <Card
+              className="mt-3 mt-md-0 p-3 shadow-sm border-0"
+              style={{ height: 180 }}
+            >
+              <h3>Weekly Meal Plans</h3>
+              <p>
+                We create weekly meal plans with a complete shopping list, which
+                you can add additional items to that you normally get at the
+                store.
+              </p>
+            </Card>
+          </Col>
+          <Col xs="10" md="4">
+            <Card
+              className="mt-3 mt-md-0 p-3 border-0 shadow-sm"
+              style={{ height: 180 }}
+            >
+              <h3>
+                Grocery Delivery
+                <span
+                  className="ml-1 text-secondary"
+                  style={{
+                    verticalAlign: 'super',
+                    fontSize: 18
+                  }}
+                >
+                  *
+                </span>
+              </h3>
+              <p>
+                We shop locally at your favorite stores to get the best fresh
+                ingredients, which are delivered to your door.
+              </p>
+              <small className="text-secondary">* Where available</small>
+            </Card>
+          </Col>
+        </div>
+        <ul
+          className="mt-3 list-unstyled text-center"
+          style={{ fontSize: '1.5rem' }}
+        >
+          <li>
+            <i className="text-success far fa-check" />7 days a week
+          </li>
+          <li>
+            <i className="text-success far fa-check" />
+            Breakfast, Lunch, and Dinner
+          </li>
+        </ul>
+      </Container>
+    </header>
+    <style jsx>
+      {`
+        nav {
+          font-size: 1.5rem;
+        }
+
+        .hero {
+          text-align: center;
+        }
+
+        .hero h1 {
+          font-size: 3rem;
+        }
+
+        .headlines > div {
+          background-color: rgba(0, 0, 0, 0.5);
+          font-size: 1.5rem;
+          padding: 2rem;
+          text-align: center;
+          color: white;
+          border-radius: 0.25rem;
+        }
+
+        ul {
+          font-size: 20px;
+          line-height: 2rem;
+        }
+
+        header {
+          height: 1000px;
+          width: 100%;
+          background-size: cover;
+          background-image: url('https://com-platezero-static.s3.amazonaws.com/assets/cutting-board-with-knife.jpg');
+          background-position: center;
+        }
+      `}
+    </style>
+  </>
+)
+
+export default class PZPA1 extends React.Component {
+  public render() {
+    return (
+      <>
+        <Head>
+          <title>PlateZero Pro</title>
+        </Head>
+        <Header />
+      </>
+    )
+  }
+}
