@@ -19,7 +19,7 @@ export async function importFile(file: S3File, user: number): Promise<Recipe> {
       log('Parsed')
       const errors = v.validate(parsed)
       if (errors && errors.length > 0) {
-        throw 'Validation failed:\n' + errors.join('\n') + '\n'
+        throw 'Validation failed:\n' + errors.join('\n')
       }
       log('Validated')
       let recipe = await poster.post(parsed, user)
