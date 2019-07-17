@@ -32,6 +32,10 @@ $changed-base: $warning;
   text-decoration: underline;
 }
 
+.link-never-underline:hover {
+  text-decoration: none !important;
+}
+
 summary {
   color: $secondary;
 }
@@ -74,5 +78,13 @@ nav .dropdown-toggle::after {
   .theme-#{$color} {
     color: theme-color-level($color, $alert-color-level);
     @include gradient-bg(theme-color-level($color, $alert-bg-level));
+  }
+}
+
+#main {
+  transition: filter 250ms ease-in-out;
+  filter: blur(0);
+  &.blur {
+    filter: blur(20px);
   }
 }

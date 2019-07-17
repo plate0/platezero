@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import {
+  Button,
   Nav,
   NavItem,
   Container,
@@ -15,7 +16,13 @@ import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
 import { logout } from '../common'
 
-export const Navbar = () => {
+export interface NavbarProps {
+  title: string
+  root: boolean
+  back: any
+}
+
+export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
   const { user } = useContext(UserContext)
   return (
     <RsNavbar
@@ -26,11 +33,33 @@ export const Navbar = () => {
       style={{ zIndex: 1 }}
     >
       <Container>
+        {root && (
+          <Button
+            className="py-0 text-white d-block d-md-none"
+            color="link"
+            onClick={mobileMenuOpen}
+          >
+            <i style={{ fontSize: '1.5rem' }} className="far fa-bars" />
+          </Button>
+        )}
+        {!root && (
+          <Button
+            className="pl-0 py-0 text-white d-md-none d-flex align-items-center link-never-underline"
+            color="link"
+            onClick={back}
+          >
+            <i className="far fa-chevron-left mr-2" />
+            Back
+          </Button>
+        )}
         <Link route={user ? `/${user.username}` : '/'}>
-          <a className="navbar-brand py-0">
+          <a className="navbar-brand py-0 d-none d-md-block">
             <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
           </a>
         </Link>
+        <div className="title text-white d-block d-md-none flex-fill text-center">
+          {title}
+        </div>
         <Nav className="ml-auto align-items-center" navbar>
           {user && <NewRecipeDropdown />}
           {user ? <UserCardNav user={user} /> : <AnonNav />}
@@ -41,39 +70,15 @@ export const Navbar = () => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <UserContext.Consumer>
-    {({ updateUser }) => (
-      <UncontrolledDropdown nav inNavbar>
-        <DropdownToggle nav caret>
-          <ProfilePicture img={user.avatar_url} size={30} />
-        </DropdownToggle>
-        <DropdownMenu right>
-          <Link route={`/${user.username}`}>
-            <a className="dropdown-item" role="menuitem">
-              Recipes
-            </a>
-          </Link>
-          <DropdownItem
-            onClick={() => {
-              logout()
-              const w = window as any
-              if (w && w._paq) {
-                w._paq.push(['resetUserId'])
-                w._paq.push(['trackPageView'])
-              }
-              updateUser(null)
-            }}
-          >
-            Logout
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    )}
-  </UserContext.Consumer>
+  <Link route={`/${user.username}`}>
+    <a>
+      <ProfilePicture img={user.avatar_url} size={30} />
+    </a>
+  </Link>
 )
 
 const NewRecipeDropdown = () => (
-  <>
+  <div className="d-none d-md-block">
     <Link route="shopping">
       <a className="text-white btn btn-link">Shopping</a>
     </Link>
@@ -82,7 +87,7 @@ const NewRecipeDropdown = () => (
         Add Recipe
       </a>
     </Link>
-  </>
+  </div>
 )
 
 const AnonNav = () => (
