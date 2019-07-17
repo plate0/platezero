@@ -40,7 +40,6 @@ const ingredientList = Joi.object({
   name: Joi.string(),
   image_url: Joi.string(),
   lines: Joi.array()
-    .min(1)
     .items(ingredientLine)
     .required()
 })
@@ -56,7 +55,6 @@ const procedureList = Joi.object({
   id: Joi.number().min(0),
   name: Joi.string(),
   lines: Joi.array()
-    .min(1)
     .required()
     .items(procedureLine)
 })
@@ -85,7 +83,6 @@ export const NewRecipe = {
   duration: Joi.number(),
   preheats: Joi.array().items(preheat),
   ingredient_lists: Joi.array()
-    .min(1)
     .items(ingredientList)
     .required(),
   procedure_lists: Joi.array()
