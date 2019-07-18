@@ -1,6 +1,11 @@
 $primary: #19afd0;
 $font-family-sans-serif: 'Lato', sans-serif;
 $enable-responsive-font-sizes: true;
+$love: #f01d94;
+
+$theme-colors: (
+  'love': $love
+);
 
 @import 'bootstrap/bootstrap.scss';
 @import 'plain-input.scss';

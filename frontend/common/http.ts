@@ -223,8 +223,8 @@ class Api {
       method: 'POST'
     })
 
-  importFiles = (body: any, opts: RequestInit = {}) =>
-    fetch(`${API_URL}/user/import/file`, {
+  importFiles = async (body: any, opts: RequestInit = {}): Promise<any> => {
+    const res = await fetch(`${API_URL}/user/import/file`, {
       ...opts,
       body,
       method: 'POST',
@@ -232,7 +232,10 @@ class Api {
         Accept: 'application/json',
         ...authHeaders(this.token)
       }
-    }).then(handleError)
+    })
+    const recipe = await handleError(res)
+    return {httpStatus: res.status, recipe: recipe}
+  }
 
   patchBranch = (
     slug: string,
@@ -350,6 +353,35 @@ class Api {
       ...opts,
       method: 'DELETE'
     })
+
+  getFavorites = (username: string, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON[]>(`/users/${username}/favorites`, opts)
+
+  addFavorite = (recipe_id: number, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON>(`/user/favorites`, {
+      ...opts,
+      body: JSON.stringify({ recipe_id }),
+      method: 'POST'
+    })
+
+  removeFavorite = (recipeId: number, opts: RequestInit = {}) =>
+    this._fetch<any>(`/user/favorites/${recipeId}`, {
+      ...opts,
+      method: 'DELETE'
+    })
+
+  getRecipes = async (
+    { username, q, sort }: { username: string; q?: string; sort?: string },
+    opts: RequestInit = {}
+  ) => {
+    if (q) {
+      return _.map(
+        await this.searchUserRecipes({ username, q, sort }, opts),
+        'recipe'
+      )
+    }
+    return await this.getUserRecipes(username, sort, opts)
+  }
 }
 
 export const api = new Api()

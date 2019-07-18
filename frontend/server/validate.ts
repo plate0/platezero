@@ -70,7 +70,7 @@ const preheat = Joi.object({
     .required()
 })
 
-export const validateNewRecipe = validator({
+export const NewRecipe = {
   title: Joi.string().required(),
   subtitle: Joi.string(),
   description: Joi.string(),
@@ -88,7 +88,9 @@ export const validateNewRecipe = validator({
   procedure_lists: Joi.array()
     .items(procedureList)
     .required()
-})
+}
+
+export const validateNewRecipe = validator(NewRecipe)
 
 export const validateNewUser = validator({
   username: Joi.string()
@@ -184,4 +186,11 @@ export const validateShoppingListItemPost = validator({
 export const validateShoppingListItemPatch = validator({
   name: Joi.string(),
   completed: Joi.boolean()
+})
+
+export const validateNewFavorite = validator({
+  recipe_id: Joi.number()
+    .integer()
+    .min(0)
+    .required()
 })

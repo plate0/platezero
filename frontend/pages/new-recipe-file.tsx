@@ -1,4 +1,6 @@
 import React from 'react'
+import Router from 'next/router'
+import Recipe from './recipe'
 import ErrorPage from './_error'
 import Head from 'next/head'
 import { Dropzone, Layout, AlertErrors } from '../components'
@@ -7,11 +9,13 @@ import * as _ from 'lodash'
 import { api, getErrorMessages } from '../common'
 import { Link } from '../routes'
 import { UserJSON } from '../models'
+import { HttpStatus } from '../common/http-status'
 
 enum UploadStatus {
   None,
   Uploading,
   UploadSucceeded,
+  ParseSucceeded,
   UploadFailed
 }
 
@@ -70,8 +74,12 @@ export default class NewRecipeFile extends React.Component<
       status: UploadStatus.Uploading
     })
     try {
-      await api.importFiles(formData)
-      this.setState({ status: UploadStatus.UploadSucceeded })
+      const { httpStatus, recipe } = await api.importFiles(formData)
+      if (httpStatus == HttpStatus.Created && recipe) {
+        Router.push(recipe.html_url)
+        return
+      }
+      this.setState({ status: UploadStatus.UploadSucceeded, recipe })
     } catch (err) {
       this.setState({
         status: UploadStatus.UploadFailed,

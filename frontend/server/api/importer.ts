@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as shrimp from '../shrimp/shrimp'
 import { AuthenticatedRequest } from './user'
 import { internalServerError } from '../errors'
 import { Recipe } from '../../models/recipe'
@@ -8,7 +9,7 @@ import * as prom from 'prom-client'
 import { parse } from 'url'
 import { HttpStatus } from '../../common/http-status'
 import { config } from '../config'
-import { size, each, toString } from 'lodash'
+import { size, toString } from 'lodash'
 import { generate } from 'shortid'
 import { parse as parseRecipe } from 'recipe-parser'
 const multer = require('multer')
@@ -77,11 +78,19 @@ const upload = multer({
 })
 r.post('/file', upload.array('file'), async function importFile(req: any, res) {
   filesPerUploadHistogram.observe(req.files.length)
-  each(req.files, file => {
+  let recipe
+
+  // Do NOT use a lambda-based loop here;
+  // the lambda must be declared 'async' but
+  // the iterator will not 'await' the result
+  for (let i = 0; i < req.files.length; ++i) {
+    const file = req.files[i]
     const mimetype = toString(file.mimetype)
     fileImportCounter.inc({ mimetype })
     fileSizeHistogram.observe({ mimetype }, file.size)
-  })
+    recipe = await shrimp.importFile(file, req.user.userId)
+  }
+
   if (slackHook) {
     fetch(slackHook, {
       method: 'POST',
@@ -97,9 +106,12 @@ ${req.files.map(f => f.originalname).join('\n')}`
       })
     })
   }
-  res.status(HttpStatus.Accepted).json({
-    upload: 'success'
-  })
+
+  if (recipe) {
+    res.status(HttpStatus.Created).json(recipe)
+  } else {
+    res.status(HttpStatus.Accepted).json({ upload: 'success' })
+  }
 })
 
 export const importers = r
