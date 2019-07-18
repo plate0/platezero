@@ -1,20 +1,9 @@
 import React, { useContext } from 'react'
-import {
-  Button,
-  Nav,
-  NavItem,
-  Container,
-  Navbar as RsNavbar,
-  UncontrolledDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem
-} from 'reactstrap'
+import { Button, Nav, NavItem, Container, Navbar as RsNavbar } from 'reactstrap'
 import { UserJSON } from '../models'
 import { UserContext } from '../context/UserContext'
 import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
-import { logout } from '../common'
 
 export interface NavbarProps {
   title: string
@@ -29,7 +18,7 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
       expand={true}
       color="primary"
       dark={true}
-      className="shadow-sm"
+      className="shadow-sm px-2"
       style={{ zIndex: 1 }}
     >
       <Container>

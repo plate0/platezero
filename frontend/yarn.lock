@@ -7746,6 +7746,11 @@ react-popper@^0.10.4:
     popper.js "^1.14.1"
     prop-types "^15.6.1"
 
+react-ripples@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-ripples/-/react-ripples-2.1.1.tgz#2e0002998e95bf851dc0ea9976523b4aeb4b42ff"
+  integrity sha512-zV6AwxuXnDaBlYCZ0JC80HP5Ggm/g2de8fTmkZWlls9O1m/q90KEEfzpUuQXefu86e8Ug3NTeIlKnQ/6LaqJyg==
+
 react-select@2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-2.4.3.tgz#62efdf76d7e33e9bde22d907a0cc8abd0aeab656"

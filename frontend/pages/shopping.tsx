@@ -12,6 +12,8 @@ import { Button, Row, Col } from 'reactstrap'
 import { api } from '../common/http'
 import { ShoppingListJSON, ShoppingListItemJSON, UserJSON } from '../models'
 import { withRouter, WithRouterProps } from 'next/router'
+import { withUUID } from '../common/uuid'
+import { v4 as uuid } from 'uuid'
 
 interface ShoppingListsProps {
   id?: number
@@ -25,6 +27,13 @@ interface ShoppingListsState {
   active: ShoppingListJSON
   lists: { [id: number]: ShoppingListJSON }
 }
+
+const getShoppingList = (id: number) =>
+  api.getShoppingList(id).then(list => {
+    const { items } = list
+    list.items = items.map(withUUID)
+    return list
+  })
 
 class ShoppingLists extends React.Component<
   ShoppingListsProps & WithRouterProps,
@@ -45,7 +54,7 @@ class ShoppingLists extends React.Component<
       const shoppingLists = await api.getShoppingLists()
       const lists = _.keyBy(shoppingLists, 'id')
       const activeId = id || _.first(_.map(shoppingLists, 'id'))
-      const active = activeId ? await api.getShoppingList(activeId) : undefined
+      const active = activeId ? await getShoppingList(activeId) : undefined
       return {
         id,
         active,
@@ -68,7 +77,7 @@ class ShoppingLists extends React.Component<
     id = _.isArray(id) ? _.first(id) : id
     if (id && id !== prevProps.router.query.id) {
       this.setState({
-        active: await api.getShoppingList(_.toNumber(id))
+        active: await getShoppingList(_.toNumber(id))
       })
     }
   }
@@ -88,12 +97,13 @@ class ShoppingLists extends React.Component<
     }))
   }
 
-  public addListItem = async (list: ShoppingListJSON) => {
+  public onAdd = async (list: ShoppingListJSON) => {
     const name = prompt(`Add to ${list.name}`)
     if (!name) {
       return
     }
     const item = await api.createShoppingListItem(list.id, name)
+    item._uuid = uuid()
     this.setState(s => ({
       active: {
         ...s.active,
@@ -102,38 +112,37 @@ class ShoppingLists extends React.Component<
     }))
   }
 
-  public completeListItem = async (
+  public onChange = async (
     list: ShoppingListJSON,
-    item: ShoppingListItemJSON,
-    idx: number
+    item: ShoppingListItemJSON
   ) => {
     this.setState(
       s => ({
         active: {
           ...s.active,
-          items: s.active.items.map((item, i) => ({
-            ...item,
-            completed: idx === i ? !item.completed : item.completed
+          items: s.active.items.map(i => ({
+            ...i,
+            ...(i._uuid === item._uuid ? item : {})
           }))
         }
       }),
       async () => {
-        const completed = !item.completed
-        await api.patchShoppingListItem(list.id, item.id, { completed })
+        await api.patchShoppingListItem(list.id, item.id, {
+          completed: item.completed
+        })
       }
     )
   }
 
-  public removeListItem = async (
+  public onRemove = async (
     list: ShoppingListJSON,
-    item: ShoppingListItemJSON,
-    idx: number
+    item: ShoppingListItemJSON
   ) => {
     this.setState(
       s => ({
         active: {
           ...s.active,
-          items: _.filter(s.active.items, (_, i) => i != idx)
+          items: _.filter(s.active.items, i => i._uuid != item._uuid)
         }
       }),
       async () => {
@@ -154,7 +163,7 @@ class ShoppingLists extends React.Component<
           <title>Shopping Lists - PlateZero</title>
         </Head>
         {_.size(lists) === 0 && (
-          <Row className="mt-3">
+          <Row className="mt-1">
             <Col xs="12">
               <Blankslate>
                 <h2>No Shopping Lists</h2>
@@ -166,7 +175,7 @@ class ShoppingLists extends React.Component<
           </Row>
         )}
         {_.size(lists) > 0 && (
-          <Row className="mt-3">
+          <Row className="mt-1">
             <Col
               className={id ? 'd-none d-md-block' : ''}
               xs="12"
@@ -175,7 +184,7 @@ class ShoppingLists extends React.Component<
             >
               <div className="d-flex align-items-center justify-content-between">
                 <h2 className="mb-0">Lists</h2>
-                <Button color="link" onClick={this.addList}>
+                <Button className="pr-0" color="link" onClick={this.addList}>
                   <i className="far fa-plus" />
                 </Button>
               </div>
@@ -189,9 +198,9 @@ class ShoppingLists extends React.Component<
             >
               <ShoppingList
                 list={active}
-                add={this.addListItem}
-                complete={this.completeListItem}
-                remove={this.removeListItem}
+                onAdd={this.onAdd}
+                onChange={this.onChange}
+                onRemove={this.onRemove}
               />
             </Col>
           </Row>
