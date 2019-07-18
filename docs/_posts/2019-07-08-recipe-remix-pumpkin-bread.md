@@ -21,4 +21,4 @@ know your ideas for next time.
 ![Pumpkin bread](https://static.platezero.com/blog/pumpkin_bread_1.jpg)
 
 [twitter]: https://twitter.com/platezer0
-[recipe]: https://platezero.com/KA/pumpkin-bread
+[recipe]: https://platezero.com/KA/pumpkin-bread/versions/526
