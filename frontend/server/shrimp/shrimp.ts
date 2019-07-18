@@ -3,7 +3,6 @@ import { log, S3File } from './common'
 
 const loader = require('./loader')
 const parser = require('./parser')
-const poster = require('./poster')
 const archiver = require('./archiver')
 const v = require('./validator')
 const moment = require('moment')
@@ -22,7 +21,7 @@ export async function importFile(file: S3File, user: number): Promise<Recipe> {
         throw 'Validation failed:\n' + errors.join('\n')
       }
       log('Validated')
-      let recipe = await poster.post(parsed, user)
+      let recipe = await Recipe.createNewRecipe(user, parsed)
       log('Posted')
       await archiver.archive(file)
       log('Achived')
