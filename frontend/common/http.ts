@@ -223,8 +223,8 @@ class Api {
       method: 'POST'
     })
 
-  importFiles = (body: any, opts: RequestInit = {}) =>
-    fetch(`${API_URL}/user/import/file`, {
+  importFiles = async (body: any, opts: RequestInit = {}): Promise<any> => {
+    const res = await fetch(`${API_URL}/user/import/file`, {
       ...opts,
       body,
       method: 'POST',
@@ -232,7 +232,10 @@ class Api {
         Accept: 'application/json',
         ...authHeaders(this.token)
       }
-    }).then(handleError)
+    })
+    const recipe = await handleError(res)
+    return {httpStatus: res.status, recipe: recipe}
+  }
 
   patchBranch = (
     slug: string,
