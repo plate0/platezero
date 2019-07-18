@@ -3,6 +3,8 @@ const nextroutes = require('next-routes')
 export const routes: any = nextroutes()
   .add('login')
   .add('register')
+  .add('tos')
+  .add('privacy')
   .add({
     name: 'shopping',
     pattern: '/shopping'
