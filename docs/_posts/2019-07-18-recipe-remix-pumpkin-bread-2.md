@@ -25,6 +25,6 @@ We’ve been sticking with the liquid coconut oil as our favorite version and I
 pretend this healthy fat + the pumpkin makes this bread a health food ;)
 
 Find the remixed version here:
-<https://platezero.com/KA/pumpkin-bread/versions/1208>
+<https://platezero.com/KA/pumpkin-bread/versions/1211>
 
 ![Pumpkin bread](https://static.platezero.com/blog/pumpkin_bread_2.jpg)
