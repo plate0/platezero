@@ -110,9 +110,9 @@ const Header = ({}) => (
             >
               <h3>Weekly Meal Plans</h3>
               <p>
-                We create weekly meal plans with a complete shopping list, which
-                you can add additional items to that you normally get at the
-                store.
+                We create weekly meal plans with a complete shopping list, to
+                which you can add additional items to that you normally get at
+                the store.
               </p>
             </Card>
           </Col>
@@ -187,7 +187,7 @@ const Header = ({}) => (
           height: 1000px;
           width: 100%;
           background-size: cover;
-          background-image: url('https://com-platezero-static.s3.amazonaws.com/assets/cutting-board-with-knife.jpg');
+          background-image: url('https://static.platezero.com/assets/cutting-board-with-knife.jpg');
           background-position: center;
         }
       `}
