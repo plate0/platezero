@@ -1,84 +1,61 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 import { Card, Container, Col, Row } from 'reactstrap'
 import Head from 'next/head'
 
-const Facebook = () => (
-  <>
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window,document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
- fbq('init', '383617562508203'); 
-fbq('track', 'PageView');
-  `
-      }}
-    />
-    <noscript>
-      <img
-        height="1"
-        width="1"
-        style={{ display: 'none' }}
-        src="https://www.facebook.com/tr?id=pixelID&ev=PageView&noscript=1"
-      />
-    </noscript>
-  </>
-)
+const Mailchimp = () => {
+  const onSubmit = () => fbq('track', 'Lead')
+  const [email, setEmail] = useState('')
 
-const Mailchimp = () => (
-  <>
-    <div id="mc_embed_signup">
-      <form
-        action="https://virtyx.us14.list-manage.com/subscribe/post?u=d18eecd2a37d39601d53b3c72&amp;id=e008d02ba0"
-        method="post"
-        id="mc-embedded-subscribe-form"
-        name="mc-embedded-subscribe-form"
-        className="validate"
-        target="_blank"
-        noValidate
-      >
-        <div id="mc_embed_signup_scroll" className="input-group">
-          <input
-            type="email"
-            name="EMAIL"
-            className="email form-control"
-            id="mce-EMAIL"
-            placeholder="email address"
-            required
-          />
-          <div className="input-group-append">
+  return (
+    <>
+      <div id="mc_embed_signup">
+        <form
+          onSubmit={onSubmit}
+          action="https://virtyx.us14.list-manage.com/subscribe/post?u=d18eecd2a37d39601d53b3c72&amp;id=e008d02ba0"
+          method="post"
+          id="mc-embedded-subscribe-form"
+          name="mc-embedded-subscribe-form"
+          className="validate"
+          target="_blank"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          noValidate
+        >
+          <div id="mc_embed_signup_scroll" className="input-group">
             <input
-              type="submit"
-              value="Join Wait List"
-              name="subscribe"
-              id="mc-embedded-subscribe"
-              className="btn btn-primary"
+              type="email"
+              name="EMAIL"
+              className="email form-control"
+              id="mce-EMAIL"
+              placeholder="email address"
+              required
             />
+            <div className="input-group-append">
+              <input
+                type="submit"
+                value="Join Wait List"
+                name="subscribe"
+                id="mc-embedded-subscribe"
+                className="btn btn-primary"
+                disabled={email == ''}
+              />
+            </div>
+            <div
+              style={{ position: 'absolute', left: -5000 }}
+              aria-hidden="true"
+            >
+              <input
+                type="text"
+                name="b_d18eecd2a37d39601d53b3c72_e008d02ba0"
+                tabIndex="-1"
+              />
+            </div>
           </div>
-          <div style={{ position: 'absolute', left: -5000 }} aria-hidden="true">
-            <input
-              type="text"
-              name="b_d18eecd2a37d39601d53b3c72_e008d02ba0"
-              tabIndex="-1"
-            />
-          </div>
-        </div>
-      </form>
-    </div>
-    <style jsx>
-      {`
-        #mc_embed_signup {
-        }
-      `}
-    </style>
-  </>
-)
+        </form>
+      </div>
+    </>
+  )
+}
 
 const Header = ({}) => (
   <>
@@ -224,7 +201,6 @@ export default class PZPA1 extends React.Component {
       <>
         <Head>
           <title>PlateZero Pro</title>
-          <Facebook />
         </Head>
         <Header />
       </>
