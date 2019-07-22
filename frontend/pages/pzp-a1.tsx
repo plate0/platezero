@@ -3,8 +3,11 @@ import { Card, Container, Col, Row } from 'reactstrap'
 import Head from 'next/head'
 
 const Mailchimp = () => {
-  const onSubmit = () => fbq('track', 'Lead')
   const [email, setEmail] = useState('')
+  const onSubmit = () => {
+    fbq('track', 'Lead')
+    setEmail('')
+  }
 
   return (
     <>
@@ -51,8 +54,31 @@ const Mailchimp = () => {
               />
             </div>
           </div>
+          <div id="mce-responses" className="text-center font-weight-bold">
+            <div id="mce-error-response" style={{ display: 'none' }}></div>
+            <div id="mce-success-response" style={{ display: 'none' }}></div>
+          </div>
         </form>
       </div>
+      <script src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js" />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';fnames[3]='ADDRESS';ftypes[3]='address';fnames[4]='PHONE';ftypes[4]='phone';}(jQuery));var $mcj = jQuery.noConflict(true);
+`
+        }}
+      />
+      <style jsx>
+        {`
+          #mce-error-response {
+            font-size: 20px;
+          }
+
+          #mce-success-response {
+            font-size: 30px;
+          }
+        `}
+      </style>
     </>
   )
 }
