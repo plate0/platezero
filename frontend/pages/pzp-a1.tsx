@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Card, Container, Col, Row } from 'reactstrap'
 import Head from 'next/head'
+import { Link } from '../routes'
 
 const Mailchimp = () => {
   const [email, setEmail] = useState('')
@@ -88,11 +89,15 @@ const Header = ({}) => (
     <header>
       <Container>
         <nav className="p-3">
-          <img
-            src="https://static.platezero.com/assets/logo/platezero-pro-black.png"
-            alt="PlateZero Pro"
-            style={{ width: 200 }}
-          />
+          <Link route="/">
+            <a>
+              <img
+                src="https://static.platezero.com/assets/logo/platezero-pro-black.png"
+                alt="PlateZero Pro"
+                style={{ width: 200 }}
+              />
+            </a>
+          </Link>
         </nav>
         <div className="py-0 py-md-4" />
         <Row className="hero pt-3 pt-md-6">
