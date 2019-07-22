@@ -6,6 +6,10 @@ export const routes: any = nextroutes()
   .add('tos')
   .add('privacy')
   .add({
+    name: 'pzp-a1',
+    pattern: '/pzp'
+  })
+  .add({
     name: 'shopping',
     pattern: '/shopping'
   })
