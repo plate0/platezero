@@ -11,7 +11,7 @@ const Mailchimp = () => {
       <div id="mc_embed_signup">
         <form
           onSubmit={onSubmit}
-          action="https://virtyx.us14.list-manage.com/subscribe/post?u=d18eecd2a37d39601d53b3c72&amp;id=e008d02ba0"
+          action="https://virtyx.us14.list-manage.com/subscribe/post?u=d18eecd2a37d39601d53b3c72&amp;id=7cde665dd7"
           method="post"
           id="mc-embedded-subscribe-form"
           name="mc-embedded-subscribe-form"
@@ -21,7 +21,7 @@ const Mailchimp = () => {
           onChange={e => setEmail(e.target.value)}
           noValidate
         >
-          <div id="mc_embed_signup_scroll" className="input-group">
+          <div className="input-group">
             <input
               type="email"
               name="EMAIL"
@@ -46,7 +46,7 @@ const Mailchimp = () => {
             >
               <input
                 type="text"
-                name="b_d18eecd2a37d39601d53b3c72_e008d02ba0"
+                name="b_d18eecd2a37d39601d53b3c72_7cde665dd7"
                 tabIndex="-1"
               />
             </div>
