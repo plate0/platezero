@@ -62,7 +62,11 @@ const Header = ({}) => (
     <header>
       <Container>
         <nav className="p-3">
-          <div>PlateZero Pro</div>
+          <img
+            src="https://static.platezero.com/assets/logo/platezero-pro-black.png"
+            alt="PlateZero Pro"
+            style={{ width: 200 }}
+          />
         </nav>
         <div className="py-0 py-md-4" />
         <Row className="hero pt-3 pt-md-6">
