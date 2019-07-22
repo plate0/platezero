@@ -56,18 +56,34 @@ function preheatsToText(preheats: PreheatJSON[]): string {
 }
 
 function parsePreheats(text: string): PreheatJSON[] {
-  return _.reject(
-    _.map(_.split(text, '\n'), line => {
-      const [name, rest] = _.split(line, ':')
-      const [temp, maybeUnit] = _.words(rest)
-      const unit = tempUnit(maybeUnit)
-      if (!name || !temp || !unit) {
-        return undefined
-      }
-      return { name, temperature: parseInt(temp, 10), unit }
-    }),
-    _.isUndefined
-  )
+  return _.reject(_.map(_.split(text, '\n'), parsePreheat), _.isUndefined)
+}
+
+function parsePreheat(line: string): PreheatJSON | undefined {
+  const [label, rest] = _.split(line, ':')
+  const v = _.size(rest) ? parsePreheatValue(rest) : parsePreheatValue(label)
+  const name = _.size(rest) ? label : 'Oven'
+  if (!v) {
+    return undefined
+  }
+  const temperature = parseInt(v[0], 10)
+  if (_.isNaN(temperature)) {
+    return undefined
+  }
+  const unit = v[1]
+  return { name, temperature, unit }
+}
+
+function parsePreheatValue(v: string): [string, string] | undefined {
+  const [temp, maybeUnit] = _.words(v)
+  const unit = tempUnit(maybeUnit)
+  if (temp && unit) {
+    return [temp, unit]
+  }
+  if (temp) {
+    return [temp, 'F']
+  }
+  return undefined
 }
 
 // take a string and if it's a case insensitive match to 'c' or 'f', return 'C'
