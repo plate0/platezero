@@ -73,8 +73,8 @@ const Header = ({}) => (
           >
             <h1>Hate Meal Planning?</h1>
             <h2 className="mb-3">
-              Never worry about eating delicious, healthy food at home. Curious?
-              Join our wait list!
+              You should never worry about eating delicious, healthy food at
+              home. Curious? Join our wait list!
             </h2>
           </Col>
         </Row>
