@@ -222,7 +222,7 @@ const Header = ({}) => (
           height: 1200px;
           width: 100%;
           background-size: cover;
-          background-image: url('https://static.platezero.com/assets/cutting-board-with-knife.jpg');
+          background-image: url('https://static.platezero.com/assets/cut_fruit_on_marble_optimized.jpg');
           background-position: center;
         }
       `}
