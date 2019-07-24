@@ -88,7 +88,7 @@ const Header = ({}) => (
   <>
     <header>
       <Container>
-        <nav className="p-3">
+        <nav className="p-3 text-center text-md-left">
           <Link route="/">
             <a>
               <img
@@ -114,7 +114,7 @@ const Header = ({}) => (
           </Col>
         </Row>
         <Row>
-          <Col xs={{ offset: 1, size: 10 }} md={{ offset: 3, size: 6 }}>
+          <Col xs={{ size: 12 }} md={{ offset: 3, size: 6 }}>
             <Mailchimp />
           </Col>
         </Row>
@@ -129,9 +129,9 @@ const Header = ({}) => (
           <Col xs="10" md="4">
             <Card
               className="mt-3 mt-md-0 p-3 shadow-sm border-0"
-              style={{ height: 180 }}
+              style={{ minHeight: 180 }}
             >
-              <h3>Personalization</h3>
+              <h3>Personalized</h3>
               <p>
                 Tell us your preferences about what foods you love, like, or
                 dislike. Inform us of allergies and other personal preferences.
@@ -141,7 +141,7 @@ const Header = ({}) => (
           <Col xs="10" md="4">
             <Card
               className="mt-3 mt-md-0 p-3 shadow-sm border-0"
-              style={{ height: 180 }}
+              style={{ minHeight: 180 }}
             >
               <h3>Weekly Meal Plans</h3>
               <p>
@@ -154,7 +154,7 @@ const Header = ({}) => (
           <Col xs="10" md="4">
             <Card
               className="mt-3 mt-md-0 p-3 border-0 shadow-sm"
-              style={{ height: 180 }}
+              style={{ minHeight: 180 }}
             >
               <h3>
                 Grocery Delivery
@@ -168,7 +168,7 @@ const Header = ({}) => (
                   *
                 </span>
               </h3>
-              <p>
+              <p className="mb-0">
                 We shop locally at your favorite stores to get the best fresh
                 ingredients, which are delivered to your door.
               </p>
@@ -219,7 +219,7 @@ const Header = ({}) => (
         }
 
         header {
-          height: 1000px;
+          height: 1200px;
           width: 100%;
           background-size: cover;
           background-image: url('https://static.platezero.com/assets/cutting-board-with-knife.jpg');
