@@ -7,7 +7,7 @@ export const routes: any = nextroutes()
   .add('privacy')
   .add({
     name: 'pzp-a1',
-    pattern: '/pzp'
+    pattern: '/(pro|pzp)'
   })
   .add({
     name: 'shopping',
