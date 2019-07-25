@@ -26,6 +26,7 @@ export interface UserJSON {
   name: string
   recipes?: RecipeJSON[]
   username: string
+  email_opt_out: boolean
 }
 
 @Table({
@@ -79,6 +80,8 @@ export class User extends Model<User> implements UserJSON {
   @Column public deleted_at: Date
 
   @Column public name: string
+
+  @Column public email_opt_out: boolean
 
   @HasMany(() => Recipe)
   public recipes: Recipe[]
