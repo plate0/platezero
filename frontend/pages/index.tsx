@@ -42,8 +42,8 @@ const HomeNav = () => {
         </NavbarBrand>
       </div>
       <div className="ml-auto mr-2" style={{ zIndex: 1 }}>
-        <Nav navbar className="align-items-center">
-          <NavItem>
+        <Nav navbar className="align-items-center flex-row">
+          <NavItem className="mr-2">
             <Link route="/pro">
               <a className="text-dark font-weight-bold">Pro</a>
             </Link>
