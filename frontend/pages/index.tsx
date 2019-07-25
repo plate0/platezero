@@ -91,7 +91,9 @@ export default class Index extends Component {
             <h2>
               Join the wait list for{' '}
               <Link route="/pro">
-                <a className="text-dark font-weight-bold">PlateZero Pro</a>
+                <a className="text-dark font-weight-bold text-underline">
+                  PlateZero Pro
+                </a>
               </Link>
               , the best and easiest way to eat delicious, healthy food at home.
             </h2>
