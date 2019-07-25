@@ -6,8 +6,9 @@ export const routes: any = nextroutes()
   .add('tos')
   .add('privacy')
   .add({
-    name: 'pzp-a1',
-    pattern: '/(pro|pzp)'
+    name: 'pro',
+    pattern: '/(pro|pzp)',
+    page: 'pzp-a1'
   })
   .add({
     name: 'shopping',
