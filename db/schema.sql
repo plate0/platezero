@@ -176,6 +176,7 @@ CREATE TABLE users (
   password_hash character varying,
   avatar_url character varying,
   name character varying,
+  email_opt_out boolean not null default false,
   confirmed_at timestamp without time zone DEFAULT now(),
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
