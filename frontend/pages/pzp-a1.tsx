@@ -236,6 +236,27 @@ export default class PZPA1 extends React.Component {
       <>
         <Head>
           <title>PlateZero Pro</title>
+          <meta
+            name="description"
+            content="Eat delicious, healthy food at home with no hassle or stress. You tell us what you love, we do the rest."
+          />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:site" content="@platezer0" />
+          <meta
+            name="twitter:image:src"
+            content="https://static.platezero.com/assets/cut_fruit_on_marble_optimized.jpg"
+          />
+          <meta property="og:title" content="PlateZero Pro" />
+          <meta property="og:type" content="website" />
+          <meta
+            property="og:image"
+            content="https://static.platezero.com/assets/cut_fruit_on_marble_optimized.jpg"
+          />
+          <meta
+            property="og:description"
+            content="Eat delicious, healthy food at home with no hassle or stress. You tell us what you love, we do the rest."
+          />
+          <meta property="og:site_name" content="PlateZero" />
         </Head>
         <Header />
       </>
