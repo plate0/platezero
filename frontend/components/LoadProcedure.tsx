@@ -7,7 +7,7 @@ export const LoadProcedure = ({
   onSubmit,
   Sample,
   Instructions,
-  Back
+  back
 }) => {
   return (
     <Row>
@@ -26,7 +26,7 @@ export const LoadProcedure = ({
         <ProcedureListsEditor lists={[]} onChange={onChange} />
       </Col>
       <Col xs="12" className="d-flex justify-content-between">
-        <Back />
+        <Back route={back} />
         <Button color="primary" onClick={onSubmit}>
           Save & Continue
         </Button>

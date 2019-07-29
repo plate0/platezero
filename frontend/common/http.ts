@@ -48,6 +48,9 @@ const handleError = async (res: Response): Promise<any> => {
   if (res.status === HttpStatus.NoContent) {
     return Promise.resolve()
   }
+  if (res.status === HttpStatus.UnprocessableEntity) {
+    return res.json()
+  }
   if (res.status >= 200 && res.status < 400) {
     return res.json()
   }
@@ -233,8 +236,8 @@ class Api {
         ...authHeaders(this.token)
       }
     })
-    const recipe = await handleError(res)
-    return {httpStatus: res.status, recipe: recipe}
+    const { recipe, text } = await handleError(res)
+    return { httpStatus: res.status, recipe: recipe, text: text }
   }
 
   patchBranch = (

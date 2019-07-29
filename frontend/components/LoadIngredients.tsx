@@ -1,5 +1,5 @@
 import { Alert, Button, Row, Col } from 'reactstrap'
-import { IngredientListsEditor } from '.'
+import { IngredientListsEditor, Back } from '.'
 
 export const LoadIngredients = ({
   disabled,
@@ -8,7 +8,7 @@ export const LoadIngredients = ({
   onSubmit,
   Sample,
   Instructions,
-  Back
+  back
 }) => {
   return (
     <Row>
@@ -28,7 +28,7 @@ export const LoadIngredients = ({
         <IngredientListsEditor lists={[]} onChange={onChange} />
       </Col>
       <Col xs="12" className="d-flex justify-content-between my-3">
-        <Back />
+        <Back route={back} />
         <Button color="primary" onClick={onSubmit} disabled={disabled}>
           Save & Continue
         </Button>

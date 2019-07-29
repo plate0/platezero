@@ -12,7 +12,7 @@ import {
 } from 'reactstrap'
 import Head from 'next/head'
 import { Link } from '../routes'
-import { Layout, LoadProcedure, LoadIngredients } from '../components'
+import { Layout, LoadProcedure, LoadIngredients, Back } from '../components'
 import { PostRecipe } from '../common/request-models'
 import { api, PlateZeroApiError, HttpStatus } from '../common'
 import { size } from 'lodash'
@@ -24,15 +24,6 @@ const Loading = () => (
   <div className="d-flex justify-content-center mt-5">
     <Spinner style={{ width: '3rem', height: '3rem' }} color="primary" />
   </div>
-)
-
-const Back = () => (
-  <Link route="new-recipe">
-    <a className="btn btn-link text-dark mt-3">
-      <i className="far fa-chevron-double-left mr-2" />
-      Cancel and go back
-    </a>
-  </Link>
 )
 
 const NotShowing = ({ href }) => {
@@ -220,7 +211,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
           onSubmit={() => this.onSubmit('ingredient_lists')}
           Sample={Foo}
           Instructions={Bar1}
-          Back={Back}
+          back={'new-recipe'}
         />
       )
     } else if (
@@ -233,8 +224,8 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
           onChange={p => this.onChange('procedure_lists', p)}
           onSubmit={() => this.onSubmit('procedure_lists')}
           Sample={Foo}
-          Instructions={Bar1}
-          Back={Back}
+          Instructions={Bar2}
+          back={'new-recipe'}
         />
       )
     }

@@ -7,8 +7,11 @@ const archiver = require('./archiver')
 const v = require('./validator')
 const moment = require('moment')
 
-export async function importFile(file: S3File, user: number): Promise<Recipe> {
-  return new Promise<Recipe>(async resolve => {
+export async function Import(
+  file: S3File,
+  user: number
+): Promise<ImportResult> {
+  return new Promise<ImportResult>(async resolve => {
     const start = moment()
     log(`Importing file ${file.key} for user ${user}`)
     try {
@@ -16,25 +19,48 @@ export async function importFile(file: S3File, user: number): Promise<Recipe> {
       log('Loaded')
       const parsed = parser.parse(text)
       log('Parsed')
-      const errors = v.validate(parsed)
-      if (errors && errors.length > 0) {
-        throw 'Validation failed:\n' + errors.join('\n')
+      let { status, errors } = v.validate(parsed)
+      if (status == ImportStatus.Failed) {
+        resolve(
+          new ImportResult(user, file, parsed, text, status, new Error(errors))
+        )
       }
       log('Validated')
       let recipe = await Recipe.createNewRecipe(user, parsed)
       log('Posted')
       await archiver.archive(file)
-      log('Achived')
-      const d = moment.duration(moment().diff(start))
-      log(`Message processed: ${d.asSeconds()} seconds`)
-      resolve(recipe)
+      log('Archived')
+      status = status ? status : ImportStatus.Imported
+      resolve(new ImportResult(user, file, recipe, text, status, null))
     } catch (err) {
       log(
         `Failed to process ${file.originalname} for user ${user}\n ${
           err instanceof Error ? err.stack : err
         }`
       )
-      resolve(null)
+      resolve(
+        new ImportResult(user, file, null, null, ImportStatus.Failed, err)
+      )
     }
+    const d = moment.duration(moment().diff(start))
+    log(`Message processed: ${d.asSeconds()} seconds`)
   })
+}
+
+export enum ImportStatus {
+  Unknown,
+  Imported,
+  Incomplete,
+  Failed
+}
+
+export class ImportResult {
+  constructor(
+    readonly user: number,
+    readonly file: S3File,
+    readonly recipe: Recipe,
+    readonly text: string,
+    readonly status: ImportStatus,
+    readonly error: Error
+  ) {}
 }

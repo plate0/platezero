@@ -1,5 +1,5 @@
 import * as express from 'express'
-import * as shrimp from '../shrimp/shrimp'
+import { Import, ImportResult, ImportStatus } from '../shrimp/shrimp'
 import { AuthenticatedRequest } from './user'
 import { internalServerError } from '../errors'
 import { Recipe } from '../../models/recipe'
@@ -78,7 +78,11 @@ const upload = multer({
 })
 r.post('/file', upload.array('file'), async function importFile(req: any, res) {
   filesPerUploadHistogram.observe(req.files.length)
-  let recipe
+  let recipe,
+    text,
+    httpStatus,
+    accepted = []
+  const results: ImportResult[] = []
 
   // Do NOT use a lambda-based loop here;
   // the lambda must be declared 'async' but
@@ -88,30 +92,51 @@ r.post('/file', upload.array('file'), async function importFile(req: any, res) {
     const mimetype = toString(file.mimetype)
     fileImportCounter.inc({ mimetype })
     fileSizeHistogram.observe({ mimetype }, file.size)
-    recipe = await shrimp.importFile(file, req.user.userId)
+    results.push(await Import(file, req.user.userId))
   }
 
-  if (slackHook) {
-    fetch(slackHook, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        text: `${req.user.username} (id: ${req.user.userId}) uploaded ${
-          req.files.length
-        } recipes. 
-Find them here: https://s3.console.aws.amazon.com/s3/buckets/com-platezero-recipes/?region=us-east-1
-${req.files.map(f => f.originalname).join('\n')}`
-      })
-    })
-  }
-
-  if (recipe) {
-    res.status(HttpStatus.Created).json(recipe)
+  if (results.length === 1) {
+    const result = results[0]
+    switch (result.status) {
+      case ImportStatus.Incomplete:
+        text = result.text
+        httpStatus = HttpStatus.UnprocessableEntity
+        break
+      case ImportStatus.Imported:
+        recipe = result.recipe
+        httpStatus = HttpStatus.Created
+        break
+      default:
+        accepted.push(result)
+        httpStatus = HttpStatus.Accepted
+        break
+    }
   } else {
-    res.status(HttpStatus.Accepted).json({ upload: 'success' })
+    accepted = results.filter(result => result.status === ImportStatus.Failed)
+    httpStatus = HttpStatus.Accepted
   }
+
+  if (slackHook && accepted.length) {
+    notifySlack(req.user.username, accepted)
+  }
+
+  res.status(httpStatus).json({ recipe, text })
 })
+
+function notifySlack(user: any, results: ImportResult[]) {
+  fetch(slackHook, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      text: `${user.username} (id: ${user.userId}) uploaded ${
+        results.length
+      } recipes which could not be automatically imported. 
+Find them here: https://s3.console.aws.amazon.com/s3/buckets/com-platezero-recipes/?region=us-east-1
+\n ${results.map(r => r.file.originalname).join('\n')}`
+    })
+  })
+}
 
 export const importers = r

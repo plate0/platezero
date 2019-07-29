@@ -15,14 +15,10 @@ const txt = require('./extractors/txt')
 
 export async function load(file: S3File): Promise<string[]> {
   const filePath = path.join(os.tmpdir(), uuidv4())
-  try {
-    await downloadFile(filePath, file.bucket, file.key)
-    let text = await loadText(filePath, file.originalname)
-    fs.unlinkSync(filePath)
-    return text
-  } catch (err) {
-    console.error(`Failed ${err}`)
-  }
+  await downloadFile(filePath, file.bucket, file.key)
+  let text = await loadText(filePath, file.originalname)
+  fs.unlinkSync(filePath)
+  return text
 }
 
 function downloadFile(filePath: string, bucketName: string, key: string) {

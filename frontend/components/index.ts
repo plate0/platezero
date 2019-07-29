@@ -1,6 +1,7 @@
 export * from './AddNote'
 export * from './AlertErrors'
 export * from './Amount'
+export * from './Back'
 export * from './Blankslate'
 export * from './Dropzone'
 export * from './EditableImage'
