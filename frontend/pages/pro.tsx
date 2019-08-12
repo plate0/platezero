@@ -80,10 +80,10 @@ const Personalized = () => {
   const text = (
     <Fade bottom>
       <p className="lead mb-4">
-        Each family is different, so your meal plans are deeply personalized.
-        They take into account meat preferences, likes, dislikes, allergies, and
-        more. When you sign up you fill out our food profile which lets us
-        create the perfect meal plan.
+        Your meal plan will be deeply personalized to your family's tastes. The
+        plan will take into account meat preferences, loved food, disliked food,
+        allergies, and more. When you sign up you fill out a food profile which
+        lets PlateZero create the perfect plan.
       </p>
       <Row>
         <Col xs="6" className="d-flex align-items-center">
@@ -143,9 +143,10 @@ const WeeklyPlans = () => {
   const text = (
     <Fade bottom>
       <p className="lead mb-4">
-        Your meal plan will be sent to you on your choosen day of the week. Your
-        meal plans comes with the complete shopping list so you can easily add
-        additional items you also need at the store.
+        On a choosen day each week, your meal plan for the following week is
+        sent to you for review. You can make any change you want and view the
+        full shopping list and estimated cost. You can easily add additional
+        items to the list to be bought.
       </p>
       <Row>
         <Col xs="12" md="6" className="d-flex align-items-center">
@@ -203,9 +204,9 @@ const GroceryDelivery = () => {
   const text = (
     <Fade bottom>
       <p className="lead mb-4">
-        You&rsquo;re busy and shopping can be a pain. PlateZero delivers your
-        food at a predetermined time so you can get back to eating well with no
-        hassle.
+        You&rsquo;re busy and shopping can be a pain. PlateZero shops locally
+        and delivers your food at a predetermined time so you can get back to
+        eating well with no hassle.
       </p>
       <Row>
         <Col xs="6" className="d-flex align-items-center">
