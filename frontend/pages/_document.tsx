@@ -113,9 +113,9 @@ export default class MyDocument extends Document<{ user?: UserJSON }> {
           />
           <link
             rel="stylesheet"
-            href="https://pro.fontawesome.com/releases/v5.7.2/css/all.css"
-            integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev"
-            crossOrigin="anonymous"
+            href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css"
+            integrity="sha384-y++enYq9sdV7msNmXr08kJdkX4zEI1gMjjkw0l9ttOepH7fMdhb7CePwuRQCfwCr"
+            crossorigin="anonymous"
           />
           <script
             dangerouslySetInnerHTML={{

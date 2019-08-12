@@ -5,14 +5,20 @@ export const routes: any = nextroutes()
   .add('register')
   .add('tos')
   .add('privacy')
-  .add({
-    name: 'pro',
-    pattern: '/(pro|pzp)',
-    page: 'pzp-a1'
-  })
+  .add('pro')
   .add({
     name: 'shopping',
     pattern: '/shopping'
+  })
+  .add({
+    page: 'pro/register',
+    name: 'pro-register',
+    pattern: '/pro/register'
+  })
+  .add({
+    page: 'pro/profile',
+    name: 'pro-profile',
+    pattern: '/pro/:id'
   })
   .add({
     name: 'shopping-list',

@@ -13,10 +13,18 @@ export const FooterLinks = [
   { name: 'Blog', icon: 'fa-rss', link: 'https://blog.platezero.com' }
 ]
 
-export const Footer = () => (
-  <footer className="text-muted bg-light mt-auto d-print-none py-5 d-none d-md-block">
+export interface FooterProps {
+  mobile?: boolean
+}
+
+export const Footer = ({ mobile }: FooterProps) => (
+  <footer
+    className={`text-muted bg-light mt-auto d-print-none py-5 ${
+      mobile ? 'd-block' : 'd-none d-md-block'
+    }`}
+  >
     <Container>
-      <ul className="list-unstyled d-flex align-items-center justify-content-between mb-0">
+      <ul className="list-unstyled d-md-flex align-items-center justify-content-between mb-0">
         {FooterLinks.map(l => (
           <li key={l.name}>
             <a href={l.link}>
