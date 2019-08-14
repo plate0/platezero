@@ -59,7 +59,7 @@ export class ImportResult {
     readonly user: number,
     readonly file: S3File,
     readonly recipe: Recipe,
-    readonly text: string,
+    readonly text: string[],
     readonly status: ImportStatus,
     readonly error: Error
   ) {}

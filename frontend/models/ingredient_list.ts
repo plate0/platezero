@@ -11,6 +11,7 @@ import * as _ from 'lodash'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
 import { normalize } from '../common/model-helpers'
+import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 
 export interface IngredientListJSON {
   id?: number
@@ -62,6 +63,32 @@ export class IngredientList extends Model<IngredientList>
       )
     )
     return ingredientList
+  }
+
+  public static async createAndLink(
+    lists: IngredientListJSON[],
+    versionId: number
+  ): Promise<IngredientList[]> {
+    return IngredientList.sequelize.transaction(async transaction => {
+      const ingredientLists = await Promise.all(
+        _.map(lists, il =>
+          IngredientList.createWithIngredients(il, { transaction })
+        )
+      )
+      await Promise.all(
+        _.map(ingredientLists, (il, sort_key) =>
+          RecipeVersionIngredientList.create(
+            {
+              recipe_version_id: versionId,
+              ingredient_list_id: il.id,
+              sort_key
+            },
+            { transaction }
+          )
+        )
+      )
+      return ingredientLists
+    })
   }
 
   /**

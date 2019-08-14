@@ -12,6 +12,7 @@ import * as _ from 'lodash'
 
 import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
+import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 
 export interface ProcedureListJSON {
   id?: number
@@ -60,6 +61,30 @@ export class ProcedureList extends Model<ProcedureList>
       )
     )
     return procedureList
+  }
+
+  public static async createAndLink(
+    lists: ProcedureListJSON[],
+    versionId: number
+  ): Promise<ProcedureList[]> {
+    return ProcedureList.sequelize.transaction(async transaction => {
+      const procedureLists = await Promise.all(
+        _.map(lists, il => ProcedureList.createWithLines(il, { transaction }))
+      )
+      await Promise.all(
+        _.map(procedureLists, (il, sort_key) =>
+          RecipeVersionProcedureList.create(
+            {
+              recipe_version_id: versionId,
+              procedure_list_id: il.id,
+              sort_key
+            },
+            { transaction }
+          )
+        )
+      )
+      return procedureLists
+    })
   }
 
   /**

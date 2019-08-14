@@ -77,5 +77,8 @@
     "url-parse": "1.4.7",
     "uuid": "3.3.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+   "@babel/cli": "^7.0.0",
+   "@babel/core": "^7.0.0"
+  }
 }

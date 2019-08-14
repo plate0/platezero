@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from '../routes'
 
-export const Back = (route: string) => {
+export const Back = ({ route }) => {
   return (
     <Link route={route}>
       <a className="btn btn-link text-dark mt-3">

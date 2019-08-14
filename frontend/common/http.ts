@@ -6,6 +6,8 @@ import {
   UserJSON,
   RecipeJSON,
   RecipeVersionJSON,
+  IngredientListJSON,
+  ProcedureListJSON,
   NoteJSON,
   RecipeSearchDocumentJSON,
   ShoppingListJSON,
@@ -48,13 +50,16 @@ const handleError = async (res: Response): Promise<any> => {
   if (res.status === HttpStatus.NoContent) {
     return Promise.resolve()
   }
-  if (res.status === HttpStatus.UnprocessableEntity) {
-    return res.json()
-  }
   if (res.status >= 200 && res.status < 400) {
     return res.json()
   }
-  const messages = (await res.clone().json()).errors
+  let messages
+  if (res.bodyUsed) {
+    messages = (await res.clone().json()).errors
+  } else {
+    messages = [`${res.status}: ${res.statusText}`]
+  }
+  console.error(`api: ${messages.join('; ')}`)
   throw new PlateZeroApiError(res.clone(), messages, res.status)
 }
 
@@ -356,6 +361,31 @@ class Api {
       ...opts,
       method: 'DELETE'
     })
+
+  createIngredientLists = (
+    lists: IngredientListJSON[],
+    versionId: number,
+    opts: RequestInit = {}
+  ) => {
+    console.log(`api: ${JSON.stringify(arguments)}, version ${versionId}`)
+    this._fetch<IngredientListJSON>(`/user/versions/${versionId}/ingredients`, {
+      ...opts,
+      body: JSON.stringify(lists),
+      method: 'POST'
+    })
+  }
+
+  createProcedureLists = (
+    lists: ProcedureListJSON[],
+    versionId: number,
+    opts: RequestInit = {}
+  ) => {
+    this._fetch<ProcedureListJSON>(`/user/version/${versionId}/procedures`, {
+      ...opts,
+      body: JSON.stringify(lists),
+      method: 'POST'
+    })
+  }
 }
 
 export const api = new Api()

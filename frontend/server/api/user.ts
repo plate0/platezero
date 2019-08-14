@@ -1,6 +1,5 @@
 import * as express from 'express'
 import { Request } from 'express'
-import * as _ from 'lodash'
 import { generate as shortid } from 'shortid'
 import { S3 } from 'aws-sdk'
 const multer = require('multer')
@@ -14,7 +13,15 @@ import {
   validateNewNote,
   validateNotePatch
 } from '../validate'
-import { User, Recipe, RecipeBranch, RecipeVersion, Note } from '../../models'
+import {
+  User,
+  Recipe,
+  RecipeBranch,
+  RecipeVersion,
+  Note,
+  IngredientList,
+  ProcedureList
+} from '../../models'
 import { notFound, internalServerError, badRequest } from '../errors'
 import { HttpStatus } from '../../common/http-status'
 
@@ -232,6 +239,37 @@ r.post('/images', upload.single('file'), async function uploadPublicImage(
   res.status(HttpStatus.Created).json({
     url: `https://static.platezero.com/${req.pzUploadKey}`
   })
+})
+
+r.post('/versions/:id/ingredients', async function addIngredients(
+  req: any,
+  res
+) {
+  try {
+    console.log(
+      `\x1b[97maddIngredients: request ${JSON.stringify(req.body)}\x1b[0m`
+    )
+    const ingredientList = await IngredientList.createAndLink(
+      req.body,
+      req.params.id
+    )
+    console.log(
+      `\x1b[97maddIngredients: result ${JSON.stringify(ingredientList)}\x1b[0m`
+    )
+    return res.status(HttpStatus.Created).json(ingredientList)
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.post('/versions/:id/procedures', async function addProcedures(req: any, res) {
+  try {
+    return res
+      .status(HttpStatus.Created)
+      .json(await ProcedureList.createAndLink(req.body, req.params.id))
+  } catch (err) {
+    return internalServerError(res, err)
+  }
 })
 
 export const user = r

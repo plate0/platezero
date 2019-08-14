@@ -81,7 +81,7 @@ r.post('/file', upload.array('file'), async function importFile(req: any, res) {
   let recipe,
     text,
     httpStatus,
-    accepted = []
+    accepted: ImportResult[] = []
   const results: ImportResult[] = []
 
   // Do NOT use a lambda-based loop here;
@@ -99,6 +99,7 @@ r.post('/file', upload.array('file'), async function importFile(req: any, res) {
     const result = results[0]
     switch (result.status) {
       case ImportStatus.Incomplete:
+        recipe = result.recipe
         text = result.text
         httpStatus = HttpStatus.UnprocessableEntity
         break
