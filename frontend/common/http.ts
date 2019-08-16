@@ -362,6 +362,35 @@ class Api {
       method: 'DELETE'
     })
 
+  getFavorites = (username: string, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON[]>(`/users/${username}/favorites`, opts)
+
+  addFavorite = (recipe_id: number, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON>(`/user/favorites`, {
+      ...opts,
+      body: JSON.stringify({ recipe_id }),
+      method: 'POST'
+    })
+
+  removeFavorite = (recipeId: number, opts: RequestInit = {}) =>
+    this._fetch<any>(`/user/favorites/${recipeId}`, {
+      ...opts,
+      method: 'DELETE'
+    })
+
+  getRecipes = async (
+    { username, q, sort }: { username: string; q?: string; sort?: string },
+    opts: RequestInit = {}
+  ) => {
+    if (q) {
+      return _.map(
+        await this.searchUserRecipes({ username, q, sort }, opts),
+        'recipe'
+      )
+    }
+    return await this.getUserRecipes(username, sort, opts)
+  }
+
   createIngredientLists = (
     lists: IngredientListJSON[],
     versionId: number,

@@ -5,6 +5,7 @@ import Router from 'next/router'
 import { Layout } from '../components'
 import { UserContext } from '../context/UserContext'
 import Head from 'next/head'
+import { Link } from '../routes'
 
 interface LoginState {
   error: string
@@ -62,7 +63,7 @@ export default class Login extends React.Component<any, LoginState> {
                     <h3 className="py-3">Log in to PlateZero</h3>
                   </div>
                   {error}
-                  <div className="border rounded p-3">
+                  <div className="border rounded p-3 mb-3">
                     <Form
                       onSubmit={e => this.login(e, updateUser)}
                       className="mb-3"
@@ -111,6 +112,11 @@ export default class Login extends React.Component<any, LoginState> {
                       and we'll get it sorted out!
                     </div>
                   </div>
+                  <Link to="/register" passHref>
+                    <Button color="primary" outline block className="my-3">
+                      Sign up for PlateZero now!
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </Container>

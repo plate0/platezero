@@ -23,6 +23,7 @@ import { ShoppingList } from './shopping_list'
 import { ShoppingListItem } from './shopping_list_item'
 import { User } from './user'
 import { UserActivity } from './user_activity'
+import { Favorite } from './favorite'
 import { config } from '../server/config'
 
 export const sequelize = new Sequelize({
@@ -34,6 +35,7 @@ export const sequelize = new Sequelize({
 })
 
 sequelize.addModels([
+  Favorite,
   IngredientLine,
   IngredientList,
   IngredientListLine,
@@ -74,6 +76,7 @@ export const sortable = (model: any, defaultCol: string) => ([
   return model.rawAttributes[col] ? [col, dir] : [defaultCol, dir]
 }
 
+export * from './favorite'
 export * from './ingredient_line'
 export * from './ingredient_list'
 export * from './ingredient_list_line'

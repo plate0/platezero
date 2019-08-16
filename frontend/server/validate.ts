@@ -187,3 +187,10 @@ export const validateShoppingListItemPatch = validator({
   name: Joi.string(),
   completed: Joi.boolean()
 })
+
+export const validateNewFavorite = validator({
+  recipe_id: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+})

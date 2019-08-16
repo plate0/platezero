@@ -11,7 +11,8 @@ import {
   validateRecipeVersionPatch,
   validateUserPatch,
   validateNewNote,
-  validateNotePatch
+  validateNotePatch,
+  validateNewFavorite
 } from '../validate'
 import {
   User,
@@ -19,6 +20,7 @@ import {
   RecipeBranch,
   RecipeVersion,
   Note,
+  Favorite,
   IngredientList,
   ProcedureList
 } from '../../models'
@@ -239,6 +241,39 @@ r.post('/images', upload.single('file'), async function uploadPublicImage(
   res.status(HttpStatus.Created).json({
     url: `https://static.platezero.com/${req.pzUploadKey}`
   })
+})
+r.post('/favorites', validateNewFavorite, async function addFavorite(
+  req: AuthenticatedRequest,
+  res
+) {
+  try {
+    return res.json(
+      await Favorite.create({
+        user_id: req.user.userId,
+        recipe_id: req.body.recipe_id
+      })
+    )
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.delete('/favorites/:recipeId', async function removeFavorite(
+  req: AuthenticatedRequest,
+  res
+) {
+  try {
+    const recipe_id = parseInt(req.params.recipeId, 10)
+    const user_id = req.user.userId
+    const fav = await Favorite.findOne({ where: { recipe_id, user_id } })
+    if (!fav) {
+      return notFound(res)
+    }
+    await fav.destroy()
+    res.status(HttpStatus.NoContent).json()
+  } catch (err) {
+    return internalServerError(res, err)
+  }
 })
 
 r.post('/versions/:id/ingredients', async function addIngredients(

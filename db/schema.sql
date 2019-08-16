@@ -1,5 +1,14 @@
 CREATE EXTENSION unaccent;
 
+CREATE TABLE favorites (
+  id SERIAL NOT NULL PRIMARY KEY,
+  user_id INT NOT NULL,
+  recipe_id INT NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone,
+  UNIQUE(user_id, recipe_id)
+);
+
 CREATE TABLE ingredient_lines (
     id SERIAL PRIMARY KEY,
     name character varying NOT NULL,
@@ -221,6 +230,8 @@ CREATE VIEW recipe_search_documents AS
   GROUP BY recipes.id, recipes.user_id;
 
 -- foreign keys
+ALTER TABLE favorites ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE favorites ADD FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_line_id) REFERENCES ingredient_lines (id);
 ALTER TABLE ingredient_list_lines ADD FOREIGN KEY (ingredient_list_id) REFERENCES ingredient_lists (id);
 ALTER TABLE notes ADD FOREIGN KEY (author_id) REFERENCES users (id);
