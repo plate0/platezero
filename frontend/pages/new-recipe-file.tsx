@@ -101,12 +101,15 @@ export default class NewRecipeFile extends React.Component<
         error.statusCode == HttpStatus.UnprocessableEntity
       ) {
         const json = await error.res.json()
-        const recipe = await api.getRecipe(
-          json.recipe.owner.username,
-          json.recipe.slug
-        )
+        const username = json.recipe.owner.username
+        const slug = json.recipe.slug
+        const recipe = await api.getRecipe(username, slug)
+
+        const versionId = recipe.branches[0].recipe_version_id
+        const version = await api.getRecipeVersion(username, slug, versionId)
         this.setState({
           recipe,
+          version,
           text: json.text,
           status: UploadStatus.ParseFailed
         })
@@ -120,33 +123,15 @@ export default class NewRecipeFile extends React.Component<
   }
 
   public onIlChange(data: any) {
-    this.setState({ ingredient_lists: data })
+    this.setState({ ingredientLists: data })
     console.log(`onIlChange: state=${Object.keys(this.state)}`)
   }
 
   public onIlSubmit() {
-    this.setState(
-      state => {
-        let r = { ...state.recipe }
-        r.ingredient_lists = state.ingredient_lists
-        console.log(`onIlSubmit: recipe=${Object.keys(state.recipe)}`)
-        console.log(
-          `onIlSubmit: ingredient lists ${JSON.stringify(
-            state.ingredient_lists
-          )}`
-        )
-        return { recipe: r }
-      },
-      async () => {
-        console.log(`onIlSubmit: in callback`)
-        console.log(`onIlSubmit: state=${Object.keys(this.state)}`)
-        console.log(`onIlSubmit: recipe=${Object.keys(this.state.recipe)}`)
-        console.log(
-          `onIlSubmit: ${JSON.stringify(this.state.recipe.ingredient_lists)}`
-        )
-        await this.createIngredientLists()
-      }
-    )
+    const { version, ingredientLists } = this.state
+    version.ingredient_lists = ingredientLists
+    this.setState({ version })
+    this.createIngredientLists()
   }
 
   public onPlChange(data: any) {
@@ -180,15 +165,9 @@ export default class NewRecipeFile extends React.Component<
   public async createIngredientLists() {
     try {
       this.setState({ errors: [] })
-      const masterVersionId = this.getMasterVersionId()
-      console.log(
-        `createIngredientLists: ${JSON.stringify(
-          this.state.ingredient_lists
-        )}, version ${masterVersionId}`
-      )
       await api.createIngredientLists(
-        this.state.ingredient_lists,
-        masterVersionId
+        this.state.ingredientLists,
+        this.state.version.id
       )
     } catch (err) {
       console.error(`createIngredientLists: ${err}`)
@@ -257,12 +236,14 @@ export default class NewRecipeFile extends React.Component<
 
       case UploadStatus.ParseFailed:
         if (this.state.recipe) {
+          let version = this.state.version
           console.log(`Parse failed: state=${Object.keys(this.state)}`)
-          if (size(this.state.recipe.ingredient_lists) == 0) {
+          console.log(`render: version=${Object.keys(version)}`)
+          if (size(version.ingredient_lists) == 0) {
             return (
               <LoadIngredients
                 src={this.state.text}
-                disabled={size(this.state.ingredient_lists) === 0}
+                disabled={size(this.state.ingredientLists) === 0}
                 onChange={i => this.onIlChange(i)}
                 onSubmit={() => this.onIlSubmit()}
                 Sample={Foo}
@@ -271,7 +252,7 @@ export default class NewRecipeFile extends React.Component<
               />
             )
           }
-          if (size(this.state.recipe.procedure_lists) === 0) {
+          if (size(version.procedure_lists) === 0) {
             return (
               <LoadProcedure
                 src={this.state.text}
