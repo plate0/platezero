@@ -107,6 +107,12 @@ export default class NewRecipeFile extends React.Component<
 
         const versionId = recipe.branches[0].recipe_version_id
         const version = await api.getRecipeVersion(username, slug, versionId)
+        console.log(
+          `onDrop: ingredientLists=${JSON.stringify(version.ingredientLists)}`
+        )
+        console.log(
+          `onDrop: procedureLists=${JSON.stringify(version.procedureLists)}`
+        )
         this.setState({
           recipe,
           version,
@@ -128,9 +134,15 @@ export default class NewRecipeFile extends React.Component<
   }
 
   public onIlSubmit() {
+    console.log(
+      `onIlSubmit: this.state.version=${Object.keys(this.state.version)}`
+    )
     const { version, ingredientLists } = this.state
-    version.ingredient_lists = ingredientLists
+    version.ingredientLists = ingredientLists
     this.setState({ version })
+    console.log(
+      `onIlSubmit: this.state.version=${Object.keys(this.state.version)}`
+    )
     this.createIngredientLists()
   }
 
@@ -187,7 +199,7 @@ export default class NewRecipeFile extends React.Component<
   }
 
   public render() {
-    const { wording, user, errorCode } = this.props
+    const { wording, errorCode } = this.props
     if (errorCode) {
       return <ErrorPage statusCode={errorCode} />
     }
@@ -210,7 +222,8 @@ export default class NewRecipeFile extends React.Component<
   }
 
   content() {
-    const { status, user } = this.state
+    const { status } = this.state
+    const { user } = this.props
     switch (status) {
       case UploadStatus.None:
       default:
@@ -238,8 +251,13 @@ export default class NewRecipeFile extends React.Component<
         if (this.state.recipe) {
           let version = this.state.version
           console.log(`Parse failed: state=${Object.keys(this.state)}`)
-          console.log(`render: version=${Object.keys(version)}`)
-          if (size(version.ingredient_lists) == 0) {
+          console.log(
+            `render: procedureLists=${JSON.stringify(version.procedureLists)}`
+          )
+          if (
+            size(version.ingredientLists) === 0 ||
+            size(version.ingredientLists[0].lines) === 0
+          ) {
             return (
               <LoadIngredients
                 src={this.state.text}
@@ -252,7 +270,10 @@ export default class NewRecipeFile extends React.Component<
               />
             )
           }
-          if (size(version.procedure_lists) === 0) {
+          if (
+            size(version.procedureLists) === 0 ||
+            size(version.ingredientLists[0].lines) === 0
+          ) {
             return (
               <LoadProcedure
                 src={this.state.text}
