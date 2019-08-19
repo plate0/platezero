@@ -259,6 +259,9 @@ function parse(lines: string[]): PostRecipe {
     .add('yield', yieldLexicon)
     .sort()
 
+  if (!w.wombats.length) {
+    throw 'No content parsed'
+  }
   // populate the result
   let cursor = new Cursor(0, 0)
   let o = getTitle(lines, cursor)
