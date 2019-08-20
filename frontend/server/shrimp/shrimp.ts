@@ -20,18 +20,20 @@ export async function Import(
       const parsed = parser.parse(text)
       log('Parsed')
       let { status, errors } = v.validate(parsed)
+      log('Validated')
       if (status == ImportStatus.Failed) {
+        log(`Import failed ${errors}`)
         resolve(
           new ImportResult(user, file, parsed, text, status, new Error(errors))
         )
+      } else {
+        let recipe = await Recipe.createNewRecipe(user, parsed)
+        log('Posted')
+        await archiver.archive(file)
+        log('Archived')
+        status = status ? status : ImportStatus.Imported
+        resolve(new ImportResult(user, file, recipe, text, status, null))
       }
-      log('Validated')
-      let recipe = await Recipe.createNewRecipe(user, parsed)
-      log('Posted')
-      await archiver.archive(file)
-      log('Archived')
-      status = status ? status : ImportStatus.Imported
-      resolve(new ImportResult(user, file, recipe, text, status, null))
     } catch (err) {
       log(
         `Failed to process ${file.originalname} for user ${user}\n ${
