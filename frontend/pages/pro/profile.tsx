@@ -159,7 +159,7 @@ export default class ProProfile extends React.Component<ProfileProps, any> {
         <div>
           <Container>
             <nav className="py-3 text-center text-md-left">
-              <Link route="/">
+              <Link route="/pro">
                 <a>
                   <img
                     src="https://static.platezero.com/assets/logo/platezero-pro-black.png"

@@ -32,11 +32,6 @@ interface RegisterFormState {
   working: boolean
 }
 
-const InputStyle = {
-  borderRadius: '0.1rem',
-  borderColor: '#888'
-}
-
 class RegisterForm extends React.Component<{}, RegisterFormState> {
   constructor(props: any) {
     super(props)
@@ -79,7 +74,6 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
       authenticated(token, refreshToken)
       api.setAuth(token, refreshToken)
       updateUser(user)
-      // Onboard/Pro
       Router.push(`/pro/profile`)
     } catch (e) {
       this.setState({ errors: _.get(e, 'messages', []) })
@@ -100,71 +94,61 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
       <UserContext.Consumer>
         {({ updateUser }) => (
           <>
-            <nav className="p-3 text-center">
-              <Link route="/">
-                <a>
-                  <img
-                    src="https://static.platezero.com/assets/logo/platezero-pro-black.png"
-                    alt="PlateZero Pro"
-                    style={{ width: 200 }}
-                  />
-                </a>
-              </Link>
-            </nav>
-            <Row>
-              <Col
-                xs="12"
-                lg={{ size: 6, offset: 3 }}
-                className="mt-3 text-center"
-              >
-                <Form
-                  onSubmit={e => this.handleSubmit(e, updateUser)}
-                  className="mt-6"
-                >
-                  <h2>Create an Account</h2>
-                  <ul className="list-unstyled">
-                    {this.state.errors.map((error, key) => (
-                      <li key={key} className="text-danger">
-                        {error}
-                      </li>
-                    ))}
-                  </ul>
-                  <FormGroup>
-                    <Input
-                      className="text-center"
-                      type="email"
-                      name="email"
-                      id="emailField"
-                      placeholder="Your Email"
-                      autoFocus={true}
-                      value={this.state.email}
-                      onChange={this.handleEmailChange}
-                      style={InputStyle}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      className="text-center"
-                      type="password"
-                      name="password"
-                      id="passwordField"
-                      placeholder="Password"
-                      value={this.state.password}
-                      onChange={this.handlePasswordChange}
-                      style={InputStyle}
-                    />
-                  </FormGroup>
-                  <Button
-                    value="submit"
-                    color="primary"
-                    block={true}
-                    disabled={!this.signUpEnabled()}
-                  >
-                    Create Account
-                  </Button>
-                </Form>
-              </Col>
-            </Row>
+            <Head>
+              <title>Register for PlateZero Pro</title>
+            </Head>
+            <Container>
+              <Row className="justify-content-center">
+                <Col xs="12" md="8" lg="4" className="mt-3">
+                  <div className="text-center">
+                    <h3 className="py-3">Register for PlateZero Pro</h3>
+                  </div>
+
+                  <div className="border rounded p-3 mb-3 bg-white">
+                    <Form
+                      onSubmit={e => this.handleSubmit(e, updateUser)}
+                      className="mb-3"
+                    >
+                      <FormGroup>
+                        <Label for="email">
+                          <strong>Email</strong>
+                        </Label>
+                        <Input
+                          type="email"
+                          name="email"
+                          id="emailField"
+                          placeholder="Your Email"
+                          autoFocus={true}
+                          value={this.state.email}
+                          onChange={this.handleEmailChange}
+                        />
+                      </FormGroup>
+                      <FormGroup>
+                        <Label for="password">
+                          <strong>Password</strong>
+                        </Label>
+                        <Input
+                          type="password"
+                          name="password"
+                          id="passwordField"
+                          placeholder="Password"
+                          value={this.state.password}
+                          onChange={this.handlePasswordChange}
+                        />
+                      </FormGroup>
+                      <Button
+                        value="submit"
+                        color="primary"
+                        block={true}
+                        disabled={!this.signUpEnabled()}
+                      >
+                        Create Account
+                      </Button>
+                    </Form>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
           </>
         )}
       </UserContext.Consumer>
@@ -173,32 +157,28 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
 }
 
 export default class RegisterPage extends React.Component {
+  public componentDidMount() {
+    if (document) {
+      document.body.className += ' ' + 'bg-light'
+    }
+  }
+
+  public componentWillUnmount() {
+    document.body.className = ''
+  }
   public render() {
     return (
-      <>
-        <div
-          style={{
-            height: '100vh',
-            backgroundColor: 'rgba(213, 232, 208, 0.5)'
-          }}
-        >
-          <Container>
-            <Head>
-              <title>Sign up for PlateZero Pro</title>
-            </Head>
-            <IfLoggedIn else={<RegisterForm />}>
-              <h1 className="mt-3">Sending you on your way...</h1>
-            </IfLoggedIn>
-          </Container>
+      <Container>
+        <Head>
+          <title>Sign up for PlateZero Pro</title>
+        </Head>
+        <RegisterForm />
+        <div className="text-center mt-3">
+          <Link route="pro-login">
+            <a>Already have an account? Log in.</a>
+          </Link>
         </div>
-        <style jsx global>
-          {`
-            .pro input:focus {
-              box-shadow: none;
-            }
-          `}
-        </style>
-      </>
+      </Container>
     )
   }
 }

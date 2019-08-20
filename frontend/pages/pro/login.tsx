@@ -46,6 +46,16 @@ export default class ProLogin extends React.Component<any, LoginState> {
     }
   }
 
+  public componentDidMount() {
+    if (document) {
+      document.body.className += ' ' + 'bg-light'
+    }
+  }
+
+  public componentWillUnmount() {
+    document.body.className = ''
+  }
+
   public render() {
     const error = this.state.error ? (
       <ErrorMessage err={this.state.error} />
@@ -53,7 +63,7 @@ export default class ProLogin extends React.Component<any, LoginState> {
     return (
       <UserContext.Consumer>
         {({ updateUser }) => (
-          <Layout>
+          <>
             <Head>
               <title>Log in to PlateZero Pro</title>
             </Head>
@@ -64,7 +74,7 @@ export default class ProLogin extends React.Component<any, LoginState> {
                     <h3 className="py-3">Log in to PlateZero Pro</h3>
                   </div>
                   {error}
-                  <div className="border rounded p-3 mb-3">
+                  <div className="border rounded p-3 mb-3 bg-white">
                     <Form
                       onSubmit={e => this.login(e, updateUser)}
                       className="mb-3"
@@ -115,13 +125,13 @@ export default class ProLogin extends React.Component<any, LoginState> {
                   </div>
                   <Link to="/pro/register" passHref>
                     <Button color="primary" outline block className="my-3">
-                      Sign up for PlateZero now!
+                      Sign up for PlateZero Pro now!
                     </Button>
                   </Link>
                 </div>
               </div>
             </Container>
-          </Layout>
+          </>
         )}
       </UserContext.Consumer>
     )
