@@ -126,11 +126,6 @@ r.get('/versions/:id', async function getRecipeVersion(
     if (!recipeVersion) {
       return notFound(res)
     }
-    console.log(
-      `\x1b[97mgetRecipeVersion: procedureLists=${JSON.stringify(
-        recipeVersion.procedureLists
-      )}\x1b[0m`
-    )
     return res.json(recipeVersion)
   } catch (error) {
     return internalServerError(res, error)

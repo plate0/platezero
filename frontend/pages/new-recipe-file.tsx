@@ -86,7 +86,7 @@ export default class NewRecipeFile extends React.Component<
       status: UploadStatus.Uploading
     })
     try {
-      const { httpStatus, recipe, text } = await api.importFiles(formData)
+      const { httpStatus, recipe } = await api.importFiles(formData)
       if (httpStatus == HttpStatus.Created && recipe) {
         Router.push(recipe.html_url)
         return

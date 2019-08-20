@@ -97,6 +97,7 @@ r.post('/file', upload.array('file'), async function importFile(req: any, res) {
 
   if (results.length === 1) {
     const result = results[0]
+    console.log(`\x1b[97mImporter: Import result: ${result.status}\x1b[0m`)
     switch (result.status) {
       case ImportStatus.Incomplete:
         recipe = result.recipe
