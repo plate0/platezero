@@ -1,5 +1,13 @@
 CREATE EXTENSION unaccent;
 
+CREATE TABLE families (
+  id SERIAL NOT NULL PRIMARY KEY,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone,
+  deleted_at timestamp without time zone
+);
+
+
 CREATE TABLE favorites (
   id SERIAL NOT NULL PRIMARY KEY,
   user_id INT NOT NULL,
@@ -68,6 +76,20 @@ CREATE TABLE procedure_list_lines (
 CREATE TABLE procedure_lists (
   id SERIAL PRIMARY KEY,
   name character varying
+);
+
+CREATE TABLE profile_questions (
+  id SERIAL PRIMARY KEY,
+  question VARCHAR NOT NULL,
+  help_text VARCHAR NULL,
+  section VARCHAR NOT NULL, -- family, personal, meal, etc. Used in UI to break apart questions.
+  priority INT NOT NULL,
+  type VARCHAR NOT NULL,
+  sort INT NOT NULL,
+  is_family BOOLEAN NOT NULL DEFAULT false,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  deleted_at timestamp without time zone
 );
 
 CREATE TABLE recipe_branches (
@@ -177,12 +199,26 @@ CREATE TABLE users (
   avatar_url character varying,
   name character varying,
   email_opt_out boolean not null default false,
+  is_pro BOOLEAN NOT NULL default false,
+  family_id INT NULL,
   confirmed_at timestamp without time zone DEFAULT now(),
   created_at timestamp without time zone NOT NULL DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
   deleted_at timestamp without time zone
 );
 CREATE UNIQUE INDEX ON users (lower(username));
+
+
+CREATE TABLE users_profile (
+  id SERIAL PRIMARY KEY,
+  user_id INT,
+  family_id INT,
+  question_id INT NOT NULL,
+  answer VARCHAR NOT NULL,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  deleted_at timestamp without time zone
+);
 
 CREATE TABLE refresh_tokens (
   id SERIAL PRIMARY KEY,
@@ -260,3 +296,8 @@ ALTER TABLE refresh_tokens ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE shopping_lists ADD FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE shopping_list_items ADD FOREIGN KEY (shopping_list_id) REFERENCES shopping_lists (id);
 ALTER TABLE user_activity ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE users ADD FOREIGN KEY (family_id) REFERENCES families (id);
+ALTER TABLE users_profile ADD FOREIGN KEY (question_id) REFERENCES profile_questions (id);
+ALTER TABLE users_profile ADD FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE users_profile ADD FOREIGN KEY (family_id) REFERENCES families (id);
+

@@ -95,7 +95,6 @@ nav .dropdown-toggle::after {
 }
 
 // Stripe
-input,
 .StripeElement {
   display: block;
   margin: 10px 0 20px 0;
@@ -111,11 +110,11 @@ input,
   background: white;
 }
 
-input::placeholder {
+.StripeElement input::placeholder {
   color: #aab7c4;
 }
 
-input:focus,
+.StripeElement input:focus,
 .StripeElement--focus {
   box-shadow: rgba(50, 50, 93, 0.109804) 0px 4px 6px,
     rgba(0, 0, 0, 0.0784314) 0px 1px 3px;

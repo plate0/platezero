@@ -1,31 +1,40 @@
 import React, { useState } from 'react'
+import { FormGroup, Label, Card, Row, Col, Input, Button } from 'reactstrap'
 import { range } from 'lodash'
+import { Help } from '../Help'
+
+const help = `This allows us to check if you are in our serviced areas. If you are not, we'll let you know right now and email you when we are servicing that area.`
 
 export const Zip = ({ question, onAnswer }) => {
   const [zip, setZip] = useState(question.answer || '')
 
-  const onChange = (e: any) => {
-    setAnswer(e.target.value)
+  const onSubmit = (e: React.FormEvent<EventTarget>) => {
+    event.preventDefault()
     onAnswer({
       ...question,
-      answer: e.target.value
+      answer: zip
     })
   }
 
   return (
-    <Card>
+    <Card body>
       <h3 className="font-weight-light">What is your zip code?</h3>
-      <form onSubmit={onAnswer}>
-        <input />
-        <div>
-          This allows us to check if you are in our serviced areas. If you are
-          not, we'll let you know right now and email you when we are servicing
-          that area.
-        </div>
+      <form onSubmit={onSubmit}>
+        <FormGroup>
+          <Input
+            type="text"
+            name="zip"
+            id="zip"
+            placeholder="Zip Code"
+            value={zip}
+            onChange={e => setZip(e.target.value)}
+          />
+        </FormGroup>
+        <Help text={help} />
         <Row className="justify-content-end">
           <Col xs="auto">
             <Button color="primary" value="submit">
-              Save & Continue
+              Save
             </Button>
           </Col>
         </Row>
