@@ -5,6 +5,7 @@ import '../style/index.scss'
 import { UserJSON } from '../models/user'
 import { UserContext } from '../context/UserContext'
 import { api } from '../common/http'
+import { StripeProvider } from 'react-stripe-elements'
 
 const currentUser = async (): Promise<UserJSON | undefined> => {
   try {
@@ -39,10 +40,13 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
   constructor(props: any) {
     super(props)
     this.updateUser = this.updateUser.bind(this)
-    this.state = { user: props.user, updateUser: this.updateUser }
+    this.state = { user: props.user, updateUser: this.updateUser, stripe: null }
   }
 
   public async componentDidMount() {
+    this.setState({
+      stripe: window.Stripe('pk_test_P8qMulQuRrRGJIFiIG6zYhdm00S3JOq7sY')
+    })
     api.loadAuth()
     // This is really only used in dev, when the pages soft-refreshes
     // and we lose the current state.
@@ -99,9 +103,11 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
     const { Component, pageProps } = this.props
     return (
       <UserContext.Provider value={this.state as any}>
-        <Container>
-          <Component {...pageProps} />
-        </Container>
+        <StripeProvider stripe={this.state.stripe}>
+          <Container>
+            <Component {...pageProps} />
+          </Container>
+        </StripeProvider>
       </UserContext.Provider>
     )
   }

@@ -194,3 +194,23 @@ export const validateNewFavorite = validator({
     .min(0)
     .required()
 })
+
+export const validateAnswer = validator({
+  id: Joi.number()
+    .integer()
+    .min(0)
+    .optional(),
+  user_id: Joi.number()
+    .integer()
+    .min(0)
+    .optional(),
+  family_id: Joi.number()
+    .integer()
+    .min(0)
+    .optional(),
+  question_id: Joi.number()
+    .integer()
+    .min(0)
+    .required(),
+  answer: Joi.string().required()
+})

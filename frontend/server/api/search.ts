@@ -15,7 +15,7 @@ r.get('/', validateRecipeSearch, async function search(req, res) {
           `ts_rank(doc, plainto_tsquery(unaccent(${sequelize.escape(q)}))) DESC`
         )
   try {
-    const user = await User.findByUsername(username)
+    const user = await User.findByAuth({ username })
     if (!user) {
       return badRequest(res, 'user not found')
     }

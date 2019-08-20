@@ -11,6 +11,11 @@ export const routes: any = nextroutes()
     pattern: '/shopping'
   })
   .add({
+    page: 'pro/login',
+    name: 'pro-login',
+    pattern: '/pro/login'
+  })
+  .add({
     page: 'pro/register',
     name: 'pro-register',
     pattern: '/pro/register'
@@ -18,7 +23,27 @@ export const routes: any = nextroutes()
   .add({
     page: 'pro/profile',
     name: 'pro-profile',
-    pattern: '/pro/:id'
+    pattern: '/pro/profile'
+  })
+  .add({
+    page: 'pro/account',
+    name: 'pro-account',
+    pattern: '/pro/profile/account'
+  })
+  .add({
+    page: 'pro/section',
+    name: 'pro-section',
+    pattern: '/pro/profile/:section'
+  })
+  .add({
+    page: 'pro/user-section',
+    name: 'pro-user-section',
+    pattern: '/pro/profile/user/:id'
+  })
+  .add({
+    page: 'pro/question',
+    name: 'pro-question',
+    pattern: '/pro/profile/:section/:id'
   })
   .add({
     name: 'shopping-list',

@@ -6,6 +6,7 @@ import { user } from './user'
 import { RefreshToken, User, UserActivity } from '../../models'
 import { search } from './search'
 import { shopping } from './shopping'
+import { pro } from './pro'
 import { config } from '../config'
 import {
   unauthorized,
@@ -66,6 +67,7 @@ r.use(
   },
   shopping
 )
+r.use('/pro', pro)
 
 // the /user path represents the _currently authenticated_ user. this is where
 // things like changing passwords, creating recipes, etc happen. so in this
@@ -92,12 +94,12 @@ r.get('/', function apiIndex(_, res) {
 
 // login route
 r.post('/login', async function login(req, res) {
-  const { username, password } = req.body
-  if (!username || !password) {
+  const { email, username, password } = req.body
+  if (!(username || email) || !password) {
     return badRequest(res, 'username and password are required')
   }
   try {
-    const user = await User.findByUsername(username)
+    const user = await User.findByAuth({ email, username })
     if (!user) {
       return invalidAuthentication(res)
     }

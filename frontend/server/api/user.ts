@@ -53,7 +53,7 @@ r.put('/', validateUserPatch, async function updateUser(
   res
 ) {
   try {
-    const user = await User.findByUsername(req.user.username)
+    const user = await User.findByAuth({ username: req.user.username })
     await user.update(req.body)
     return res.json(user)
   } catch (err) {

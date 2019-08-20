@@ -1,8 +1,10 @@
 import {
   AllowNull,
   AutoIncrement,
+  BelongsTo,
   Column,
   DataType,
+  ForeignKey,
   Is,
   IsEmail,
   Model,
@@ -18,6 +20,8 @@ import { RefreshToken } from './refresh_token'
 import { Recipe, RecipeJSON } from './recipe'
 import { ShoppingList } from './shopping_list'
 import { config } from '../server/config'
+import { Family } from './family'
+import { UserProfile } from './user_profile'
 
 export interface UserJSON {
   avatar_url: string
@@ -27,6 +31,8 @@ export interface UserJSON {
   recipes?: RecipeJSON[]
   username: string
   email_opt_out: boolean
+  is_pro: boolean
+  profile?: any
 }
 
 @Table({
@@ -82,6 +88,19 @@ export class User extends Model<User> implements UserJSON {
   @Column public name: string
 
   @Column public email_opt_out: boolean
+
+  @Column public is_pro: boolean
+
+  @AllowNull(true)
+  @Column
+  @ForeignKey(() => Family)
+  public family_id: number
+
+  @BelongsTo(() => Family)
+  public family: Family
+
+  @Column(DataType.VIRTUAL)
+  public profile: UserProfile
 
   @HasMany(() => Recipe)
   public recipes: Recipe[]
@@ -155,13 +174,22 @@ export class User extends Model<User> implements UserJSON {
     })
   }
 
-  public static async findByUsername(username: string): Promise<User> {
-    if (_.isUndefined(username)) {
-      throw new Error('username is undefined')
+  public static async findByAuth({
+    email,
+    username
+  }: {
+    email?: string
+    username?: string
+  }): Promise<User> {
+    if (_.isUndefined(username) && _.isUndefined(email)) {
+      throw new Error('auth is undefined')
     }
     const { where, fn, col } = User.sequelize
+    const clause = username
+      ? where(fn('lower', col('username')), username.toLowerCase())
+      : where(fn('lower', col('email')), email.toLowerCase())
     return User.findOne({
-      where: where(fn('lower', col('username')), username.toLowerCase())
+      where: clause
     })
   }
 }

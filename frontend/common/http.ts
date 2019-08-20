@@ -9,7 +9,8 @@ import {
   NoteJSON,
   RecipeSearchDocumentJSON,
   ShoppingListJSON,
-  ShoppingListItemJSON
+  ShoppingListItemJSON,
+  ProfileQuestionJSON
 } from '../models'
 import {
   PostRecipe,
@@ -139,10 +140,18 @@ class Api {
       headers
     })
 
-  login = ({ username, password }: { username: string; password: string }) =>
+  login = ({
+    email,
+    username,
+    password
+  }: {
+    email?: string
+    username?: string
+    password: string
+  }) =>
     this._fetch<LoginResponse>('/login', {
       method: 'POST',
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ email, username, password })
     })
 
   getCurrentUser = (opts: RequestInit = {}) =>
@@ -234,7 +243,7 @@ class Api {
       }
     })
     const recipe = await handleError(res)
-    return {httpStatus: res.status, recipe: recipe}
+    return { httpStatus: res.status, recipe: recipe }
   }
 
   patchBranch = (
@@ -382,6 +391,22 @@ class Api {
     }
     return await this.getUserRecipes(username, sort, opts)
   }
+
+  getProProfile = (opts: RequestInit = {}) =>
+    this._fetch<UserProfileJSON>(`/pro/profile`, opts)
+
+  getProFamily = (opts: RequestInit = {}) =>
+    this._fetch<UserProfileJSON>(`/pro/family`, opts)
+
+  getProQuestion = (id: number, opts: RequestInit = {}) =>
+    this._fetch<ProfileQuestionJSON>(`/pro/question/${id}`, opts)
+
+  putAnswer = (body: any, opts: RequestInit = {}) =>
+    this._fetch<FavoriteJSON>(`/pro/answer`, {
+      ...opts,
+      body: JSON.stringify(body),
+      method: 'PUT'
+    })
 }
 
 export const api = new Api()

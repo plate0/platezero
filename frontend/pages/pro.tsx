@@ -81,7 +81,7 @@ const Personalized = () => {
     <Fade bottom>
       <p className="lead mb-4">
         Your meal plan will be deeply personalized to your family's tastes. The
-        plan will take into account meat preferences, loved food, disliked food,
+        plan will take into account meal preferences, loved food, disliked food,
         allergies, and more. When you sign up you fill out a food profile which
         lets PlateZero create the perfect plan.
       </p>

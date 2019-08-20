@@ -76,7 +76,7 @@ Instructions
 ${plainTextProcedure(r.procedureLists)}
 `
 
-const getUser = (username: string) => User.findByUsername(username)
+const getUser = (username: string) => User.findByAuth({ username })
 
 const getRecipe = (user_id: number, slug: string) =>
   Recipe.findOne({

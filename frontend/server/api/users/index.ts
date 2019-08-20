@@ -56,7 +56,7 @@ r.use(
   async function populateUsername(req, res, next) {
     const { username } = req.params
     try {
-      const user = await User.findByUsername(username)
+      const user = await User.findByAuth({ username })
       if (!user) {
         return notFound(res)
       }

@@ -115,8 +115,9 @@ export default class MyDocument extends Document<{ user?: UserJSON }> {
             rel="stylesheet"
             href="https://pro.fontawesome.com/releases/v5.10.1/css/all.css"
             integrity="sha384-y++enYq9sdV7msNmXr08kJdkX4zEI1gMjjkw0l9ttOepH7fMdhb7CePwuRQCfwCr"
-            crossorigin="anonymous"
+            crossOrigin="anonymous"
           />
+          <script src="https://js.stripe.com/v3/" />
           <script
             dangerouslySetInnerHTML={{
               __html: `
