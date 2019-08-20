@@ -1,5 +1,6 @@
 import { toLower } from 'lodash'
 import { Sequelize } from 'sequelize-typescript'
+import { Favorite } from './favorite'
 import { IngredientLine } from './ingredient_line'
 import { IngredientList } from './ingredient_list'
 import { IngredientListLine } from './ingredient_list_line'
@@ -23,7 +24,6 @@ import { ShoppingList } from './shopping_list'
 import { ShoppingListItem } from './shopping_list_item'
 import { User } from './user'
 import { UserActivity } from './user_activity'
-import { Favorite } from './favorite'
 import { config } from '../server/config'
 
 export const sequelize = new Sequelize({
