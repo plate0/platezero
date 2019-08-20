@@ -1,6 +1,7 @@
 import { toLower } from 'lodash'
 import { Sequelize } from 'sequelize-typescript'
 import { Family } from './family'
+import { Favorite } from './favorite'
 import { IngredientLine } from './ingredient_line'
 import { IngredientList } from './ingredient_list'
 import { IngredientListLine } from './ingredient_list_line'
