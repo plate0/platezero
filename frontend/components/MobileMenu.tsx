@@ -20,7 +20,8 @@ export const MobileMenu = ({
   const NavRoutes = [
     { name: 'Recipes', route: 'user', params: { username: user.username } },
     { name: 'Add Recipe', route: 'new-recipe' },
-    { name: 'Shopping Lists', route: 'shopping' }
+    { name: 'Shopping Lists', route: 'shopping' },
+    { name: 'Meal Plan', route: 'mealplan' },
   ]
   const route = (route: string, params: any = {}) => () => {
     close()

@@ -234,7 +234,7 @@ class Api {
       }
     })
     const recipe = await handleError(res)
-    return {httpStatus: res.status, recipe: recipe}
+    return { httpStatus: res.status, recipe: recipe }
   }
 
   patchBranch = (
@@ -382,6 +382,25 @@ class Api {
     }
     return await this.getUserRecipes(username, sort, opts)
   }
+
+  getPlannedRecipes = async (until?: Date, opts: RequestInit = {}) =>
+    this._fetch<PlannedRecipeJSON[]>(`/user/mealplan`, {
+      ...opts,
+      method: 'GET'
+    })
+
+  addPlannedRecipe = async (
+    body: { recipe_id: number; plan_date: Date },
+    opts: RequestInit = {}
+  ) =>
+    this._fetch<PlannedRecipeJSON>('/user/mealplan', {
+      ...opts,
+      body: JSON.stringify(body),
+      method: 'POST'
+    })
+
+  removePlannedRecipe = async (id: number, opts: RequestInit = {}) =>
+    this._fetch<any>(`/user/mealplan/${id}`, { ...opts, method: 'DELETE' })
 }
 
 export const api = new Api()

@@ -19,6 +19,7 @@ export const routes: any = nextroutes()
     pattern: '/shopping/:id',
     page: 'shopping'
   })
+  .add('mealplan', '/mealplan')
   .add('profile', '/profile')
   .add('user', '/:username')
   .add('new-recipe', '/recipe/new')

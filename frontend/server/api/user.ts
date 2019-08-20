@@ -25,6 +25,7 @@ import {
 } from '../../models'
 import { notFound, internalServerError, badRequest } from '../errors'
 import { HttpStatus } from '../../common/http-status'
+import { mealplan } from './mealplan'
 
 const s3 = new S3()
 
@@ -275,5 +276,7 @@ r.delete('/favorites/:recipeId', async function removeFavorite(
     return internalServerError(res, err)
   }
 })
+
+r.use('/mealplan', mealplan)
 
 export const user = r

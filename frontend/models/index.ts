@@ -5,6 +5,7 @@ import { IngredientLine } from './ingredient_line'
 import { IngredientList } from './ingredient_list'
 import { IngredientListLine } from './ingredient_list_line'
 import { Note } from './note'
+import { PlannedRecipe } from './planned_recipe'
 import { Preheat } from './preheat'
 import { ProcedureLine } from './procedure_line'
 import { ProcedureList } from './procedure_list'
@@ -40,6 +41,7 @@ sequelize.addModels([
   IngredientList,
   IngredientListLine,
   Note,
+  PlannedRecipe,
   Preheat,
   ProcedureLine,
   ProcedureList,
@@ -81,6 +83,7 @@ export * from './ingredient_line'
 export * from './ingredient_list'
 export * from './ingredient_list_line'
 export * from './note'
+export * from './planned_recipe'
 export * from './preheat'
 export * from './preheat'
 export * from './procedure_line'

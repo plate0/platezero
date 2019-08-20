@@ -194,3 +194,16 @@ export const validateNewFavorite = validator({
     .min(0)
     .required()
 })
+
+export const validateMealplanRequest = validator(
+  { until: Joi.date() },
+  requestQueryGetter
+)
+
+export const validateNewPlannedRecipe = validator({
+  recipe_id: Joi.number()
+    .integer()
+    .min(0)
+    .required(),
+  plan_date: Joi.date().required()
+})

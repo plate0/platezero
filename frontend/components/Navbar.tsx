@@ -71,6 +71,9 @@ const NewRecipeDropdown = () => (
     <Link route="shopping">
       <a className="text-white btn btn-link">Shopping</a>
     </Link>
+    <Link route="mealplan">
+      <a className="text-white btn btn-link">Meal Plan</a>
+    </Link>
     <Link route="new-recipe">
       <a className="add-recipe text-white btn btn-link" id="add-recipe">
         Add Recipe
