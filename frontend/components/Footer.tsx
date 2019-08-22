@@ -8,6 +8,8 @@ export const FooterLinks = [
     icon: 'fa-envelope',
     link: 'mailto:hello@platezero.com'
   },
+  { name: 'TOS', icon: 'fa-balance-scale', link: '/tos' },
+  { name: 'Privacy', icon: 'fa-lock', link: '/privacy' },
   { name: 'Blog', icon: 'fa-rss', link: 'https://blog.platezero.com' }
 ]
 

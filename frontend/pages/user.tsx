@@ -72,7 +72,7 @@ class User extends React.Component<UserProps & WithRouterProps> {
         <Row className="mt-3">
           <Col xs={12} sm={4} md={3} lg={2} className="text-center">
             <ProfilePicture size={64} img={user.avatar_url} />
-            <h3>{user.username}</h3>
+            <h3>{getName(user)}</h3>
             <IfLoggedIn username={user.username}>
               <p>
                 <Link route="profile">

@@ -3,6 +3,13 @@ const nextroutes = require('next-routes')
 export const routes: any = nextroutes()
   .add('login')
   .add('register')
+  .add('tos')
+  .add('privacy')
+  .add({
+    name: 'pro',
+    pattern: '/(pro|pzp)',
+    page: 'pzp-a1'
+  })
   .add({
     name: 'shopping',
     pattern: '/shopping'
