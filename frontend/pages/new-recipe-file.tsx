@@ -245,8 +245,7 @@ export default class NewRecipeFile extends React.Component<
                 back={'new-recipe'}
               />
             )
-          }
-          if (
+          } else if (
             size(version.procedureLists) === 0 ||
             size(version.procedureLists[0].lines) === 0
           ) {
@@ -260,9 +259,11 @@ export default class NewRecipeFile extends React.Component<
                 back={'new-recipe'}
               />
             )
+          } else {
+            Router.push(this.state.recipe.html_url)
           }
         }
-      // Fall through...
+
       case UploadStatus.UploadSucceeded:
         return (
           <div>
