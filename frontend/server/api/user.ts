@@ -281,15 +281,9 @@ r.post('/versions/:id/ingredients', async function addIngredients(
   res
 ) {
   try {
-    console.log(
-      `\x1b[97maddIngredients: request ${JSON.stringify(req.body)}\x1b[0m`
-    )
     const ingredientList = await IngredientList.createAndLink(
       req.body,
       req.params.id
-    )
-    console.log(
-      `\x1b[97maddIngredients: result ${JSON.stringify(ingredientList)}\x1b[0m`
     )
     return res.status(HttpStatus.Created).json(ingredientList)
   } catch (err) {
@@ -299,9 +293,11 @@ r.post('/versions/:id/ingredients', async function addIngredients(
 
 r.post('/versions/:id/procedures', async function addProcedures(req: any, res) {
   try {
-    return res
-      .status(HttpStatus.Created)
-      .json(await ProcedureList.createAndLink(req.body, req.params.id))
+    const procedureList = await ProcedureList.createAndLink(
+      req.body,
+      req.params.id
+    )
+    return res.status(HttpStatus.Created).json(procedureList)
   } catch (err) {
     return internalServerError(res, err)
   }

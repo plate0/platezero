@@ -69,14 +69,14 @@ export class ProcedureList extends Model<ProcedureList>
   ): Promise<ProcedureList[]> {
     return ProcedureList.sequelize.transaction(async transaction => {
       const procedureLists = await Promise.all(
-        _.map(lists, il => ProcedureList.createWithLines(il, { transaction }))
+        _.map(lists, pl => ProcedureList.createWithLines(pl, { transaction }))
       )
       await Promise.all(
-        _.map(procedureLists, (il, sort_key) =>
+        _.map(procedureLists, (pl, sort_key) =>
           RecipeVersionProcedureList.create(
             {
               recipe_version_id: versionId,
-              procedure_list_id: il.id,
+              procedure_list_id: pl.id,
               sort_key
             },
             { transaction }

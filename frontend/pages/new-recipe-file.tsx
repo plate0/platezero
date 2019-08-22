@@ -107,12 +107,6 @@ export default class NewRecipeFile extends React.Component<
 
         const versionId = recipe.branches[0].recipe_version_id
         const version = await api.getRecipeVersion(username, slug, versionId)
-        console.log(
-          `onDrop: ingredientLists=${JSON.stringify(version.ingredientLists)}`
-        )
-        console.log(
-          `onDrop: procedureLists=${JSON.stringify(version.procedureLists)}`
-        )
         this.setState({
           recipe,
           version,
@@ -130,46 +124,32 @@ export default class NewRecipeFile extends React.Component<
 
   public onIlChange(data: any) {
     this.setState({ ingredientLists: data })
-    console.log(`onIlChange: state=${Object.keys(this.state)}`)
   }
 
   public onIlSubmit() {
-    console.log(
-      `onIlSubmit: this.state.version=${Object.keys(this.state.version)}`
-    )
     const { version, ingredientLists } = this.state
     version.ingredientLists = ingredientLists
     this.setState({ version })
-    console.log(
-      `onIlSubmit: this.state.version=${Object.keys(this.state.version)}`
-    )
     this.createIngredientLists()
   }
 
   public onPlChange(data: any) {
-    this.setState({ procedure_lists: data })
+    this.setState({ procedureLists: data })
   }
 
   public onPlSubmit() {
-    this.setState(
-      state => {
-        let r = state.recipe
-        r.procedure_lists = state.procedure_lists
-        return { recipe: r }
-      },
-      () => {
-        this.createProcedureLists()
-      }
-    )
+    const { version, procedureLists } = this.state
+    version.procedureLists = procedureLists
+    this.setState({ version })
+    this.createProcedureLists()
   }
 
   public createProcedureLists() {
     try {
       this.setState({ errors: [] })
-      const recipe = this.state.recipe
-      const masterVersionId = this.getMasterVersionId()
-      api.createProcedureLists(recipe.procedureLists, masterVersionId)
+      api.createProcedureLists(this.state.procedureLists, this.state.version.id)
     } catch (err) {
+      console.error(`createProcedureLists: ${err}`)
       this.setState({ errors: getErrorMessages(err) })
     }
   }
@@ -250,10 +230,6 @@ export default class NewRecipeFile extends React.Component<
       case UploadStatus.ParseFailed:
         if (this.state.recipe) {
           let version = this.state.version
-          console.log(`Parse failed: state=${Object.keys(this.state)}`)
-          console.log(
-            `render: procedureLists=${JSON.stringify(version.procedureLists)}`
-          )
           if (
             size(version.ingredientLists) === 0 ||
             size(version.ingredientLists[0].lines) === 0
@@ -272,7 +248,7 @@ export default class NewRecipeFile extends React.Component<
           }
           if (
             size(version.procedureLists) === 0 ||
-            size(version.ingredientLists[0].lines) === 0
+            size(version.procedureLists[0].lines) === 0
           ) {
             return (
               <LoadProcedure

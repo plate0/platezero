@@ -396,7 +396,6 @@ class Api {
     versionId: number,
     opts: RequestInit = {}
   ) => {
-    console.log(`api: ${JSON.stringify(arguments)}, version ${versionId}`)
     this._fetch<IngredientListJSON>(`/user/versions/${versionId}/ingredients`, {
       ...opts,
       body: JSON.stringify(lists),
@@ -409,7 +408,7 @@ class Api {
     versionId: number,
     opts: RequestInit = {}
   ) => {
-    this._fetch<ProcedureListJSON>(`/user/version/${versionId}/procedures`, {
+    this._fetch<ProcedureListJSON>(`/user/versions/${versionId}/procedures`, {
       ...opts,
       body: JSON.stringify(lists),
       method: 'POST'
