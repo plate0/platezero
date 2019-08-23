@@ -261,6 +261,7 @@ export default class NewRecipeFile extends React.Component<
             )
           } else {
             Router.push(this.state.recipe.html_url)
+            return
           }
         }
 
