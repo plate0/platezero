@@ -213,7 +213,11 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
         }
       }),
       () => {
-        if (prop === 'procedure_lists') {
+        if (
+          this.state.recipe &&
+          size(this.state.recipe.ingredient_lists) > 0 &&
+          size(this.state.recipe.procedure_lists) > 0
+        ) {
           this.create()
         }
       }
