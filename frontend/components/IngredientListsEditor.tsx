@@ -119,9 +119,13 @@ function parseIngredientLists(text: string): IngredientListJSON[] {
         acc.push({ name: undefined, lines: [] })
       }
       const section = _.last(acc)
-      if (_.startsWith(line, '#')) {
+      if (_.startsWith(line, '#') && _.size(section.lines) === 0) {
         // it's a name
         section.name = line.substring(1)
+      } else if (_.startsWith(line, '#') && _.size(section.lines) > 0) {
+        // it's a name and we've already filled lines in this section, we
+        // should start a new section
+        acc.push({ name: line.substring(1), lines: [] })
       } else if (_.trim(line) === '' && _.size(section.lines) > 0) {
         // it's a blank line and we've already filled lines in this section, we
         // should start a new section
