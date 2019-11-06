@@ -259,22 +259,25 @@ function parse(lines: string[]): PostRecipe {
     .add('yield', yieldLexicon)
     .sort()
 
+  if (!w.wombats.length) {
+    throw 'No content parsed'
+  }
   // populate the result
   let cursor = new Cursor(0, 0)
-  let o = getTitle(lines, cursor)
-  if (o) {
-    r.title = o['text']
-    cursor = o['cursor']
+  let x = getTitle(lines, cursor)
+  if (x) {
+    r.title = x['text']
+    cursor = x['cursor']
   }
   cursor.advance(w.wombats[0].cursor.start)
-  r.description = getDescription(lines, cursor)
 
-  r.ingredient_lists = getIngredients(w)
-  r.procedure_lists = getMethods(w)
-
-  r.yield = getYield(w)
-  r.duration = getTotalTime(w)
-  r.preheats = getPreheat(w)
+  let o // Add keys only for values which are found
+  if ((o = getDescription(lines, cursor))) r.description = o
+  if ((o = getIngredients(w))) r.ingredient_lists = o
+  if ((o = getMethods(w))) r.procedure_lists = o
+  if ((o = getYield(w))) r.yield = o
+  if ((o = getTotalTime(w))) r.duration = o
+  if ((o = getPreheat(w))) r.preheats = o
 
   return r
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Router } from '../routes'
 import {
-  Alert,
   Form,
   Input,
   InputGroup,
@@ -13,11 +12,7 @@ import {
 } from 'reactstrap'
 import Head from 'next/head'
 import { Link } from '../routes'
-import {
-  Layout,
-  IngredientListsEditor,
-  ProcedureListsEditor
-} from '../components'
+import { Layout, LoadProcedure, LoadIngredients, Back } from '../components'
 import { PostRecipe } from '../common/request-models'
 import { api, PlateZeroApiError, HttpStatus } from '../common'
 import { size } from 'lodash'
@@ -29,15 +24,6 @@ const Loading = () => (
   <div className="d-flex justify-content-center mt-5">
     <Spinner style={{ width: '3rem', height: '3rem' }} color="primary" />
   </div>
-)
-
-const Back = () => (
-  <Link route="new-recipe">
-    <a className="btn btn-link text-dark mt-3">
-      <i className="far fa-chevron-double-left mr-2" />
-      Cancel and go back
-    </a>
-  </Link>
 )
 
 const NotShowing = ({ href }) => {
@@ -88,70 +74,38 @@ const UrlForm = ({ onSubmit }) => {
   )
 }
 
-const LoadIngredients = ({ disabled, src, onChange, onSubmit }) => {
+const Foo = ({ src }) => {
   return (
-    <Row>
-      <Col xs="12">
-        <Alert color="danger">
-          Sorry, the importer could not find the ingredients.
-        </Alert>
-        <div className="position-relative">
-          <iframe src={src} className="w-100" style={{ height: '50vh' }} />
-          <NotShowing href={src} />
-        </div>
-      </Col>
-      <Col xs="12">
-        <h2>Oops, that didn&rsquo;t quite work.</h2>
-        <p>
-          Please copy the ingredients from the{' '}
-          <a href={src} target="_blank">
-            website above
-          </a>
-          . Paste them into the text field below and edit them however you would
-          like. When done, press <em>Save & Continue</em>.
-        </p>
-        <IngredientListsEditor lists={[]} onChange={onChange} />
-      </Col>
-      <Col xs="12" className="d-flex justify-content-between my-3">
-        <Back />
-        <Button color="primary" onClick={onSubmit} disabled={disabled}>
-          Save & Continue
-        </Button>
-      </Col>
-    </Row>
+    <div className="position-relative">
+      <iframe src={src} className="w-100" style={{ height: '50vh' }} />
+      <NotShowing href={src} />
+    </div>
   )
 }
 
-const LoadProcedure = ({ src, onChange, onSubmit }) => {
+const Bar1 = ({ src }) => {
   return (
-    <Row>
-      <Col xs="12">
-        <Alert color="danger">
-          Sorry, the importer could not find the instructions.
-        </Alert>
-        <div className="position-relative">
-          <iframe src={src} className="w-100" style={{ height: '50vh' }} />
-          <NotShowing href={src} />
-        </div>
-      </Col>
-      <Col xs="12">
-        <p>
-          Please copy the instructions from the
-          <a href={src} target="_blank">
-            website above
-          </a>
-          . Paste them into the text field below and edit them however you would
-          like. When done, press 'Save & Continue'.
-        </p>
-        <ProcedureListsEditor lists={[]} onChange={onChange} />
-      </Col>
-      <Col xs="12" className="d-flex justify-content-between">
-        <Back />
-        <Button color="primary" onClick={onSubmit}>
-          Save & Continue
-        </Button>
-      </Col>
-    </Row>
+    <span>
+      {' '}
+      Please copy the ingredients from the{' '}
+      <a href={src} target="_blank">
+        website above
+      </a>
+      .{' '}
+    </span>
+  )
+}
+
+const Bar2 = ({ src }) => {
+  return (
+    <span>
+      {' '}
+      Please copy the instructions from the{' '}
+      <a href={src} target="_blank">
+        website above
+      </a>
+      .{' '}
+    </span>
   )
 }
 
@@ -255,6 +209,9 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
           disabled={size(this.state.ingredient_lists) === 0}
           onChange={i => this.onChange('ingredient_lists', i)}
           onSubmit={() => this.onSubmit('ingredient_lists')}
+          Sample={Foo}
+          Instructions={Bar1}
+          back={'new-recipe'}
         />
       )
     } else if (
@@ -266,6 +223,9 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
           src={this.state.url}
           onChange={p => this.onChange('procedure_lists', p)}
           onSubmit={() => this.onSubmit('procedure_lists')}
+          Sample={Foo}
+          Instructions={Bar2}
+          back={'new-recipe'}
         />
       )
     }

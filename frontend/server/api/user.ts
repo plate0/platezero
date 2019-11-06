@@ -1,6 +1,5 @@
 import * as express from 'express'
 import { Request } from 'express'
-import * as _ from 'lodash'
 import { generate as shortid } from 'shortid'
 import { S3 } from 'aws-sdk'
 const multer = require('multer')
@@ -21,7 +20,9 @@ import {
   RecipeBranch,
   RecipeVersion,
   Note,
-  Favorite
+  Favorite,
+  IngredientList,
+  ProcedureList
 } from '../../models'
 import { notFound, internalServerError, badRequest } from '../errors'
 import { HttpStatus } from '../../common/http-status'
@@ -241,7 +242,6 @@ r.post('/images', upload.single('file'), async function uploadPublicImage(
     url: `https://static.platezero.com/${req.pzUploadKey}`
   })
 })
-
 r.post('/favorites', validateNewFavorite, async function addFavorite(
   req: AuthenticatedRequest,
   res
@@ -271,6 +271,33 @@ r.delete('/favorites/:recipeId', async function removeFavorite(
     }
     await fav.destroy()
     res.status(HttpStatus.NoContent).json()
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.post('/versions/:id/ingredients', async function addIngredients(
+  req: any,
+  res
+) {
+  try {
+    const ingredientList = await IngredientList.createAndLink(
+      req.body,
+      req.params.id
+    )
+    return res.status(HttpStatus.Created).json(ingredientList)
+  } catch (err) {
+    return internalServerError(res, err)
+  }
+})
+
+r.post('/versions/:id/procedures', async function addProcedures(req: any, res) {
+  try {
+    const procedureList = await ProcedureList.createAndLink(
+      req.body,
+      req.params.id
+    )
+    return res.status(HttpStatus.Created).json(procedureList)
   } catch (err) {
     return internalServerError(res, err)
   }

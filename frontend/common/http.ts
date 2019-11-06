@@ -6,6 +6,8 @@ import {
   UserJSON,
   RecipeJSON,
   RecipeVersionJSON,
+  IngredientListJSON,
+  ProcedureListJSON,
   NoteJSON,
   RecipeSearchDocumentJSON,
   ShoppingListJSON,
@@ -51,7 +53,13 @@ const handleError = async (res: Response): Promise<any> => {
   if (res.status >= 200 && res.status < 400) {
     return res.json()
   }
-  const messages = (await res.clone().json()).errors
+  let messages
+  if (res.bodyUsed) {
+    messages = (await res.clone().json()).errors
+  } else {
+    messages = [`${res.status}: ${res.statusText}`]
+  }
+  console.error(`api: ${messages.join('; ')}`)
   throw new PlateZeroApiError(res.clone(), messages, res.status)
 }
 
@@ -233,8 +241,8 @@ class Api {
         ...authHeaders(this.token)
       }
     })
-    const recipe = await handleError(res)
-    return {httpStatus: res.status, recipe: recipe}
+    const { recipe, text } = await handleError(res)
+    return { httpStatus: res.status, recipe: recipe, text: text }
   }
 
   patchBranch = (
@@ -381,6 +389,30 @@ class Api {
       )
     }
     return await this.getUserRecipes(username, sort, opts)
+  }
+
+  createIngredientLists = (
+    lists: IngredientListJSON[],
+    versionId: number,
+    opts: RequestInit = {}
+  ) => {
+    this._fetch<IngredientListJSON>(`/user/versions/${versionId}/ingredients`, {
+      ...opts,
+      body: JSON.stringify(lists),
+      method: 'POST'
+    })
+  }
+
+  createProcedureLists = (
+    lists: ProcedureListJSON[],
+    versionId: number,
+    opts: RequestInit = {}
+  ) => {
+    this._fetch<ProcedureListJSON>(`/user/versions/${versionId}/procedures`, {
+      ...opts,
+      body: JSON.stringify(lists),
+      method: 'POST'
+    })
   }
 }
 
