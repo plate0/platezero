@@ -7,7 +7,9 @@ import {
   FormGroup,
   FormText,
   Label,
-  Input
+  Input,
+  InputGroup,
+  InputGroupAddon
 } from 'reactstrap'
 import Head from 'next/head'
 import {
@@ -114,7 +116,7 @@ export default class Profile extends React.Component<
         <Head>
           <title>{name} Profile</title>
         </Head>
-        <Row className="">
+        <Row>
           <Col className="mt-3 text-center">
             <ProfilePicture size={64} img={user.avatar_url} />
             <EditableImage
@@ -125,13 +127,12 @@ export default class Profile extends React.Component<
           </Col>
         </Row>
         <Row>
-          <Col className="justify-content-center">
+          <Col xs={12} md={6}>
+            <h3>My Settings</h3>
             <Form onSubmit={this.onSave}>
-              <FormGroup row>
-                <Label for="name" xs={3}>
-                  Name
-                </Label>
-                <Col xs={9}>
+              <FormGroup>
+                <Label for="name">Display Name</Label>
+                <InputGroup>
                   <Input
                     type="text"
                     name="name"
@@ -139,39 +140,30 @@ export default class Profile extends React.Component<
                     value={this.state.name}
                     onChange={e => this.setState({ name: e.target.value })}
                   />
-                  <FormText>
-                    If you add a display name, it will appear instead of your
-                    username across PlateZero. Your username will still be{' '}
-                    <strong>{user.username}</strong> and your URL will still be{' '}
-                    <code>platezero.com/{user.username}</code>.
-                  </FormText>
-                  <AlertErrors errors={editErrors} />
-                </Col>
+                  <InputGroupAddon addonType="append">
+                    <Button type="submit" color="success" disabled={isSaving}>
+                      Save
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+                <FormText>
+                  If you add a display name, it will appear instead of your
+                  username across PlateZero. Your username will still be{' '}
+                  <strong>{user.username}</strong> and your URL will still be{' '}
+                  <code>platezero.com/{user.username}</code>.
+                </FormText>
+                <AlertErrors errors={editErrors} />
               </FormGroup>
-              <div className="text-center d-flex">
-                <Button
-                  type="submit"
-                  color="success"
-                  className="px-3 flex-fill"
-                  disabled={isSaving}
-                >
-                  Save
-                </Button>
-              </div>
             </Form>
           </Col>
-        </Row>
-        <Row className="mt-6">
-          <Col xs="12">
+          <Col xs={12} md={6}>
             <h3>Other Options</h3>
-          </Col>
-          <Col xs="12" className="d-flex">
             <UserContext.Consumer>
               {({ updateUser }) => (
                 <Button
                   outline
                   color="danger"
-                  className="flex-fill"
+                  block
                   onClick={() => {
                     logout()
                     const w = window as any
