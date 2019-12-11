@@ -43,25 +43,12 @@ const HomeNav = () => {
       </div>
       <div className="ml-auto mr-2" style={{ zIndex: 1 }}>
         <Nav navbar className="align-items-center flex-row">
-          <NavItem className="mr-2">
-            <Link route="/pro">
-              <a className="text-dark font-weight-bold">Pro</a>
-            </Link>
-          </NavItem>
           <NavItem>{action}</NavItem>
         </Nav>
       </div>
     </Navbar>
   )
 }
-
-const CallToAction = ({ className }: { className?: string }) => (
-  <Link to="register">
-    <a className={`btn btn-primary ${className}`} role="button">
-      Join the Beta for Free
-    </a>
-  </Link>
-)
 
 export default class Index extends Component {
   public render() {
@@ -82,22 +69,8 @@ export default class Index extends Component {
             >
               <h1 className="d-none d-sm-block">PlateZero</h1>
               <h2>Save, Remix, and Share your favorite recipes</h2>
-              <CallToAction />
             </Col>
           </Row>
-        </div>
-        <div className="py-5 pro" style={{ background: 'rgb(197, 220, 190)' }}>
-          <Container className="text-center">
-            <h2>
-              Join the wait list for{' '}
-              <Link route="/pro">
-                <a className="text-dark font-weight-bold text-underline">
-                  PlateZero Pro
-                </a>
-              </Link>
-              , the best and easiest way to eat delicious, healthy food at home.
-            </h2>
-          </Container>
         </div>
         <Container>
           <Row className="my-5">
@@ -198,15 +171,6 @@ export default class Index extends Component {
             </Col>
           </Row>
         </Container>
-        <div>
-          <Container>
-            <Row className="py-5">
-              <Col className="d-flex justify-content-center align-items-center">
-                <CallToAction className="btn-lg" />
-              </Col>
-            </Row>
-          </Container>
-        </div>
         <Footer />
         <style jsx>{`
           .hero-image {
@@ -215,10 +179,6 @@ export default class Index extends Component {
             background-repeat: no-repeat;
             background-position-y: 50%;
             background-size: cover;
-          }
-
-          .pro {
-            background-color: green;
           }
         `}</style>
       </div>
