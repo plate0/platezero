@@ -117,46 +117,6 @@ export default class MyDocument extends Document<{ user?: UserJSON }> {
             integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev"
             crossOrigin="anonymous"
           />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-  var _paq = window._paq || [];
-  ${userId ? "_paq.push(['setUserId', '" + userId + "']);" : ''}
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://matomo.plate0.com/";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '1']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-  })();`
-            }}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window,document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '383617562508203'); 
-fbq('track', 'PageView');
-`
-            }}
-          />
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: 'none' }}
-              src="https://www.facebook.com/tr?id=pixelID&ev=PageView&noscript=1"
-            />
-          </noscript>
         </Head>
         <body>
           <Main />

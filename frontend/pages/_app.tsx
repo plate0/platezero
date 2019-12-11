@@ -81,15 +81,6 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
       if (window.scrollX !== 0 || window.scrollY !== 0) {
         scrolls[window.location] = { x: window.scrollX, y: window.scrollY }
       }
-
-      const w = window as any
-      if (w && w._paq) {
-        w._paq.push(['setCustomUrl', url])
-        if (this.state.user) {
-          w._paq.push(['setUserId', this.state.user.username])
-        }
-        w._paq.push(['trackPageView'])
-      }
     })
   }
 
