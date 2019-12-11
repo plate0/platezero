@@ -107,6 +107,7 @@ const ActionMenu = ({
   const [isAttributionModalOpen, setAttributionModalOpen] = useState(false)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const [isNoteModalOpen, setNoteModalOpen] = useState(false)
+  const [isMealplanModalOpen, setMealplanModalOpen] = useState(false)
   return (
     <>
       <Dropdown
@@ -134,6 +135,9 @@ const ActionMenu = ({
           </DropdownItem>
           <DropdownItem onClick={() => setNoteModalOpen(true)}>
             Add Note
+          </DropdownItem>
+          <DropdownItem onClick={() => setMealplanModalOpen(true)}>
+            Add to Meal Plan
           </DropdownItem>
           <DropdownItem
             onClick={() => setDeleteModalOpen(true)}
@@ -167,6 +171,12 @@ const ActionMenu = ({
         versionId={effectiveVersionId}
         toggle={() => setNoteModalOpen(!isNoteModalOpen)}
         close={() => setNoteModalOpen(false)}
+      />
+      <MealplanModal
+        isOpen={isMealplanModalOpen}
+        recipeId={recipe.id}
+        toggle={() => setMealplanModalOpen(!isMealplanModalOpen)}
+        close={() => setMealplanModalOpen(false)}
       />
     </>
   )
@@ -384,6 +394,37 @@ const NoteModal = ({
             close()
           }}
         />
+        <AlertErrors errors={errors} className="mt-3 mb-0 small" />
+        <Button
+          color="link"
+          className="text-muted"
+          outline
+          block
+          onClick={close}
+        >
+          Never mind
+        </Button>
+      </ModalBody>
+    </Modal>
+  )
+}
+
+const MealplanModal = ({
+  recipeId,
+  isOpen,
+  toggle,
+  close
+}: {
+  recipeId: number
+  isOpen: boolean
+  toggle: () => void
+  close: () => void
+}) => {
+  const [errors] = useState([])
+  return (
+    <Modal isOpen={isOpen} toggle={toggle} size="lg">
+      <ModalHeader>Add to Meal Plan</ModalHeader>
+      <ModalBody>
         <AlertErrors errors={errors} className="mt-3 mb-0 small" />
         <Button
           color="link"
