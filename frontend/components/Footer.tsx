@@ -10,7 +10,6 @@ export const FooterLinks = [
   },
   { name: 'TOS', icon: 'fa-balance-scale', link: '/tos' },
   { name: 'Privacy', icon: 'fa-lock', link: '/privacy' },
-  { name: 'Blog', icon: 'fa-rss', link: 'https://blog.platezero.com' }
 ]
 
 export const Footer = () => (
