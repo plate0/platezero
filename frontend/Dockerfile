@@ -15,6 +15,7 @@ RUN yarn
 
 # Bundle app source
 COPY .babelrc .
+COPY next-env.d.ts next-env.d.ts
 COPY next.config.js .
 COPY tsconfig.server.json .
 COPY tsconfig.json .

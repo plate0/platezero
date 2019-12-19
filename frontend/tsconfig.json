@@ -24,5 +24,7 @@
     "strict": false,
     "target": "esnext",
     "typeRoots": ["./node_modules/@types"]
-  }
+  },
+  "exclude": ["dist", ".next", "out", "next.config.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
