@@ -22,7 +22,6 @@ export default class MyDocument extends Document<{ user?: UserJSON }> {
   }
 
   render() {
-    const userId = this.props.user ? this.props.user.username : undefined
     return (
       <html lang="en">
         <Head>

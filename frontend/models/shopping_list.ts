@@ -2,24 +2,25 @@ import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
-  ForeignKey,
   Column,
-  Model,
+  CreatedAt,
+  DeletedAt,
+  ForeignKey,
   HasMany,
+  Model,
   PrimaryKey,
   Table,
   Unique,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt
+  UpdatedAt
 } from 'sequelize-typescript'
-import { User } from './user'
 import { ShoppingListItem, ShoppingListItemJSON } from './shopping_list_item'
+import { User } from './user'
 
 export interface ShoppingListJSON {
   id?: number
   name: string
   items?: ShoppingListItemJSON[]
+  _uuid?: any
 }
 
 @Table({

@@ -1,17 +1,17 @@
-import React from 'react'
-import { Row, Col, ListGroup, ListGroupItem } from 'reactstrap'
 import * as _ from 'lodash'
-import {
-  RecipeLayout,
-  RecipeLayoutProps,
-  fetchRecipeLayoutProps,
-  Timestamp,
-  ProfilePicture,
-  Markdown
-} from '../components'
-import { RecipeVersionJSON } from '../models'
+import React from 'react'
+import { Col, ListGroup, ListGroupItem, Row } from 'reactstrap'
 import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
+import {
+  fetchRecipeLayoutProps,
+  Markdown,
+  ProfilePicture,
+  RecipeLayout,
+  RecipeLayoutProps,
+  Timestamp
+} from '../components'
+import { RecipeVersionJSON } from '../models'
 import { Link } from '../routes'
 
 interface Props {

@@ -1,14 +1,14 @@
-import * as express from 'express'
-import * as next from 'next'
+import express from 'express'
+import * as _ from 'lodash'
+import next from 'next'
 import { join } from 'path'
 import * as prom from 'prom-client'
-import * as _ from 'lodash'
+import { HttpStatus } from '../common/http-status'
+import { api } from './api'
+import { config } from './config'
+import { exportRecipes } from './export'
 const { routes } = require('../routes')
 const { sequelize } = require('../models')
-import { api } from './api'
-import { exportRecipes } from './export'
-import { config } from './config'
-import { HttpStatus } from '../common/http-status'
 
 const app = next({ dev: config.dev })
 const handler = routes.getRequestHandler(app)

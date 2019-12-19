@@ -1,27 +1,29 @@
+import { UserJSON } from 'models'
+import Head from 'next/head'
 import React from 'react'
 import {
   Button,
-  Row,
   Col,
   Form,
   FormGroup,
   FormText,
-  Label,
   Input,
   InputGroup,
-  InputGroupAddon
+  InputGroupAddon,
+  Label,
+  Row
 } from 'reactstrap'
-import Head from 'next/head'
+import { logout } from '../common'
+import { api, getErrorMessages } from '../common/http'
+import { getName } from '../common/model-helpers'
 import {
   AlertErrors,
+  EditableImage,
   Layout,
-  ProfilePicture,
-  EditableImage
+  ProfilePicture
 } from '../components'
-import { api } from '../common/http'
-import { getName } from '../common/model-helpers'
 import { UserContext } from '../context/UserContext'
-import { logout } from '../common'
+import ErrorPage from './_error'
 
 interface ProfileProps {
   user?: UserJSON
@@ -45,7 +47,7 @@ export default class Profile extends React.Component<
     super(props)
     this.state = {
       avatarErrors: [],
-      isEdit: false,
+      isEditOpen: false,
       name: props.user.name,
       isSaving: false,
       editErrors: [],
@@ -55,7 +57,7 @@ export default class Profile extends React.Component<
     this.onSave = this.onSave.bind(this)
   }
 
-  static async getInitialProps() {
+  static async getInitialProps({ res }) {
     try {
       return {
         user: await api.getCurrentUser()

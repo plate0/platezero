@@ -1,23 +1,22 @@
-import React from 'react'
 import * as _ from 'lodash'
-import { Row, Col, Button, Nav, NavItem, NavLink } from 'reactstrap'
+import { WithRouterProps } from 'next/dist/client/with-router'
 import Head from 'next/head'
-import { withRouter, WithRouterProps } from 'next/router'
-import * as parse from 'url-parse'
-import ErrorPage from './_error'
-import { Link, Router } from '../routes'
-import { stringify } from 'query-string'
-import {
-  Layout,
-  UserSidebar,
-  UserPageRecipes,
-  RecipeList,
-  ProfilePicture,
-  IfLoggedIn
-} from '../components'
-import { UserJSON, RecipeJSON } from '../models'
+import { withRouter } from 'next/router'
+import React from 'react'
+import { Col, Nav, NavItem, NavLink, Row } from 'reactstrap'
+import parse from 'url-parse'
 import { api } from '../common/http'
 import { getName } from '../common/model-helpers'
+import {
+  IfLoggedIn,
+  Layout,
+  ProfilePicture,
+  RecipeList,
+  UserPageRecipes
+} from '../components'
+import { RecipeJSON, UserJSON } from '../models'
+import { Link } from '../routes'
+import ErrorPage from './_error'
 
 const FAVORITES = 'favorites'
 

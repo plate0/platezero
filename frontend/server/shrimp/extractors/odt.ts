@@ -3,24 +3,22 @@ import { Section } from '../common'
 const ELEMENT_NODE = 1,
   TEXT_NODE = 3
 
-module.exports = {
-  load: async filename => {
-    const AdmZip = require('adm-zip')
-    const cheerio = require('cheerio')
+export const load = async filename => {
+  const AdmZip = require('adm-zip')
+  const cheerio = require('cheerio')
 
-    // Read content.xml from ODF document
-    const zip = new AdmZip(filename)
-    const xml = zip.readAsText('content.xml')
-    const scrubbedXml = scrubXml(xml)
-    // Load xml DOM
-    const $ = cheerio.load(scrubbedXml, {
-      normalizeWhitespace: true,
-      xmlMode: true
-    })
+  // Read content.xml from ODF document
+  const zip = new AdmZip(filename)
+  const xml = zip.readAsText('content.xml')
+  const scrubbedXml = scrubXml(xml)
+  // Load xml DOM
+  const $ = cheerio.load(scrubbedXml, {
+    normalizeWhitespace: true,
+    xmlMode: true
+  })
 
-    const body = $('office\\:body > office\\:text')
-    return extractText($, $(body), 0)
-  }
+  const body = $('office\\:body > office\\:text')
+  return extractText($, $(body), 0)
 }
 
 function extractText($, node, depth) {

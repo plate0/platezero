@@ -1,23 +1,23 @@
-import { PostRecipe } from '../common/request-models'
-import React from 'react'
-import Router from 'next/router'
-import ErrorPage from './_error'
+import * as _ from 'lodash'
+import { size } from 'lodash'
 import Head from 'next/head'
+import Router from 'next/router'
+import React from 'react'
+import { Button, Col, Row, Spinner } from 'reactstrap'
+import { api, getErrorMessages, PlateZeroApiError } from '../common'
+import { HttpStatus } from '../common/http-status'
+import { PostRecipe } from '../common/request-models'
 import {
+  AlertErrors,
   Back,
   Dropzone,
   Layout,
-  AlertErrors,
   LoadIngredients,
   LoadProcedure
 } from '../components'
-import { Spinner, Button, Row, Col } from 'reactstrap'
-import { size } from 'lodash'
-import { api, getErrorMessages, PlateZeroApiError } from '../common'
+import { RecipeVersionJSON, UserJSON } from '../models'
 import { Link } from '../routes'
-import { UserJSON } from '../models'
-import { HttpStatus } from '../common/http-status'
-import * as _ from 'lodash'
+import ErrorPage from './_error'
 
 enum UploadStatus {
   None,
@@ -45,6 +45,9 @@ interface NewRecipeFileState {
   recipe?: PostRecipe
   text?: string[]
   errors?: string[]
+  version?: RecipeVersionJSON
+  ingredientLists?: any
+  procedureLists?: any
 }
 
 export default class NewRecipeFile extends React.Component<
@@ -167,9 +170,9 @@ export default class NewRecipeFile extends React.Component<
     }
   }
 
-  private getMasterVersionId(): number {
+  getMasterVersionId(): number {
     const masterVersionId = _.get(
-      _.find(this.state.recipe.branches, { name: 'master' }),
+      _.find((this.state.recipe as any).branches, { name: 'master' }),
       'recipe_version_id'
     )
     if (!masterVersionId) {
@@ -313,10 +316,10 @@ const Foo = ({ src }) => {
   )
 }
 
-const Bar1 = ({ _src }) => {
+const Bar1 = () => {
   return <span> Please copy the ingredients from the text above . </span>
 }
 
-const Bar2 = ({ _src }) => {
+const Bar2 = () => {
   return <span> Please copy the instructions from the text above . </span>
 }

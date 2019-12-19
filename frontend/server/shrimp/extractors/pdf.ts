@@ -2,37 +2,35 @@ import { Section } from '../common'
 
 const pdfReader = require('pdfreader')
 
-module.exports = {
-  load: async filename => {
-    let p = new Promise((resolve, reject) => {
-      let rdr = new pdfReader.PdfReader({ debug: 'true' })
+export const load = async filename => {
+  let p = new Promise((resolve, reject) => {
+    let rdr = new pdfReader.PdfReader({ debug: 'true' })
 
-      var mapOfItems = new Map<Key, Item>() // indexed by [column, y-position, x-position]
-      var pageWidth
+    var mapOfItems = new Map<Key, Item>() // indexed by [column, y-position, x-position]
+    var pageWidth
 
-      // Read the file and pass each 'item' to 'cb'
-      rdr.parseFileItems(filename, function cb(err, item) {
-        if (err) {
-          // Reject on error
-          reject(err)
-        } else if (!item) {
-          // Null item indicates end of file; resolve
-          resolve(transform(mapOfItems))
-        } else if (item.page && item.width) {
-          // This item is a page, save the width
-          pageWidth = item.width
-        } else if (item.text) {
-          // This item has text; extract it
-          if (item.x > 0 && item.y > 0) {
-            const key = new Key(pageWidth, item.x, item.y)
-            mapOfItems.set(key, item)
-          }
+    // Read the file and pass each 'item' to 'cb'
+    rdr.parseFileItems(filename, function cb(err, item) {
+      if (err) {
+        // Reject on error
+        reject(err)
+      } else if (!item) {
+        // Null item indicates end of file; resolve
+        resolve(transform(mapOfItems))
+      } else if (item.page && item.width) {
+        // This item is a page, save the width
+        pageWidth = item.width
+      } else if (item.text) {
+        // This item has text; extract it
+        if (item.x > 0 && item.y > 0) {
+          const key = new Key(pageWidth, item.x, item.y)
+          mapOfItems.set(key, item)
         }
-      })
+      }
     })
-    let text = await p
-    return text
-  }
+  })
+  let text = await p
+  return text
 }
 
 // Transform the map of position->text into

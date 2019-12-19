@@ -1,19 +1,20 @@
-import * as React from 'react'
 import * as _ from 'lodash'
-import ErrorPage from './_error'
+import { WithRouterProps } from 'next/dist/client/with-router'
 import Head from 'next/head'
+import { withRouter } from 'next/router'
+import * as React from 'react'
+import { Button, Col, Row } from 'reactstrap'
+import { v4 as uuid } from 'uuid'
+import { api } from '../common/http'
+import { withUUID } from '../common/uuid'
 import {
   Blankslate,
   Layout,
-  ShoppingLists as Shopping,
-  ShoppingList
+  ShoppingList,
+  ShoppingLists as Shopping
 } from '../components'
-import { Button, Row, Col } from 'reactstrap'
-import { api } from '../common/http'
-import { ShoppingListJSON, ShoppingListItemJSON, UserJSON } from '../models'
-import { withRouter, WithRouterProps } from 'next/router'
-import { withUUID } from '../common/uuid'
-import { v4 as uuid } from 'uuid'
+import { ShoppingListItemJSON, ShoppingListJSON, UserJSON } from '../models'
+import ErrorPage from './_error'
 
 interface ShoppingListsProps {
   id?: number
@@ -39,8 +40,8 @@ class ShoppingLists extends React.Component<
   ShoppingListsProps & WithRouterProps,
   ShoppingListsState
 > {
-  constructor(props: ShoppingListsProps) {
-    super(props)
+  constructor(props: ShoppingListsProps & WithRouterProps) {
+    super(props as any)
     this.state = {
       active: props.active,
       lists: props.lists
@@ -102,7 +103,7 @@ class ShoppingLists extends React.Component<
     if (!name) {
       return
     }
-    const item = await api.createShoppingListItem(list.id, name)
+    const item: any = await api.createShoppingListItem(list.id, name)
     item._uuid = uuid()
     this.setState(s => ({
       active: {
@@ -122,7 +123,7 @@ class ShoppingLists extends React.Component<
           ...s.active,
           items: s.active.items.map(i => ({
             ...i,
-            ...(i._uuid === item._uuid ? item : {})
+            ...((i as any)._uuid === (item as any)._uuid ? item : {})
           }))
         }
       }),
@@ -142,7 +143,10 @@ class ShoppingLists extends React.Component<
       s => ({
         active: {
           ...s.active,
-          items: _.filter(s.active.items, i => i._uuid != item._uuid)
+          items: _.filter(
+            s.active.items,
+            i => (i as any)._uuid != (item as any)._uuid
+          )
         }
       }),
       async () => {

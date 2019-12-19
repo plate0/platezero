@@ -1,12 +1,11 @@
 import React from 'react'
 import { ListGroup, ListGroupItem } from 'reactstrap'
-import * as _ from 'lodash'
 import { RecipeJSON } from '../models'
 import { Link } from '../routes'
 import { Image } from './Image'
 
 export interface RecipesProps {
-  children: any
+  children?: any
   recipes: RecipeJSON[]
 }
 

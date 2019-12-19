@@ -1,10 +1,10 @@
-import React from 'react'
-import Router from 'next/router'
 import App, { Container } from 'next/app'
-import '../style/index.scss'
-import { UserJSON } from '../models/user'
-import { UserContext } from '../context/UserContext'
+import Router from 'next/router'
+import React from 'react'
 import { api } from '../common/http'
+import { UserContext } from '../context/UserContext'
+import { UserJSON } from '../models/user'
+import '../style/index.scss'
 
 const currentUser = async (): Promise<UserJSON | undefined> => {
   try {
@@ -46,7 +46,7 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
     api.loadAuth()
     // This is really only used in dev, when the pages soft-refreshes
     // and we lose the current state.
-    if (!this.state.user) {
+    if (!(this.state as any).user) {
       this.setState({
         user: await currentUser()
       })
@@ -68,18 +68,18 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
       return true
     })
 
-    Router.events.on('routeChangeComplete', url => {
+    Router.events.on('routeChangeComplete', () => {
       if (nextScroll) {
         window.scrollTo(nextScroll.x, nextScroll.y)
         nextScroll = undefined
       }
     })
 
-    Router.events.on('routeChangeStart', url => {
+    Router.events.on('routeChangeStart', () => {
       // if the user has scrolled, add their current position to the map so we
       // can return them here when they navigate back/forward.
       if (window.scrollX !== 0 || window.scrollY !== 0) {
-        scrolls[window.location] = { x: window.scrollX, y: window.scrollY }
+        scrolls[window.location.href] = { x: window.scrollX, y: window.scrollY }
       }
     })
   }
