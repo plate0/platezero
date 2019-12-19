@@ -3,7 +3,6 @@
   "scripts": {
     "dev": "SITE_URL=http://localhost:9100 API_URL=http://localhost:9100/api JWT_SECRET=test_jwt_secret BCRYPT_ROUNDS=12 PORT=9100 nodemon",
     "build": "NODE_ENV=production next build && tsc --project tsconfig.server.json && cp -R static dist && cp -R announcements dist",
-    "prestart": "npm run build",
     "start": "NODE_ENV=production node dist/server/index.js",
     "test": "jest"
   },
