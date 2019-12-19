@@ -1,6 +1,6 @@
-import { v4 as uuid } from 'uuid/v4'
+import v4 from 'uuid/v4'
 
 export const withUUID = (o: object) => ({
   ...o,
-  _uuid: uuid()
+  _uuid: v4()
 })
