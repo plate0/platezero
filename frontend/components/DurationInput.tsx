@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Row, Col, FormGroup, Label, Input, FormText } from 'reactstrap'
-import * as moment from 'moment'
 import * as _ from 'lodash'
+import moment from 'moment'
+import React, { useEffect, useState } from 'react'
+import { Col, FormGroup, FormText, Input, Label, Row } from 'reactstrap'
 import { toHoursAndMinutes } from '../common/time'
 
 interface Props {

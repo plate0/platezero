@@ -1,5 +1,5 @@
+import moment from 'moment'
 import React from 'react'
-import * as moment from 'moment'
 
 interface TimestampProps {
   t: string | moment.Moment | Date

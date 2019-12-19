@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react'
 import * as _ from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Button,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  FormGroup,
   Input,
   Label,
-  FormGroup,
   ListGroup,
   ListGroupItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
+  UncontrolledDropdown
 } from 'reactstrap'
+import { ShoppingListItemJSON, ShoppingListJSON } from '../models'
 import { Blankslate } from './Blankslate'
-import { ShoppingListJSON, ShoppingListItemJSON } from '../models'
 
 export type ItemChangeHandler = (item: ShoppingListItemJSON) => any
 
@@ -108,7 +108,7 @@ export const ShoppingList = ({
       <ListGroup flush>
         {unchecked.map(item => (
           <ShoppingListItem
-            key={item._uuid}
+            key={(item as any)._uuid}
             item={item}
             onChange={changed => onChange(list, changed)}
             onRemove={changed => onRemove(list, changed)}
@@ -129,7 +129,7 @@ export const ShoppingList = ({
         <ListGroup flush>
           {checked.map(item => (
             <ShoppingListItem
-              key={item._uuid}
+              key={(item as any)._uuid}
               item={item}
               onChange={changed => onChange(list, changed)}
               onRemove={changed => onRemove(list, changed)}

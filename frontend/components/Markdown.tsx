@@ -1,5 +1,5 @@
 import React from 'react'
-import * as ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown'
 
 export const Markdown = ({ source }: { source: string }) => (
   <ReactMarkdown

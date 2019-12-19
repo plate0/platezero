@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
 import { includes } from 'lodash'
+import { WithRouterProps } from 'next/dist/client/with-router'
+import { withRouter } from 'next/router'
+import React, { useState } from 'react'
 import { Container } from 'reactstrap'
-import { Navbar } from './Navbar'
+import { titleForRoute } from '../routes'
 import { Footer } from './Footer'
 import { MobileMenu } from './MobileMenu'
-import { withRouter, WithRouterProps } from 'next/router'
-import { titleForRoute } from '../routes'
+import { Navbar } from './Navbar'
 
 export interface LayoutProps {
   title?: string

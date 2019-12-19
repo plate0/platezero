@@ -1,9 +1,8 @@
 import React from 'react'
-import * as _ from 'lodash'
-import * as parseUrl from 'url-parse'
 import { Col } from 'reactstrap'
-import { RecipeJSON } from '../models'
+import parseUrl from 'url-parse'
 import { getName } from '../common/model-helpers'
+import { RecipeJSON } from '../models'
 import { Link } from '../routes'
 import { Image } from './Image'
 

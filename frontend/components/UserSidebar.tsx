@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  Row,
-  Col,
-  Modal,
-  ModalFooter,
   Button,
-  Spinner,
-  ModalBody,
+  Col,
   FormGroup,
   FormText,
   Input,
-  ModalHeader
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  Spinner
 } from 'reactstrap'
-import { IfLoggedIn } from './IfLoggedIn'
-import { AlertErrors } from './AlertErrors'
-import { EditableImage } from './EditableImage'
-import { ProfilePicture } from './ProfilePicture'
 import { api, getErrorMessages } from '../common/http'
 import { UserJSON } from '../models'
+import { AlertErrors } from './AlertErrors'
+import { EditableImage } from './EditableImage'
+import { IfLoggedIn } from './IfLoggedIn'
+import { ProfilePicture } from './ProfilePicture'
 
 export const UserSidebar = (props: { user: UserJSON }) => {
   const [user, setUser] = useState(props.user)
@@ -126,7 +126,7 @@ export const UserSidebar = (props: { user: UserJSON }) => {
             onClick={saveDisplayName}
             disabled={isSaving}
           >
-            {isSaving && <Spinner size="sm" />} Save Changes
+            {isSaving && <Spinner size={'sm' as any} />} Save Changes
           </Button>
         </ModalFooter>
       </Modal>

@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { Row, Col, Button } from 'reactstrap'
-import { stringify } from 'query-string'
 import * as _ from 'lodash'
-
-import { RecipeJSON, UserJSON } from '../models'
-import { Search } from './Search'
-import { SortRecipes } from './Sort'
+import { stringify } from 'query-string'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Row } from 'reactstrap'
+import { api } from '../common/http'
+import { useDebounce } from '../hooks/useDebounce'
+import { RecipeJSON } from '../models'
+import { Router } from '../routes'
 import { RecipeList } from './RecipeList'
 import {
   RecipeListBlankslate,
   RecipeListNoSearchResults
 } from './RecipeListBlankslate'
-import { Router } from '../routes'
-import { api } from '../common/http'
-import { useDebounce } from '../hooks/useDebounce'
+import { Search } from './Search'
+import { SortRecipes } from './Sort'
 
 export const UserPageRecipes = ({
   initialQuery,
@@ -22,9 +21,9 @@ export const UserPageRecipes = ({
   username,
   baseURL
 }: {
-  query?: string
-  sort?: string
-  recipes: RecipeJSON[]
+  initialQuery?: string
+  initialSort?: string
+  initialRecipes: RecipeJSON[]
   username: string
   baseURL: string
 }) => {
@@ -42,7 +41,7 @@ export const UserPageRecipes = ({
 
   // update href when query params change
   useEffect(() => {
-    const qs = stringify(_.omitBy(queryString, v => _.trim(v) === ''))
+    const qs = stringify(_.omitBy(queryString, (v: any) => _.trim(v) === ''))
     if (qs) {
       setHref(`${baseURL}?${qs}`)
     } else {
