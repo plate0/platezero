@@ -1,6 +1,6 @@
 import * as express from 'express'
 import * as _ from 'lodash'
-import * as jwtMiddleware from 'express-jwt'
+import jwtMiddleware from 'express-jwt'
 import { users } from './users'
 import { user } from './user'
 import { RefreshToken, User, UserActivity } from '../../models'
