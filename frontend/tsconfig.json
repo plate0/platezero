@@ -13,7 +13,7 @@
     "lib": ["dom", "es2015", "es2016"],
     "module": "ESNext",
     "moduleResolution": "node",
-    "noEmit": true,
+    "noEmit": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "preserveConstEnums": true,
