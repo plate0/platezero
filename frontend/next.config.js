@@ -28,7 +28,7 @@ module.exports = (config, { defaultConfig }) => {
           url: process.env.SITE_URL
         }
       },
-      pageExtensions: ['mdx']
+      pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx']
     })
   )
 }
