@@ -77,7 +77,7 @@ export default class Index extends Component {
             <Col xs="12" className="text-center">
               <img
                 className="w-100 mb-3"
-                src="https://s3.amazonaws.com/com-platezero-static/assets/devices.jpg"
+                src="https://static.platezero.com/assets/devices.jpg"
               />
               <h2 className="mt-3">All your recipes in one place.</h2>
               <p className="lead">
@@ -120,7 +120,7 @@ export default class Index extends Component {
             <Col xs="12" md={{ size: 6, order: 12 }} className="text-center">
               <img
                 className="w-75"
-                src="https://s3.amazonaws.com/com-platezero-static/assets/sprinkles.jpg"
+                src="https://static.platezero.com/assets/sprinkles.jpg"
               />
             </Col>
             <Col
