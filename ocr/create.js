@@ -7,11 +7,11 @@ const fetch = require('node-fetch')
 const { argv } = require('yargs').demandOption(['id'])
 
 const config = {
-  secret: 'a9c26d0b386547839929e7f9c96af8fb1f7d2347f1e0405ebed9dcb88ec3f765',
-  url: 'https://platezero.com/api/user/recipe'
+  secret: process.env.JWT_SECRET,
+  url: 'https://platezero.com/api/user/recipe',
 }
 
-const login = userId => {
+const login = (userId) => {
   return new Promise((resolve, reject) => {
     jwt.sign({ userId }, config.secret, { expiresIn: '1h' }, (err, token) => {
       if (err) {
@@ -28,16 +28,16 @@ const post = (recipe, { token }) => {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(recipe)
+    body: JSON.stringify(recipe),
   })
 }
 
 const email = ({ to, name, title, url }) => {
   const params = {
     Destination: {
-      ToAddresses: [to]
+      ToAddresses: [to],
     },
     Message: {
       Body: {
@@ -49,16 +49,16 @@ Thanks for using the PlateZero importer! We've finished importing the recipe ${t
 
 If you have any questions or thoughts, please let us know by replying to this email!
 
-Thank you`
-        }
+Thank you`,
+        },
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: 'PlateZero Importer Success'
-      }
+        Data: 'PlateZero Importer Success',
+      },
     },
     Source: 'importer@platezero.com',
-    ReplyToAddresses: ['importer@platezero.com']
+    ReplyToAddresses: ['importer@platezero.com'],
   }
   return new SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise()
 }

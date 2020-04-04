@@ -1,32 +1,12 @@
-import * as jwt from 'jsonwebtoken'
 import { SES } from 'aws-sdk'
+import * as jwt from 'jsonwebtoken'
 import { Recipe } from './models'
 require('aws-sdk').config.update({ region: 'us-east-1' })
 
-/*
 const config = {
-  secret: 'test_jwt_secret',
-  url: 'http://localhost:9100/api/user/recipe'
+  secret: process.env.JWT_SECRET,
+  url: 'https://platezero.com/api/user/recipe',
 }
-   */
-
-const config = {
-  secret: 'a9c26d0b386547839929e7f9c96af8fb1f7d2347f1e0405ebed9dcb88ec3f765',
-  url: 'https://platezero.com/api/user/recipe'
-}
-
-/*
-const config = argv.dev
-  ? {
-      secret: 'test_jwt_secret',
-      url: 'http://localhost:9100/api/user/recipe'
-    }
-  : {
-      secret:
-        'a9c26d0b386547839929e7f9c96af8fb1f7d2347f1e0405ebed9dcb88ec3f765',
-      url: 'https://platezero.com/api/user/recipe'
-    }
-*/
 
 export const login = (userId: number): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -50,9 +30,9 @@ export const post = (recipe: Recipe, { token }: { token: string }) => {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(recipe)
+    body: JSON.stringify(recipe),
   })
 }
 
@@ -66,7 +46,7 @@ interface EmailParams {
 export const email = ({ to, name, title, url }: EmailParams) => {
   const params = {
     Destination: {
-      ToAddresses: [to]
+      ToAddresses: [to],
     },
     Message: {
       Body: {
@@ -78,16 +58,16 @@ Thanks for using the PlateZero importer! We've finished importing the recipe ${t
 
 If you have any questions or thoughts, please let us know by replying to this email!
 
-Thank you`
-        }
+Thank you`,
+        },
       },
       Subject: {
         Charset: 'UTF-8',
-        Data: 'PlateZero Importer Success'
-      }
+        Data: 'PlateZero Importer Success',
+      },
     },
     Source: 'importer@platezero.com',
-    ReplyToAddresses: ['importer@platezero.com']
+    ReplyToAddresses: ['importer@platezero.com'],
   }
   return new SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise()
 }
