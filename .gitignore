@@ -5,3 +5,5 @@ venv
 docs/Gemfile.lock
 node_modules/
 **/*.log
+
+.DS_Store
