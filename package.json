@@ -28,16 +28,13 @@
     "@types/uuid": "3.4.4",
     "@zeit/next-mdx": "1.2.0",
     "@zeit/next-sass": "1.0.1",
-    "adm-zip": "0.4.13",
     "aws-sdk": "2.428.0",
     "babel-plugin-dynamic-import-node": "2.2.0",
     "bcrypt": "3.0.6",
     "cheerio": "1.0.0-rc.3",
-    "cross-env": "5.2.0",
     "express": "4.16.4",
     "express-jwt": "5.3.1",
     "fraction.js": "4.0.12",
-    "html-entities": "1.2.1",
     "ingredient-parser": "https://github.com/plate0/ingredient-parser.git#v0.2.2",
     "isomorphic-fetch": "2.2.1",
     "jest": "24.8.0",
@@ -50,7 +47,6 @@
     "next-routes": "1.4.2",
     "node-sass": "4.12.0",
     "nodemon": "1.19.0",
-    "pdfreader": "^1.0.4",
     "pg": "7.11.0",
     "prom-client": "11.3.0",
     "query-string": "6.5.0",
@@ -70,13 +66,8 @@
     "showdown": "1.9.0",
     "slugify": "1.3.4",
     "ts-node": "8.1.0",
-    "turndown": "5.0.3",
     "typescript": "3.7.3",
     "url-parse": "1.4.7",
     "uuid": "3.3.2"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0"
   }
 }

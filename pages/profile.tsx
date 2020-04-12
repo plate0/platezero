@@ -1,4 +1,3 @@
-import { UserJSON } from 'models'
 import Head from 'next/head'
 import React from 'react'
 import {
@@ -11,7 +10,7 @@ import {
   InputGroup,
   InputGroupAddon,
   Label,
-  Row
+  Row,
 } from 'reactstrap'
 import { logout } from '../common'
 import { api, getErrorMessages } from '../common/http'
@@ -20,9 +19,10 @@ import {
   AlertErrors,
   EditableImage,
   Layout,
-  ProfilePicture
+  ProfilePicture,
 } from '../components'
 import { UserContext } from '../context/UserContext'
+import { UserJSON } from '../models'
 import ErrorPage from './_error'
 
 interface ProfileProps {
@@ -51,7 +51,7 @@ export default class Profile extends React.Component<
       name: props.user.name,
       isSaving: false,
       editErrors: [],
-      user: props.user
+      user: props.user,
     }
     this.onAvatarChange = this.onAvatarChange.bind(this)
     this.onSave = this.onSave.bind(this)
@@ -60,7 +60,7 @@ export default class Profile extends React.Component<
   static async getInitialProps({ res }) {
     try {
       return {
-        user: await api.getCurrentUser()
+        user: await api.getCurrentUser(),
       }
     } catch (err) {
       const statusCode = err.statusCode || 500
@@ -73,16 +73,16 @@ export default class Profile extends React.Component<
 
   private async onAvatarChange(avatar_url: string) {
     this.setState({
-      avatarErrors: []
+      avatarErrors: [],
     })
     try {
       const user = await api.updateUser({ avatar_url })
       this.setState({
-        user
+        user,
       })
     } catch (err) {
       this.setState({
-        avatarErrors: getErrorMessages(err)
+        avatarErrors: getErrorMessages(err),
       })
     }
   }
@@ -93,15 +93,15 @@ export default class Profile extends React.Component<
     try {
       const newUser = await api.updateUser({ name: this.state.name || null })
       this.setState({
-        user: newUser
+        user: newUser,
       })
     } catch (err) {
       this.setState({
-        editErrors: getErrorMessages(err)
+        editErrors: getErrorMessages(err),
       })
     } finally {
       this.setState({
-        isSaving: false
+        isSaving: false,
       })
     }
   }
@@ -140,7 +140,7 @@ export default class Profile extends React.Component<
                     name="name"
                     id="name"
                     value={this.state.name}
-                    onChange={e => this.setState({ name: e.target.value })}
+                    onChange={(e) => this.setState({ name: e.target.value })}
                   />
                   <InputGroupAddon addonType="append">
                     <Button type="submit" color="success" disabled={isSaving}>
