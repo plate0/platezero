@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
-import { UserContext } from '../context/UserContext'
 import { Button, Container, Navbar } from 'reactstrap'
+import { UserContext } from '../context/UserContext'
 import { Router } from '../routes'
 import { FooterLinks } from './Footer'
 
@@ -8,7 +8,7 @@ export type CloseHandler = () => any
 
 export const MobileMenu = ({
   isOpen,
-  close
+  close,
 }: {
   isOpen: boolean
   close: CloseHandler
@@ -20,7 +20,6 @@ export const MobileMenu = ({
   const NavRoutes = [
     { name: 'Recipes', route: 'user', params: { username: user.username } },
     { name: 'Add Recipe', route: 'new-recipe' },
-    { name: 'Shopping Lists', route: 'shopping' }
   ]
   const route = (route: string, params: any = {}) => () => {
     close()
@@ -41,7 +40,7 @@ export const MobileMenu = ({
         </Container>
       </Navbar>
       <ul className="main-nav list-unstyled ml-4">
-        {NavRoutes.map(r => (
+        {NavRoutes.map((r) => (
           <li key={r.route}>
             <a
               href="javascript:void(0)"
@@ -55,7 +54,7 @@ export const MobileMenu = ({
       </ul>
       <footer className="position-absolute">
         <ul className="list-unstyled ml-4">
-          {FooterLinks.map(l => (
+          {FooterLinks.map((l) => (
             <li key={l.name}>
               <a href={l.link} className="text-dark" target="_blank">
                 <i className={`fal ${l.icon} fa-fw mr-2`} />

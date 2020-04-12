@@ -1,5 +1,6 @@
 import { toLower } from 'lodash'
 import { Sequelize } from 'sequelize-typescript'
+import { config } from '../server/config'
 import { Favorite } from './favorite'
 import { IngredientLine } from './ingredient_line'
 import { IngredientList } from './ingredient_list'
@@ -20,18 +21,15 @@ import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 import { RecipeYield } from './recipe_yield'
 import { RefreshToken } from './refresh_token'
-import { ShoppingList } from './shopping_list'
-import { ShoppingListItem } from './shopping_list_item'
 import { User } from './user'
 import { UserActivity } from './user_activity'
-import { config } from '../server/config'
 
 export const sequelize = new Sequelize({
   database: config.dbName,
   dialect: 'postgres',
   username: config.dbUser,
   password: config.dbPassword,
-  host: config.dbHost
+  host: config.dbHost,
 })
 
 sequelize.addModels([
@@ -55,20 +53,18 @@ sequelize.addModels([
   RecipeVersionProcedureList,
   RecipeYield,
   RefreshToken,
-  ShoppingList,
-  ShoppingListItem,
   User,
-  UserActivity
+  UserActivity,
 ])
 
 export const OrderDirections = {
   asc: 'ASC',
-  desc: 'DESC'
+  desc: 'DESC',
 }
 
 export const sortable = (model: any, defaultCol: string) => ([
   col,
-  direction
+  direction,
 ]: any) => {
   const dir = OrderDirections[toLower(direction)]
     ? OrderDirections[toLower(direction)]
@@ -81,7 +77,6 @@ export * from './ingredient_line'
 export * from './ingredient_list'
 export * from './ingredient_list_line'
 export * from './note'
-export * from './preheat'
 export * from './preheat'
 export * from './procedure_line'
 export * from './procedure_list'
@@ -96,7 +91,5 @@ export * from './recipe_version_ingredient_list'
 export * from './recipe_version_procedure_list'
 export * from './recipe_yield'
 export * from './refresh_token'
-export * from './shopping_list'
-export * from './shopping_list_item'
 export * from './user'
 export * from './user_activity'
