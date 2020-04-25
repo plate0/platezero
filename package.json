@@ -26,7 +26,6 @@
     "@types/turndown": "5.0.0",
     "@types/url-parse": "1.4.3",
     "@types/uuid": "3.4.4",
-    "@zeit/next-mdx": "1.2.0",
     "@zeit/next-sass": "1.0.1",
     "aws-sdk": "2.428.0",
     "babel-plugin-dynamic-import-node": "2.2.0",
