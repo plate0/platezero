@@ -30,7 +30,6 @@ jobs:
       - run: yarn lint
 
   test:
-    name: Test All
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -44,7 +43,7 @@ jobs:
   docker:
     name: Build docker image
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [lint, test]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
