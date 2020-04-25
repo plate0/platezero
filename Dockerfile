@@ -11,11 +11,11 @@ WORKDIR /usr/src/app
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn
+RUN yarn install --frozen-lockfile
 
 # Bundle app source
 COPY .babelrc .
-COPY next-env.d.ts next-env.d.ts
+COPY next-env.d.ts .
 COPY next.config.js .
 COPY tsconfig.server.json .
 COPY tsconfig.json .
@@ -28,7 +28,6 @@ COPY models models
 COPY static static
 COPY style style
 COPY context context
-COPY announcements announcements
 COPY hooks hooks
 
 RUN yarn build
