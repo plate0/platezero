@@ -1,8 +1,7 @@
+import Head from 'next/head'
 import React from 'react'
 import { Card, CardBody } from 'reactstrap'
-import Head from 'next/head'
 import { Layout } from '../components'
-import * as _ from 'lodash'
 import { Link } from '../routes'
 
 const links = [
@@ -17,26 +16,6 @@ const links = [
     icon: 'globe',
     color: 'rgb(58, 154, 217)',
     route: 'new-recipe-url'
-  },
-  {
-    text: 'Photo',
-    icon: 'images',
-    color: 'rgb(235, 113, 96)',
-    route: 'new-recipe-file',
-    params: { type: 'image' }
-  },
-  {
-    text: 'PDF/Doc',
-    icon: 'file-pdf',
-    color: 'rgb(222, 77, 78)',
-    route: 'new-recipe-file',
-    params: { type: 'doc' }
-  },
-  {
-    text: 'Email',
-    icon: 'envelope',
-    color: 'rgb(110, 158, 207)',
-    route: 'mailto:importer@platezero.com'
   }
 ]
 
@@ -67,7 +46,7 @@ export default class ImportRecipe extends React.Component {
                   />
                 </div>
                 <div>
-                  <Link to={s.route} params={s.params}>
+                  <Link to={s.route}>
                     <a className="text-dark stretched-link">{s.text}</a>
                   </Link>
                 </div>
@@ -75,11 +54,6 @@ export default class ImportRecipe extends React.Component {
             </Card>
           ))}
         </div>
-        <p className="mx-4 text-muted text-center">
-          Want to add recipes from somewhere else, like an entire cookbook or
-          many URLs? <a href="mailto:hello@platezero.com">Contact us</a> for
-          help.
-        </p>
       </Layout>
     )
   }
