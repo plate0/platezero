@@ -129,10 +129,11 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
 
   public async onUrl(e: any, url: string) {
     e.preventDefault()
+    const user = await api.getCurrentUser()
     this.setState({ url })
     try {
       const recipe = await api.importUrl(url)
-      Router.push(recipe.html_url)
+      Router.push(`/${user.username}/${recipe.slug}`)
     } catch (error) {
       if (
         error instanceof PlateZeroApiError &&

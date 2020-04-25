@@ -80,11 +80,12 @@ export default class NewRecipe extends React.Component<any, State> {
 
   public async create(event: React.FormEvent<EventTarget>) {
     event.preventDefault()
+    const user = await api.getCurrentUser()
     this.setState({ errors: [] })
     const recipe = this.getRecipe()
     try {
       const res = await api.createRecipe(recipe)
-      Router.push(res.html_url)
+      Router.push(`/${user.username}/${res.slug}`)
     } catch (err) {
       this.setState({ errors: getErrorMessages(err) })
     }
@@ -151,7 +152,7 @@ export default class NewRecipe extends React.Component<any, State> {
             source_title=""
             source_author=""
             source_isbn=""
-            onChange={delta => this.setState(delta)}
+            onChange={(delta) => this.setState(delta)}
           />
           <Button type="submit" color="primary" className="btn-block my-3">
             Create New Recipe!
