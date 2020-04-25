@@ -61,7 +61,7 @@
     "reactstrap": "7.1.0",
     "recipe-parser": "https://github.com/plate0/recipe-parser#v0.3.2",
     "reflect-metadata": "0.1.13",
-    "sequelize": "4.43.0",
+    "sequelize": "5.15.1",
     "sequelize-typescript": "0.6.10",
     "shortid": "2.2.14",
     "showdown": "1.9.0",
