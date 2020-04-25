@@ -19,3 +19,6 @@ with `yarn` installed.
 5. Open <http://localhost:9100> to see your local PlateZero instance! If you do
    not have an account being automatically created in `db/seed.sql`, you can
    register for one and log in.
+
+
+Test deployment.
