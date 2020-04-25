@@ -1,9 +1,9 @@
 import {
   IngredientListJSON,
-  ProcedureListJSON,
   PreheatJSON,
+  ProcedureListJSON,
   RecipeDurationJSON,
-  RecipeYieldJSON
+  RecipeYieldJSON,
 } from '../models'
 
 export interface PostRecipe {
@@ -35,9 +35,4 @@ export interface RecipeVersionPatch {
 export interface NotePatch {
   pinned?: boolean
   text?: string
-}
-
-export interface ShoppingListItemPatch {
-  name?: string
-  completed?: boolean
 }

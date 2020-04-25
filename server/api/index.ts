@@ -1,18 +1,16 @@
 import * as express from 'express'
-import * as _ from 'lodash'
 import jwtMiddleware from 'express-jwt'
-import { users } from './users'
-import { user } from './user'
 import { RefreshToken, User, UserActivity } from '../../models'
-import { search } from './search'
-import { shopping } from './shopping'
 import { config } from '../config'
 import {
-  unauthorized,
-  invalidAuthentication,
+  badRequest,
   internalServerError,
-  badRequest
+  invalidAuthentication,
+  unauthorized,
 } from '../errors'
+import { search } from './search'
+import { user } from './user'
+import { users } from './users'
 
 const r = express.Router()
 
@@ -24,7 +22,7 @@ r.use(
   jwtMiddleware({
     secret: config.jwtSecret,
     credentialsRequired: false,
-    getToken: req => {
+    getToken: (req) => {
       if (
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'Bearer'
@@ -32,7 +30,7 @@ r.use(
         return req.headers.authorization.split(' ')[1]
       }
       return null
-    }
+    },
   })
 )
 
@@ -55,17 +53,6 @@ r.use((err, _req, res, next) => {
 
 r.use('/users', users)
 r.use('/search', search)
-r.use(
-  '/shopping',
-  (req, res, next) => {
-    const { user } = req as any
-    if (!user) {
-      return unauthorized(res)
-    }
-    next()
-  },
-  shopping
-)
 
 // the /user path represents the _currently authenticated_ user. this is where
 // things like changing passwords, creating recipes, etc happen. so in this
@@ -86,7 +73,7 @@ r.use(
 r.get('/', function apiIndex(_, res) {
   return res.json({
     users_url: `${config.apiUrl}/users`,
-    current_user_url: `${config.apiUrl}/user`
+    current_user_url: `${config.apiUrl}/user`,
   })
 })
 
@@ -111,7 +98,7 @@ r.post('/login', async function login(req, res) {
     return res.json({
       user,
       token: await user.generateToken(),
-      refreshToken: refresh.token
+      refreshToken: refresh.token,
     })
   } catch (err) {
     return internalServerError(res, err)
@@ -131,10 +118,10 @@ r.post('/login/refresh', async function getRefreshToken(req, res) {
           model: RefreshToken,
           where: {
             deleted_at: null,
-            token
-          }
-        }
-      ]
+            token,
+          },
+        },
+      ],
     })
     if (!user) {
       return invalidAuthentication(res)
@@ -144,12 +131,12 @@ r.post('/login/refresh', async function getRefreshToken(req, res) {
       return invalidAuthentication(res)
     }
     await refresh.update({
-      last_used: new Date()
+      last_used: new Date(),
     })
     const jwtToken = await user.generateToken()
     return res.json({
       user,
-      token: jwtToken
+      token: jwtToken,
     })
   } catch (err) {
     return internalServerError(res, err)
