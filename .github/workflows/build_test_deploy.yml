@@ -1,0 +1,58 @@
+on:
+  push:
+    branches: [master]
+  pull_request:
+    types: [opened, synchronize]
+
+name: Build, test, and deploy
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn install --frozen-lockfile --check-files
+      - uses: actions/cache@v1
+        id: cache-build
+        with:
+          path: '.'
+          key: ${{ github.sha }}
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/cache@v1
+        id: restore-build
+        with:
+          path: '.'
+          key: ${{ github.sha }}
+      - run: yarn lint
+
+  test:
+    name: Test All
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/cache@v1
+        id: restore-build
+        with:
+          path: '.'
+          key: ${{ github.sha }}
+      - run: yarn test
+
+  docker:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: plate0/platezero/platezero
+          tag_with_ref: true
