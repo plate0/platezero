@@ -51,7 +51,7 @@ export function LivePreviewEditor<T>(props: Props<T>) {
               backgroundColor: 'transparent'
             }}
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
           />
           <div
             className="text-muted"

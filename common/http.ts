@@ -12,7 +12,7 @@ import {
   RecipeJSON,
   RecipeSearchDocumentJSON,
   RecipeVersionJSON,
-  UserJSON,
+  UserJSON
 } from '../models'
 import { getAuth } from './auth'
 import { HttpStatus } from './http-status'
@@ -21,13 +21,13 @@ const API_URL = get(getConfig(), 'publicRuntimeConfig.api.url')
 
 const headers = {
   Accept: 'application/json',
-  'Content-Type': 'application/json',
+  'Content-Type': 'application/json'
 }
 
 const authHeaders = (token?: string) =>
   token
     ? {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`
       }
     : {}
 
@@ -35,7 +35,7 @@ const refreshToken = async (token: string) => {
   const res = await fetch(`${API_URL}/login/refresh`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ token }),
+    body: JSON.stringify({ token })
   })
   return res.json()
 }
@@ -94,9 +94,9 @@ class Api {
       headers: {
         ...headers,
         ...(opts.headers || {}),
-        ...authHeaders(this.token),
+        ...authHeaders(this.token)
       },
-      body: opts.body,
+      body: opts.body
     }
     const res = await fetch(`${API_URL}${uri}`, options)
     if (
@@ -138,13 +138,13 @@ class Api {
     this._fetch<UserJSON>(`/users`, {
       method: 'POST',
       body: JSON.stringify(body),
-      headers,
+      headers
     })
 
   login = ({ username, password }: { username: string; password: string }) =>
     this._fetch<LoginResponse>('/login', {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password })
     })
 
   getCurrentUser = (opts: RequestInit = {}) =>
@@ -171,7 +171,7 @@ class Api {
     {
       username,
       q,
-      sort,
+      sort
     }: {
       username: string
       q: string
@@ -215,14 +215,14 @@ class Api {
     this._fetch<RecipeJSON>(`/user/recipe`, {
       ...opts,
       body: JSON.stringify(recipe),
-      method: 'POST',
+      method: 'POST'
     })
 
   importUrl = (url: string, opts: RequestInit = {}) =>
     this._fetch<RecipeJSON>(`/user/import/url`, {
       ...opts,
       body: JSON.stringify({ url }),
-      method: 'POST',
+      method: 'POST'
     })
 
   importFiles = async (body: any, opts: RequestInit = {}): Promise<any> => {
@@ -232,8 +232,8 @@ class Api {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        ...authHeaders(this.token),
-      },
+        ...authHeaders(this.token)
+      }
     })
     const { recipe, text } = await handleError(res)
     return { httpStatus: res.status, recipe: recipe, text: text }
@@ -248,20 +248,20 @@ class Api {
     this._fetch<RecipeVersionJSON>(`/user/recipes/${slug}/branches/${branch}`, {
       ...opts,
       body: JSON.stringify(patch),
-      method: 'PATCH',
+      method: 'PATCH'
     })
 
   deleteRecipe = (slug: string, opts: RequestInit = {}) =>
     this._fetch(`/user/recipes/${slug}`, {
       ...opts,
-      method: 'DELETE',
+      method: 'DELETE'
     })
 
   patchRecipe = (slug: string, body: object, opts: RequestInit = {}) =>
     this._fetch(`/user/recipes/${slug}`, {
       ...opts,
       method: 'PATCH',
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     })
 
   uploadPublicImage = (
@@ -274,8 +274,8 @@ class Api {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        ...authHeaders(this.token),
-      },
+        ...authHeaders(this.token)
+      }
     }).then(handleError)
 
   updateUser = (body: object, opts: RequestInit = {}) =>
@@ -283,14 +283,14 @@ class Api {
       ...opts,
       body: JSON.stringify(body),
       method: 'PUT',
-      headers: { Accept: 'application/json', ...authHeaders(this.token) },
+      headers: { Accept: 'application/json', ...authHeaders(this.token) }
     })
 
   createNote = (note: NoteJSON, opts: RequestInit = {}) =>
     this._fetch<NoteJSON>(`/user/notes`, {
       ...opts,
       body: JSON.stringify(note),
-      method: 'POST',
+      method: 'POST'
     })
 
   getRecipeNotes = (
@@ -304,7 +304,7 @@ class Api {
     this._fetch<NoteJSON>(`/user/notes/${id}`, {
       ...opts,
       body: JSON.stringify(note),
-      method: 'PATCH',
+      method: 'PATCH'
     })
 
   deleteNote = (id: number, opts: RequestInit = {}) =>
@@ -317,13 +317,13 @@ class Api {
     this._fetch<FavoriteJSON>(`/user/favorites`, {
       ...opts,
       body: JSON.stringify({ recipe_id }),
-      method: 'POST',
+      method: 'POST'
     })
 
   removeFavorite = (recipeId: number, opts: RequestInit = {}) =>
     this._fetch<any>(`/user/favorites/${recipeId}`, {
       ...opts,
-      method: 'DELETE',
+      method: 'DELETE'
     })
 
   getRecipes = async (
@@ -347,7 +347,7 @@ class Api {
     this._fetch<IngredientListJSON>(`/user/versions/${versionId}/ingredients`, {
       ...opts,
       body: JSON.stringify(lists),
-      method: 'POST',
+      method: 'POST'
     })
   }
 
@@ -359,7 +359,7 @@ class Api {
     this._fetch<ProcedureListJSON>(`/user/versions/${versionId}/procedures`, {
       ...opts,
       body: JSON.stringify(lists),
-      method: 'POST',
+      method: 'POST'
     })
   }
 }

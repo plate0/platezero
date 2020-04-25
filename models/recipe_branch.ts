@@ -48,8 +48,11 @@ export class RecipeBranch extends Model<RecipeBranch>
   @BelongsTo(() => RecipeVersion)
   public recipeVersion: RecipeVersion
 
-  public async applyPatch(patch: RecipeVersionPatch, userId: number): Promise<RecipeBranch> {
-    return await RecipeBranch.sequelize.transaction(async transaction => {
+  public async applyPatch(
+    patch: RecipeVersionPatch,
+    userId: number
+  ): Promise<RecipeBranch> {
+    return await RecipeBranch.sequelize.transaction(async (transaction) => {
       const prevId = this.get('recipe_version_id')
       const newVersion = await RecipeVersion.createFromPrevious(
         prevId,

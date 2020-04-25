@@ -7,21 +7,21 @@ module.exports = (config, { defaultConfig }) => {
       cookie: {
         expires: 365,
         secure: isProd,
-        samesite: 'strict',
-      },
+        samesite: 'strict'
+      }
     },
     serverRuntimeConfig: {
       api: {
-        url: process.env.API_URL,
-      },
+        url: process.env.API_URL
+      }
     },
     publicRuntimeConfig: {
       api: {
-        url: process.env.API_URL,
+        url: process.env.API_URL
       },
       www: {
-        url: process.env.SITE_URL,
-      },
-    },
+        url: process.env.SITE_URL
+      }
+    }
   })
 }

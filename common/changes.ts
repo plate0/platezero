@@ -5,16 +5,16 @@ export function changesBetween<
   T extends { id?: number; name?: string; lines: any[] }
 >(orig: T[], curr: T[]): T[] {
   const usedSectionIds = {}
-  const allLines = _.flatten(_.map(orig, section => section.lines))
+  const allLines = _.flatten(_.map(orig, (section) => section.lines))
   const usedLineIds = {}
   return normalize(
-    _.map(curr, currSection => {
-      const lines = _.map(currSection.lines, currLine => {
-        const origLine = _.find(allLines, l => {
+    _.map(curr, (currSection) => {
+      const lines = _.map(currSection.lines, (currLine) => {
+        const origLine = _.find(allLines, (l) => {
           if (_.has(usedLineIds, _.toString(l.id))) {
             return false
           }
-          const [a, b] = [l, currLine].map(x => normalize(_.omit(x, 'id')))
+          const [a, b] = [l, currLine].map((x) => normalize(_.omit(x, 'id')))
           return _.isEqual(a, b)
         })
         if (origLine) {
@@ -27,7 +27,7 @@ export function changesBetween<
       })
       const origSection = _.find(
         orig,
-        s =>
+        (s) =>
           !_.has(usedSectionIds, _.toString(s.id)) &&
           s.name === currSection.name
       )

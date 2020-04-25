@@ -20,8 +20,8 @@ export const RecipeNotes = ({
   const showNote = (note: NoteJSON) =>
     Boolean(showAll || note.recipe_version_id === currentVersionId)
 
-  const hidden = notes.filter(n => !showNote(n))
-  const visible = notes.filter(n => showNote(n))
+  const hidden = notes.filter((n) => !showNote(n))
+  const visible = notes.filter((n) => showNote(n))
 
   return (
     <div>
@@ -46,7 +46,7 @@ export const RecipeNotes = ({
       {!visible.length && (
         <Blankslate>No notes {showAll || 'on this version'}</Blankslate>
       )}
-      {visible.map(n => {
+      {visible.map((n) => {
         const versionLink =
           n.recipe_version_id && n.recipe_version_id !== currentVersionId
             ? `${recipe.html_url}/versions/${n.recipe_version_id}`

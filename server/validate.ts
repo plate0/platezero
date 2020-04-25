@@ -14,7 +14,7 @@ const validator = (schema, objectGetter?: (req: Request) => object) => {
     const result = Joi.validate(objectGetter(req), schema, {
       abortEarly: false,
       convert: false,
-      allowUnknown: false,
+      allowUnknown: false
     })
     if (result.error) {
       return res
@@ -32,34 +32,34 @@ const ingredientLine = Joi.object({
   name: Joi.string().required(),
   unit: Joi.string().allow(''),
   preparation: Joi.string().allow(''),
-  optional: Joi.boolean().required(),
+  optional: Joi.boolean().required()
 })
 
 const ingredientList = Joi.object({
   id: Joi.number().min(0),
   name: Joi.string(),
   image_url: Joi.string(),
-  lines: Joi.array().items(ingredientLine).required(),
+  lines: Joi.array().items(ingredientLine).required()
 })
 
 const procedureLine = Joi.object({
   id: Joi.number().min(0),
   text: Joi.string().required(),
   image_url: Joi.string(),
-  title: Joi.string(),
+  title: Joi.string()
 })
 
 const procedureList = Joi.object({
   id: Joi.number().min(0),
   name: Joi.string(),
-  lines: Joi.array().required().items(procedureLine),
+  lines: Joi.array().required().items(procedureLine)
 })
 
 const preheat = Joi.object({
   id: Joi.number().min(0),
   name: Joi.string().required(),
   temperature: Joi.number().min(0).required(),
-  unit: Joi.string().valid('C', 'F').required(),
+  unit: Joi.string().valid('C', 'F').required()
 })
 
 export const NewRecipe = {
@@ -75,7 +75,7 @@ export const NewRecipe = {
   duration: Joi.number(),
   preheats: Joi.array().items(preheat),
   ingredient_lists: Joi.array().items(ingredientList).required(),
-  procedure_lists: Joi.array().items(procedureList).required(),
+  procedure_lists: Joi.array().items(procedureList).required()
 }
 
 export const validateNewRecipe = validator(NewRecipe)
@@ -87,7 +87,7 @@ export const validateNewUser = validator({
     .max(25)
     .required(),
   email: Joi.string().email({ minDomainSegments: 2 }).required(),
-  password: Joi.string().min(8).required(),
+  password: Joi.string().min(8).required()
 })
 
 export const validateRecipeVersionPatch = validator({
@@ -97,12 +97,12 @@ export const validateRecipeVersionPatch = validator({
   preheats: Joi.array().items(preheat),
   recipeYield: Joi.object({
     id: Joi.number().min(0),
-    text: Joi.string().required(),
+    text: Joi.string().required()
   }),
   recipeDuration: Joi.object({
     id: Joi.number().min(0),
-    duration_seconds: Joi.number().min(0).required(),
-  }),
+    duration_seconds: Joi.number().min(0).required()
+  })
 })
 
 export const validateRecipePatch = validator({
@@ -113,24 +113,24 @@ export const validateRecipePatch = validator({
   source_url: Joi.string().allow(null).allow(''),
   source_title: Joi.string().allow(null).allow(''),
   source_author: Joi.string().allow(null).allow(''),
-  source_isbn: Joi.string().allow(null).allow(''),
+  source_isbn: Joi.string().allow(null).allow('')
 })
 
 export const validateUserPatch = validator({
   name: Joi.string().allow(null),
-  avatar_url: Joi.string().uri().allow(null),
+  avatar_url: Joi.string().uri().allow(null)
 })
 
 export const validateNewNote = validator({
   recipe_id: Joi.number().required(),
   recipe_version_id: Joi.number().required(),
   text: Joi.string().required(),
-  pinned: Joi.boolean(),
+  pinned: Joi.boolean()
 })
 
 export const validateNotePatch = validator({
   pinned: Joi.boolean(),
-  text: Joi.string(),
+  text: Joi.string()
 })
 
 export const validateRecipeSearch = validator(
@@ -140,11 +140,11 @@ export const validateRecipeSearch = validator(
     sort: Joi.string()
       .regex(/^(title|created_at)-(asc|desc)$/)
       .allow('')
-      .optional(),
+      .optional()
   },
   requestQueryGetter
 )
 
 export const validateNewFavorite = validator({
-  recipe_id: Joi.number().integer().min(0).required(),
+  recipe_id: Joi.number().integer().min(0).required()
 })

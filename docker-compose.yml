@@ -7,7 +7,7 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD", "su", "postgres", "-c", "echo 'select 1' | psql"]
+      test: ['CMD', 'su', 'postgres', '-c', "echo 'select 1' | psql"]
       interval: 5s
       timeout: 5s
       retries: 30

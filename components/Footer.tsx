@@ -9,14 +9,14 @@ export const FooterLinks = [
     link: 'mailto:hello@platezero.com'
   },
   { name: 'TOS', icon: 'fa-balance-scale', link: '/tos' },
-  { name: 'Privacy', icon: 'fa-lock', link: '/privacy' },
+  { name: 'Privacy', icon: 'fa-lock', link: '/privacy' }
 ]
 
 export const Footer = () => (
   <footer className="text-muted bg-light mt-auto d-print-none py-5 d-none d-md-block">
     <Container>
       <ul className="list-unstyled d-flex align-items-center justify-content-between mb-0">
-        {FooterLinks.map(l => (
+        {FooterLinks.map((l) => (
           <li key={l.name}>
             <a href={l.link}>
               <i className={`fal ${l.icon} fa-fw mr-2`} />

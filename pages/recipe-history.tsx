@@ -40,7 +40,7 @@ export default class RecipeHistory extends React.Component<Props> {
     return (
       <RecipeLayout {...layoutProps} condensedHeader={true}>
         <ListGroup className="mb-3">
-          {versions.map(v => {
+          {versions.map((v) => {
             const lines = _.split(v.message, '\n\n')
             const rest = _.join(_.tail(lines), '\n\n')
             return (

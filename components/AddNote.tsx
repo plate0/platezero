@@ -19,7 +19,7 @@ export const AddNote = ({
   const [isWorking, setWorking] = useState(false)
   const [errors, setErrors] = useState([])
 
-  const createNote = async e => {
+  const createNote = async (e) => {
     e.preventDefault()
     setWorking(true)
     setErrors([])
@@ -49,7 +49,7 @@ export const AddNote = ({
           minRows={3}
           className="form-control"
           value={text}
-          onChange={e => setText(e.target.value)}
+          onChange={(e) => setText(e.target.value)}
           disabled={isWorking}
         />
       </FormGroup>

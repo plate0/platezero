@@ -17,7 +17,7 @@ export function PreheatsEditor(props: Props) {
       initialData={props.preheats}
       dataToText={preheatsToText}
       textToData={parsePreheats}
-      preview={ph => <Preheats preheats={ph} />}
+      preview={(ph) => <Preheats preheats={ph} />}
       onChange={props.onChange}
       placeholder={`Oven: 350 F\nSous Vide: 170 F`}
       differ={differ}
@@ -32,7 +32,7 @@ export function PreheatsEditor(props: Props) {
           </div>
         </Blankslate>
       }
-      hasPreview={ph => Boolean(ph && ph.length)}
+      hasPreview={(ph) => Boolean(ph && ph.length)}
       formattingTips={
         <ul className="small">
           <li>Write one preheat on each line</li>
@@ -49,7 +49,7 @@ function preheatsToText(preheats: PreheatJSON[]): string {
   return _.join(
     _.map(
       preheats,
-      preheat => `${preheat.name}: ${preheat.temperature} ${preheat.unit}`
+      (preheat) => `${preheat.name}: ${preheat.temperature} ${preheat.unit}`
     ),
     '\n'
   )
@@ -98,12 +98,12 @@ function tempUnit(text: string | undefined): 'C' | 'F' | undefined {
 
 function differ(orig: PreheatJSON[], curr: PreheatJSON[]): PreheatJSON[] {
   const usedIds = {}
-  return _.map(curr, currPreheat => {
-    const origPreheat = _.find(orig, p => {
+  return _.map(curr, (currPreheat) => {
+    const origPreheat = _.find(orig, (p) => {
       if (_.has(usedIds, _.toString(p.id))) {
         return false
       }
-      const [a, b] = [p, currPreheat].map(x => normalize(_.omit(x, 'id')))
+      const [a, b] = [p, currPreheat].map((x) => normalize(_.omit(x, 'id')))
       return _.isEqual(a, b)
     })
     if (origPreheat) {

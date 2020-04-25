@@ -17,22 +17,22 @@ export const routes: any = nextroutes()
   .add({
     name: 'recipe-history',
     pattern: '/:username/:slug/history',
-    page: 'recipe-history',
+    page: 'recipe-history'
   })
   .add({
     name: 'recipe-version-history',
     pattern: '/:username/:slug/versions/:versionId/history',
-    page: 'recipe-history',
+    page: 'recipe-history'
   })
   .add({
     name: 'recipe-version-notes',
     pattern: '/:username/:slug/versions/:versionId/notes',
-    page: 'recipe-notes',
+    page: 'recipe-notes'
   })
   .add({
     name: 'notes',
     pattern: '/:username/:slug/notes',
-    page: 'recipe-notes',
+    page: 'recipe-notes'
   })
 
 export const RouteTitles = {
@@ -42,7 +42,7 @@ export const RouteTitles = {
   'new-recipe': 'Add Recipe',
   'new-recipe-text': 'New Recipe',
   'new-recipe-url': 'New Recipe',
-  'new-recipe-file': 'New Recipe',
+  'new-recipe-file': 'New Recipe'
 }
 
 export const titleForRoute = (url: string): string => {

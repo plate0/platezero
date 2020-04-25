@@ -21,7 +21,7 @@ export const Search = ({
       name="search"
       placeholder={placeholder}
       value={value}
-      onChange={e => onChange(e.target.value)}
+      onChange={(e) => onChange(e.target.value)}
     />
   )
 }

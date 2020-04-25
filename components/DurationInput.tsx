@@ -38,7 +38,7 @@ export function DurationInput(props: Props) {
             type="number"
             placeholder="hours"
             value={hours}
-            onChange={e => setHours(e.target.value)}
+            onChange={(e) => setHours(e.target.value)}
             className={
               props.added ? 'bg-added' : props.changed ? 'bg-changed' : ''
             }
@@ -50,7 +50,7 @@ export function DurationInput(props: Props) {
             type="number"
             placeholder="minutes"
             value={minutes}
-            onChange={e => setMinutes(e.target.value)}
+            onChange={(e) => setMinutes(e.target.value)}
             className={
               props.added ? 'bg-added' : props.changed ? 'bg-changed' : ''
             }

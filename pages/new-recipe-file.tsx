@@ -84,7 +84,7 @@ export default class NewRecipeFile extends React.Component<
 
   public async onDrop(files: File[]) {
     const formData = new FormData()
-    files.forEach(f => formData.append('file', f, f.name))
+    files.forEach((f) => formData.append('file', f, f.name))
     this.setState({
       status: UploadStatus.Uploading
     })
@@ -241,7 +241,7 @@ export default class NewRecipeFile extends React.Component<
               <LoadIngredients
                 src={this.state.text}
                 disabled={size(this.state.ingredientLists) === 0}
-                onChange={i => this.onIlChange(i)}
+                onChange={(i) => this.onIlChange(i)}
                 onSubmit={() => this.onIlSubmit()}
                 Sample={Foo}
                 Instructions={Bar1}
@@ -255,7 +255,7 @@ export default class NewRecipeFile extends React.Component<
             return (
               <LoadProcedure
                 src={this.state.text}
-                onChange={p => this.onPlChange(p)}
+                onChange={(p) => this.onPlChange(p)}
                 onSubmit={() => this.onPlSubmit()}
                 Sample={Foo}
                 Instructions={Bar2}

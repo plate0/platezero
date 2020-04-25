@@ -65,12 +65,12 @@ app.prepare().then(() => {
   sequelize
     .authenticate()
     .then(() => {
-      server.listen(config.port, err => {
+      server.listen(config.port, (err) => {
         if (err) throw err
         console.log(`> Ready on ${config.siteUrl}`)
       })
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(`Error connecting to database: ${err}`)
     })
 })

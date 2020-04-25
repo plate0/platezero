@@ -18,7 +18,7 @@ const r = express.Router()
 const urlImportCounter = new prom.Counter({
   name: 'platezero_url_imports_total',
   help: 'Total number of URLs imported',
-  labelNames: ['hostname'],
+  labelNames: ['hostname']
 })
 r.post('/url', async function importUrl(req: AuthenticatedRequest, res) {
   const parsed = parse(req.body.url)
@@ -50,7 +50,7 @@ r.post('/url', async function importUrl(req: AuthenticatedRequest, res) {
 const filesPerUploadHistogram = new prom.Histogram({
   name: 'platezero_file_import_num_files',
   help: 'Number of files per upload',
-  buckets: [0, 1, 2, 4, 8, 16, 32, 64],
+  buckets: [0, 1, 2, 4, 8, 16, 32, 64]
 })
 const upload = multer({
   storage: multerS3({
@@ -58,8 +58,8 @@ const upload = multer({
     bucket: 'com-platezero-recipes',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: (req, file, cb) =>
-      cb(null, `${req.user.userId}/${generate()}-${file.originalname}`),
-  }),
+      cb(null, `${req.user.userId}/${generate()}-${file.originalname}`)
+  })
 })
 r.post('/file', upload.array('file'), async function importFile(req: any, res) {
   filesPerUploadHistogram.observe(req.files.length)

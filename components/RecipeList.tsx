@@ -14,7 +14,7 @@ export const RecipeList = ({ children, recipes }: RecipesProps) => {
     <section className="my-3">
       {children}
       <ListGroup className="mt-3" flush>
-        {recipes.map(recipe => (
+        {recipes.map((recipe) => (
           <ListGroupItem key={recipe.id} className="px-0">
             <Link route={recipe.html_url}>
               <a className="d-flex flex-row">

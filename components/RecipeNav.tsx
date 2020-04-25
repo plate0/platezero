@@ -126,9 +126,7 @@ const ActionMenu = ({
             Edit Attribution
           </DropdownItem>
           <DropdownItem
-            href={`/${recipe.owner.username}/${
-              recipe.slug
-            }/branches/master/edit`}
+            href={`/${recipe.owner.username}/${recipe.slug}/branches/master/edit`}
           >
             Edit Recipe
           </DropdownItem>
@@ -253,28 +251,28 @@ const AttributionModal = ({
           <Label>Source Title</Label>
           <Input
             value={source_title}
-            onChange={e => setSourceTitle(e.target.value)}
+            onChange={(e) => setSourceTitle(e.target.value)}
           />
         </FormGroup>
         <FormGroup>
           <Label>Source Author</Label>
           <Input
             value={source_author}
-            onChange={e => setSourceAuthor(e.target.value)}
+            onChange={(e) => setSourceAuthor(e.target.value)}
           />
         </FormGroup>
         <FormGroup>
           <Label>Source ISBN</Label>
           <Input
             value={source_isbn}
-            onChange={e => setSourceIsbn(e.target.value)}
+            onChange={(e) => setSourceIsbn(e.target.value)}
           />
         </FormGroup>
         <FormGroup>
           <Label>Source URL</Label>
           <Input
             value={source_url}
-            onChange={e => setSourceUrl(e.target.value)}
+            onChange={(e) => setSourceUrl(e.target.value)}
           />
         </FormGroup>
         <AlertErrors errors={errors} className="mt-3 mb-0 small" />
@@ -325,18 +323,21 @@ const RenameModal = ({
       <ModalBody>
         <FormGroup>
           <Label>Recipe Title</Label>
-          <Input value={title} onChange={e => setTitle(e.target.value)} />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
         </FormGroup>
         <FormGroup>
           <Label>Subtitle</Label>
-          <Input value={subtitle} onChange={e => setSubtitle(e.target.value)} />
+          <Input
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+          />
         </FormGroup>
         <FormGroup>
           <Label>Description</Label>
           <TextareaAutosize
             className="form-control"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </FormGroup>
         <AlertErrors errors={errors} className="mt-3 mb-0 small" />

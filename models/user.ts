@@ -12,7 +12,7 @@ import {
   Model,
   PrimaryKey,
   Table,
-  Unique,
+  Unique
 } from 'sequelize-typescript'
 import { config } from '../server/config'
 import { Recipe, RecipeJSON } from './recipe'
@@ -29,7 +29,7 @@ export interface UserJSON {
 }
 
 @Table({
-  tableName: 'users',
+  tableName: 'users'
 })
 export class User extends Model<User> implements UserJSON {
   @AutoIncrement
@@ -157,7 +157,7 @@ export class User extends Model<User> implements UserJSON {
     }
     const { where, fn, col } = User.sequelize
     return User.findOne({
-      where: where(fn('lower', col('username')), username.toLowerCase()),
+      where: where(fn('lower', col('username')), username.toLowerCase())
     })
   }
 }

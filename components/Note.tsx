@@ -56,7 +56,7 @@ export const Note = ({
     } catch {}
   }
 
-  const patch = async p => {
+  const patch = async (p) => {
     try {
       const newNote = await api.patchNote(note.id, p)
       if (typeof onChange === 'function') {
@@ -140,7 +140,7 @@ export const Note = ({
           <TextareaAutosize
             value={text}
             className="form-control border-0"
-            onChange={e => setText(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
             minRows={5}
           />
           <CardFooter className="text-right">

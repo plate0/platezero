@@ -46,7 +46,7 @@ export class IngredientList extends Model<IngredientList>
       options
     )
     const ingredientLines = await Promise.all(
-      _.map(il.lines, ingredient =>
+      _.map(il.lines, (ingredient) =>
         IngredientLine.create(normalize(ingredient), options)
       )
     )
@@ -69,9 +69,9 @@ export class IngredientList extends Model<IngredientList>
     lists: IngredientListJSON[],
     versionId: number
   ): Promise<IngredientList[]> {
-    return IngredientList.sequelize.transaction(async transaction => {
+    return IngredientList.sequelize.transaction(async (transaction) => {
       const ingredientLists = await Promise.all(
-        _.map(lists, il =>
+        _.map(lists, (il) =>
           IngredientList.createWithIngredients(il, { transaction })
         )
       )
@@ -120,7 +120,7 @@ export class IngredientList extends Model<IngredientList>
       { name: patch.name },
       { transaction }
     )
-    const lines = _.map(patch.lines, async line => {
+    const lines = _.map(patch.lines, async (line) => {
       if (!_.isUndefined(line.id)) {
         return await IngredientLine.findOne({
           where: { id: line.id },

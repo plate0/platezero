@@ -46,7 +46,7 @@ export interface ShareButtonProps {
 
 export const ShareButton = ({ url }: ShareButtonProps) => {
   const ref = useRef(null)
-  const copyToClipboard = e => {
+  const copyToClipboard = (e) => {
     ;(findDOMNode(ref.current) as HTMLInputElement).select()
     document.execCommand('copy')
     e.target.focus()

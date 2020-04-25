@@ -6,7 +6,7 @@ import {
   badRequest,
   internalServerError,
   invalidAuthentication,
-  unauthorized,
+  unauthorized
 } from '../errors'
 import { search } from './search'
 import { user } from './user'
@@ -30,7 +30,7 @@ r.use(
         return req.headers.authorization.split(' ')[1]
       }
       return null
-    },
+    }
   })
 )
 
@@ -73,7 +73,7 @@ r.use(
 r.get('/', function apiIndex(_, res) {
   return res.json({
     users_url: `${config.apiUrl}/users`,
-    current_user_url: `${config.apiUrl}/user`,
+    current_user_url: `${config.apiUrl}/user`
   })
 })
 
@@ -98,7 +98,7 @@ r.post('/login', async function login(req, res) {
     return res.json({
       user,
       token: await user.generateToken(),
-      refreshToken: refresh.token,
+      refreshToken: refresh.token
     })
   } catch (err) {
     return internalServerError(res, err)
@@ -118,10 +118,10 @@ r.post('/login/refresh', async function getRefreshToken(req, res) {
           model: RefreshToken,
           where: {
             deleted_at: null,
-            token,
-          },
-        },
-      ],
+            token
+          }
+        }
+      ]
     })
     if (!user) {
       return invalidAuthentication(res)
@@ -131,12 +131,12 @@ r.post('/login/refresh', async function getRefreshToken(req, res) {
       return invalidAuthentication(res)
     }
     await refresh.update({
-      last_used: new Date(),
+      last_used: new Date()
     })
     const jwtToken = await user.generateToken()
     return res.json({
       user,
-      token: jwtToken,
+      token: jwtToken
     })
   } catch (err) {
     return internalServerError(res, err)

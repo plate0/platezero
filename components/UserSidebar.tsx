@@ -105,7 +105,7 @@ export const UserSidebar = (props: { user: UserJSON }) => {
               value={name}
               bsSize="lg"
               placeholder="None"
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
             />
             <FormText>
               If you add a display name, it will appear instead of your username

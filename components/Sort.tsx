@@ -37,7 +37,7 @@ export const Sort = ({ selected, by, onSort }: SortProps) => (
   </UncontrolledDropdown>
 )
 
-const sortBy = (by: SortBy[]) => props => <Sort {...props} by={by} />
+const sortBy = (by: SortBy[]) => (props) => <Sort {...props} by={by} />
 
 export const SortRecipes = sortBy([
   { name: 'Relevance', value: '' },

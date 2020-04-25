@@ -7,4 +7,3 @@ export function usePrevious(val) {
   }, [val])
   return ref.current
 }
-

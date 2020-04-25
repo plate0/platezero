@@ -3,7 +3,7 @@ import {
   PreheatJSON,
   ProcedureListJSON,
   RecipeDurationJSON,
-  RecipeYieldJSON,
+  RecipeYieldJSON
 } from '../models'
 
 export interface PostRecipe {

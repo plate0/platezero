@@ -65,7 +65,7 @@ export default class Login extends React.Component<any, LoginState> {
                   {error}
                   <div className="border rounded p-3 mb-3">
                     <Form
-                      onSubmit={e => this.login(e, updateUser)}
+                      onSubmit={(e) => this.login(e, updateUser)}
                       className="mb-3"
                     >
                       <FormGroup>

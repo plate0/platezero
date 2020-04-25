@@ -33,7 +33,7 @@ export const Dropzone = ({
   onDrop: Function
   children: any
 }) => {
-  const cb = useCallback(files => {
+  const cb = useCallback((files) => {
     onDrop(files)
   }, [])
   const {

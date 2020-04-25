@@ -166,30 +166,30 @@ export default class EditRecipe extends React.Component<Props, State> {
           <Col xs={12} md={6}>
             <RecipeYield
               yield={v.recipeYield}
-              onChange={recipeYield => this.setState({ recipeYield })}
+              onChange={(recipeYield) => this.setState({ recipeYield })}
             />
           </Col>
           <Col xs={12} md={6}>
             <RecipeDuration
               duration={v.recipeDuration}
-              onChange={recipeDuration => this.setState({ recipeDuration })}
+              onChange={(recipeDuration) => this.setState({ recipeDuration })}
             />
           </Col>
         </Row>
         <h4>Preheats</h4>
         <PreheatsEditor
           preheats={v.preheats}
-          onChange={preheats => this.setState({ preheats })}
+          onChange={(preheats) => this.setState({ preheats })}
         />
         <h4 className="mt-3">Ingredients</h4>
         <IngredientListsEditor
           lists={v.ingredientLists}
-          onChange={ingredientLists => this.setState({ ingredientLists })}
+          onChange={(ingredientLists) => this.setState({ ingredientLists })}
         />
         <h4 className="mt-3">Instructions</h4>
         <ProcedureListsEditor
           lists={v.procedureLists}
-          onChange={procedureLists => this.setState({ procedureLists })}
+          onChange={(procedureLists) => this.setState({ procedureLists })}
         />
         <Card className="my-3">
           <CardHeader>
@@ -204,7 +204,7 @@ export default class EditRecipe extends React.Component<Props, State> {
                     className="form-control"
                     value={this.state.message}
                     placeholder="e.g. Remove crushed red pepper to make it less spicy"
-                    onChange={e => this.setState({ message: e.target.value })}
+                    onChange={(e) => this.setState({ message: e.target.value })}
                   />
                   <FormText>
                     In the future, your message will help remind you what you

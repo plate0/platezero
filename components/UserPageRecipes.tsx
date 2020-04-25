@@ -79,13 +79,16 @@ export const UserPageRecipes = ({
         <Col>
           <Search
             value={query}
-            onChange={q => setQuery(q)}
+            onChange={(q) => setQuery(q)}
             placeholder="Find a recipe..."
             className="my-2"
           />
         </Col>
         <Col xs="auto">
-          <SortRecipes selected={sort} onSort={e => setSort(e.target.value)} />
+          <SortRecipes
+            selected={sort}
+            onSort={(e) => setSort(e.target.value)}
+          />
         </Col>
       </Row>
       <RecipeList recipes={recipes}>

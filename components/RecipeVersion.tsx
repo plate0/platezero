@@ -32,7 +32,7 @@ const HeaderBar = ({ version }: { version: RecipeVersionJSON }) => {
     )
   }
 
-  _.each(version.preheats, preheat => {
+  _.each(version.preheats, (preheat) => {
     cards.push(
       <span className="text-danger">
         {preheat.name}: {preheat.temperature}º{preheat.unit}

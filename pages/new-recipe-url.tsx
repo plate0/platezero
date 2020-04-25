@@ -51,7 +51,7 @@ const NotShowing = ({ href }) => {
 const UrlForm = ({ onSubmit }) => {
   const [value, setValue] = useState('')
   return (
-    <Form onSubmit={e => onSubmit(e, value)}>
+    <Form onSubmit={(e) => onSubmit(e, value)}>
       <InputGroup>
         <Input
           placeholder="Recipe URL to import..."
@@ -61,7 +61,7 @@ const UrlForm = ({ onSubmit }) => {
           id="url"
           required
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
         />
         <InputGroupAddon addonType="append">
           <Button color="primary" type="submit">
@@ -151,7 +151,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
   }
 
   public onChange(prop: MissingValue, data: any) {
-    this.setState(s => ({
+    this.setState((s) => ({
       ...s,
       [prop]: data
     }))
@@ -159,7 +159,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
 
   public onSubmit(prop: MissingValue) {
     this.setState(
-      s => ({
+      (s) => ({
         ...s,
         recipe: {
           ...s.recipe,
@@ -211,7 +211,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
         <LoadIngredients
           src={this.state.url}
           disabled={size(this.state.ingredient_lists) === 0}
-          onChange={i => this.onChange('ingredient_lists', i)}
+          onChange={(i) => this.onChange('ingredient_lists', i)}
           onSubmit={() => this.onSubmit('ingredient_lists')}
           Sample={Foo}
           Instructions={Bar1}
@@ -225,7 +225,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
       inner = (
         <LoadProcedure
           src={this.state.url}
-          onChange={p => this.onChange('procedure_lists', p)}
+          onChange={(p) => this.onChange('procedure_lists', p)}
           onSubmit={() => this.onSubmit('procedure_lists')}
           Sample={Foo}
           Instructions={Bar2}

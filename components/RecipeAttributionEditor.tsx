@@ -137,7 +137,7 @@ export function RecipeAttributionEditor({
                 type="text"
                 value={title}
                 placeholder="e.g. The Joy of Cooking"
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
                 bsSize="sm"
               />
             </Col>
@@ -152,7 +152,7 @@ export function RecipeAttributionEditor({
                 type="text"
                 value={author}
                 placeholder="e.g. Firstname Lastname"
-                onChange={e => setAuthor(e.target.value)}
+                onChange={(e) => setAuthor(e.target.value)}
                 bsSize="sm"
               />
             </Col>
@@ -168,7 +168,7 @@ export function RecipeAttributionEditor({
                   type="text"
                   value={url}
                   placeholder="e.g. https://example.com/recipe.html"
-                  onChange={e => setUrl(e.target.value)}
+                  onChange={(e) => setUrl(e.target.value)}
                   bsSize="sm"
                 />
               </Col>
@@ -185,7 +185,7 @@ export function RecipeAttributionEditor({
                   type="text"
                   value={isbn}
                   placeholder="e.g. 9780000000000"
-                  onChange={e => setIsbn(e.target.value)}
+                  onChange={(e) => setIsbn(e.target.value)}
                   bsSize="sm"
                 />
               </Col>

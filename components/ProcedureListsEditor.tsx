@@ -18,7 +18,7 @@ export function ProcedureListsEditor(props: Props) {
       initialData={props.lists}
       dataToText={procedureListsToText}
       textToData={parseProcedureLists}
-      preview={lists => <ProcedureLists lists={lists} />}
+      preview={(lists) => <ProcedureLists lists={lists} />}
       placeholder={`# For the sauce\n\nSweat the aromatics.\n\nAdd remaining ingredients.`}
       onChange={props.onChange}
       differ={changesBetween}
@@ -33,7 +33,7 @@ export function ProcedureListsEditor(props: Props) {
           </div>
         </Blankslate>
       }
-      hasPreview={lists =>
+      hasPreview={(lists) =>
         Boolean(lists && lists.length && lists[0].lines.length)
       }
       formattingTips={
@@ -46,14 +46,20 @@ export function ProcedureListsEditor(props: Props) {
             You can make text <strong>**bold**</strong> or <em>_italic_</em>.
           </li>
           <li>
-            Include a link to 
+            Include a link to
             <ul>
               <li>
-                 <strong>[</strong><span style={{color:'#19afd0'}}>another recipe</span><strong>](</strong>/user-name/cheese_sauce<strong>)</strong>
-              </li>  
+                <strong>[</strong>
+                <span style={{ color: '#19afd0' }}>another recipe</span>
+                <strong>](</strong>/user-name/cheese_sauce<strong>)</strong>
+              </li>
               <li>
-                 <strong>[</strong><span style={{color:'#19afd0'}}>another site</span><strong>](</strong>https://ivu.org/recipes/northam/cornbread-recipe-j.html<strong>)</strong>
-              </li>  
+                <strong>[</strong>
+                <span style={{ color: '#19afd0' }}>another site</span>
+                <strong>](</strong>
+                https://ivu.org/recipes/northam/cornbread-recipe-j.html
+                <strong>)</strong>
+              </li>
             </ul>
           </li>
         </ul>

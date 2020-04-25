@@ -128,19 +128,25 @@ export class RecipeVersion extends Model<RecipeVersion>
     })
 
     const recipe_yield_id = patch.recipeYield
-      ? (await RecipeYield.findOrCreate({
-          where: { id: patch.recipeYield.id },
-          defaults: { text: patch.recipeYield.text },
-          transaction
-        }))[0].id
+      ? (
+          await RecipeYield.findOrCreate({
+            where: { id: patch.recipeYield.id },
+            defaults: { text: patch.recipeYield.text },
+            transaction
+          })
+        )[0].id
       : undefined
 
     const recipe_duration_id = patch.recipeDuration
-      ? (await RecipeDuration.findOrCreate({
-          where: { id: patch.recipeDuration.id },
-          defaults: { duration_seconds: patch.recipeDuration.duration_seconds },
-          transaction
-        }))[0].id
+      ? (
+          await RecipeDuration.findOrCreate({
+            where: { id: patch.recipeDuration.id },
+            defaults: {
+              duration_seconds: patch.recipeDuration.duration_seconds
+            },
+            transaction
+          })
+        )[0].id
       : undefined
 
     const v = await RecipeVersion.create(
@@ -185,7 +191,7 @@ export class RecipeVersion extends Model<RecipeVersion>
 
     // preheats
     await Promise.all(
-      _.map(patch.preheats, async preheat => {
+      _.map(patch.preheats, async (preheat) => {
         const [{ id }] = await Preheat.findOrCreate({
           where: { id: preheat.id },
           defaults: _.omit(preheat, 'id'),

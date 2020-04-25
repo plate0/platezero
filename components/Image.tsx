@@ -25,4 +25,4 @@ export const buildProxyURL = (props: ImageProps) => {
   return IMAGE_PROXY + (options ? options + '/' : '') + props.src
 }
 
-export const Image = props => <img {...props} src={buildProxyURL(props)} />
+export const Image = (props) => <img {...props} src={buildProxyURL(props)} />

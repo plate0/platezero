@@ -96,7 +96,7 @@ class RegisterForm extends React.Component<{}, RegisterFormState> {
           <Row>
             <Col xs="12" lg={{ size: 6, offset: 3 }} className="mt-3">
               <h1>Sign Up for PlateZero</h1>
-              <Form onSubmit={e => this.handleSubmit(e, updateUser)}>
+              <Form onSubmit={(e) => this.handleSubmit(e, updateUser)}>
                 <ul>
                   {this.state.errors.map((error, key) => (
                     <li key={key} className="text-danger">

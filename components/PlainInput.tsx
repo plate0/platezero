@@ -1,7 +1,7 @@
 import { Input } from 'reactstrap'
 import Select from 'react-select'
 
-export const PlainInput = props => {
+export const PlainInput = (props) => {
   const cls = `plain-input ${props.className}`
   return <Input {...props} className={cls} />
 }
@@ -9,10 +9,10 @@ export const PlainInput = props => {
 const bsPrimary = '#7adeaef'
 const bsLightGray = '#ced4da'
 
-export const PlainSelect = props => (
+export const PlainSelect = (props) => (
   <Select
     {...props}
-    theme={theme => ({
+    theme={(theme) => ({
       ...theme,
       colors: {
         ...theme.colors,
@@ -35,7 +35,7 @@ export const PlainSelect = props => (
       }
     })}
     styles={{
-      control: base => ({
+      control: (base) => ({
         ...base,
         borderStyle: 'none none solid none',
         borderColor: bsLightGray,

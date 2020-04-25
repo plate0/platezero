@@ -60,7 +60,7 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
     // change is complete.
     let nextScroll = undefined
 
-    Router.beforePopState(url => {
+    Router.beforePopState((url) => {
       const prevPosition = scrolls[url.as]
       if (prevPosition) {
         nextScroll = prevPosition

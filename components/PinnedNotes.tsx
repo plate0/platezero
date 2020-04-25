@@ -16,8 +16,8 @@ export const PinnedNotes = () => {
   return (
     <div>
       {notes
-        .filter(n => n.pinned)
-        .map(n => (
+        .filter((n) => n.pinned)
+        .map((n) => (
           <Note
             key={n.id}
             note={n}

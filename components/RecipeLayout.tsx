@@ -18,11 +18,11 @@ function notesReducer(state, action) {
     case NoteAction.CREATE:
       return [action.note, ...state]
     case NoteAction.UPDATE:
-      return _.map(state, note =>
+      return _.map(state, (note) =>
         note.id === action.note.id ? action.note : note
       )
     case NoteAction.DELETE:
-      return _.reject(state, note => note.id === action.noteId)
+      return _.reject(state, (note) => note.id === action.noteId)
     default:
       return state
   }

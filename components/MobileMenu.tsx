@@ -8,7 +8,7 @@ export type CloseHandler = () => any
 
 export const MobileMenu = ({
   isOpen,
-  close,
+  close
 }: {
   isOpen: boolean
   close: CloseHandler
@@ -19,7 +19,7 @@ export const MobileMenu = ({
   }
   const NavRoutes = [
     { name: 'Recipes', route: 'user', params: { username: user.username } },
-    { name: 'Add Recipe', route: 'new-recipe' },
+    { name: 'Add Recipe', route: 'new-recipe' }
   ]
   const route = (route: string, params: any = {}) => () => {
     close()

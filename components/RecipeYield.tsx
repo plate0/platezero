@@ -43,7 +43,7 @@ export function RecipeYield(props: Props) {
         type="text"
         value={text}
         placeholder="e.g. 2 servings, 12 large muffins"
-        onChange={e => setText(e.target.value)}
+        onChange={(e) => setText(e.target.value)}
         className={added ? 'bg-added' : changed ? 'bg-changed' : ''}
       />
     </FormGroup>

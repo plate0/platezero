@@ -29,7 +29,7 @@ export const sequelize = new Sequelize({
   dialect: 'postgres',
   username: config.dbUser,
   password: config.dbPassword,
-  host: config.dbHost,
+  host: config.dbHost
 })
 
 sequelize.addModels([
@@ -54,17 +54,17 @@ sequelize.addModels([
   RecipeYield,
   RefreshToken,
   User,
-  UserActivity,
+  UserActivity
 ])
 
 export const OrderDirections = {
   asc: 'ASC',
-  desc: 'DESC',
+  desc: 'DESC'
 }
 
 export const sortable = (model: any, defaultCol: string) => ([
   col,
-  direction,
+  direction
 ]: any) => {
   const dir = OrderDirections[toLower(direction)]
     ? OrderDirections[toLower(direction)]

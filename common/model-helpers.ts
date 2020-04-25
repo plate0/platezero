@@ -4,7 +4,7 @@ import { UserJSON } from '../models'
 export const getName = (user: UserJSON): string =>
   user.name ? user.name : user.username
 
-export const normalize = x => {
+export const normalize = (x) => {
   if (_.isArray(x)) {
     return _.map(x, normalize)
   }

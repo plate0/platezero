@@ -67,9 +67,9 @@ export class ProcedureList extends Model<ProcedureList>
     lists: ProcedureListJSON[],
     versionId: number
   ): Promise<ProcedureList[]> {
-    return ProcedureList.sequelize.transaction(async transaction => {
+    return ProcedureList.sequelize.transaction(async (transaction) => {
       const procedureLists = await Promise.all(
-        _.map(lists, pl => ProcedureList.createWithLines(pl, { transaction }))
+        _.map(lists, (pl) => ProcedureList.createWithLines(pl, { transaction }))
       )
       await Promise.all(
         _.map(procedureLists, (pl, sort_key) =>
@@ -116,7 +116,7 @@ export class ProcedureList extends Model<ProcedureList>
       { name: patch.name },
       { transaction }
     )
-    const lines = _.map(patch.lines, async line => {
+    const lines = _.map(patch.lines, async (line) => {
       if (!_.isUndefined(line.id)) {
         return await ProcedureLine.findOne({
           where: { id: line.id },

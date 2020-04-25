@@ -133,7 +133,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
     body: PostRecipe,
     slug: string
   ): Promise<Recipe> {
-    const recipe = await Recipe.sequelize.transaction(async transaction => {
+    const recipe = await Recipe.sequelize.transaction(async (transaction) => {
       const recipe = await Recipe.create(
         {
           title: body.title,
@@ -159,7 +159,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
         : undefined
 
       const procedureLists = await Promise.all(
-        _.map(body.procedure_lists, pl =>
+        _.map(body.procedure_lists, (pl) =>
           ProcedureList.createWithLines(pl, {
             transaction
           })
@@ -167,7 +167,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
       )
 
       const ingredientLists = await Promise.all(
-        _.map(body.ingredient_lists, il =>
+        _.map(body.ingredient_lists, (il) =>
           IngredientList.createWithIngredients(il, { transaction })
         )
       )
@@ -186,13 +186,13 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
       )
 
       const preheats = await Promise.all(
-        _.map(body.preheats, preheat =>
+        _.map(body.preheats, (preheat) =>
           Preheat.create(preheat, { transaction })
         )
       )
 
       await Promise.all(
-        _.map(preheats, preheat =>
+        _.map(preheats, (preheat) =>
           RecipeVersionPreheat.create(
             { recipe_version_id: recipeVersion.id, preheat_id: preheat.id },
             { transaction }

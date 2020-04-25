@@ -1,6 +1,6 @@
 import * as moment from 'moment'
 
-export const toHoursAndMinutes = seconds => {
+export const toHoursAndMinutes = (seconds) => {
   if (!seconds) {
     return { h: undefined, m: undefined }
   }

@@ -26,10 +26,10 @@ const withNewline = (s: string | undefined) => (s ? s + '\n' : '')
 const plainTextIngredients = (ingredient_lists: IngredientList[]) =>
   ingredient_lists
     .map(
-      il =>
+      (il) =>
         withNewline(il.name) +
         il.lines
-          .map(line => {
+          .map((line) => {
             const amount = new Fraction(
               line.quantity_numerator,
               line.quantity_denominator
@@ -45,15 +45,12 @@ const plainTextIngredients = (ingredient_lists: IngredientList[]) =>
     .join('\n\n')
 
 const markdownToPlainText = (s: string) =>
-  cheerio
-    .load(converter.makeHtml(s))
-    .root()
-    .text()
+  cheerio.load(converter.makeHtml(s)).root().text()
 
 const plainTextProcedure = (procedure_lists: ProcedureList[]) =>
   procedure_lists
     .map(
-      pl =>
+      (pl) =>
         withNewline(pl.name) +
         pl.lines
           .map((line, i) => {
@@ -165,7 +162,7 @@ r.get('/:username/:slug.txt', async (req, res) => {
       return notFound(res)
     }
     const masterBranch = _.head(
-      _.filter(recipe.branches, r => r.name === 'master')
+      _.filter(recipe.branches, (r) => r.name === 'master')
     )
     const versionId = _.get(masterBranch, 'recipe_version_id')
     const recipeVersion = await getRecipeVersion(recipe.id, versionId)

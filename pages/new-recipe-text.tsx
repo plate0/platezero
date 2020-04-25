@@ -121,30 +121,30 @@ export default class NewRecipe extends React.Component<any, State> {
             <Col xs={12} md={6}>
               <RecipeYield
                 yield={this.state.recipeYield}
-                onChange={recipeYield => this.setState({ recipeYield })}
+                onChange={(recipeYield) => this.setState({ recipeYield })}
               />
             </Col>
             <Col xs={12} md={6}>
               <RecipeDuration
                 duration={this.state.recipeDuration}
-                onChange={recipeDuration => this.setState({ recipeDuration })}
+                onChange={(recipeDuration) => this.setState({ recipeDuration })}
               />
             </Col>
           </Row>
           <h5>Preheats</h5>
           <PreheatsEditor
             preheats={[]}
-            onChange={preheats => this.setState({ preheats })}
+            onChange={(preheats) => this.setState({ preheats })}
           />
           <h5>Ingredients</h5>
           <IngredientListsEditor
             lists={[defaultIngredientList]}
-            onChange={ingredientLists => this.setState({ ingredientLists })}
+            onChange={(ingredientLists) => this.setState({ ingredientLists })}
           />
           <h5 className="my-3">Steps</h5>
           <ProcedureListsEditor
             lists={[defaultProcedureList]}
-            onChange={procedureLists => this.setState({ procedureLists })}
+            onChange={(procedureLists) => this.setState({ procedureLists })}
           />
           <h5 className="my-3">Attribution</h5>
           <RecipeAttributionEditor
