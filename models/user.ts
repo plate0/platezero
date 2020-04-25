@@ -1,23 +1,22 @@
+import * as bcrypt from 'bcrypt'
+import * as jwt from 'jsonwebtoken'
+import * as _ from 'lodash'
 import {
   AllowNull,
   AutoIncrement,
   Column,
   DataType,
+  HasMany,
   Is,
   IsEmail,
   Model,
-  HasMany,
   PrimaryKey,
   Table,
-  Unique
+  Unique,
 } from 'sequelize-typescript'
-import * as bcrypt from 'bcrypt'
-import * as jwt from 'jsonwebtoken'
-import * as _ from 'lodash'
-import { RefreshToken } from './refresh_token'
-import { Recipe, RecipeJSON } from './recipe'
-import { ShoppingList } from './shopping_list'
 import { config } from '../server/config'
+import { Recipe, RecipeJSON } from './recipe'
+import { RefreshToken } from './refresh_token'
 
 export interface UserJSON {
   avatar_url: string
@@ -30,7 +29,7 @@ export interface UserJSON {
 }
 
 @Table({
-  tableName: 'users'
+  tableName: 'users',
 })
 export class User extends Model<User> implements UserJSON {
   @AutoIncrement
@@ -40,7 +39,7 @@ export class User extends Model<User> implements UserJSON {
 
   @AllowNull(false)
   @Unique
-  @Is('Username', value => {
+  @Is('Username', (value) => {
     if (!/[a-zA-Z0-9][a-zA-Z0-9_\-]{1,31}/.test(value)) {
       throw new Error(`"${value}" is not a valid username.`)
     }
@@ -88,9 +87,6 @@ export class User extends Model<User> implements UserJSON {
 
   @HasMany(() => RefreshToken)
   public refresh_tokens: RefreshToken[]
-
-  @HasMany(() => ShoppingList)
-  public shoppingLists: ShoppingList[]
 
   @Column(DataType.VIRTUAL)
   public get url(): string {
@@ -161,7 +157,7 @@ export class User extends Model<User> implements UserJSON {
     }
     const { where, fn, col } = User.sequelize
     return User.findOne({
-      where: where(fn('lower', col('username')), username.toLowerCase())
+      where: where(fn('lower', col('username')), username.toLowerCase()),
     })
   }
 }

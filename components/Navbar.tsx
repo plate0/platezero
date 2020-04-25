@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
-import { Button, Nav, NavItem, Container, Navbar as RsNavbar } from 'reactstrap'
-import { UserJSON } from '../models'
+import { Button, Container, Nav, Navbar as RsNavbar, NavItem } from 'reactstrap'
 import { UserContext } from '../context/UserContext'
+import { UserJSON } from '../models'
 import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
 
@@ -68,9 +68,6 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
 
 const NewRecipeDropdown = () => (
   <div className="d-none d-md-block">
-    <Link route="shopping">
-      <a className="text-white btn btn-link">Shopping</a>
-    </Link>
     <Link route="new-recipe">
       <a className="add-recipe text-white btn btn-link" id="add-recipe">
         Add Recipe
