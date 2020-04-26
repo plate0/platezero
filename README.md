@@ -20,4 +20,4 @@ with `yarn` installed.
    not have an account being automatically created in `db/seed.sql`, you can
    register for one and log in.
 
-Test deployment again.
+Test deployment.
