@@ -33,7 +33,7 @@
     "bcrypt": "3.0.6",
     "cheerio": "1.0.0-rc.3",
     "express": "4.16.4",
-    "express-jwt": "5.3.1",
+    "express-jwt": "6.0.0",
     "fraction.js": "4.0.12",
     "ingredient-parser": "https://github.com/plate0/ingredient-parser.git#v0.2.2",
     "isomorphic-fetch": "2.2.1",
