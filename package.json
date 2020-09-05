@@ -45,7 +45,7 @@
     "next": "9.1.6",
     "next-cookies": "1.1.2",
     "next-routes": "1.4.2",
-    "node-sass": "4.12.0",
+    "node-sass": "4.13.1",
     "nodemon": "1.19.0",
     "pg": "7.11.0",
     "prettier": "2.0.5",
