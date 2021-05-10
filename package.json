@@ -30,7 +30,7 @@
     "@zeit/next-sass": "1.0.1",
     "aws-sdk": "2.428.0",
     "babel-plugin-dynamic-import-node": "2.2.0",
-    "bcrypt": "3.0.6",
+    "bcrypt": "5.0.0",
     "cheerio": "1.0.0-rc.3",
     "express": "4.16.4",
     "express-jwt": "5.3.1",
