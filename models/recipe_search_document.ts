@@ -1,11 +1,3 @@
-import {
-  PrimaryKey,
-  BelongsTo,
-  Column,
-  ForeignKey,
-  Model,
-  Table
-} from 'sequelize-typescript'
 import { Recipe, RecipeJSON } from './recipe'
 import { User } from './user'
 
@@ -27,24 +19,14 @@ export interface RecipeSearchDocumentJSON {
  * This model only exists for nice interoperability with Sequelize, such as
  * being able to do `findAll` and `include` the Recipe model.
  */
-@Table({ tableName: 'recipe_search_documents' })
-export class RecipeSearchDocument extends Model<RecipeSearchDocument>
-  implements RecipeSearchDocumentJSON {
-  @PrimaryKey
-  @Column
-  @ForeignKey(() => Recipe)
+export class RecipeSearchDocument implements RecipeSearchDocumentJSON {
   public recipe_id: number
 
-  @Column
-  @ForeignKey(() => User)
   public user_id: number
 
-  @Column
   public doc: string
 
-  @BelongsTo(() => Recipe)
   public recipe: Recipe
 
-  @BelongsTo(() => User)
   public user: User
 }

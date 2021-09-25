@@ -1,12 +1,3 @@
-import {
-  AllowNull,
-  AutoIncrement,
-  Column,
-  Model,
-  PrimaryKey,
-  Table
-} from 'sequelize-typescript'
-
 export interface ProcedureLineJSON {
   id?: number
   text: string
@@ -14,23 +5,12 @@ export interface ProcedureLineJSON {
   title?: string
 }
 
-@Table({
-  tableName: 'procedure_lines'
-})
-export class ProcedureLine extends Model<ProcedureLine>
-  implements ProcedureLineJSON {
-  @AutoIncrement
-  @PrimaryKey
-  @Column
+export class ProcedureLine implements ProcedureLineJSON {
   public declare id: number
 
-  @AllowNull(false)
-  @Column
   public text: string
 
-  @Column
   public image_url: string
 
-  @Column
   public title: string
 }

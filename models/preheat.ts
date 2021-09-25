@@ -1,13 +1,3 @@
-import {
-  AllowNull,
-  AutoIncrement,
-  Column,
-  IsIn,
-  Model,
-  PrimaryKey,
-  Table
-} from 'sequelize-typescript'
-
 export interface PreheatJSON {
   id?: number
   name: string
@@ -15,25 +5,12 @@ export interface PreheatJSON {
   unit: string
 }
 
-@Table({
-  tableName: 'preheats'
-})
-export class Preheat extends Model<Preheat> implements PreheatJSON {
-  @AutoIncrement
-  @PrimaryKey
-  @Column
+export class Preheat implements PreheatJSON {
   public declare id: number
 
-  @AllowNull(false)
-  @Column
   public name: string
 
-  @AllowNull(false)
-  @Column
   public temperature: number
 
-  @AllowNull(false)
-  @IsIn([['C', 'F']])
-  @Column
   public unit: string
 }

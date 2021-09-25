@@ -112,7 +112,7 @@ export const UserPageRecipes = ({
 }
 
 const SearchResultsHeader = ({ n, q, className, onClear }) => (
-  <Row className={`py-2 align-items-center ${className || ''}`}>
+  <Row className={`py-2 align-items-center ${className || ''}` as any}>
     <Col xs="6" md="10">
       <strong>{n}</strong> results for recipes matching <strong>{q}</strong>
     </Col>

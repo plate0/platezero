@@ -1,16 +1,4 @@
-import * as _ from 'lodash'
-import {
-  AutoIncrement,
-  BelongsToMany,
-  Column,
-  Model,
-  PrimaryKey,
-  Table
-} from 'sequelize-typescript'
-import { normalize } from '../common/model-helpers'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
-import { IngredientListLine } from './ingredient_list_line'
-import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 
 export interface IngredientListJSON {
   id?: number
@@ -19,75 +7,27 @@ export interface IngredientListJSON {
   name?: string
 }
 
-@Table({
-  tableName: 'ingredient_lists'
-})
-export class IngredientList extends Model<IngredientList>
-  implements IngredientListJSON {
-  @AutoIncrement
-  @PrimaryKey
-  @Column
+export class IngredientList implements IngredientListJSON {
   public declare id: number
 
-  @Column public name: string
+  public name: string
 
-  @Column public image_url: string
+  public image_url: string
 
-  @BelongsToMany(() => IngredientLine, () => IngredientListLine)
   public lines: IngredientLine[]
 
   public static async createWithIngredients(
-    il: IngredientListJSON,
-    options?: any
+    _il: IngredientListJSON,
+    _options?: any
   ): Promise<IngredientList> {
-    const ingredientList: any = await IngredientList.create(
-      { name: il.name, image_url: il.image_url } as any,
-      options
-    )
-    const ingredientLines = await Promise.all(
-      _.map(il.lines, (ingredient) =>
-        IngredientLine.create(normalize(ingredient), options)
-      )
-    )
-    await Promise.all(
-      _.map(ingredientLines, (line, sort_key) =>
-        IngredientListLine.create(
-          {
-            ingredient_list_id: ingredientList.id,
-            ingredient_line_id: line.id,
-            sort_key
-          } as any,
-          options
-        )
-      )
-    )
-    return ingredientList
+    return null
   }
 
   public static async createAndLink(
-    lists: IngredientListJSON[],
-    versionId: number
+    _lists: IngredientListJSON[],
+    _versionId: number
   ): Promise<IngredientList[]> {
-    return IngredientList.sequelize.transaction(async (transaction) => {
-      const ingredientLists: any = await Promise.all(
-        _.map(lists, (il) =>
-          IngredientList.createWithIngredients(il, { transaction })
-        )
-      )
-      await Promise.all(
-        _.map(ingredientLists, (il, sort_key) =>
-          RecipeVersionIngredientList.create(
-            {
-              recipe_version_id: versionId,
-              ingredient_list_id: il.id,
-              sort_key
-            } as any,
-            { transaction }
-          )
-        )
-      )
-      return ingredientLists
-    })
+    return null
   }
 
   /**
@@ -105,42 +45,9 @@ export class IngredientList extends Model<IngredientList>
    * as queried from the database.
    */
   public static async findOrCreateWithIngredients(
-    patch: IngredientListJSON,
-    transaction?: any
+    _patch: IngredientListJSON,
+    _transaction?: any
   ): Promise<IngredientList> {
-    if (!_.isUndefined(patch.id)) {
-      return await IngredientList.findOne({
-        where: { id: patch.id },
-        include: [{ model: IngredientLine }],
-        transaction
-      })
-    }
-    const list = await IngredientList.create({ name: patch.name } as any, {
-      transaction
-    })
-    const lines = _.map(patch.lines, async (line) => {
-      if (!_.isUndefined(line.id)) {
-        return await IngredientLine.findOne({
-          where: { id: line.id },
-          transaction
-        })
-      }
-      return await IngredientLine.create(line, { transaction })
-    })
-    await Promise.all(
-      _.map(
-        lines,
-        async (line, sort_key) =>
-          await IngredientListLine.create(
-            {
-              ingredient_list_id: list.id,
-              ingredient_line_id: (await line).id,
-              sort_key
-            } as any,
-            { transaction }
-          )
-      )
-    )
-    return list
+    return null
   }
 }

@@ -1,39 +1,14 @@
-import {
-  AllowNull,
-  BelongsTo,
-  Column,
-  ForeignKey,
-  PrimaryKey,
-  Model,
-  Table
-} from 'sequelize-typescript'
-
 import { IngredientList } from './ingredient_list'
 import { RecipeVersion } from './recipe_version'
 
-@Table({
-  tableName: 'recipe_version_ingredient_lists'
-})
-export class RecipeVersionIngredientList extends Model<
-  RecipeVersionIngredientList
-> {
-  @AllowNull(false)
-  @PrimaryKey
-  @Column
-  @ForeignKey(() => RecipeVersion)
+export class RecipeVersionIngredientList {
   public recipe_version_id: number
 
-  @AllowNull(false)
-  @PrimaryKey
-  @Column
-  @ForeignKey(() => IngredientList)
   public ingredient_list_id: number
 
-  @Column public sort_key: number
+  public sort_key: number
 
-  @BelongsTo(() => RecipeVersion)
   public recipeVersion: RecipeVersion
 
-  @BelongsTo(() => IngredientList)
   public ingredientList: IngredientList
 }

@@ -1,14 +1,3 @@
-import {
-  AllowNull,
-  AutoIncrement,
-  Column,
-  Default,
-  IsIn,
-  Model,
-  PrimaryKey,
-  Table
-} from 'sequelize-typescript'
-
 export interface IngredientLineJSON {
   id?: number
   name: string
@@ -19,58 +8,18 @@ export interface IngredientLineJSON {
   unit?: string
 }
 
-@Table({
-  tableName: 'ingredient_lines'
-})
-export class IngredientLine extends Model<IngredientLine>
-  implements IngredientLineJSON {
-  @AutoIncrement
-  @PrimaryKey
-  @Column
+export class IngredientLine implements IngredientLineJSON {
   public declare id: number
 
-  @AllowNull(false)
-  @Column
   public name: string
 
-  @Column public quantity_numerator: number
+  public quantity_numerator: number
 
-  @Column public quantity_denominator: number
+  public quantity_denominator: number
 
-  @Column public preparation: string
+  public preparation: string
 
-  @IsIn([
-    [
-      // mass
-      'g',
-      'mg',
-      'kg',
-      'oz',
-
-      // weight
-      'lb',
-
-      // volume
-      'c',
-      'qt',
-      'tbsp',
-      'tsp',
-      'l',
-      'dl',
-      'ml',
-
-      // distance
-      'in',
-      'ft',
-      'cm',
-      'm'
-    ]
-  ])
-  @Column
   public unit: string
 
-  @AllowNull(false)
-  @Default(false)
-  @Column
   public optional: boolean
 }
