@@ -1,3 +1,4 @@
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import 'bootstrap/dist/css/bootstrap.css'
 import App from 'next/app'
 import Router from 'next/router'
@@ -6,6 +7,11 @@ import { api } from '../common/http'
 import { UserContext } from '../context/UserContext'
 import { UserJSON } from '../models/user'
 import '../style/index.css'
+
+const client = new ApolloClient({
+  uri: process.env.NEXT_PUBLIC_API_ROOT,
+  cache: new InMemoryCache()
+})
 
 const currentUser = async (): Promise<UserJSON | undefined> => {
   try {
@@ -90,9 +96,11 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
   public render() {
     const { Component, pageProps } = this.props
     return (
-      <UserContext.Provider value={this.state as any}>
-        <Component {...pageProps} />
-      </UserContext.Provider>
+      <ApolloProvider client={client}>
+        <UserContext.Provider value={this.state as any}>
+          <Component {...pageProps} />
+        </UserContext.Provider>
+      </ApolloProvider>
     )
   }
 }

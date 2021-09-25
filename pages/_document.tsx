@@ -2,7 +2,7 @@
 // Event handlers like onClick can't be added to this file
 
 // ./pages/_document.js
-import Document, { Head, Main, NextScript } from 'next/document'
+import Document, { Head, Html, Main, NextScript } from 'next/document'
 import { api } from '../common/http'
 import { UserJSON } from '../models'
 
@@ -23,7 +23,7 @@ export default class MyDocument extends Document<{ user?: UserJSON }> {
 
   render() {
     return (
-      <html lang="en">
+      <Html lang="en">
         <Head>
           <meta charSet="utf-8" />
           <meta
@@ -121,7 +121,7 @@ export default class MyDocument extends Document<{ user?: UserJSON }> {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     )
   }
 }
