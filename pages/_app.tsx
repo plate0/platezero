@@ -1,10 +1,11 @@
-import App, { Container } from 'next/app'
+import 'bootstrap/dist/css/bootstrap.css'
+import App from 'next/app'
 import Router from 'next/router'
 import React from 'react'
 import { api } from '../common/http'
 import { UserContext } from '../context/UserContext'
 import { UserJSON } from '../models/user'
-import '../style/index.scss'
+import '../style/index.css'
 
 const currentUser = async (): Promise<UserJSON | undefined> => {
   try {
@@ -90,9 +91,7 @@ export default class PlateZeroApp extends App<AppProps, AppState> {
     const { Component, pageProps } = this.props
     return (
       <UserContext.Provider value={this.state as any}>
-        <Container>
-          <Component {...pageProps} />
-        </Container>
+        <Component {...pageProps} />
       </UserContext.Provider>
     )
   }

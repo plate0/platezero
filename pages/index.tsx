@@ -1,19 +1,18 @@
+import Head from 'next/head'
 import React, { Component, useContext } from 'react'
 import {
-  Container,
-  Row,
   Col,
+  Container,
+  Nav,
   Navbar,
   NavbarBrand,
   NavItem,
-  Nav
+  Row
 } from 'reactstrap'
-import Head from 'next/head'
-import '../style/index.scss'
 import { ProfilePicture } from '../components'
-import { Link } from '../routes'
-import { UserContext } from '../context/UserContext'
 import { Footer } from '../components/Footer'
+import { UserContext } from '../context/UserContext'
+import { Link } from '../routes'
 
 const HomeNav = () => {
   const { user } = useContext(UserContext)

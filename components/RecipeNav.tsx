@@ -1,35 +1,35 @@
-import React, { useState, useContext } from 'react'
-import TextareaAutosize from 'react-textarea-autosize'
-import Router from 'next/router'
 import { get } from 'lodash'
+import getConfig from 'next/config'
+import Router from 'next/router'
+import React, { useContext, useState } from 'react'
+import TextareaAutosize from 'react-textarea-autosize'
 import {
-  FormGroup,
-  Label,
-  Input,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
   Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  FormGroup,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
   Nav,
   NavItem,
   NavLink
 } from 'reactstrap'
-import getConfig from 'next/config'
-import { RecipeJSON, NoteJSON } from '../models'
-import { UserContext } from '../context/UserContext'
+import { api, getErrorMessages } from '../common/http'
 import { RecipeContext } from '../context/RecipeContext'
-import { getErrorMessages, api } from '../common/http'
-import { IfLoggedIn } from './IfLoggedIn'
-import { AlertErrors } from './AlertErrors'
+import { UserContext } from '../context/UserContext'
+import { NoteJSON, RecipeJSON } from '../models'
 import { Link } from '../routes'
+import { AddNote } from './AddNote'
+import { AlertErrors } from './AlertErrors'
+import { FavoriteButton } from './FavoriteButton'
+import { IfLoggedIn } from './IfLoggedIn'
 import { PrintButton } from './PrintButton'
 import { ShareButton } from './ShareButton'
-import { FavoriteButton } from './FavoriteButton'
-import { AddNote } from './AddNote'
 const SITE_URL = get(getConfig(), 'publicRuntimeConfig.www.url', '')
 
 export const RecipeNav = ({ route }: { route: string }) => {
@@ -126,7 +126,9 @@ const ActionMenu = ({
             Edit Attribution
           </DropdownItem>
           <DropdownItem
-            href={`/${recipe.owner.username}/${recipe.slug}/branches/master/edit`}
+            href={
+              `/${recipe.owner.username}/${recipe.slug}/branches/master/edit` as any
+            }
           >
             Edit Recipe
           </DropdownItem>
