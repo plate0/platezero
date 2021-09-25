@@ -27,7 +27,7 @@ export class IngredientLine extends Model<IngredientLine>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

@@ -1,17 +1,15 @@
+import * as _ from 'lodash'
 import {
   AutoIncrement,
+  BelongsToMany,
   Column,
   HasMany,
-  BelongsToMany,
   Model,
   PrimaryKey,
-  ICreateOptions,
   Table
 } from 'sequelize-typescript'
-import * as _ from 'lodash'
-
-import { ProcedureListLine } from './procedure_list_line'
 import { ProcedureLine, ProcedureLineJSON } from './procedure_line'
+import { ProcedureListLine } from './procedure_list_line'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
 
 export interface ProcedureListJSON {
@@ -28,7 +26,7 @@ export class ProcedureList extends Model<ProcedureList>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @Column public name: string
 
@@ -40,12 +38,15 @@ export class ProcedureList extends Model<ProcedureList>
 
   public static async createWithLines(
     pl: ProcedureListJSON,
-    options?: ICreateOptions
+    options?: any
   ): Promise<ProcedureList> {
-    const procedureList = await ProcedureList.create({ name: pl.name }, options)
+    const procedureList: any = await ProcedureList.create(
+      { name: pl.name } as any,
+      options
+    )
     const lines = await Promise.all(
       _.map(pl.lines, ({ text, image_url, title }) =>
-        ProcedureLine.create({ text, image_url, title }, options)
+        ProcedureLine.create({ text, image_url, title } as any, options)
       )
     )
     await Promise.all(
@@ -55,7 +56,7 @@ export class ProcedureList extends Model<ProcedureList>
             procedure_list_id: procedureList.id,
             procedure_line_id: line.id,
             sort_key
-          },
+          } as any,
           options
         )
       )
@@ -68,7 +69,7 @@ export class ProcedureList extends Model<ProcedureList>
     versionId: number
   ): Promise<ProcedureList[]> {
     return ProcedureList.sequelize.transaction(async (transaction) => {
-      const procedureLists = await Promise.all(
+      const procedureLists: any = await Promise.all(
         _.map(lists, (pl) => ProcedureList.createWithLines(pl, { transaction }))
       )
       await Promise.all(
@@ -78,7 +79,7 @@ export class ProcedureList extends Model<ProcedureList>
               recipe_version_id: versionId,
               procedure_list_id: pl.id,
               sort_key
-            },
+            } as any,
             { transaction }
           )
         )
@@ -112,10 +113,9 @@ export class ProcedureList extends Model<ProcedureList>
         transaction
       })
     }
-    const list = await ProcedureList.create(
-      { name: patch.name },
-      { transaction }
-    )
+    const list = await ProcedureList.create({ name: patch.name } as any, {
+      transaction
+    })
     const lines = _.map(patch.lines, async (line) => {
       if (!_.isUndefined(line.id)) {
         return await ProcedureLine.findOne({
@@ -134,7 +134,7 @@ export class ProcedureList extends Model<ProcedureList>
               procedure_list_id: list.id,
               procedure_line_id: (await line).id,
               sort_key
-            },
+            } as any,
             { transaction }
           )
       )

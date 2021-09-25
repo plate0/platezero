@@ -1,6 +1,5 @@
 import { toLower } from 'lodash'
 import { Sequelize } from 'sequelize-typescript'
-import { config } from '../server/config'
 import { Favorite } from './favorite'
 import { IngredientLine } from './ingredient_line'
 import { IngredientList } from './ingredient_list'
@@ -25,11 +24,11 @@ import { User } from './user'
 import { UserActivity } from './user_activity'
 
 export const sequelize = new Sequelize({
-  database: config.dbName,
+  database: '',
   dialect: 'postgres',
-  username: config.dbUser,
-  password: config.dbPassword,
-  host: config.dbHost
+  username: '',
+  password: '',
+  host: ''
 })
 
 sequelize.addModels([

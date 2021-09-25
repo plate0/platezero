@@ -1,34 +1,33 @@
+import * as _ from 'lodash'
 import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
-  DataType,
   Column,
+  CreatedAt,
+  DataType,
   DefaultScope,
-  HasMany,
+  DeletedAt,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
-  Table
+  Table,
+  UpdatedAt
 } from 'sequelize-typescript'
-import * as _ from 'lodash'
 import { PostRecipe } from '../common/request-models'
-import { User, UserJSON } from './user'
-import { RecipeBranch, RecipeBranchJSON } from './recipe_branch'
-import { RecipeVersion } from './recipe_version'
-import { RecipeYield } from './recipe_yield'
-import { RecipeDuration } from './recipe_duration'
+import { toSlug } from '../common/slug'
+import { IngredientList } from './ingredient_list'
 import { Preheat } from './preheat'
+import { ProcedureList } from './procedure_list'
+import { RecipeBranch, RecipeBranchJSON } from './recipe_branch'
+import { RecipeDuration } from './recipe_duration'
+import { RecipeVersion } from './recipe_version'
+import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 import { RecipeVersionPreheat } from './recipe_version_preheat'
 import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
-import { ProcedureList } from './procedure_list'
-import { IngredientList } from './ingredient_list'
-import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
-import { config } from '../server/config'
-import { toSlug } from '../common/slug'
+import { RecipeYield } from './recipe_yield'
+import { User, UserJSON } from './user'
 
 export interface RecipeJSON {
   id?: number
@@ -64,7 +63,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column
@@ -120,12 +119,12 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
 
   @Column(DataType.VIRTUAL)
   public get url(): string {
-    return `${config.apiUrl}/users/${this.owner.username}/recipes/${this.slug}`
+    return `${process.env.API_URL}/users/${this.owner.username}/recipes/${this.slug}`
   }
 
   @Column(DataType.VIRTUAL)
   public get html_url(): string {
-    return `${config.siteUrl}/${this.owner.username}/${this.slug}`
+    return `${process.env.SITE_URL}/${this.owner.username}/${this.slug}`
   }
 
   private static async createWithSlug(
@@ -146,16 +145,18 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
           source_title: body.source_title,
           source_isbn: body.source_isbn,
           user_id
-        },
+        } as any,
         { transaction }
       )
 
       const recipeDuration = body.duration
-        ? await RecipeDuration.create({ duration_seconds: body.duration })
+        ? await RecipeDuration.create({
+            duration_seconds: body.duration
+          } as any)
         : undefined
 
       const recipeYield = body.yield
-        ? await RecipeYield.create({ text: body.yield })
+        ? await RecipeYield.create({ text: body.yield } as any)
         : undefined
 
       const procedureLists = await Promise.all(
@@ -181,7 +182,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
           ingredientLists: [],
           procedureLists: [],
           message: 'Initial version'
-        },
+        } as any,
         { transaction }
       )
 
@@ -194,7 +195,10 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
       await Promise.all(
         _.map(preheats, (preheat) =>
           RecipeVersionPreheat.create(
-            { recipe_version_id: recipeVersion.id, preheat_id: preheat.id },
+            {
+              recipe_version_id: recipeVersion.id,
+              preheat_id: preheat.id
+            } as any,
             { transaction }
           )
         )
@@ -207,7 +211,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
               recipe_version_id: recipeVersion.id,
               procedure_list_id: pl.id,
               sort_key
-            },
+            } as any,
             { transaction }
           )
         )
@@ -220,7 +224,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
               recipe_version_id: recipeVersion.id,
               ingredient_list_id: il.id,
               sort_key
-            },
+            } as any,
             { transaction }
           )
         )
@@ -231,7 +235,7 @@ export class Recipe extends Model<Recipe> implements RecipeJSON {
           name: 'master',
           recipe_id: recipe.id,
           recipe_version_id: recipeVersion.id
-        },
+        } as any,
         { transaction }
       )
 

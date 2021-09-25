@@ -20,7 +20,7 @@ export class RecipeDuration extends Model<RecipeDuration>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

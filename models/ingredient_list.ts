@@ -1,16 +1,15 @@
+import * as _ from 'lodash'
 import {
-  Model,
   AutoIncrement,
-  PrimaryKey,
-  Column,
   BelongsToMany,
-  ICreateOptions,
+  Column,
+  Model,
+  PrimaryKey,
   Table
 } from 'sequelize-typescript'
-import * as _ from 'lodash'
+import { normalize } from '../common/model-helpers'
 import { IngredientLine, IngredientLineJSON } from './ingredient_line'
 import { IngredientListLine } from './ingredient_list_line'
-import { normalize } from '../common/model-helpers'
 import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
 
 export interface IngredientListJSON {
@@ -28,7 +27,7 @@ export class IngredientList extends Model<IngredientList>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @Column public name: string
 
@@ -39,10 +38,10 @@ export class IngredientList extends Model<IngredientList>
 
   public static async createWithIngredients(
     il: IngredientListJSON,
-    options?: ICreateOptions
+    options?: any
   ): Promise<IngredientList> {
-    const ingredientList = await IngredientList.create(
-      { name: il.name, image_url: il.image_url },
+    const ingredientList: any = await IngredientList.create(
+      { name: il.name, image_url: il.image_url } as any,
       options
     )
     const ingredientLines = await Promise.all(
@@ -57,7 +56,7 @@ export class IngredientList extends Model<IngredientList>
             ingredient_list_id: ingredientList.id,
             ingredient_line_id: line.id,
             sort_key
-          },
+          } as any,
           options
         )
       )
@@ -70,7 +69,7 @@ export class IngredientList extends Model<IngredientList>
     versionId: number
   ): Promise<IngredientList[]> {
     return IngredientList.sequelize.transaction(async (transaction) => {
-      const ingredientLists = await Promise.all(
+      const ingredientLists: any = await Promise.all(
         _.map(lists, (il) =>
           IngredientList.createWithIngredients(il, { transaction })
         )
@@ -82,7 +81,7 @@ export class IngredientList extends Model<IngredientList>
               recipe_version_id: versionId,
               ingredient_list_id: il.id,
               sort_key
-            },
+            } as any,
             { transaction }
           )
         )
@@ -116,10 +115,9 @@ export class IngredientList extends Model<IngredientList>
         transaction
       })
     }
-    const list = await IngredientList.create(
-      { name: patch.name },
-      { transaction }
-    )
+    const list = await IngredientList.create({ name: patch.name } as any, {
+      transaction
+    })
     const lines = _.map(patch.lines, async (line) => {
       if (!_.isUndefined(line.id)) {
         return await IngredientLine.findOne({
@@ -138,7 +136,7 @@ export class IngredientList extends Model<IngredientList>
               ingredient_list_id: list.id,
               ingredient_line_id: (await line).id,
               sort_key
-            },
+            } as any,
             { transaction }
           )
       )

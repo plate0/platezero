@@ -5,11 +5,10 @@ import {
   Column,
   Default,
   ForeignKey,
-  PrimaryKey,
   Model,
+  PrimaryKey,
   Table
 } from 'sequelize-typescript'
-
 import { Recipe, RecipeJSON } from './recipe'
 import { User, UserJSON } from './user'
 
@@ -30,7 +29,7 @@ export class RecipeCollaborator extends Model<RecipeCollaborator>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

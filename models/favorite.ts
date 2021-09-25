@@ -4,7 +4,6 @@ import {
   BelongsTo,
   Column,
   CreatedAt,
-  DefaultScope,
   ForeignKey,
   Model,
   PrimaryKey,
@@ -24,9 +23,6 @@ export interface FavoriteJSON {
   recipe?: RecipeJSON
 }
 
-@DefaultScope({
-  include: [{ model: () => User }, { model: () => Recipe }]
-})
 @Table({
   tableName: 'favorites',
   paranoid: false
@@ -35,7 +31,7 @@ export class Favorite extends Model<Favorite> implements FavoriteJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

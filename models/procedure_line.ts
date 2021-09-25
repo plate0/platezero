@@ -3,8 +3,8 @@ import {
   AutoIncrement,
   Column,
   Model,
-  Table,
-  PrimaryKey
+  PrimaryKey,
+  Table
 } from 'sequelize-typescript'
 
 export interface ProcedureLineJSON {
@@ -22,7 +22,7 @@ export class ProcedureLine extends Model<ProcedureLine>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

@@ -42,7 +42,7 @@ export class Note extends Model<Note> implements NoteJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

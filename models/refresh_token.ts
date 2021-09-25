@@ -1,18 +1,18 @@
 import { randomBytes } from 'crypto'
 import {
-  Default,
   AllowNull,
   AutoIncrement,
   BelongsTo,
-  ForeignKey,
   Column,
+  CreatedAt,
+  Default,
+  DeletedAt,
+  ForeignKey,
   Model,
   PrimaryKey,
   Table,
   Unique,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt
+  UpdatedAt
 } from 'sequelize-typescript'
 import { User } from './user'
 
@@ -23,7 +23,7 @@ export class RefreshToken extends Model<RefreshToken> {
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

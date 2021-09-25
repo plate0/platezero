@@ -22,7 +22,7 @@ export class Preheat extends Model<Preheat> implements PreheatJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column

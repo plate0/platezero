@@ -23,7 +23,7 @@ export class UserActivity extends Model<UserActivity> {
       'insert into user_activity (date, user_id) values (now()::date, ?) on conflict do nothing',
       {
         replacements: [user_id],
-        type: UserActivity.sequelize.QueryTypes.INSERT
+        type: ''
       }
     )
   }

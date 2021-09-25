@@ -1,31 +1,30 @@
+import * as _ from 'lodash'
+import { fn } from 'sequelize'
 import {
   AllowNull,
   AutoIncrement,
   BelongsTo,
   BelongsToMany,
-  Default,
   Column,
+  Default,
   ForeignKey,
   Model,
   PrimaryKey,
   Table
 } from 'sequelize-typescript'
-import { fn } from 'sequelize'
-import * as _ from 'lodash'
-
-import { Preheat } from './preheat'
-import { RecipeYield } from './recipe_yield'
-import { RecipeDuration } from './recipe_duration'
-import { Recipe } from './recipe'
-import { RecipeVersionPreheat } from './recipe_version_preheat'
-import { User } from './user'
-import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
-import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
-import { ProcedureList } from './procedure_list'
-import { IngredientList } from './ingredient_list'
 import { RecipeVersionPatch } from '../common/request-models'
 import { IngredientLine } from './ingredient_line'
+import { IngredientList } from './ingredient_list'
+import { Preheat } from './preheat'
 import { ProcedureLine } from './procedure_line'
+import { ProcedureList } from './procedure_list'
+import { Recipe } from './recipe'
+import { RecipeDuration } from './recipe_duration'
+import { RecipeVersionIngredientList } from './recipe_version_ingredient_list'
+import { RecipeVersionPreheat } from './recipe_version_preheat'
+import { RecipeVersionProcedureList } from './recipe_version_procedure_list'
+import { RecipeYield } from './recipe_yield'
+import { User } from './user'
 
 export interface RecipeVersionJSON {
   id?: number
@@ -54,7 +53,7 @@ export class RecipeVersion extends Model<RecipeVersion>
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column
@@ -131,7 +130,7 @@ export class RecipeVersion extends Model<RecipeVersion>
       ? (
           await RecipeYield.findOrCreate({
             where: { id: patch.recipeYield.id },
-            defaults: { text: patch.recipeYield.text },
+            defaults: { text: patch.recipeYield.text } as any,
             transaction
           })
         )[0].id
@@ -143,7 +142,7 @@ export class RecipeVersion extends Model<RecipeVersion>
             where: { id: patch.recipeDuration.id },
             defaults: {
               duration_seconds: patch.recipeDuration.duration_seconds
-            },
+            } as any,
             transaction
           })
         )[0].id
@@ -157,7 +156,7 @@ export class RecipeVersion extends Model<RecipeVersion>
         parent_recipe_version_id: prev.id,
         recipe_yield_id,
         recipe_duration_id
-      },
+      } as any,
       { transaction }
     )
 
@@ -169,7 +168,7 @@ export class RecipeVersion extends Model<RecipeVersion>
           transaction
         )
         return RecipeVersionProcedureList.create(
-          { recipe_version_id: v.id, procedure_list_id: id, sort_key },
+          { recipe_version_id: v.id, procedure_list_id: id, sort_key } as any,
           { transaction }
         )
       })
@@ -183,7 +182,7 @@ export class RecipeVersion extends Model<RecipeVersion>
           transaction
         )
         return RecipeVersionIngredientList.create(
-          { recipe_version_id: v.id, ingredient_list_id: id, sort_key },
+          { recipe_version_id: v.id, ingredient_list_id: id, sort_key } as any,
           { transaction }
         )
       })
@@ -198,7 +197,7 @@ export class RecipeVersion extends Model<RecipeVersion>
           transaction
         })
         return RecipeVersionPreheat.create(
-          { recipe_version_id: v.id, preheat_id: id },
+          { recipe_version_id: v.id, preheat_id: id } as any,
           { transaction }
         )
       })

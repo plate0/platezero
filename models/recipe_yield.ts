@@ -19,7 +19,7 @@ export class RecipeYield extends Model<RecipeYield> implements RecipeYieldJSON {
   @AutoIncrement
   @PrimaryKey
   @Column
-  public id: number
+  public declare id: number
 
   @AllowNull(false)
   @Column
