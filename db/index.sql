@@ -1,27 +1,25 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-
 -- Create the schemas for PlateZero
 -- pz_public holds everything accessible to GraphQL
 -- pz_private holds all private data that is not accessible via GraphQL
-CREATE SCHEMA pz_public;
-CREATE SCHEMA pz_private;
+create schema pz_public;
+create schema pz_private;
 
-
+-- Remove permissions on the default schema
 alter default privileges revoke execute on functions from public;
-
 
 -- This is not the password we use on production :)
 create role pz_postgraphile login password 'password';
 
+-- pz_anonymous represents a user who is not logged in. They can view public
+-- recipes on PlateZero, but no private information.
 create role pz_anonymous;
 grant pz_anonymous to pz_postgraphile;
 
+-- pz_account represents the logged in user
 create role pz_account;
 grant pz_account to pz_postgraphile;
-
-
-
 
 
 -------------------------------------------------------------------------------
@@ -96,6 +94,10 @@ CREATE TRIGGER recipe_updated_at BEFORE UPDATE
   for each row
   execute procedure pz_private.set_updated_at();
 
+
+
+
+------------
 
 
 
@@ -195,3 +197,6 @@ create policy select_recipe on pz_public.recipe for select
 
 create policy update_user on pz_public.user for update to pz_account
   using (id = nullif(current_setting('jwt.claims.user_id', true), '')::integer);
+
+create policy insert_recipe on pz_public.recipe for insert to pz_account
+  with check (user_id = nullif(current_setting('jwt.claims.user_id', true), '')::integer);

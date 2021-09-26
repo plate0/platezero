@@ -17,7 +17,6 @@ import {
   LoadProcedure
 } from '../components'
 import { RecipeVersionJSON, UserJSON } from '../models'
-import ErrorPage from './_error'
 
 enum UploadStatus {
   None,
@@ -182,10 +181,7 @@ export default class NewRecipeFile extends React.Component<
   }
 
   public render() {
-    const { wording, errorCode } = this.props
-    if (errorCode) {
-      return <ErrorPage statusCode={errorCode} />
-    }
+    const { wording } = this.props
 
     return (
       <Layout>

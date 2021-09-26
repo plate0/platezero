@@ -16,7 +16,6 @@ import {
   UserPageRecipes
 } from '../components'
 import { RecipeJSON, UserJSON } from '../models'
-import ErrorPage from './_error'
 
 const FAVORITES = 'favorites'
 
@@ -58,10 +57,7 @@ class User extends React.Component<UserProps & WithRouterProps> {
   }
 
   public render() {
-    const { user, statusCode } = this.props
-    if (statusCode) {
-      return <ErrorPage statusCode={statusCode} />
-    }
+    const { user } = this.props
     const { recipes, query, sort, tab } = this.props
     return (
       <Layout title={getName(user)}>

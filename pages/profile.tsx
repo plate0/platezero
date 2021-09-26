@@ -23,7 +23,6 @@ import {
 } from '../components'
 import { UserContext } from '../context/UserContext'
 import { UserJSON } from '../models'
-import ErrorPage from './_error'
 
 interface ProfileProps {
   user?: UserJSON
@@ -107,11 +106,8 @@ export default class Profile extends React.Component<
   }
 
   public render() {
-    const { user, statusCode } = this.props
+    const { user } = this.props
     const { isSaving, editErrors, avatarErrors } = this.state
-    if (statusCode) {
-      return <ErrorPage statusCode={statusCode} />
-    }
     const name = getName(user)
     return (
       <Layout title={name}>
