@@ -19,6 +19,7 @@ const InitialState = {
 }
 
 export default function RegisterPage() {
+  const [input, setInput] = useState(InitialState)
   const [register] = useMutation<Register_registerUser, RegisterVariables>(
     RegisterMutation,
     {
@@ -28,7 +29,6 @@ export default function RegisterPage() {
       }
     }
   )
-  const [input, setInput] = useState(InitialState)
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault()
