@@ -1,8 +1,8 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import React from 'react'
 import { Card, CardBody } from 'reactstrap'
 import { Layout } from '../components'
-import { Link } from '../routes'
 
 const links = [
   {
@@ -46,7 +46,7 @@ export default class ImportRecipe extends React.Component {
                   />
                 </div>
                 <div>
-                  <Link to={s.route}>
+                  <Link href={s.route}>
                     <a className="text-dark stretched-link">{s.text}</a>
                   </Link>
                 </div>

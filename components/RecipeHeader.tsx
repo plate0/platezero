@@ -1,9 +1,9 @@
+import Link from 'next/link'
 import React from 'react'
 import { Col } from 'reactstrap'
 import parseUrl from 'url-parse'
 import { getName } from '../common/model-helpers'
 import { RecipeJSON } from '../models'
-import { Link } from '../routes'
 import { Image } from './Image'
 
 const RecipeHeaderNoImage = ({ recipe }: { recipe: RecipeJSON }) => {
@@ -13,7 +13,7 @@ const RecipeHeaderNoImage = ({ recipe }: { recipe: RecipeJSON }) => {
     <Col xs="12" className="my-3">
       <h1 className="mb-0">{title}</h1>
       <h5 className="m-0">{subtitle}</h5>
-      <Link to="user" params={{ username: recipe.owner.username }}>
+      <Link href={{ href: 'user', query: { username: recipe.owner.username } }}>
         <a itemProp="author">{getName(recipe.owner)} </a>
       </Link>
       <Source recipe={recipe} />

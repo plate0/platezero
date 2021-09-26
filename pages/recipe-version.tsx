@@ -1,17 +1,16 @@
+import Link from 'next/link'
 import React from 'react'
-import * as _ from 'lodash'
-import { Card, CardHeader, CardBody } from 'reactstrap'
+import { Card, CardBody, CardHeader } from 'reactstrap'
+import { getName } from '../common/model-helpers'
 import {
+  fetchRecipeLayoutProps,
+  Markdown,
+  PinnedNotes,
   RecipeLayout,
   RecipeLayoutProps,
-  fetchRecipeLayoutProps,
   RecipeVersion,
-  Timestamp,
-  Markdown,
-  PinnedNotes
+  Timestamp
 } from '../components'
-import { Link } from '../routes'
-import { getName } from '../common/model-helpers'
 
 export default class RecipeVersionPage extends React.Component<
   RecipeLayoutProps
@@ -28,7 +27,11 @@ export default class RecipeVersionPage extends React.Component<
         <Card className="mb-3">
           <CardHeader className="theme-warning d-flex align-items-center justify-content-between">
             <div>Viewing a specific version of this recipe</div>
-            <Link route="recipe" params={{ username: owner.username, slug }}>
+            <Link
+              href={{
+                query: { username: owner.username, slug }
+              }}
+            >
               <a className="btn btn-link btn-sm">Show Master Version</a>
             </Link>
           </CardHeader>
@@ -36,10 +39,7 @@ export default class RecipeVersionPage extends React.Component<
             <Markdown source={viewingVersion.message} />
             <div className="text-secondary small mt-3">
               Authored <Timestamp t={viewingVersion.created_at} /> by{' '}
-              <Link
-                route="/user"
-                params={{ username: viewingVersion.author.username }}
-              >
+              <Link href="/user">
                 <a className="font-weight-bold text-secondary">
                   {getName(viewingVersion.author)}
                 </a>

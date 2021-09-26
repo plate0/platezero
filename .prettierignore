@@ -1,2 +1,11 @@
-.next
-dist
+node_modules
+**/.next/**
+**/_next/**
+**/dist/**
+**/queries/**
+
+.pnp.js
+.yarn
+.yarnrc.yml
+coverage
+public/mockServiceWorker.js

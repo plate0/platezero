@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import React, { Component, useContext } from 'react'
 import {
   Col,
@@ -12,18 +13,17 @@ import {
 import { ProfilePicture } from '../components'
 import { Footer } from '../components/Footer'
 import { UserContext } from '../context/UserContext'
-import { Link } from '../routes'
 
 const HomeNav = () => {
   const { user } = useContext(UserContext)
   const action = user ? (
-    <Link route={`/${user.username}`}>
+    <Link href={`/${user.username}`}>
       <a className="d-block py-1 px-2">
         <ProfilePicture img={user.avatar_url} size={30} />
       </a>
     </Link>
   ) : (
-    <Link to="login">
+    <Link href="/login">
       <a className="nav-link text-dark">
         Login <i className="fal fa-sign-in" />
       </a>

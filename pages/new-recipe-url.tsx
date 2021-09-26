@@ -1,5 +1,6 @@
 import { size } from 'lodash'
 import Head from 'next/head'
+import Link from 'next/link'
 import React, { useState } from 'react'
 import {
   Button,
@@ -11,11 +12,10 @@ import {
   Row,
   Spinner
 } from 'reactstrap'
-import { api, HttpStatus, PlateZeroApiError } from '../common'
+import { HttpStatus, PlateZeroApiError } from '../common'
 import { PostRecipe } from '../common/request-models'
 import { Layout, LoadIngredients, LoadProcedure } from '../components'
 import { IngredientListJSON, ProcedureListJSON } from '../models'
-import { Link, Router } from '../routes'
 
 type MissingValue = 'ingredient_lists' | 'procedure_lists'
 
@@ -129,11 +129,11 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
 
   public async onUrl(e: any, url: string) {
     e.preventDefault()
-    const user = await api.getCurrentUser()
+    //    const user = await api.getCurrentUser()
     this.setState({ url })
     try {
-      const recipe = await api.importUrl(url)
-      Router.push(`/${user.username}/${recipe.slug}`)
+      //     const _recipe = await api.importUrl(url)
+      //Router.push(`/${user.username}/${recipe.slug}`)
     } catch (error) {
       if (
         error instanceof PlateZeroApiError &&
@@ -180,10 +180,10 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
 
   public async create() {
     this.setState({ errors: [] })
-    const recipe = this.state.recipe
+    //const recipe = this.state.recipe
     try {
-      const res = await api.createRecipe(recipe)
-      Router.push(res.html_url)
+      // const res = await api.createRecipe(recipe)
+      //Router.push(res.html_url)
     } catch (err) {
       if (err instanceof PlateZeroApiError) {
         this.setState({ errors: err.messages })
@@ -197,7 +197,7 @@ export default class ImportURL extends React.Component<any, ImportURLState> {
       inner = (
         <>
           <UrlForm onSubmit={this.onUrl} />
-          <Link route="new-recipe">
+          <Link href="new-recipe">
             <a className="btn btn-link text-dark mt-3">
               <i className="far fa-chevron-double-left mr-2" />
               Cancel and go back

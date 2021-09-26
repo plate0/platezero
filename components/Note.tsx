@@ -1,26 +1,26 @@
-import React, { useState, useRef } from 'react'
+import Link from 'next/link'
+import React, { useRef, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 import {
-  Row,
-  Col,
+  Button,
+  ButtonDropdown,
   Card,
   CardBody,
-  CardHeader,
   CardFooter,
-  ButtonDropdown,
-  DropdownToggle,
-  DropdownMenu,
+  CardHeader,
+  Col,
   DropdownItem,
-  Tooltip,
-  Button
+  DropdownMenu,
+  DropdownToggle,
+  Row,
+  Tooltip
 } from 'reactstrap'
+import { api } from '../common/http'
+import { getName } from '../common/model-helpers'
+import { NoteJSON } from '../models'
+import { IfLoggedIn } from './IfLoggedIn'
 import { Markdown } from './Markdown'
 import { Timestamp } from './Timestamp'
-import { IfLoggedIn } from './IfLoggedIn'
-import { NoteJSON } from '../models'
-import { getName } from '../common/model-helpers'
-import { Link } from '../routes'
-import { api } from '../common/http'
 
 export const Note = ({
   note,
@@ -79,7 +79,7 @@ export const Note = ({
       <CardHeader className="text-muted py-1 px-2">
         <Row>
           <Col>
-            <Link to={`/${note.author.username}`}>
+            <Link href={`/${note.author.username}`}>
               <a className="text-muted font-weight-bold">
                 {getName(note.author)}
               </a>
@@ -88,7 +88,7 @@ export const Note = ({
               <>
                 {' '}
                 on{' '}
-                <Link to={versionLink}>
+                <Link href={versionLink}>
                   <a className="text-underline text-muted">another version</a>
                 </Link>
               </>

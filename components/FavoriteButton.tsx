@@ -4,7 +4,6 @@ import { Button } from 'reactstrap'
 import { api } from '../common/http'
 import { HttpStatus } from '../common/http-status'
 import { UserContext } from '../context/UserContext'
-import { Router } from '../routes'
 
 export const FavoriteButton = ({ recipeId }: { recipeId: number }) => {
   const { user } = useContext(UserContext)
@@ -43,7 +42,7 @@ export const FavoriteButton = ({ recipeId }: { recipeId: number }) => {
       }
     } catch (err) {
       if (err.statusCode === HttpStatus.Unauthorized) {
-        Router.push('/login')
+        //Router.push('/login')
       }
     } finally {
       setWorking(false)
