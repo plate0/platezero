@@ -3,7 +3,6 @@ import { WithRouterProps } from 'next/dist/client/with-router'
 import { withRouter } from 'next/router'
 import React, { useState } from 'react'
 import { Container } from 'reactstrap'
-import { titleForRoute } from '../routes'
 import { Footer } from './Footer'
 import { MobileMenu } from './MobileMenu'
 import { Navbar } from './Navbar'
@@ -29,7 +28,7 @@ const _Layout = (props: LayoutProps & WithRouterProps) => {
       >
         <Navbar
           root={root}
-          title={props.title || titleForRoute(asPath)}
+          title={props.title}
           mobileMenuOpen={() => setMenuOpen(true)}
           back={router.back}
         />

@@ -1,4 +1,5 @@
 import * as _ from 'lodash'
+import Link from 'next/link'
 import React from 'react'
 import { Col, ListGroup, ListGroupItem, Row } from 'reactstrap'
 import { api } from '../common/http'
@@ -12,7 +13,6 @@ import {
   Timestamp
 } from '../components'
 import { RecipeVersionJSON } from '../models'
-import { Link } from '../routes'
 
 interface Props {
   layoutProps: RecipeLayoutProps
@@ -49,13 +49,13 @@ export default class RecipeHistory extends React.Component<Props> {
                   <Col>
                     <div className="pb-1">
                       <Link
-                        route={`/${owner.username}/${slug}/versions/${v.id}`}
+                        href={`/${owner.username}/${slug}/versions/${v.id}`}
                       >
                         <a>{_.head(lines)}</a>
                       </Link>
                     </div>
                     <div className="small text-muted">
-                      <Link route={`/${v.author.username}`}>
+                      <Link href={`/${v.author.username}`}>
                         <a>
                           <ProfilePicture img={v.author.avatar_url} size={20} />
                           <span className="pl-2">{getName(v.author)}</span>
@@ -74,7 +74,7 @@ export default class RecipeHistory extends React.Component<Props> {
                       <span className="text-success">currently viewing</span>
                     ) : (
                       <Link
-                        route={`/${owner.username}/${slug}/versions/${v.id}`}
+                        href={`/${owner.username}/${slug}/versions/${v.id}`}
                       >
                         <a className="btn btn-outline-primary">Show Version</a>
                       </Link>

@@ -1,5 +1,6 @@
 import { get } from 'lodash'
 import getConfig from 'next/config'
+import Link from 'next/link'
 import Router from 'next/router'
 import React, { useContext, useState } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
@@ -23,7 +24,6 @@ import { api, getErrorMessages } from '../common/http'
 import { RecipeContext } from '../context/RecipeContext'
 import { UserContext } from '../context/UserContext'
 import { NoteJSON, RecipeJSON } from '../models'
-import { Link } from '../routes'
 import { AddNote } from './AddNote'
 import { AlertErrors } from './AlertErrors'
 import { FavoriteButton } from './FavoriteButton'
@@ -44,17 +44,17 @@ export const RecipeNav = ({ route }: { route: string }) => {
   return (
     <Nav className="mb-3 d-print-none recipe-nav">
       <NavItem active={route === '/recipe'}>
-        <Link route={versionURL} passHref>
+        <Link href={versionURL} passHref>
           <NavLink active={route === '/recipe'}>Recipe</NavLink>
         </Link>
       </NavItem>
       <NavItem active={route === '/recipe-history'}>
-        <Link route={`${versionURL}/history`} passHref>
+        <Link href={`${versionURL}/history`} passHref>
           <NavLink active={route === '/recipe-history'}>History</NavLink>
         </Link>
       </NavItem>
       <NavItem active={route === '/recipe-notes'}>
-        <Link route={`${versionURL}/notes`} passHref>
+        <Link href={`${versionURL}/notes`} passHref>
           <NavLink active={route === '/recipe-notes'}>
             Notes {noteCount > 0 ? `(${noteCount})` : ''}
           </NavLink>

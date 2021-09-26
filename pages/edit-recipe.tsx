@@ -1,41 +1,40 @@
-import React from 'react'
-import Router from 'next/router'
-import Head from 'next/head'
-import ErrorPage from './_error'
 import * as _ from 'lodash'
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Row,
-  Col,
-  Button,
-  FormGroup,
-  FormText
-} from 'reactstrap'
+import Head from 'next/head'
+import Link from 'next/link'
+import Router from 'next/router'
+import React from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
-
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  FormGroup,
+  FormText,
+  Row
+} from 'reactstrap'
+import { api, getErrorMessages } from '../common/http'
+import { RecipeVersionPatch } from '../common/request-models'
 import {
   AlertErrors,
   EditableImage,
-  Layout,
-  ProcedureListsEditor,
   IngredientListsEditor,
+  Layout,
   PreheatsEditor,
+  ProcedureListsEditor,
   RecipeDuration,
   RecipeYield
 } from '../components'
-import { api, getErrorMessages } from '../common/http'
 import {
-  RecipeVersionJSON,
-  ProcedureListJSON,
   IngredientListJSON,
   PreheatJSON,
+  ProcedureListJSON,
   RecipeDurationJSON,
+  RecipeVersionJSON,
   RecipeYieldJSON
 } from '../models'
-import { RecipeVersionPatch } from '../common/request-models'
-import { Link } from '../routes'
+import ErrorPage from './_error'
 
 interface Props {
   branch?: string
@@ -156,7 +155,7 @@ export default class EditRecipe extends React.Component<Props, State> {
             <h1>{v.recipe.title}</h1>
           </Col>
           <Col xs="auto">
-            <Link route={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
+            <Link href={`/${v.recipe.owner.username}/${v.recipe.slug}`}>
               <a className="btn btn-outline-primary">Back to Recipe</a>
             </Link>
           </Col>

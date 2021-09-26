@@ -1,13 +1,13 @@
+import Link from 'next/link'
 import React from 'react'
-import { IfLoggedIn } from './IfLoggedIn'
-import { Link } from '../routes'
 import { Blankslate } from './Blankslate'
+import { IfLoggedIn } from './IfLoggedIn'
 
 export const RecipeListBlankslate = (props: { username: string }) => (
   <Blankslate>
     <h1>No recipes yet :(</h1>
     <IfLoggedIn username={props.username}>
-      <Link route="/recipe/new">
+      <Link href="/recipe/new">
         <a className="btn btn-primary">Create your first!</a>
       </Link>
     </IfLoggedIn>

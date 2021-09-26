@@ -5,7 +5,6 @@ import { Button, Col, Row } from 'reactstrap'
 import { api } from '../common/http'
 import { useDebounce } from '../hooks/useDebounce'
 import { RecipeJSON } from '../models'
-import { Router } from '../routes'
 import { RecipeList } from './RecipeList'
 import {
   RecipeListBlankslate,
@@ -51,7 +50,7 @@ export const UserPageRecipes = ({
 
   // replace route when href changes
   useEffect(() => {
-    Router.replaceRoute(href, { shallow: true })
+    //Router.replaceRoute(href, { shallow: true })
   }, [href])
 
   // load new recipes

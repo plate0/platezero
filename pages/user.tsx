@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
 import { WithRouterProps } from 'next/dist/client/with-router'
 import Head from 'next/head'
+import Link from 'next/link'
 import { withRouter } from 'next/router'
 import React from 'react'
 import { Col, Nav, NavItem, NavLink, Row } from 'reactstrap'
@@ -15,7 +16,6 @@ import {
   UserPageRecipes
 } from '../components'
 import { RecipeJSON, UserJSON } from '../models'
-import { Link } from '../routes'
 import ErrorPage from './_error'
 
 const FAVORITES = 'favorites'
@@ -74,7 +74,7 @@ class User extends React.Component<UserProps & WithRouterProps> {
             <h3>{getName(user)}</h3>
             <IfLoggedIn username={user.username}>
               <p>
-                <Link route="profile">
+                <Link href="profile">
                   <a className="btn btn-link">Edit Profile</a>
                 </Link>
               </p>
@@ -83,12 +83,12 @@ class User extends React.Component<UserProps & WithRouterProps> {
           <Col xs={12} sm={8} md={9} lg={10}>
             <Nav tabs>
               <NavItem>
-                <Link to={`/${user.username}`} passHref>
+                <Link href={`/${user.username}`} passHref>
                   <NavLink active={tab !== FAVORITES}>Recipes</NavLink>
                 </Link>
               </NavItem>
               <NavItem>
-                <Link to={`/${user.username}?tab=favorites`} passHref>
+                <Link href={`/${user.username}?tab=favorites`} passHref>
                   <NavLink active={tab === FAVORITES}>Favorites</NavLink>
                 </Link>
               </NavItem>

@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { Button, Container, Navbar } from 'reactstrap'
 import { UserContext } from '../context/UserContext'
-import { Router } from '../routes'
 import { FooterLinks } from './Footer'
 
 export type CloseHandler = () => any
@@ -21,9 +20,9 @@ export const MobileMenu = ({
     { name: 'Recipes', route: 'user', params: { username: user.username } },
     { name: 'Add Recipe', route: 'new-recipe' }
   ]
-  const route = (route: string, params: any = {}) => () => {
+  const route = (_route: string, _params: any = {}) => () => {
     close()
-    Router.pushRoute(route, params)
+    //Router.pushRoute(route, params)
   }
   return (
     <div className="mobile menu">

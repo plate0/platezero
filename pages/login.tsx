@@ -1,11 +1,11 @@
+import Head from 'next/head'
+import Link from 'next/link'
+import Router from 'next/router'
 import * as React from 'react'
 import { Alert, Button, Container, Form, FormGroup, Label } from 'reactstrap'
-import { authenticated, api } from '../common'
-import Router from 'next/router'
+import { api, authenticated } from '../common'
 import { Layout } from '../components'
 import { UserContext } from '../context/UserContext'
-import Head from 'next/head'
-import { Link } from '../routes'
 
 interface LoginState {
   error: string
@@ -112,7 +112,7 @@ export default class Login extends React.Component<any, LoginState> {
                       and we'll get it sorted out!
                     </div>
                   </div>
-                  <Link to="/register" passHref>
+                  <Link href="/register" passHref>
                     <Button color="primary" outline block className="my-3">
                       Sign up for PlateZero now!
                     </Button>

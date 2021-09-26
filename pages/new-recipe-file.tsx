@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
 import { size } from 'lodash'
 import Head from 'next/head'
+import Link from 'next/link'
 import Router from 'next/router'
 import React from 'react'
 import { Button, Col, Row, Spinner } from 'reactstrap'
@@ -16,7 +17,6 @@ import {
   LoadProcedure
 } from '../components'
 import { RecipeVersionJSON, UserJSON } from '../models'
-import { Link } from '../routes'
 import ErrorPage from './_error'
 
 enum UploadStatus {
@@ -277,7 +277,7 @@ export default class NewRecipeFile extends React.Component<
               email to you when it is ready.
             </p>
             <div className="text-center">
-              <Link to={`/${user.username}`}>
+              <Link href={`/${user.username}`}>
                 <a className="btn btn-link">View My Recipes</a>
               </Link>
             </div>

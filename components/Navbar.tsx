@@ -1,8 +1,8 @@
+import Link from 'next/link'
 import React, { useContext } from 'react'
 import { Button, Container, Nav, Navbar as RsNavbar, NavItem } from 'reactstrap'
 import { UserContext } from '../context/UserContext'
 import { UserJSON } from '../models'
-import { Link } from '../routes'
 import { ProfilePicture } from './ProfilePicture'
 
 export interface NavbarProps {
@@ -41,7 +41,7 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
             Back
           </Button>
         )}
-        <Link route={user ? `/${user.username}` : '/'}>
+        <Link href={user ? `/${user.username}` : '/'}>
           <a className="navbar-brand py-0 d-none d-md-block">
             <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
           </a>
@@ -59,7 +59,7 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
 }
 
 const UserCardNav = ({ user }: { user: UserJSON }) => (
-  <Link route={`/${user.username}`}>
+  <Link href={`/${user.username}`}>
     <a>
       <ProfilePicture img={user.avatar_url} size={30} />
     </a>
@@ -68,7 +68,7 @@ const UserCardNav = ({ user }: { user: UserJSON }) => (
 
 const NewRecipeDropdown = () => (
   <div className="d-none d-md-block">
-    <Link route="new-recipe">
+    <Link href="new-recipe">
       <a className="add-recipe text-white btn btn-link" id="add-recipe">
         Add Recipe
       </a>
@@ -79,14 +79,14 @@ const NewRecipeDropdown = () => (
 const AnonNav = () => (
   <>
     <NavItem>
-      <Link route="/register">
+      <Link href="/register">
         <a role="button" className="btn btn-link text-light">
           Sign Up
         </a>
       </Link>
     </NavItem>
     <NavItem>
-      <Link route="/login">
+      <Link href="/login">
         <a role="button" className="btn btn-link text-light">
           Log In
         </a>
