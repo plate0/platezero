@@ -4,7 +4,9 @@
     "dev": "next dev",
     "build": "next build",
     "apollo:generate": "apollo codegen:generate --excludes='node_modules/*' --includes='**/*.tsx' --endpoint http://localhost:5000/graphql --target typescript --tagName gql --outputFlat queries --passthroughCustomScalars --customScalarsPrefix PZ",
-    "lint": "prettier --check \"**/*.{js,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss}\"",
+    "lint": "yarn prettier:check",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "start": "next start",
     "test": "jest"
   },

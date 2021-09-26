@@ -2,7 +2,7 @@ node_modules
 **/.next/**
 **/_next/**
 **/dist/**
-**/queries/generated/**
+**/queries/**
 
 .pnp.js
 .yarn
