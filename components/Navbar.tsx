@@ -43,7 +43,11 @@ export const Navbar = ({ title, mobileMenuOpen, root, back }) => {
         )}
         <Link href={user ? `/${user.username}` : '/'}>
           <a className="navbar-brand py-0 d-none d-md-block">
-            <img src="/static/logo-reverse.png" alt="PlateZero" height="40" />
+            <img
+              src="/static/logo-reverse.png"
+              alt="PlateZero"
+              className="w-28"
+            />
           </a>
         </Link>
         <div className="title text-white d-block d-md-none flex-fill text-center">
