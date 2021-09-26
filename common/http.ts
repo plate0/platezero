@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import cookie from 'js-cookie'
 import * as _ from 'lodash'
 import { get } from 'lodash'
