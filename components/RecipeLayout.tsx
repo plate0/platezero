@@ -1,12 +1,11 @@
-import React, { useReducer } from 'react'
-import { Row, Col } from 'reactstrap'
 import * as _ from 'lodash'
+import React, { useReducer } from 'react'
+import { Col, Row } from 'reactstrap'
+import { api } from '../common/http'
+import { maybeNumber } from '../common/number'
 import { Head, Layout, RecipeHeader, RecipeNav } from '../components'
 import { RecipeContext } from '../context/RecipeContext'
-import { RecipeJSON, RecipeVersionJSON, NoteJSON } from '../models'
-import ErrorPage from '../pages/_error'
-import { maybeNumber } from '../common/number'
-import { api } from '../common/http'
+import { NoteJSON, RecipeJSON, RecipeVersionJSON } from '../models'
 
 enum NoteAction {
   CREATE,
@@ -79,7 +78,6 @@ export const fetchRecipeLayoutProps = async ({
 }
 
 export const RecipeLayout = ({
-  statusCode,
   pathname,
   condensedHeader,
   children,
@@ -91,9 +89,6 @@ export const RecipeLayout = ({
 }: RecipeLayoutProps) => {
   const { title, description, image_url, html_url } = recipe
   const [notes, dispatch] = useReducer(notesReducer, initialNotes)
-  if (statusCode) {
-    return <ErrorPage statusCode={statusCode} />
-  }
   return (
     <Layout title={title}>
       <Head

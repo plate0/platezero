@@ -34,7 +34,6 @@ import {
   RecipeVersionJSON,
   RecipeYieldJSON
 } from '../models'
-import ErrorPage from './_error'
 
 interface Props {
   branch?: string
@@ -128,9 +127,6 @@ export default class EditRecipe extends React.Component<Props, State> {
   }
 
   public render() {
-    if (this.props.statusCode) {
-      return <ErrorPage statusCode={this.props.statusCode} />
-    }
     const v = this.props.recipeVersion
     return (
       <Layout>
