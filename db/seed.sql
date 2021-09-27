@@ -1,0 +1,2 @@
+insert into pz_public.user (username, name) values ('em', 'Ethan');
+insert into pz_private.user_account (user_id, password_hash) values (1, '$2a$06$1XzUT.uNiB.lR2fsbrU1huS8INvtDD.yZOKgRTzzJlOdNypmEHgKO')

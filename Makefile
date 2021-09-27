@@ -8,10 +8,17 @@ db.build:
 db.run: db.build
 	-docker run --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=password --name platezero-db platezero/db
 
+.PHONY: db.test
+db.test: db.stop db.build 
+	docker run --rm -p 5432:5432 -e POSTGRES_PASSWORD=password platezero/db
+
+.PHONY: db.stop
+db.stop:
+	-docker stop platezero-db
 
 .PHONY: graphql
-graphql: db.run
-	npx postgraphile \
+graphql: db.stop db.run
+	DEBUG=graphile-build:warn npx postgraphile \
 		-c postgres://postgres:password@localhost/postgres \
 		--watch \
 		--enhance-graphiql \

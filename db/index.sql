@@ -66,26 +66,30 @@ COMMENT ON TABLE pz_private.user_account IS 'Private information about a users a
 --------
 
 -- Recipe is the heart of PlateZero
-CREATE TABLE pz_public.recipe (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL REFERENCES pz_public.user(id),
-  slug TEXT NOT NULL,
-  title TEXT NOT NULL,
-  subtitle TEXT,
-  description TEXT,
-  procedure TEXT,
-  ingredients TEXT,
-  image_url TEXT,
-  source_url TEXT,
-  source_author TEXT,
-  source_title TEXT,
-  source_isbn TEXT,
+create table pz_public.recipe (
+  id serial primary key,
+  user_id integer not null references pz_public.user(id),
+  slug text not null,
+  title text not nulL,
+  subtitle text,
+  description text,
+  procedure text,
+  ingredients text,
+  yield text,
+  duration integer,
+  image_url text,
+  source_url text,
+  source_author text,
+  source_title text,
+  source_isbn text,
   created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
   deleted_at TIMESTAMP WITHOUT TIME ZONE
 );
-COMMENT ON TABLE pz_public.recipe IS 'A recipe.';
+create unique index unique_user_slug ON pz_public.recipe (user_id, slug);
+COMMENT ON TABLE "pz_public"."recipe" IS E'@omit create\nA recipe.';
 COMMENT ON COLUMN pz_public.recipe.id IS 'The primary unique identifier for the recipe.';
+
 
 
 
@@ -95,6 +99,90 @@ CREATE TRIGGER recipe_updated_at BEFORE UPDATE
   execute procedure pz_private.set_updated_at();
 
 
+--- Create a recipe
+create function pz_public.create_recipe(
+  slug text,
+  title text,
+  subtitle text,
+  description text,
+  procedure text,
+  ingredients text,
+  yield text,
+  duration integer,
+  image_url text,
+  source_url text,
+  source_author text,
+  source_title text,
+  source_isbn text
+)
+RETURNS pz_public.recipe
+AS $$
+  DECLARE
+    slug_count integer;
+    recipe pz_public.recipe;
+  BEGIN
+  select into
+    slug_count count(*)
+  from pz_public.recipe r
+  where
+    r.user_id = pz_public.current_user_id()
+  and (
+    r.slug = create_recipe.slug
+    OR
+    r.slug ~ (create_recipe.slug || '-' || '\d+')
+    );
+  
+
+  insert into pz_public.recipe (
+    user_id,
+    slug,
+    title,
+    subtitle,
+    description,
+    procedure,
+    ingredients,
+    yield,
+    duration,
+    image_url,
+    source_url,
+    source_author,
+    source_title,
+    source_isbn
+  ) values (
+    pz_public.current_user_id(),
+    case when slug_count > 0 then slug || '-' || (slug_count + 1) else slug end,
+    title,
+    subtitle,
+    description,
+    procedure,
+    ingredients,
+    yield,
+    duration,
+    image_url,
+    source_url,
+    source_author,
+    source_title,
+    source_isbn
+  )
+  returning * into recipe;
+  return recipe;
+  END;
+$$ LANGUAGE plpgsql;
+grant execute on function pz_public.create_recipe(
+  text,
+  text,
+  text,
+  text,
+  text,
+  text,
+  text,
+  integer,
+  text,
+  text,
+  text,
+  text,
+  text
+) to pz_account;
 
 
 ------------
@@ -166,6 +254,13 @@ $$ language sql stable;
 
 comment on function pz_public.current_user() is 'Gets the user who was identified by our JWT.';
 
+create function pz_public.current_user_id() returns integer as $$
+  BEGIN
+    return (nullif(current_setting('jwt.claims.user_id', true), '')::integer);
+  END;
+$$ language plpgsql stable;
+grant execute on function pz_public.current_user_id() to pz_anonymous, pz_account;
+
 
 
 
@@ -184,6 +279,8 @@ grant execute on function pz_public.authenticate(text, text) to pz_anonymous, pz
 grant execute on function pz_public.current_user() to pz_anonymous, pz_account;
 
 grant execute on function pz_public.register_user(text, text) to pz_anonymous;
+
+
 
 
 alter table pz_public.user enable row level security;

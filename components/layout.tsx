@@ -4,7 +4,6 @@ import { withRouter } from 'next/router'
 import React, { useState } from 'react'
 import { Container } from 'reactstrap'
 import { Footer } from './Footer'
-import { MobileMenu } from './MobileMenu'
 import { Navbar } from './Navbar'
 
 export interface LayoutProps {
@@ -40,7 +39,6 @@ const _Layout = (props: LayoutProps & WithRouterProps) => {
         </Container>
         <Footer />
       </div>
-      <MobileMenu isOpen={menuOpen} close={() => setMenuOpen(false)} />
     </>
   )
 }

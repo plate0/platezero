@@ -1,5 +1,7 @@
-import { gql, useMutation } from '@apollo/client'
-import { Layout } from 'components'
+import { ApolloError, gql, useMutation } from '@apollo/client'
+import { AlertErrors, Header } from 'components'
+import { asContainer } from 'components/container'
+import { FormInput, FormTextarea } from 'components/input'
 import { CreateRecipe, CreateRecipeVariables } from 'queries/CreateRecipe'
 import { useState } from 'react'
 import { Button } from 'reactstrap'
@@ -15,21 +17,23 @@ const CreateRecipeMutation = gql`
 `
 
 const InitialState = {
-  title: 'hi',
-  ingredients: 'hi',
-  procedure: 'hi',
-  slug: 'oops'
+  title: '',
+  ingredients: '',
+  procedure: '',
+  slug: ''
 }
 
 export default function NewRecipePage() {
-  const [input, _setInput] = useState(InitialState)
+  const [err, setErr] = useState('')
+  const [input, setInput] = useState(InitialState)
   const [create] = useMutation<CreateRecipe, CreateRecipeVariables>(
     CreateRecipeMutation,
     {
       onCompleted: (data: CreateRecipe) => {
         console.log('Created!', data)
         // redirect to new user page
-      }
+      },
+      onError: (error: ApolloError) => setErr(error.message)
     }
   )
 
@@ -37,19 +41,36 @@ export default function NewRecipePage() {
     e.preventDefault()
     create({
       variables: {
-        input: { recipe: { ...input, userId: 1 } }
+        input: { recipe: { ...input, userId: 2 } }
       }
     })
   }
 
   return (
-    <Layout>
-      <form onSubmit={onSubmit}>
-        <input></input>
-        <textarea />
-        <textarea />
+    <>
+      <Header />
+      {!!err && <AlertErrors errors={[err]} />}
+      <form onSubmit={onSubmit} className={asContainer('py-8')}>
+        <h1 className="text-xl">Create New Recipe</h1>
+        <FormInput
+          label="Title"
+          placeholder="Recipe title"
+          value={input.title}
+          onChange={(e) => setInput({ ...input, title: e.target.value })}
+        />
+
+        <FormTextarea
+          label="Ingredients"
+          value={input.ingredients}
+          onChange={(e) => setInput({ ...input, ingredients: e.target.value })}
+        />
+        <FormTextarea
+          label="Steps"
+          value={input.procedure}
+          onChange={(e) => setInput({ ...input, procedure: e.target.value })}
+        />
         <Button>Submit</Button>
       </form>
-    </Layout>
+    </>
   )
 }
