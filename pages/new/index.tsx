@@ -2,6 +2,7 @@ import { ApolloError, gql, useMutation } from '@apollo/client'
 import { AlertErrors, Header } from 'components'
 import { asContainer } from 'components/container'
 import { FormInput, FormTextarea } from 'components/input'
+import { useRouter } from 'next/router'
 import { CreateRecipe, CreateRecipeVariables } from 'queries/CreateRecipe'
 import { useState } from 'react'
 import { Button } from 'reactstrap'
@@ -11,6 +12,9 @@ const CreateRecipeMutation = gql`
     createRecipe(input: $input) {
       recipe {
         slug
+        userByUserId {
+          username
+        }
       }
     }
   }
@@ -24,14 +28,16 @@ const InitialState = {
 }
 
 export default function NewRecipePage() {
+  const router = useRouter()
   const [err, setErr] = useState('')
   const [input, setInput] = useState(InitialState)
   const [create] = useMutation<CreateRecipe, CreateRecipeVariables>(
     CreateRecipeMutation,
     {
       onCompleted: (data: CreateRecipe) => {
-        console.log('Created!', data)
-        // redirect to new user page
+        router.push(
+          `/${data.createRecipe.recipe.userByUserId.username}/${data.createRecipe.recipe.slug}`
+        )
       },
       onError: (error: ApolloError) => setErr(error.message)
     }
