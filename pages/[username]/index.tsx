@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client'
 import { Layout } from 'components'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { client } from 'queries'
 import {
   UserPageQuery,
@@ -40,8 +41,12 @@ export default function UserPage({ data }: Props) {
       <ul>
         {data.recipesByUserId.edges.map(({ node }) => (
           <li key={node.slug}>
-            <div>{node.title}</div>
-            <div>{node.description}</div>
+            <Link href={`/${data.username}/${node.slug}`}>
+              <a>
+                <div>{node.title}</div>
+                <div>{node.description}</div>
+              </a>
+            </Link>
           </li>
         ))}
       </ul>

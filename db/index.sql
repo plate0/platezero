@@ -185,6 +185,17 @@ grant execute on function pz_public.create_recipe(
 ) to pz_account;
 
 
+create function pz_public.recipe_by_slug(slug text) returns pz_public.recipe as $$
+declare
+  recipe pz_public.recipe;
+begin
+  select * into recipe from pz_public.recipe r WHERE r.slug = recipe_by_slug.slug limit 1;
+  return recipe;
+end;
+$$ language plpgsql strict stable;
+grant execute on function pz_public.recipe_by_slug(text) to pz_anonymous, pz_account;
+
+
 ------------
 
 

@@ -17,33 +17,23 @@ export interface AuthenticateInput {
 }
 
 /**
- * All input for the create `Recipe` mutation.
+ * All input for the `createRecipe` mutation.
  */
 export interface CreateRecipeInput {
   clientMutationId?: string | null;
-  recipe: RecipeInput;
-}
-
-/**
- * An input for mutations affecting `Recipe`
- */
-export interface RecipeInput {
-  id?: number | null;
-  userId: number;
-  slug: string;
-  title: string;
+  slug?: string | null;
+  title?: string | null;
   subtitle?: string | null;
   description?: string | null;
   procedure?: string | null;
   ingredients?: string | null;
+  yield?: string | null;
+  duration?: number | null;
   imageUrl?: string | null;
   sourceUrl?: string | null;
   sourceAuthor?: string | null;
   sourceTitle?: string | null;
   sourceIsbn?: string | null;
-  createdAt?: PZDatetime | null;
-  updatedAt?: PZDatetime | null;
-  deletedAt?: PZDatetime | null;
 }
 
 /**
