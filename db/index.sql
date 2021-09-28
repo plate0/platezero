@@ -185,15 +185,21 @@ grant execute on function pz_public.create_recipe(
 ) to pz_account;
 
 
-create function pz_public.recipe_by_slug(slug text) returns pz_public.recipe as $$
+create function pz_public.recipe_by_slug(username text, slug text) returns pz_public.recipe as $$
 declare
   recipe pz_public.recipe;
 begin
-  select * into recipe from pz_public.recipe r WHERE r.slug = recipe_by_slug.slug limit 1;
+  select r.* into recipe
+  from pz_public.recipe r
+  inner join pz_public.user u on u.id = r.user_id
+  where r.slug = recipe_by_slug.slug
+  and
+  u.username = recipe_by_slug.username
+  limit 1;
   return recipe;
 end;
 $$ language plpgsql strict stable;
-grant execute on function pz_public.recipe_by_slug(text) to pz_anonymous, pz_account;
+grant execute on function pz_public.recipe_by_slug(text, text) to pz_anonymous, pz_account;
 
 
 ------------
@@ -308,3 +314,6 @@ create policy update_user on pz_public.user for update to pz_account
 
 create policy insert_recipe on pz_public.recipe for insert to pz_account
   with check (user_id = nullif(current_setting('jwt.claims.user_id', true), '')::integer);
+
+create policy update_recipe on pz_public.recipe for update to pz_account
+  using (user_id = nullif(current_setting('jwt.claims.user_id', true), '')::integer);

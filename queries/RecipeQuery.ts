@@ -7,6 +7,11 @@
 // GraphQL query operation: RecipeQuery
 // ====================================================
 
+export interface RecipeQuery_recipeBySlug_userByUserId {
+  __typename: "User";
+  username: string;
+}
+
 export interface RecipeQuery_recipeBySlug {
   __typename: "Recipe";
   /**
@@ -18,6 +23,10 @@ export interface RecipeQuery_recipeBySlug {
   ingredients: string | null;
   description: string | null;
   procedure: string | null;
+  /**
+   * Reads a single `User` that is related to this `Recipe`.
+   */
+  userByUserId: RecipeQuery_recipeBySlug_userByUserId | null;
 }
 
 export interface RecipeQuery {
@@ -26,4 +35,5 @@ export interface RecipeQuery {
 
 export interface RecipeQueryVariables {
   slug: string;
+  username: string;
 }

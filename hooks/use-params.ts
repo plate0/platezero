@@ -1,6 +1,11 @@
-import { useRouter } from 'next/router'
+import { NextRouter, useRouter } from 'next/router'
 
-export function useParams<T>(): T {
-  const { query } = useRouter()
-  return (query as unknown) as T
+type UseParamRouter = {
+  router: NextRouter
+}
+
+export function useParams<T>(): T & UseParamRouter {
+  const router = useRouter()
+  const { query } = router
+  return { ...((query as unknown) as T), router }
 }
