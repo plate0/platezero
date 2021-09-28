@@ -16,16 +16,10 @@ export interface CreateRecipe_createRecipe_recipe {
 
 export interface CreateRecipe_createRecipe {
   __typename: "CreateRecipePayload";
-  /**
-   * The `Recipe` that was created by this mutation.
-   */
   recipe: CreateRecipe_createRecipe_recipe | null;
 }
 
 export interface CreateRecipe {
-  /**
-   * Creates a single `Recipe`.
-   */
   createRecipe: CreateRecipe_createRecipe | null;
 }
 

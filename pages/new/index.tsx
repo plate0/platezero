@@ -41,7 +41,7 @@ export default function NewRecipePage() {
     e.preventDefault()
     create({
       variables: {
-        input: { recipe: { ...input, userId: 2 } }
+        input
       }
     })
   }
