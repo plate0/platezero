@@ -2,7 +2,6 @@ import { gql, useMutation } from '@apollo/client'
 import { useCookie } from 'next-cookie'
 import { Login, LoginVariables } from 'queries/Login'
 import { useState } from 'react'
-import { Button, Form, FormGroup, Label } from 'reactstrap'
 
 const LoginMutation = gql`
   mutation Login($input: AuthenticateInput!) {
@@ -37,40 +36,30 @@ export default function LoginPage() {
   }
 
   return (
-    <Form onSubmit={onSubmit} className="mb-3">
-      <FormGroup>
-        <Label for="username">
-          <strong>Username</strong>
-        </Label>
-        <input
-          type="text"
-          name="username"
-          className="form-control"
-          autoCapitalize="none"
-          required
-          autoFocus={true}
-          tabIndex={1}
-          value={input.username}
-          onChange={(e) => setInput({ ...input, username: e.target.value })}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label for="password">
-          <strong>Password</strong>
-        </Label>
-        <input
-          type="password"
-          name="password"
-          className="form-control"
-          required
-          tabIndex={2}
-          value={input.password}
-          onChange={(e) => setInput({ ...input, password: e.target.value })}
-        />
-      </FormGroup>
-      <Button type="submit" color="primary" className="btn-block">
+    <form onSubmit={onSubmit} className="mb-3">
+      <input
+        type="text"
+        name="username"
+        className="form-control"
+        autoCapitalize="none"
+        required
+        autoFocus={true}
+        tabIndex={1}
+        value={input.username}
+        onChange={(e) => setInput({ ...input, username: e.target.value })}
+      />
+      <input
+        type="password"
+        name="password"
+        className="form-control"
+        required
+        tabIndex={2}
+        value={input.password}
+        onChange={(e) => setInput({ ...input, password: e.target.value })}
+      />
+      <button type="submit" color="primary" className="btn-block">
         Sign In
-      </Button>
-    </Form>
+      </button>
+    </form>
   )
 }

@@ -1,7 +1,6 @@
 import { gql, useMutation } from '@apollo/client'
 import { RegisterVariables, Register_registerUser } from 'queries/Register'
 import { useState } from 'react'
-import { Button, Form, Input } from 'reactstrap'
 
 const RegisterMutation = gql`
   mutation Register($input: RegisterUserInput!) {
@@ -40,8 +39,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <Form onSubmit={onSubmit}>
-      <Input
+    <form onSubmit={onSubmit}>
+      <input
         type="text"
         name="username"
         autoCapitalize="none"
@@ -49,16 +48,14 @@ export default function RegisterPage() {
         value={input.username}
         onChange={(e) => setInput({ ...input, username: e.target.value })}
       />
-      <Input
+      <input
         type="password"
         name="password"
         placeholder="Choose a strong password, at least 8 characters"
         value={input.password}
         onChange={(e) => setInput({ ...input, password: e.target.value })}
       />
-      <Button color="primary" block={true}>
-        Sign Up for PlateZero
-      </Button>
-    </Form>
+      <button>Sign Up for PlateZero</button>
+    </form>
   )
 }

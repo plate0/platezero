@@ -1,5 +1,5 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
-import type { NextApiRequest } from 'next'
+import { NextApiRequest } from 'next'
 import { useCookie } from 'next-cookie'
 
 

@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client'
-import { Layout } from 'components'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { client } from 'queries'
@@ -35,7 +34,7 @@ export default function UserPage({ data }: Props) {
     return <>404</>
   }
   return (
-    <Layout>
+    <div>
       <p>{data.username}</p>
       <div>Recipes</div>
       <ul>
@@ -50,7 +49,7 @@ export default function UserPage({ data }: Props) {
           </li>
         ))}
       </ul>
-    </Layout>
+    </div>
   )
 }
 

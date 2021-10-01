@@ -1,8 +1,12 @@
 
+.PHONY: install
+install:
+	yarn set version berry &&	yarn set version latest
+	yarn install
+
 .PHONY: db.build
 db.build:
 	cd db && docker build -t platezero/db .
-
 
 .PHONY: db.run
 db.run: db.build

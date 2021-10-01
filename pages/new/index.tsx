@@ -1,11 +1,10 @@
 import { ApolloError, gql, useMutation } from '@apollo/client'
-import { AlertErrors, Header } from 'components'
+import { Header } from 'components'
 import { asContainer } from 'components/container'
 import { FormInput, FormTextarea } from 'components/input'
 import { useRouter } from 'next/router'
 import { CreateRecipe, CreateRecipeVariables } from 'queries/CreateRecipe'
 import { useState } from 'react'
-import { Button } from 'reactstrap'
 
 const CreateRecipeMutation = gql`
   mutation CreateRecipe($input: CreateRecipeInput!) {
@@ -55,7 +54,7 @@ export default function NewRecipePage() {
   return (
     <>
       <Header />
-      {!!err && <AlertErrors errors={[err]} />}
+      {!!err && <div>{err}</div>}
       <form onSubmit={onSubmit} className={asContainer('py-8')}>
         <h1 className="text-xl">Create New Recipe</h1>
         <FormInput
@@ -75,7 +74,7 @@ export default function NewRecipePage() {
           value={input.procedure}
           onChange={(e) => setInput({ ...input, procedure: e.target.value })}
         />
-        <Button>Submit</Button>
+        <button>Submit</button>
       </form>
     </>
   )
