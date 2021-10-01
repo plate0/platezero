@@ -1,11 +1,50 @@
-venv
-.project
-**/*.marks
-.settings
-docs/Gemfile.lock
-node_modules/
-**/*.log
-
-.DS_Store
-.next
+# build output
 dist
+.next
+target
+
+# dependencies
+node_modules
+package-lock.json
+yarn.lock
+!/yarn.lock
+test/node_modules
+
+# logs & pids
+*.log
+pids
+
+# coverage
+.nyc_output
+coverage
+
+# test output
+test/**/out*
+test/**/next-env.d.ts
+.DS_Store
+/e2e-tests
+test/tmp/**
+
+# Editors
+**/.idea
+**/.#*
+
+# examples
+examples/**/out
+examples/**/.env*.local
+
+pr-stats.md
+test-timings.json
+
+# Vercel
+.vercel
+.now
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

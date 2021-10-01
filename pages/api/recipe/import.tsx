@@ -1,10 +1,12 @@
 import { gql } from '@apollo/client'
-import { toSlug } from 'common/slug'
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { getClient } from 'queries'
 import { CreateRecipeInput } from 'queries/globalTypes'
 import { ImportRecipe, ImportRecipeVariables } from 'queries/ImportRecipe'
 import { parse } from 'recipe-parser'
+import slugify from 'slugify'
+
+const REPLACEMENT = '-'
 
 const mutation = gql`
   mutation ImportRecipe($input: CreateRecipeInput!) {
@@ -19,7 +21,10 @@ const mutation = gql`
   }
 `
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const client = getClient(req)
   const { url } = req.body
   const input = convert(await parse(url))
@@ -65,3 +70,10 @@ const convert = ({
     .flat(Infinity)
     .join('\n\n')
 })
+
+export const toSlug = (s: string): string =>
+  slugify(s, { lower: true, remove: null, replacement: REPLACEMENT })
+    .replace(/[^a-z0-9\-]/gi, REPLACEMENT)
+    .replace(/\-{2,}/g, REPLACEMENT)
+    .replace(/^-|-$/g, '')
+    .trim()
