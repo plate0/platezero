@@ -8,6 +8,9 @@ module.exports = {
       colors: {
         primary: colors.cyan
       }
+    },
+    container: {
+      center: true
     }
   },
   variants: {
