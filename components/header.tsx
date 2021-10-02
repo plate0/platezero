@@ -1,16 +1,20 @@
+import { asContainer } from 'components'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export const Header = () => (
-  <header className="bg-primary-600 py-2">
-    <Link href="/">
-      <a className="navbar-brand py-0 d-none d-md-block">
-        <Image
-          src="/static/logo-reverse.png"
-          alt="PlateZero"
-          className="w-28"
-        />
-      </a>
-    </Link>
+  <header className="bg-primary-600 relative shadow py-2">
+    <div className={asContainer('flex')}>
+      <Link href="/">
+        <a className="flex py-1">
+          <Image
+            src="/logo-reverse.png"
+            alt="PlateZero"
+            width={100}
+            height={22}
+          />
+        </a>
+      </Link>
+    </div>
   </header>
 )
