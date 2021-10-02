@@ -1,9 +1,15 @@
-import { gql, useQuery } from '@apollo/client'
-import { Header } from 'components'
-import { Container } from 'components/container'
-import { useParams } from 'hooks'
+import { gql } from '@apollo/client'
+import { Header, Main } from 'components'
+import { getParams } from 'hooks'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
 import Link from 'next/link'
-import { RecipeQuery, RecipeQueryVariables } from 'queries/RecipeQuery'
+import { getClient } from 'queries'
+import {
+  RecipeQuery,
+  RecipeQueryVariables,
+  RecipeQuery_recipeBySlug
+} from 'queries/RecipeQuery'
 
 const query = gql`
   query RecipeQuery($slug: String!, $username: String!) {
@@ -21,39 +27,81 @@ const query = gql`
   }
 `
 
-export default function RecipePage() {
-  const { username, slug } = useParams<{ username: string; slug: string }>()
-  const { data } = useQuery<RecipeQuery, RecipeQueryVariables>(query, {
-    skip: !slug,
-    variables: {
-      username,
-      slug
-    }
-  })
-  if (!data?.recipeBySlug) {
-    return null
-  }
+interface TitleProps {
+  title: string
+  username: string
+}
+
+const Title = ({ slug, title, username }) => (
+  <>
+    <h1 className="text-2xl">{title}</h1>
+    <Link href={`/${username}`}>
+      <a>{username}</a>
+    </Link>
+  </>
+  // <div className="text-2xl text-blue-700 flex gap-x-2">
+  //   <Link href={`/${username}`}>
+  //     <a>{username}</a>
+  //   </Link>
+  //   <span className="text-gray-600">/</span>
+  //   <Link href={`/${username}/${slug}`}>
+  //     <a>{slug}</a>
+  //   </Link>
+  // </div>
+)
+
+interface Props {
+  recipe: RecipeQuery_recipeBySlug
+}
+
+export default function RecipePage({ recipe }: Props) {
+  const username = recipe.userByUserId.username
   return (
     <>
+      <Head>
+        <title>{recipe.title}</title>
+      </Head>
       <Header />
-      <Container>
-        <Link href={`/${username}`}>
-          <a>{username}</a>
-        </Link>
-        <Link href={`/${username}/${slug}/edit`}>
-          <a>Edit</a>
-        </Link>
-        <h1 className="text-lg mb-4">{data.recipeBySlug.title}</h1>
-        <div>It takes 1.5 hours to make. | Yields about 12 servings.</div>
-        <div className="grid grid-cols-2">
+      <Main>
+        <Title slug={recipe.slug} title={recipe.title} username={username} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="col-span-1 whitespace-pre-line">
-            {data.recipeBySlug.ingredients}
+            <h2 className="text-xl">Ingredients</h2>
+            {recipe.ingredients}
           </div>
           <div className="col-span-1 whitespace-pre-line">
-            {data.recipeBySlug.procedure}
+            <h2 className="text-xl">Procedure</h2>
+            {recipe.procedure}
           </div>
         </div>
-      </Container>
+      </Main>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { username, slug } =
+    getParams<{ username: string; slug: string }>(context)
+  try {
+    const { data } = await getClient(context).query<
+      RecipeQuery,
+      RecipeQueryVariables
+    >({
+      query,
+      variables: {
+        username,
+        slug
+      }
+    })
+    return {
+      props: {
+        recipe: data.recipeBySlug
+      }
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      notFound: true
+    }
+  }
 }

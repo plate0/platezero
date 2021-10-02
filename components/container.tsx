@@ -1,7 +1,7 @@
 import cx, { Argument } from 'classnames'
 import React from 'react'
 
-const containerClass = 'container mx-auto'
+const containerClass = 'container mx-auto px-2'
 
 interface Props extends React.ComponentPropsWithoutRef<'div'> {}
 
