@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useClient } from 'queries'
 import React from 'react'
-import 'tailwindcss/tailwind.css'
+import '../styles/globals.css'
 
 function PlateZeroApp({ Component, pageProps }: AppProps) {
   const client = useClient()
