@@ -5,8 +5,12 @@ node_modules
 **/queries/**
 !queries/client.ts
 
+packages/parser/test
+
+.vercel
 .pnp.js
 .yarn
 .yarnrc.yml
 coverage
 public/mockServiceWorker.js
+package-lock.json

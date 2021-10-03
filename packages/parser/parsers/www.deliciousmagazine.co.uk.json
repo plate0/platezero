@@ -1,0 +1,4 @@
+{
+  "procedure_lists": "#method ol li",
+  "ingredient_lists": ".recipe-ingredients ul li"
+}

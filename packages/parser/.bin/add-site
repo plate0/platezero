@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+const exit = (s) => {
+  console.error(s)
+  return process.exit(1)
+}
+
+const { execSync } = require('child_process')
+const { parse } = require('url')
+const Path = require('path')
+const url = process.argv[2]
+const ext = process.argv[3] || 'js'
+
+if (!url) {
+  return exit('usage: ./bin/add-site https://www.example.com/recipe.html')
+}
+
+const { href, path, hostname } = parse(url)
+const { name } = Path.parse(path)
+
+if (!hostname) {
+  return exit('invalid arguement, expect full http:// url')
+}
+
+execSync(`touch "parsers/${hostname}.${ext}"`)
+execSync(`touch "parsers/${hostname}.test.js"`)
+execSync(`mkdir -p "test/${hostname}"`)
+execSync(`curl -s -L -o "test/${hostname}/${name}.html" '${href}'`)
+
+
+
