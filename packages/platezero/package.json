@@ -1,34 +1,43 @@
 {
+  "name": "@platezero/platezero",
   "license": "UNLICENSED",
-  "workspaces": [
-    "packages/parser",
-    "packages/platezero"
-  ],
   "scripts": {
-    "clean": "yarn lerna clean -y && yarn lerna bootstrap",
-    "lerna": "lerna",
     "dev": "next dev",
     "build": "next build",
     "apollo:generate": "apollo codegen:generate --excludes='node_modules/*' --includes='**/*.tsx' --endpoint http://localhost:5000/graphql --target typescript --tagName gql --outputFlat queries --passthroughCustomScalars --customScalarsPrefix PZ",
-    "lint": "lerna run lint",
+    "lint": "next lint",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "start": "next start",
     "test": "jest",
     "ci": "yarn prettier:check && yarn lint && yarn test && yarn build"
   },
+  "dependencies": {
+    "@apollo/client": "3.4.15",
+    "@platezero/parser": "0.3.2",
+    "classnames": "2.3.1",
+    "graphql": "15.6.0",
+    "next": "11.1.2",
+    "next-cookie": "2.7.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "slugify": "1.6.0"
+  },
   "devDependencies": {
     "@types/jest": "27.0.2",
     "@types/node": "16.10.2",
+    "@types/react": "17.0.26",
     "apollo": "2.33.6",
+    "autoprefixer": "10.3.6",
     "babel-jest": "27.2.4",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
     "jest": "27.2.4",
     "lerna": "^4.0.0",
+    "postcss": "8.3.8",
     "prettier": "2.4.1",
+    "tailwindcss": "2.2.16",
     "typescript": "4.4.3"
   },
-  "packageManager": "yarn@3.0.2",
-  "name": "platezero"
+  "packageManager": "yarn@3.0.2"
 }

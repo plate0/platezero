@@ -1,1 +1,1 @@
-# [PlateZero](https://platezero.com)
+./packages/platezero/README.md

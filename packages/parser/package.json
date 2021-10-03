@@ -1,0 +1,25 @@
+{
+  "name": "@platezero/parser",
+  "version": "0.3.2",
+  "description": "Parse Recipes from HTML",
+  "main": "index.js",
+  "author": "PlateZero <hello@platezero.com>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "add-site": ".bin/add-site",
+    "test:debug": "node --inspect node_modules/.bin/jest --runInBand"
+  },
+  "dependencies": {
+    "axios": "0.19.0",
+    "cheerio": "1.0.0-rc.10",
+    "html-entities": "1.2.1",
+    "ingredient-parser": "https://github.com/plate0/ingredient-parser.git#v0.2.2",
+    "lodash": "4.17.14",
+    "moment": "2.24.0",
+    "turndown": "5.0.3"
+  },
+  "devDependencies": {
+    "@types/cheerio": "0.22.30",
+    "jest": "24.8.0"
+  }
+}
